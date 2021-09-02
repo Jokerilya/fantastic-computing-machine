@@ -1,0 +1,144 @@
+@import './variables.scss';
+@import './mixin.scss';
+@import './transition.scss';
+@import './element-ui.scss';
+@import './sidebar.scss';
+
+body {
+  height: 100%;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial, sans-serif;
+}
+div::-webkit-scrollbar {
+  width:1px;
+  height:auto;
+  background-color:transparent;
+}
+*{
+  margin: 0;
+  padding: 0;
+}
+
+label {
+  font-weight: 700;
+}
+
+html {
+  height: 100%;
+  box-sizing: border-box;
+}
+
+#app {
+  height: 100%;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+a:focus,
+a:active {
+  outline: none;
+}
+
+a,
+a:focus,
+a:hover {
+  cursor: pointer;
+  color: inherit;
+  text-decoration: none;
+}
+
+div:focus {
+  outline: none;
+}
+
+.clearfix {
+  &:after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: " ";
+    clear: both;
+    height: 0;
+  }
+}
+
+// main-container global css
+.app-container {
+  padding: 20px;
+}
+.el_delete{
+    font-size: 24px;
+    cursor: pointer;
+}
+.el-table__body-wrapper::-webkit-scrollbar{
+  width:auto;
+  height:10px;
+  background-color:#ddd;
+}
+.el-table__body-wrapper::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background: #999;
+}
+.el-table__body-wrapper::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background: #ccc;
+}
+
+.img_fit{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.el_pagination{
+  width: 100%;
+  overflow: hidden;
+  margin: 40px auto;
+}
+.select_view{
+  padding: 20px;
+  background: #FFFFFF;
+  height: auto;
+  margin-top: 10px;
+}
+.mg_l15{
+  margin-left: 15px;
+}
+.mg_r15{
+  margin-right: 15px;
+}
+.mg_t10{
+  margin-bottom: 10px;
+}
+.content_box{
+  padding: 20px;
+  .table_from{
+    .el-form-item{
+      margin-bottom: 0;
+    }
+  }
+  .list{
+    width: 100%;
+    min-height: 700px;
+    margin-top: 10px;
+  }
+  .delete_icon{
+      font-size: 20px;
+      cursor: pointer;
+   }
+   .link{
+     color: #00f;
+     &:hover{
+       cursor: pointer;
+       text-decoration: underline;
+     }
+   }
+}
+.el-image-viewer__close{
+  color: #FFFFFF;
+}
