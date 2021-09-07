@@ -26,33 +26,97 @@
           />
         </el-form-item>
         <el-form-item class="float_item" style="height: auto" label="商品名称">
-			<el-input v-model="addEditData.title" rows="3" type="textarea" style="width: 300px" resize="none" />
+          <el-input
+            v-model="addEditData.title"
+            rows="3"
+            type="textarea"
+            style="width: 300px"
+            resize="none"
+          />
         </el-form-item>
         <el-form-item class="float_item" style="height: auto" label="商品简述">
-			<el-input v-model="addEditData.simpleDesc" rows="3" type="textarea" style="width: 300px" resize="none" />
+          <el-input
+            v-model="addEditData.simpleDesc"
+            rows="3"
+            type="textarea"
+            style="width: 300px"
+            resize="none"
+          />
         </el-form-item>
         <div style="width: 100%; height: auto; overflow: hidden; float: left">
-			<el-form-item class="float_item" style="height: auto" label="商品封面图">
-				<upload-img width="80px" height="80px" :img="addEditData.coverImage" @uploadSuc="uploadSucFn"/>
-			</el-form-item>
-			<el-form-item class="float_item" style="height: auto" label="商品多图">
-				<upload-imgs :imgs="addEditData.images" @uploadSuc="uploadImgsSucFn" @deleteImg="deleteImgFn"/>
-			</el-form-item>
+          <el-form-item
+            class="float_item"
+            style="height: auto"
+            label="商品封面图"
+          >
+            <upload-img
+              width="80px"
+              height="80px"
+              :img="addEditData.coverImage"
+              @uploadSuc="uploadSucFn"
+            />
+          </el-form-item>
+          <el-form-item
+            class="float_item"
+            style="height: auto"
+            label="商品多图"
+          >
+            <upload-imgs
+              :imgs="addEditData.images"
+              @uploadSuc="uploadImgsSucFn"
+              @deleteImg="deleteImgFn"
+            />
+          </el-form-item>
         </div>
         <div style="width: 100%; height: auto; overflow: hidden; float: left">
-			<el-form-item class="float_item" style="height: auto" label="商品背景图">
-				<upload-img width="80px" height="80px" :img="addEditData.backImage" @uploadSuc="uploadSucFn2"/>
-				<span style="font-size: 12px;color: #999;">注：鼠标移入显示的图片</span>
-			</el-form-item>
-			<el-form-item class="float_item" label="商品类型">
-				<el-select v-model="addEditData.type" style="width: 300px" placeholder="请选择商品类型" @change="productTypeChange">
-					<el-option v-for="item in types" :key="item.val" :label="item.name" :value="item.val" />
-				</el-select>
-			</el-form-item>	
+          <el-form-item
+            class="float_item"
+            style="height: auto"
+            label="商品背景图"
+          >
+            <upload-img
+              width="80px"
+              height="80px"
+              :img="addEditData.backImage"
+              @uploadSuc="uploadSucFn2"
+            />
+            <span style="font-size: 12px; color: #999"
+              >注：鼠标移入显示的图片</span
+            >
+          </el-form-item>
+          <el-form-item class="float_item" label="商品类型">
+            <el-select
+              v-model="addEditData.type"
+              style="width: 300px"
+              placeholder="请选择商品类型"
+              @change="productTypeChange"
+            >
+              <el-option
+                v-for="item in types"
+                :key="item.val"
+                :label="item.name"
+                :value="item.val"
+              />
+            </el-select>
+          </el-form-item>
         </div>
-		
+
         <el-form-item class="float_item" label="商品分类">
-			<el-cascader style="width: 300px" v-model="addEditData.categoryId" :class="{ el_cascader: addEditData.categoryId != '' }" :placeholder="addEditData.categoryId ? addEditData.categoryName : '请选择商品分类'"  expand-trigger="hover" :props="categoryList" :show-all-levels="false" clearable :disabled="!addEditData.type" />
+          <el-cascader
+            style="width: 300px"
+            v-model="addEditData.categoryId"
+            :class="{ el_cascader: addEditData.categoryId != '' }"
+            :placeholder="
+              addEditData.categoryId
+                ? addEditData.categoryName
+                : '请选择商品分类'
+            "
+            expand-trigger="hover"
+            :props="categoryList"
+            :show-all-levels="false"
+            clearable
+            :disabled="!addEditData.type"
+          />
         </el-form-item>
         <!-- <el-form-item class="float_item" label="商品分类" v-if="addEditData.type === 3">
 			<el-select v-model="addEditData.partsId" filterable placeholder="请选择配件分类" style="width: 300px;" :disabled="!addEditData.type">
@@ -60,8 +124,6 @@
 			</el-select>
 			<el-cascader style="width: 300px" v-model="addEditData.partsId" :class="{ el_cascader: addEditData.partsId != '' }" placeholder="请选择配件分类" expand-trigger="hover" :props="categoryList" :show-all-levels="false" clearable :disabled="!addEditData.type" />
         </el-form-item> -->
-
-        
 
         <el-form-item class="float_item" label="上/下架">
           <el-select
@@ -86,46 +148,75 @@
           />
         </el-form-item>
         <el-form-item class="float_item" label="运费">
-			<el-select v-model="addEditData.expId" style="width: 300px" clearable placeholder="请选择运费模板">
-				<el-option v-for="item in expList" :key="item.id" :label="item.name" :value="item.id"/>
-			</el-select>
+          <el-select
+            v-model="addEditData.expId"
+            style="width: 300px"
+            clearable
+            placeholder="请选择运费模板"
+          >
+            <el-option
+              v-for="item in expList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            />
+          </el-select>
         </el-form-item>
-		
+
         <el-form-item class="float_item" label="供应商">
-			<el-select v-model="addEditData.supplierId" style="width: 300px" filterable clearable placeholder="请选择供应商">
-				<el-option v-for="item in supplierList" :key="item.id" :label="item.name" :value="item.id"/>
-			</el-select>
+          <el-select
+            v-model="addEditData.supplierId"
+            style="width: 300px"
+            filterable
+            clearable
+            placeholder="请选择供应商"
+          >
+            <el-option
+              v-for="item in supplierList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            />
+          </el-select>
         </el-form-item>
-		
-		<template v-if="addEditData.type === 2">
-		<el-form-item class="float_item" style="height: auto" label="拼团库存">
-		  <el-input-number
-		    v-model="addEditData.groupNum"
-		    style="width: 300px"
-		  />
-		</el-form-item>
-		
-		<!-- <el-form-item class="float_item" style="height: auto" label="拼团时长(H)">
+
+        <template v-if="addEditData.type === 2">
+          <el-form-item
+            class="float_item"
+            style="height: auto"
+            label="拼团库存"
+          >
+            <el-input-number
+              v-model="addEditData.groupNum"
+              style="width: 300px"
+            />
+          </el-form-item>
+
+          <!-- <el-form-item class="float_item" style="height: auto" label="拼团时长(H)">
 		  <el-input-number
 		    v-model="addEditData.groupHours"
 		    style="width: 300px"
 		  />
 		</el-form-item> -->
-		
-		<el-form-item class="float_item" style="height: auto" label="活动截止时间">
-		  <el-date-picker
-		    v-model="addEditData.activityTime"
-		    class="mg_r15 mg_t10"
-		    type="datetimerange"
-		  	value-format="yyyy-MM-dd HH:mm:ss"
-		    range-separator="至"
-		    start-placeholder="开始日期"
-		    end-placeholder="结束日期">
-		  </el-date-picker>
-		</el-form-item>
-		</template>
-		
-		
+
+          <el-form-item
+            class="float_item"
+            style="height: auto"
+            label="活动截止时间"
+          >
+            <el-date-picker
+              v-model="addEditData.activityTime"
+              class="mg_r15 mg_t10"
+              type="datetimerange"
+              value-format="yyyy-MM-dd HH:mm:ss"
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+            >
+            </el-date-picker>
+          </el-form-item>
+        </template>
+
         <el-form-item
           v-if="addEditData.isExistManySpec == 1"
           style="clear: both"
@@ -148,14 +239,31 @@
               </template>
             </el-table-column>
             <el-table-column label="规格值(例如:白色,红色)">
-				<template slot-scope="scope">
-					<div v-for="(item, index) in scope.row.value" :key="index" class="value_item">
-						<div class="item">
-							<el-input v-model="scope.row.value[index]" placeholder="规格值" @input="valueChange(scope.$index, index)"/>
-							<el-button v-if="!addEditData.id||editAddValItem.indexOf(scope.$index +','+ index) > -1" type="danger" size="small" icon="el-icon-delete" @click="delListValuItemFn(scope.$index, index)"/>
-						</div>
-					</div>
-				</template>
+              <template slot-scope="scope">
+                <div
+                  v-for="(item, index) in scope.row.value"
+                  :key="index"
+                  class="value_item"
+                >
+                  <div class="item">
+                    <el-input
+                      v-model="scope.row.value[index]"
+                      placeholder="规格值"
+                      @input="valueChange(scope.$index, index)"
+                    />
+                    <el-button
+                      v-if="
+                        !addEditData.id ||
+                        editAddValItem.indexOf(scope.$index + ',' + index) > -1
+                      "
+                      type="danger"
+                      size="small"
+                      icon="el-icon-delete"
+                      @click="delListValuItemFn(scope.$index, index)"
+                    />
+                  </div>
+                </div>
+              </template>
             </el-table-column>
             <el-table-column
               label="操作"
@@ -232,36 +340,52 @@
                 />
               </template>
             </el-table-column>
-            <el-table-column label="规格编码" align="center" header-align="center">
+            <el-table-column
+              label="规格编码"
+              align="center"
+              header-align="center"
+            >
               <template slot-scope="scope">
                 <el-input v-model="scope.row.skuCode" min="0" type="text" />
               </template>
             </el-table-column>
-			
-            <el-table-column label="参考价(销售价)" align="center" header-align="center">
+
+            <el-table-column
+              label="参考价(销售价)"
+              align="center"
+              header-align="center"
+            >
               <template slot-scope="scope">
                 <el-input v-model="scope.row.price" min="0" type="number" />
               </template>
             </el-table-column>
-			
+
             <el-table-column label="原价" align="center" header-align="center">
               <template slot-scope="scope">
-                <el-input v-model="scope.row.originalPrice" min="0" type="number" />
+                <el-input
+                  v-model="scope.row.originalPrice"
+                  min="0"
+                  type="number"
+                />
               </template>
             </el-table-column>
-			
+
             <el-table-column label="库存" align="center" header-align="center">
               <template slot-scope="scope">
                 <el-input v-model="scope.row.inventory" min="0" type="number" />
               </template>
             </el-table-column>
-			
+
             <el-table-column label="操作" align="center" header-align="center">
               <template slot-scope="scope">
-                <el-button size="small" type="danger" @click="delSpecFn(scope.$index)">删除</el-button>
+                <el-button
+                  size="small"
+                  type="danger"
+                  @click="delSpecFn(scope.$index)"
+                  >删除</el-button
+                >
               </template>
             </el-table-column>
-			
           </el-table>
           <el-button
             size="small"
@@ -283,6 +407,7 @@
         </el-form-item>
         <el-form-item style="clear: both" label="商品详情">
           <tinymce
+            ref="ppp"
             :id="'agreement_' + addEditData.id"
             v-model="addEditData.content"
             :height="600"
@@ -343,145 +468,159 @@
 import uploadImg from "@/components/uploadImg/upload-img.vue";
 import uploadImgs from "@/components/uploadImgs/upload-imgs.vue";
 import Tinymce from "@/components/Tinymce";
-import { getProductDetailFn, queryProductCategoryFn,editProductFn,queryProductFittingCategoryFn,querySupplierList} from "@/api/product.js";
+import {
+  getProductDetailFn,
+  queryProductCategoryFn,
+  editProductFn,
+  queryProductFittingCategoryFn,
+  querySupplierList,
+} from "@/api/product.js";
 import { queryExpRuleFn } from "@/api/system.js";
 export default {
-	name: "ProductList",
-	components: {
-		Tinymce,
-		uploadImg,
-		uploadImgs,
-	},
-	data() {
-		return {
-			pageNo: 0,
-			pageSize: 0,
-			submitIng: false,
-			productId: "",
-			dialogVisible: false,
-			editAddValItem: [],
-			types: [
-				{ name: "优选商品", val: 1 },
-				{ name: "拼团产品", val: 2 },
-				{ name: "配件", val: 3 },
-				{ name: "机件", val: 4 },
-			],
-			isShelves: [
-				{ name: "上架", val: 1 },
-				{ name: "下架", val: 0 },
-			],
-			isExistManySpec: [
-				{ name: "是", val: 1 },
-				{ name: "否", val: 0 },
-			],
-			addEditData: {
-				expId: "",
-				categoryId: '',
-				content: "",
-				coverImage: "",
-				backImage:'',
-				id: "",
-				images: [],
-				inventory: "",
-				isExistManySpec: "",
-				isShelves: "",
-				mode: "",
-				price: 0,
-				simpleDesc: "",
-				list: [],
-				specList: [],
-				title: "",
-				type:'',
-				// partsId:'',
-				supplierId:'',
-				// groupHours:1,
-				groupNum:1,
-				activityTime:[],
-				activityStartTime:'',
-				activityEndTime:''
-			},
-			supplierList:[],  // 供应商列表
-			editLevelData: [],
-			expList: [],
-			batchData: {
-				specImage: "",
-				price: 0,
-				originalPrice:0,
-				inventory: 0,
-			},
-			results: [],
-			result: [],
-			levelList: [],
-			categoryList: {
-				lazy: true,
-				checkStrictly: true,
-				lazyLoad(node, resolve) {
-					queryProductCategoryFn({ pid: node.value || 0 }).then((res) => {
-							const resData = res.data;
-							const nodes = resData.map((item) => ({
-							value: item.id,
-							label: item.name,
-						}));
-						// 通过调用resolve将子节点数据返回，通知组件数据加载完成
-						resolve(nodes);
-					})
-				}
-			},
-			categoryPartsList:[]
-		}
-	},
-	mounted() {
-		this.productId = this.$route.query.id;
-		this.pageNo = this.$route.query.pageNo;
-		this.pageSize = this.$route.query.pageSize;
-		this.getInit()
-	},
-	created() {
-		this.queryProductFittingCategoryFn()
-	},
-	activated() {   // 解决组件被keep-alive无法更新数据
-		this.addProductFn()
-		this.productId = this.$route.query.id;
-		this.pageNo = this.$route.query.pageNo;
-		this.pageSize = this.$route.query.pageSize;
-		this.getInit()
-	},
+  name: "ProductList",
+  components: {
+    Tinymce,
+    uploadImg,
+    uploadImgs,
+  },
+  data() {
+    return {
+      pageNo: 0,
+      pageSize: 0,
+      submitIng: false,
+      productId: "",
+      dialogVisible: false,
+      editAddValItem: [],
+      types: [
+        { name: "优选商品", val: 1 },
+        { name: "拼团产品", val: 2 },
+        { name: "配件", val: 3 },
+        { name: "机件", val: 4 },
+      ],
+      isShelves: [
+        { name: "上架", val: 1 },
+        { name: "下架", val: 0 },
+      ],
+      isExistManySpec: [
+        { name: "是", val: 1 },
+        { name: "否", val: 0 },
+      ],
+      addEditData: {
+        expId: "",
+        categoryId: "",
+        content: "",
+        coverImage: "",
+        backImage: "",
+        id: "",
+        images: [],
+        inventory: "",
+        isExistManySpec: "",
+        isShelves: "",
+        mode: "",
+        price: 0,
+        simpleDesc: "",
+        list: [],
+        specList: [],
+        title: "",
+        type: "",
+        // partsId:'',
+        supplierId: "",
+        // groupHours:1,
+        groupNum: 1,
+        activityTime: [],
+        activityStartTime: "",
+        activityEndTime: "",
+      },
+      supplierList: [], // 供应商列表
+      editLevelData: [],
+      expList: [],
+      batchData: {
+        specImage: "",
+        price: 0,
+        originalPrice: 0,
+        inventory: 0,
+      },
+      results: [],
+      result: [],
+      levelList: [],
+      categoryList: {
+        lazy: true,
+        checkStrictly: true,
+        lazyLoad(node, resolve) {
+          queryProductCategoryFn({ pid: node.value || 0 }).then((res) => {
+            const resData = res.data;
+            const nodes = resData.map((item) => ({
+              value: item.id,
+              label: item.name,
+            }));
+            // 通过调用resolve将子节点数据返回，通知组件数据加载完成
+            resolve(nodes);
+          });
+        },
+      },
+      categoryPartsList: [],
+    };
+  },
+  mounted() {
+    this.productId = this.$route.query.id;
+    this.pageNo = this.$route.query.pageNo;
+    this.pageSize = this.$route.query.pageSize;
+    this.getInit();
+  },
+  created() {
+    this.queryProductFittingCategoryFn();
+  },
+  activated() {
+    // 解决组件被keep-alive无法更新数据
+    this.addProductFn();
+    this.productId = this.$route.query.id;
+    this.pageNo = this.$route.query.pageNo;
+    this.pageSize = this.$route.query.pageSize;
+    this.getInit();
+  },
+  watch: {
+    productId(newval) {
+      if (newval === undefined) {
+        this.$refs.ppp.setContent("");
+      }
+    },
+  },
   methods: {
-	// 获取
-	async getInit(){
-		await queryExpRuleFn({
-		  pageNo: 1,
-		  pageSize: 20,
-		  name: "",
-		}).then((res) => {
-		  const resData = this.resDataFn(res);
-		  this.expList.splice(0, this.expList.length, ...resData.records);
-		});
-		this.getProductDetailFn();
-		this.getQuerySupplierList()
-	},
-	// 获取供应商列表
-	async getQuerySupplierList(){
-		const res = await querySupplierList({
-			pageNo:1,
-			pageSize:1000
-		})
-		if(res.code === '000'){
-			this.supplierList = res.data.records
-		}
-	},
-	// 产品类型选择
-	productTypeChange(e){
-		this.addEditData.categoryId = ''
-	},
-	// 获取装机配件商品分类
-	async queryProductFittingCategoryFn(){
-		const res = await queryProductFittingCategoryFn()
-		if(res.code === '000'){
-			this.categoryPartsList = res.data
-		}
-	},
-	// 
+    // 获取
+    async getInit() {
+      await queryExpRuleFn({
+        pageNo: 1,
+        pageSize: 20,
+        name: "",
+      }).then((res) => {
+        const resData = this.resDataFn(res);
+        this.expList.splice(0, this.expList.length, ...resData.records);
+      });
+      this.getProductDetailFn();
+      this.getQuerySupplierList();
+    },
+    // 获取供应商列表
+    async getQuerySupplierList() {
+      const res = await querySupplierList({
+        pageNo: 1,
+        pageSize: 1000,
+      });
+      if (res.code === "000") {
+        this.supplierList = res.data.records;
+      }
+    },
+    // 产品类型选择
+    productTypeChange(e) {
+      this.addEditData.categoryId = "";
+    },
+    // 获取装机配件商品分类
+    async queryProductFittingCategoryFn() {
+      const res = await queryProductFittingCategoryFn();
+      if (res.code === "000") {
+        this.categoryPartsList = res.data;
+      }
+    },
+    //
     cascaderChangeFn(val) {
       // const endIndex = val.length - 1
       // this.addEditData.categoryId = val[endIndex]
@@ -558,7 +697,7 @@ export default {
         categoryId: "",
         content: "",
         coverImage: "",
-		backImage:'',
+        backImage: "",
         id: "",
         images: [],
         inventory: "",
@@ -571,21 +710,21 @@ export default {
         list: [],
         specList: [],
         title: "",
-		// partsId:'',
-		supplierId:'',
-		// groupHours:1,
-		groupNum:1,
-		activityTime:[],
-		activityStartTime:'',
-		activityEndTime:''
+        // partsId:'',
+        supplierId: "",
+        // groupHours:1,
+        groupNum: 1,
+        activityTime: [],
+        activityStartTime: "",
+        activityEndTime: "",
       };
     },
     submitFn() {
       const postData = JSON.parse(JSON.stringify(this.addEditData));
-	  // console.log(postData)
+      console.log(postData, "000");
       let listFlag = true;
       let specListFlag = true;
-	  
+
       // 规格数据验证
       if (this.addEditData.isExistManySpec == 1) {
         if (this.addEditData.list.length == 0) {
@@ -674,16 +813,16 @@ export default {
       delete postData.specList;
       delete postData.categoryName;
       delete postData.createTime;
-	  
-	  if (!postData.categoryId || postData.categoryId.length === 0) {
-			this.$message({
-			  showClose: true,
-			  message: `请选择商品分类！`,
-			  type: "warning",
-			});
-			return;
-	   }
-	  /* if(this.addEditData.type !== 3){
+
+      if (!postData.categoryId || postData.categoryId.length === 0) {
+        this.$message({
+          showClose: true,
+          message: `请选择商品分类！`,
+          type: "warning",
+        });
+        return;
+      }
+      /* if(this.addEditData.type !== 3){
 		 if (!postData.categoryId || postData.categoryId.length === 0) {
 			this.$message({
 			  showClose: true,
@@ -702,22 +841,22 @@ export default {
 				return;
 		   }
 	  } */
-     
-	  if(!this.addEditData.supplierId){
-		  this.$message({
-		    showClose: true,
-		    message: `请选择供应商！`,
-		    type: "warning",
-		  });
-		  return;
-	  }
-	  postData.categoryId = postData.categoryId.pop()
+
+      if (!this.addEditData.supplierId) {
+        this.$message({
+          showClose: true,
+          message: `请选择供应商！`,
+          type: "warning",
+        });
+        return;
+      }
+      postData.categoryId = postData.categoryId.pop();
       postData.images = postData.images.join(",");
       postData.id = this.productId ? this.productId : undefined;
-	  postData.activityStartTime = postData.activityTime[0]
-	  postData.activityEndTime = postData.activityTime[1]
-	  console.log(postData)
-	  // return
+      postData.activityStartTime = postData.activityTime[0];
+      postData.activityEndTime = postData.activityTime[1];
+      console.log(postData);
+      // return
       this.submitIng = true;
       editProductFn(postData)
         .then((res) => {
@@ -837,7 +976,7 @@ export default {
     },
     deleteImgFn(index) {
       this.addEditData.images.splice(index, 1);
-		// console.log(this.addEditData.images,index)
+      // console.log(this.addEditData.images,index)
     },
     getProductDetailFn() {
       if (!this.productId) return;
@@ -865,9 +1004,8 @@ export default {
               item.skuIndex = [];
               if (item.skuName) {
                 item.skuName.split(",").forEach((item2, index2) => {
-                  const posIndex = resData.specInfoList[index2].value.indexOf(
-                    item2
-                  );
+                  const posIndex =
+                    resData.specInfoList[index2].value.indexOf(item2);
                   if (posIndex > -1) {
                     item.skuIndex.push(String(posIndex));
                   }
@@ -876,48 +1014,57 @@ export default {
             }
           });
         }
-		this.addEditData.activityTime = resData.activityStartTime &&resData.activityEndTime ?  [resData.activityStartTime,resData.activityEndTime] : []
-		this.addEditData = Object.assign({}, this.addEditData, resData, {
-		  // provincePrice:
-		  //   resData.type === 3 ? resData.productAgent.proPrice : undefined,
-		  // cityPrice:
-		  //   resData.type === 3 ? resData.productAgent.cityPrice : undefined,
-		  // areaPrice:
-		  //   resData.type === 3 ? resData.productAgent.areaPrice : undefined,
-		  // dealerPrice:
-		  //   resData.type === 3 ? resData.productAgent.dealerPrice : undefined,
-		  // provinceThigh:
-		  //   resData.type === 3 ? resData.productAgent.proThigh : undefined,
-		  // cityThigh:
-		  //   resData.type === 3 ? resData.productAgent.cityThigh : undefined,
-		  // areaThigh:
-		  //   resData.type === 3 ? resData.productAgent.areaThigh : undefined,
-		  // dealerThigh:
-		  //   resData.type === 3 ? resData.productAgent.dealerThigh : undefined,
-		  // provinceBeginNum:
-		  //   resData.type === 3 ? resData.productAgent.proNum : undefined,
-		  // cityBeginNum:
-		  //   resData.type === 3 ? resData.productAgent.cityNum : undefined,
-		  // areaBeginNum:
-		  //   resData.type === 3 ? resData.productAgent.areaNum : undefined,
-		  // dealerBeginNum:
-		  //   resData.type === 3 ? resData.productAgent.dealerNum : undefined,
-		  // productAgent: undefined,
-		  categoryId: resData.categoryIds,
-		  images: resData.images.split(","),
-		  list: resData.specInfoList && resData.specInfoList.length > 0 ? resData.specInfoList : [],
-		  specList: resData.skuInfoList && resData.skuInfoList.length > 0 ? resData.skuInfoList : [],
-		});
-		this.editLevelData = resData.rewardInfoList;
-		this.levelList.map((item, index) => {
-		  if (this.editLevelData[index].levelId === item.id) {
-		    this.editLevelData[index].name = item.name;
-		  }
-		});
-		// 如果是装机商品 设定分类id 为装机分类的id
-		// if(this.addEditData.type === 3){
-		// 	this.addEditData.categoryId = this.addEditData.partsId
-		// }
+        this.addEditData.activityTime =
+          resData.activityStartTime && resData.activityEndTime
+            ? [resData.activityStartTime, resData.activityEndTime]
+            : [];
+        this.addEditData = Object.assign({}, this.addEditData, resData, {
+          // provincePrice:
+          //   resData.type === 3 ? resData.productAgent.proPrice : undefined,
+          // cityPrice:
+          //   resData.type === 3 ? resData.productAgent.cityPrice : undefined,
+          // areaPrice:
+          //   resData.type === 3 ? resData.productAgent.areaPrice : undefined,
+          // dealerPrice:
+          //   resData.type === 3 ? resData.productAgent.dealerPrice : undefined,
+          // provinceThigh:
+          //   resData.type === 3 ? resData.productAgent.proThigh : undefined,
+          // cityThigh:
+          //   resData.type === 3 ? resData.productAgent.cityThigh : undefined,
+          // areaThigh:
+          //   resData.type === 3 ? resData.productAgent.areaThigh : undefined,
+          // dealerThigh:
+          //   resData.type === 3 ? resData.productAgent.dealerThigh : undefined,
+          // provinceBeginNum:
+          //   resData.type === 3 ? resData.productAgent.proNum : undefined,
+          // cityBeginNum:
+          //   resData.type === 3 ? resData.productAgent.cityNum : undefined,
+          // areaBeginNum:
+          //   resData.type === 3 ? resData.productAgent.areaNum : undefined,
+          // dealerBeginNum:
+          //   resData.type === 3 ? resData.productAgent.dealerNum : undefined,
+          // productAgent: undefined,
+          categoryId: resData.categoryIds,
+          images: resData.images.split(","),
+          list:
+            resData.specInfoList && resData.specInfoList.length > 0
+              ? resData.specInfoList
+              : [],
+          specList:
+            resData.skuInfoList && resData.skuInfoList.length > 0
+              ? resData.skuInfoList
+              : [],
+        });
+        this.editLevelData = resData.rewardInfoList;
+        this.levelList.map((item, index) => {
+          if (this.editLevelData[index].levelId === item.id) {
+            this.editLevelData[index].name = item.name;
+          }
+        });
+        // 如果是装机商品 设定分类id 为装机分类的id
+        // if(this.addEditData.type === 3){
+        // 	this.addEditData.categoryId = this.addEditData.partsId
+        // }
       });
     },
   },
