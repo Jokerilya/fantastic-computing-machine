@@ -581,7 +581,7 @@ export default {
   watch: {
     productId(newval) {
       if (newval === undefined) {
-        this.$refs.ppp.setContent("");
+        this.$refs.ppp.setContent("")
       }
     },
   },
