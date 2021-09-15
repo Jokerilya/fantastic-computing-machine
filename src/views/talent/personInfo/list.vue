@@ -1,6 +1,6 @@
 <template>
   <div class="content_box">
-    <first-title title="人才精英列表" />
+    <first-title title="人才精英管理" />
     <div class="select_view flex just-end">
       <router-link
         :to="{
@@ -97,7 +97,7 @@
         </template>
       </el-table-column>
       <el-table-column
-        label="个人优势"
+        label="个人简介"
         align="center"
         header-align="center"
         width="300px"
@@ -142,9 +142,7 @@
           >
             <el-button type="primary" size="small">编辑</el-button>
           </router-link>
-          <el-button size="small" type="danger" @click="delProductFn(scope)"
-            >删除</el-button
-          >
+          <el-button size="small" type="danger">删除</el-button>
         </template>
       </el-table-column>
     </el-table>

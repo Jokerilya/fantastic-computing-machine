@@ -139,7 +139,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item class="float_item" label="参考价(销售价)">
+        <el-form-item class="float_item" label="参考价(销售价)" v-if="addEditData.isExistManySpec == 0">
           <el-input
             v-model="addEditData.price"
             style="width: 300px"
@@ -178,6 +178,26 @@
               :value="item.id"
             />
           </el-select>
+        </el-form-item>
+
+        <el-form-item class="float_item" label="库存" v-if="addEditData.isExistManySpec == 0">
+          <el-input
+            v-model="addEditData.lastInventory"
+            style="width: 300px"
+            min="0"
+            type="number"
+            placeholder="请输入库存"
+          />
+        </el-form-item>
+
+        <el-form-item class="float_item" label="原价" v-if="addEditData.isExistManySpec == 0">
+          <el-input
+            v-model="addEditData.originalPrice"
+            style="width: 300px"
+            min="0"
+            type="number"
+            placeholder="请输入原价"
+          />
         </el-form-item>
 
         <template v-if="addEditData.type === 2">
@@ -351,6 +371,7 @@
             </el-table-column>
 
             <el-table-column
+              v-if="addEditData.isExistManySpec == 1"
               label="参考价(销售价)"
               align="center"
               header-align="center"
@@ -530,6 +551,8 @@ export default {
         activityTime: [],
         activityStartTime: "",
         activityEndTime: "",
+        lastInventory:'',
+        originalPrice:''
       },
       supplierList: [], // 供应商列表
       editLevelData: [],
@@ -581,7 +604,7 @@ export default {
   watch: {
     productId(newval) {
       if (newval === undefined) {
-        this.$refs.ppp.setContent("")
+        this.$refs.ppp.setContent("");
       }
     },
   },
@@ -704,8 +727,9 @@ export default {
         isExistManySpec: "",
         isShelves: "",
         mode: "",
-        originalPrice: 0,
-        price: 0,
+        originalPrice: "",
+        price: "",
+        lastInventory:"",
         simpleDesc: "",
         list: [],
         specList: [],
@@ -721,6 +745,8 @@ export default {
     },
     submitFn() {
       const postData = JSON.parse(JSON.stringify(this.addEditData));
+      postData.originalPrice = Number(postData.originalPrice);
+      postData.lastInventory = Number(postData.lastInventory)
       console.log(postData, "000");
       let listFlag = true;
       let specListFlag = true;

@@ -1,19 +1,19 @@
 <template>
   <div class="content_box">
-    <first-title :title="personId === 0 ? '新增精英列表' : '编辑精英列表'" />
+    <first-title :title="personId === 0 ? '新增精英' : '编辑精英'" />
     <div class="bg-white" style="padding: 50px 20px">
       <el-form ref="form" :rules="rules" label-width="180px" :model="formdata">
-        <el-form-item label="精英名称：" prop="name">
+        <el-form-item label="名称：" prop="name">
           <el-input
             style="width: 250px"
             v-model="formdata.name"
-            placeholder="请输入精英名称"
+            placeholder="请输入名称"
           />
         </el-form-item>
         <el-form-item
           class="float_item"
           style="height: auto"
-          label="精英头像:"
+          label="头像："
           prop="headUrl"
         >
           <upload-img
@@ -23,15 +23,15 @@
             @uploadSuc="uploadSucFn"
           />
         </el-form-item>
-        <el-form-item label="精英电话：" prop="phone">
+        <el-form-item label="电话：" prop="phone">
           <el-input
             style="width: 250px"
             v-model="formdata.phone"
-            placeholder="请输入精英电话"
+            placeholder="请输入电话"
           />
         </el-form-item>
-        <el-form-item label="精英学历：" prop="education">
-          <el-select v-model="formdata.education" placeholder="请选择精英学历">
+        <el-form-item label="学历：" prop="education">
+          <el-select v-model="formdata.education" placeholder="请选择学历">
             <el-option
               v-for="(item, i) in typeList"
               :key="i"
@@ -42,47 +42,48 @@
         </el-form-item>
         <el-form-item label="排序(越小越前)：" prop="sort">
           <el-input
+            min="0"
             type="number"
             style="width: 250px"
             v-model="formdata.sort"
             placeholder="请输入排序数"
           />
         </el-form-item>
-        <el-form-item label="工作时间：" prop="workTime">
+        <el-form-item label="工作年限：" prop="workTime">
           <el-input
             type="number"
             style="width: 250px"
             v-model="formdata.workTime"
-            placeholder="请输入精英工作时间"
+            placeholder="请输入工作年限"
           />
         </el-form-item>
-        <el-form-item label="精英级别：" prop="level">
+        <el-form-item label="级别：" prop="level">
           <el-select v-model="formdata.level" placeholder="请选择精英级别">
             <el-option :label="'高级技工'" :value="3"></el-option>
             <el-option :label="'初级技工'" :value="1"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="精英年龄：" prop="age">
+        <el-form-item label="年龄：" prop="age">
           <el-input
             type="number"
             style="width: 250px"
             v-model="formdata.age"
-            placeholder="请输入精英年龄"
+            placeholder="请输入年龄"
           />
         </el-form-item>
-        <el-form-item style="clear: both" label="精英擅长：">
+        <el-form-item style="clear: both" label="擅长：">
           <el-table
             class="list_table"
             :data="formdata.lables"
             border
             style="width: 560px"
           >
-            <el-table-column label="精英擅长领域(例如:CNC数控大师)" width="250">
+            <el-table-column label="擅长领域(例如:CNC数控大师)" width="250">
               <template slot-scope="scope">
                 <el-input
                   v-model="scope.row.name"
                   class="spec_name"
-                  placeholder="填写精英擅长信息"
+                  placeholder="填写擅长信息"
                 />
               </template>
             </el-table-column>
@@ -111,7 +112,7 @@
             >添加精英擅长信息</el-button
           >
         </el-form-item>
-        <el-form-item style="clear: both" label="精英工作经历：">
+        <el-form-item style="clear: both" label="工作经历：">
           <el-table
             class="list_table"
             :data="formdata.experience"
@@ -184,7 +185,7 @@
             >添加精英工作经历</el-button
           >
         </el-form-item>
-        <el-form-item style="clear: both" label="精英个人简介：" prop="summary">
+        <el-form-item style="clear: both" label="个人简介：" prop="summary">
           <el-input
             style="width: 400px"
             type="textarea"
@@ -339,12 +340,12 @@ export default {
         this.formdata.summary = resData.summary;
         this.formdata.workTime = resData.workTime;
         let arr = [];
-        resData.lableList.map(item=>{
-          let obj = {}
-          obj.name = item
-          arr.push(obj)
-        })
-        this.formdata.lables = arr
+        resData.lableList.map((item) => {
+          let obj = {};
+          obj.name = item;
+          arr.push(obj);
+        });
+        this.formdata.lables = arr;
       });
     },
     //图片上传返回

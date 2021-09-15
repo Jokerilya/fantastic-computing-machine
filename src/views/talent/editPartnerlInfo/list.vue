@@ -6,7 +6,7 @@
         :to="{
           name: 'editPartnerlDetail',
           query: {
-            parentId:0
+            parentId: 0,
           },
         }"
       >
@@ -91,9 +91,7 @@
           >
             <el-button type="primary" size="small">编辑</el-button>
           </router-link>
-          <el-button size="small" type="danger" @click="delProductFn(scope)"
-            >删除</el-button
-          >
+          <el-button size="small" type="danger">删除</el-button>
         </template>
       </el-table-column>
     </el-table>

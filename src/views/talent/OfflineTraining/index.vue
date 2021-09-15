@@ -1,18 +1,16 @@
 <template>
   <div class="content_box">
-    <first-title title="线下培训列表" />
+    <first-title title="线下培训管理" />
     <div class="select_view flex just-end">
       <router-link
         :to="{
           name: 'offlinetrainingDetail',
           query: {
-            offlineId:0
+            offlineId: 0,
           },
         }"
       >
-        <el-button type="primary"
-          ><i class="el-icon-plus" />添加培训</el-button
-        >
+        <el-button type="primary"><i class="el-icon-plus" />添加培训</el-button>
       </router-link>
     </div>
     <el-table
@@ -130,9 +128,7 @@
           >
             <el-button type="primary" size="small">编辑</el-button>
           </router-link>
-          <el-button size="small" type="danger" @click="delProductFn(scope)"
-            >删除</el-button
-          >
+          <el-button size="small" type="danger">删除</el-button>
         </template>
       </el-table-column>
     </el-table>

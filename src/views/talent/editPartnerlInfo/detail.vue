@@ -1,7 +1,7 @@
 <template>
   <div class="content_box">
     <first-title
-      :title="parentId === 0 ? '新增(学院/企业)列表' : '编辑(学院/企业)列表'"
+      :title="parentId === 0 ? '新增(学院/企业)' : '编辑(学院/企业)'"
     />
     <div class="bg-white" style="padding: 50px 20px">
       <el-form ref="form" :rules="rules" label-width="180px" :model="formdata">
@@ -33,6 +33,7 @@
         </el-form-item>
         <el-form-item label="观看次数：" prop="watchedNum">
           <el-input
+            min="0"
             type="number"
             style="width: 250px"
             v-model="formdata.watchedNum"
@@ -41,6 +42,7 @@
         </el-form-item>
         <el-form-item label="排序(越小越前)：" prop="sort">
           <el-input
+            min="0"
             type="number"
             style="width: 250px"
             v-model="formdata.sort"
@@ -54,7 +56,11 @@
             border
             style="width: 800px"
           >
-            <el-table-column label="就业类型名称(例如:数控)" width="250" align="center">
+            <el-table-column
+              label="就业类型名称(例如:数控)"
+              width="250"
+              align="center"
+            >
               <template slot-scope="scope">
                 <el-input
                   v-model="scope.row.name"
@@ -149,10 +155,10 @@ export default {
       formdata: {
         content: "",
         coverImage: "",
-        sort: 0,
+        sort: "",
         title: "",
         type: "",
-        watchedNum: 0,
+        watchedNum: "",
         workInfo: [],
       },
       rules: {},
