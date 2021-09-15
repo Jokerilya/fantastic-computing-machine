@@ -14,6 +14,7 @@ import productRouter from './modules/product.js';
 // import userRouter from './modules/user.js';
 import userListRouter from './modules/userList.js';
 import newsRouter from './modules/news.js';
+import talentRouter from './modules/talent.js'
 
 export const constantRoutes = [
 	{
@@ -75,6 +76,7 @@ export const constantRoutes = [
 	installRouter,
 	userListRouter,
 	newsRouter,
+	talentRouter,
 	// contentRouter,
 	// schoolRouter,
 	// userRouter,

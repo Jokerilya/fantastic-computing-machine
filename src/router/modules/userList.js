@@ -12,6 +12,13 @@ const router = {
 			name: 'UserList',
 			component: () => import('@/views/userList'),
 			meta: { title: '用户列表', icon: 'el-icon-user' },
+		},
+		{
+			path: 'userwalletlist',
+			name: 'UserWallet',
+			hidden:true,
+			component: () => import('@/views/userList/userwalletlist'),
+			meta: { title: '用户钱包流水', icon: 'el-icon-user' },
 		}
 	]
 };

@@ -33,6 +33,14 @@ export function handleAccountEditFn(data) {
 		data: data,
 	});
 }
+// 用户钱包流水列表
+export function getqueryMoney(data) {
+	return request({
+		url: '/admin/userInfo/queryMoney',
+		method: 'post',
+		data: data,
+	});
+}
 // 用户等级详情
 export function getLevelInfoDetailFn(data) {
 	return request({
