@@ -184,12 +184,12 @@
             >添加精英工作经历</el-button
           >
         </el-form-item>
-        <el-form-item style="clear: both" label="精英个人优势：" prop="summary">
+        <el-form-item style="clear: both" label="精英个人简介：" prop="summary">
           <el-input
             style="width: 400px"
             type="textarea"
             :rows="8"
-            placeholder="请输入精英个人优势"
+            placeholder="请输入精英个人简介"
             v-model="formdata.summary"
           >
           </el-input>
