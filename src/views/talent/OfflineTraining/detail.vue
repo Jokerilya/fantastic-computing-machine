@@ -37,25 +37,14 @@
             placeholder="请输入邮箱"
           />
         </el-form-item>
-        <el-form-item label="地理纬度：" prop="latitude">
+        <el-form-item label="地理位置：" prop="address">
           <el-input
-            style="width: 250px"
-            v-model="formdata.latitude"
-            placeholder="请输入纬度"
-          />
-        </el-form-item>
-        <el-form-item label="地理经度：" prop="longitude">
-          <el-input
-            style="width: 250px"
-            v-model="formdata.longitude"
-            placeholder="请输入经度"
-          />
-        </el-form-item>
-        <el-form-item label="详细地址：" prop="address">
-          <el-input
-            style="width: 350px"
             v-model="formdata.address"
-            placeholder="请输入地址"
+            class="inputcursor"
+            readonly=""
+            style="width: 350px"
+            @click.native="openmapdialog = true"
+            placeholder="点击打开地图选择地理位置"
           />
         </el-form-item>
         <el-form-item style="clear: both" label="线下培训描述：" prop="content">
@@ -84,10 +73,17 @@
         </el-form-item>
       </el-form>
     </div>
+    <!--地图组件-->
+    <gdmap
+      @getaddress="getaddress"
+      :openmapdialog="openmapdialog"
+      @close="openmapdialog = false"
+    ></gdmap>
   </div>
 </template>
 
 <script>
+import gdmap from "@/components/gdMap";
 import { getOfflineTraining, editOfflineTraining } from "@/api/talent.js";
 import uploadImg from "@/components/uploadImg/upload-img.vue";
 import Tinymce from "@/components/Tinymce";
@@ -96,10 +92,12 @@ export default {
   components: {
     Tinymce,
     uploadImg,
+    gdmap,
   },
   props: {},
   data() {
     return {
+      openmapdialog: false,
       offlineId: "",
       submitIng: false,
       formdata: {
@@ -129,6 +127,7 @@ export default {
     //提交
     submit() {
       const postData = { ...this.formdata };
+      delete postData.delFlag
       postData.id = this.offlineId;
       this.submitIng = true;
       editOfflineTraining(postData)
@@ -161,11 +160,20 @@ export default {
     },
     //图片上传返回
     uploadSucFn(img) {
-      this.formdata.headUrl = img;
+      this.formdata.coverImage = img;
+    },
+    //地图返回地理位置
+    getaddress(val) {
+      this.formdata.address = val.address;
+      this.formdata.latitude = val.lat;
+      this.formdata.longitude = val.lng
     },
   },
 };
 </script>
 
-<style lang="scss">
+<style>
+.inputcursor /deep/ .el-input__inner {
+  cursor: pointer;
+}
 </style>

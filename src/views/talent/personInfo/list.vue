@@ -56,7 +56,7 @@
           />
         </template>
       </el-table-column>
-      <el-table-column
+      <!-- <el-table-column
         label="年龄"
         align="center"
         header-align="center"
@@ -65,7 +65,7 @@
         <template slot-scope="scope">
           <span>{{ scope.row.age }}</span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column
         label="学历"
         align="center"
@@ -142,7 +142,7 @@
           >
             <el-button type="primary" size="small">编辑</el-button>
           </router-link>
-          <el-button size="small" type="danger">删除</el-button>
+          <el-button size="small" type="danger" @click="delpersonfunc(scope)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -163,7 +163,7 @@
 </template>
 
 <script>
-import { getqueryPersonnelList } from "@/api/talent";
+import { getqueryPersonnelList,deletePersonnelInfo } from "@/api/talent";
 export default {
   name: "",
   data() {
@@ -199,6 +199,21 @@ export default {
     currentChangeFn(pageNo) {
       this.dataConfig.pageNo = pageNo;
       this.getDataListFn();
+    },
+    //删除
+    delpersonfunc(scope) {
+      this.deleteAlert()
+        .then(() => {
+          const res = deletePersonnelInfo(scope.row.id);
+          return res;
+        })
+        .then((res) => {
+          const resData = this.resDataFn(res);
+          if (resData == "000") {
+            this.$message.success('删除成功！')
+            this.dataList.splice(scope.$index, 1);
+          }
+        });
     },
   },
 };

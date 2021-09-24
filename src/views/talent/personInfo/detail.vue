@@ -63,14 +63,21 @@
             <el-option :label="'初级技工'" :value="1"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="年龄：" prop="age">
+        <el-form-item label="认证标识：" prop="level">
+          <el-switch
+            v-model="formdata.vipFlag"
+            :active-value="1"
+            :inactive-value="0"
+          ></el-switch>
+        </el-form-item>
+        <!-- <el-form-item label="年龄：" prop="age">
           <el-input
             type="number"
             style="width: 250px"
             v-model="formdata.age"
             placeholder="请输入年龄"
           />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item style="clear: both" label="擅长：">
           <el-table
             class="list_table"
@@ -241,7 +248,7 @@ export default {
         { value: "博士", name: "博士" },
       ],
       formdata: {
-        age: "",
+        age: 0,
         education: "",
         experience: [],
         headUrl: "",
@@ -252,6 +259,7 @@ export default {
         sort: "",
         summary: "",
         workTime: "",
+        vipFlag: 0,
       },
       rules: {},
     };
@@ -339,6 +347,7 @@ export default {
         this.formdata.sort = resData.sort;
         this.formdata.summary = resData.summary;
         this.formdata.workTime = resData.workTime;
+        this.formdata.vipFlag = resData.vipFlag;
         let arr = [];
         resData.lableList.map((item) => {
           let obj = {};

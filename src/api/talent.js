@@ -78,3 +78,24 @@ export function getqueryOfflineApply(data) {
 		data: data,
 	});
 }
+// 删除线下培训报名信息
+export function deleteOfflineApply(params) {
+	return request({
+		url: `/admin/talentPool/deleteOfflineApply?id=${params}`,
+		method: 'get'
+	});
+}
+// 删除合作伙伴(学院/企业)
+export function deletePartnerlInfo(params) {
+	return request({
+		url: `/admin/talentPool/deletePartnerlInfo?id=${params}`,
+		method: 'get'
+	});
+}
+// 删除人才精英
+export function deletePersonnelInfo(params) {
+	return request({
+		url: `/admin/talentPool/deletePersonnelInfo?id=${params}`,
+		method: 'get'
+	});
+}

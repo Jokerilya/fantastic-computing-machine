@@ -32,6 +32,17 @@ Vue.prototype.$store = store;
 import "@/icons"; // icon
 import "@/permission"; // permission control
 
+// 引入vue-amap
+import VueAMap from 'vue-amap';
+// 初始化vue-amap
+Vue.use(VueAMap);
+VueAMap.initAMapApiLoader({
+  key: '0592067faeab23b9a97a69e4336d5ee6',
+  plugin: ['AMap.Autocomplete', 'AMap.PlaceSearch', 'AMap.Scale', 'AMap.OverView', 'AMap.ToolBar', 'AMap.MapType', 'AMap.PolyEditor', 'AMap.CircleEditor','AMap.Geocoder','AMap.Geolocation','AMap.MarkerClusterer'],
+  v: '1.4.4',
+  uiVersion: '1.0'
+});
+
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api

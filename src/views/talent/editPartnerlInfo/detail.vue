@@ -12,10 +12,17 @@
             placeholder="请输入学院/企业名称"
           />
         </el-form-item>
+        <el-form-item label="学院/企业主要方向：" prop="title">
+          <el-input
+            style="width: 350px"
+            v-model="formdata.label"
+            placeholder="请输入学院/企业主要方向(多个以/隔开)"
+          />
+        </el-form-item>
         <el-form-item
           class="float_item"
           style="height: auto"
-          label="封面图:"
+          label="列表小图:"
           prop="coverImage"
         >
           <upload-img
@@ -23,6 +30,19 @@
             height="80px"
             :img="formdata.coverImage"
             @uploadSuc="uploadSucFn"
+          />
+        </el-form-item>
+        <el-form-item
+          class="float_item"
+          style="height: auto"
+          label="详情大图:"
+          prop="coverImage"
+        >
+          <upload-img
+            width="80px"
+            height="80px"
+            :img="formdata.inImage"
+            @uploadSuc="uploadSucFnbig"
           />
         </el-form-item>
         <el-form-item label="添加类型(学院/企业)：" prop="type">
@@ -153,6 +173,8 @@ export default {
         { type: 1, name: "企业" },
       ],
       formdata: {
+        label: "",
+        inImage: "",
         content: "",
         coverImage: "",
         sort: "",
@@ -226,6 +248,8 @@ export default {
         const resData = this.resDataFn(res);
         this.formdata.workInfo = resData.list;
         this.formdata.content = resData.content;
+        this.formdata.inImage = resData.inImage;
+        this.formdata.label = resData.label;
         this.formdata.coverImage = resData.coverImage;
         this.formdata.sort = resData.sort;
         this.formdata.title = resData.title;
@@ -236,6 +260,10 @@ export default {
     //图片上传返回
     uploadSucFn(img) {
       this.formdata.coverImage = img;
+    },
+    //图片上传返回详情大图
+    uploadSucFnbig(img) {
+      this.formdata.inImage = img;
     },
   },
 };

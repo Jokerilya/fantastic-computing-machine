@@ -91,7 +91,9 @@
           >
             <el-button type="primary" size="small">编辑</el-button>
           </router-link>
-          <el-button size="small" type="danger">删除</el-button>
+          <el-button size="small" type="danger" @click="delparentfunc(scope)"
+            >删除</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
@@ -112,7 +114,7 @@
 </template>
 
 <script>
-import { getqueryPartnerlList } from "@/api/talent";
+import { getqueryPartnerlList, deletePartnerlInfo } from "@/api/talent";
 export default {
   name: "",
   data() {
@@ -148,6 +150,21 @@ export default {
     currentChangeFn(pageNo) {
       this.dataConfig.pageNo = pageNo;
       this.getDataListFn();
+    },
+    //删除学院/企业
+    delparentfunc(scope) {
+      this.deleteAlert()
+        .then(() => {
+          const res = deletePartnerlInfo(scope.row.id);
+          return res;
+        })
+        .then((res) => {
+          const resData = this.resDataFn(res);
+          if (resData == "000") {
+            this.$message.success('删除成功！')
+            this.dataList.splice(scope.$index, 1);
+          }
+        });
     },
   },
 };

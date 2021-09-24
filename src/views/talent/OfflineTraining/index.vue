@@ -128,7 +128,7 @@
           >
             <el-button type="primary" size="small">编辑</el-button>
           </router-link>
-          <el-button size="small" type="danger">删除</el-button>
+          <el-button size="small" type="danger" @click="delofflinefunc(scope)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -149,7 +149,7 @@
 </template>
 
 <script>
-import { getqueryOfflineTrainingList } from "@/api/talent";
+import { getqueryOfflineTrainingList,deleteOfflineApply } from "@/api/talent";
 export default {
   name: "",
   data() {
@@ -186,6 +186,21 @@ export default {
       this.dataConfig.pageNo = pageNo;
       this.getDataListFn();
     },
+    //删除
+    delofflinefunc(scope) {
+      this.deleteAlert()
+        .then(() => {
+          const res = deleteOfflineApply(scope.row.id);
+          return res;
+        })
+        .then((res) => {
+          const resData = this.resDataFn(res);
+          if (resData == "000") {
+            this.$message.success('删除成功！')
+            this.dataList.splice(scope.$index, 1);
+          }
+        });
+    }
   },
 };
 </script>

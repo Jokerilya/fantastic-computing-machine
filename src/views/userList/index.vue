@@ -108,6 +108,35 @@
             <span>{{ scope.row.payAmount }}</span>
           </template>
         </el-table-column>
+        <el-table-column label="企业认证名称" width="200" align="center">
+          <template slot-scope="scope">
+            <span>{{ scope.row.enterpriseName || "-" }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="企业认证邮箱" width="180" align="center">
+          <template slot-scope="scope">
+            <span>{{ scope.row.email || "-" }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="纳税人识别号" width="200" align="center">
+          <template slot-scope="scope">
+            <span>{{ scope.row.taxpayerNo || "-" }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="企业认证地址" width="250" align="center">
+          <template slot-scope="scope">
+            <span>{{ scope.row.enterpriseAddress || "-" }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="企业营业执照" width="200" align="center">
+          <template slot-scope="scope">
+            <el-image
+              style="width: 80px; height: 80px"
+              :src="scope.row.businessLicense"
+              :preview-src-list="[scope.row.businessLicense]"
+            ></el-image>
+          </template>
+        </el-table-column>
         <el-table-column label="账号禁用" width="180" align="center">
           <template slot-scope="scope">
             <el-switch
@@ -122,10 +151,23 @@
           <template slot-scope="scope">
             <!-- <el-button size="mini" type="infor" @click="detailFn(scope.row.id)">查看详情</el-button> -->
             <!-- <el-button size="mini" type="danger">删除用户</el-button> -->
-            <el-button size="mini" type="primary" @click="editinfowallet(scope.row)"
+            <el-button
+              size="mini"
+              type="primary"
+              @click="editinfowallet(scope.row)"
               >修改用户余额</el-button
             >
-            <el-button size="mini" type="primary" @click="$router.push({path:'/user/userwalletlist',query:{uid:scope.row.uid}})">钱包流水</el-button>
+            <el-button
+              size="mini"
+              type="primary"
+              @click="
+                $router.push({
+                  path: '/user/userwalletlist',
+                  query: { uid: scope.row.uid },
+                })
+              "
+              >钱包流水</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -230,11 +272,11 @@ export default {
       };
       this.getDataListFn();
     },
-	//修改用户余额
-	editinfowallet(info) {
-		this.userdetail = Object.assign(this.userdetail,info)
-		this.opendrawer = true
-	},
+    //修改用户余额
+    editinfowallet(info) {
+      this.userdetail = Object.assign(this.userdetail, info);
+      this.opendrawer = true;
+    },
     // 禁用启用账号
     async accountDisable(data) {
       const loading = this.$loading();
