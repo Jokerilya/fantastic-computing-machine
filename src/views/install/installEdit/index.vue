@@ -321,6 +321,7 @@
 				res = this.resDataFn(res)
 				
 				res.carouselImg = res.carouselImg ? res.carouselImg.split(',') : []
+				res.appletCarouselImg = res.appletCarouselImg ? res.appletCarouselImg.split(',') : []
 				this.classifyTags = res.data
 				res.data.forEach(item=>{
 					item.isChoice = item.isChoice ? true : false
