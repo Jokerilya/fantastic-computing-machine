@@ -41,6 +41,14 @@ export function getqueryMoney(data) {
 		data: data,
 	});
 }
+// 启用/禁用
+export function editUservip(data) {
+	return request({
+		url: '/admin/userInfo/toVip',
+		method: 'post',
+		data: data,
+	});
+}
 // 用户等级详情
 export function getLevelInfoDetailFn(data) {
 	return request({

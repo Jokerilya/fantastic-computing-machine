@@ -568,7 +568,7 @@ export default {
       levelList: [],
       categoryList: {
         lazy: true,
-        checkStrictly: true,
+        checkStrictly: false,
         lazyLoad(node, resolve) {
           queryProductCategoryFn({ pid: node.value || 0 }).then((res) => {
             const resData = res.data;

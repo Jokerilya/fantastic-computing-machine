@@ -276,7 +276,7 @@
 				refundCheckId:'',
 				refundCheckOptions:[
 					{value:'同意',id:2},
-					{value:'拒绝',id:0},
+					{value:'拒绝',id:3},
 				],
 				refundCheckIndex:2,
 				refundCheckReason:'',

@@ -98,6 +98,16 @@
             ></el-image>
           </template>
         </el-table-column>
+        <el-table-column label="是否VIP" width="180" align="center">
+          <template slot-scope="scope">
+            <el-switch
+              v-model="scope.row.vipFlag"
+              :active-value="1"
+              :inactive-value="0"
+              @change="accountvip(scope.row)"
+            ></el-switch>
+          </template>
+        </el-table-column>
         <el-table-column label="订单数量" width="150" align="center">
           <template slot-scope="scope">
             <span>{{ scope.row.orderNum }}</span>
@@ -198,7 +208,7 @@
 
 <script>
 import editinfodrawer from "./editdrawer.vue";
-import { queryUserInfoFn, editUserInfoStatusFn } from "@/api/user.js";
+import { queryUserInfoFn, editUserInfoStatusFn,editUservip } from "@/api/user.js";
 export default {
   components: {
     editinfodrawer,
@@ -294,6 +304,26 @@ export default {
       } else {
         this.$nextTick(() => {
           data.status = status;
+        });
+      }
+    },
+    //修改用户vip
+    async accountvip(data) {
+      const loading = this.$loading();
+      let status = data.vipFlag;
+      const res = await editUservip({
+        uid: data.uid,
+        status: data.vipFlag,
+      });
+      loading.close();
+      if (res.code === "000") {
+        this.$message({
+          message: "操作成功!",
+          type: "success",
+        });
+      } else {
+        this.$nextTick(() => {
+          data.vipFlag = status;
         });
       }
     },

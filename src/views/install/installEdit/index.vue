@@ -12,7 +12,7 @@
 				<div class="tab-title">
 					<span>商品信息</span>
 				</div>
-				<el-form :model="queryData" :rules="firstRules" ref="ruleForm" label-position="right" label-width="100px" class="demo-ruleForm">
+				<el-form :model="queryData" :rules="firstRules" ref="ruleForm" label-position="right" label-width="160px" class="demo-ruleForm">
 					<el-form-item label="商品名称" prop="name">
 						<el-input v-model="queryData.name" placeholder="请输入商品名称"></el-input>
 					</el-form-item>
@@ -24,6 +24,10 @@
 					</el-form-item>
 					<el-form-item label="装机轮播图" prop="carouselImg">
 						<upload-imgs :imgs="queryData.carouselImg" @uploadSuc="uploadImgsSucFn" @deleteImg="deleteImgFn"/>
+						<!-- <span style="color: gray;">只能上传jpg/png格式图片</span> -->
+					</el-form-item>
+					<el-form-item label="小程序装机轮播图" prop="appletCarouselImg">
+						<upload-imgs :imgs="queryData.appletCarouselImg" @uploadSuc="uploadappletImgsSucFn" @deleteImg="deleteappletImgFn"/>
 						<!-- <span style="color: gray;">只能上传jpg/png格式图片</span> -->
 					</el-form-item>
 					<el-form-item label="产品类型">
@@ -190,6 +194,7 @@
 					descVal:'',
 					img:'',
 					carouselImg:[],
+					appletCarouselImg:[],
 					expType:2,   //运费类型 1运费模板计算 2固定金额 ,
 					expMoney:'' ,
 					expId:'',
@@ -211,6 +216,9 @@
 					 ],
 					 carouselImg:[
 						{ required: true, message: '请上传装机轮播图', trigger: 'upload' },
+					 ],
+					 appletCarouselImg:[
+						{ required: true, message: '请上传小程序装机轮播图', trigger: 'upload' },
 					 ],
 					 modelId:[
 						 { required: true, message: '请上选择产品型号', trigger: 'change' },
@@ -394,8 +402,16 @@
 			uploadImgsSucFn(img) {
 			  this.queryData.carouselImg.push(img);
 			},
+			//小程序轮播图上传
+			uploadappletImgsSucFn(img) {
+				this.queryData.appletCarouselImg.push(img);
+			},
 			deleteImgFn(index) {
 			  this.queryData.carouselImg.splice(index, 1);
+			},
+			//小程序轮播图删除
+			deleteappletImgFn(index) {
+			  this.queryData.appletCarouselImg.splice(index, 1);
 			},
 			// 下一步 & 提交
 			nextStpe(type,formName) {
@@ -431,6 +447,7 @@
 									delete item.productName
 								})
 								const data = {
+									appletCarouselImg:this.queryData.appletCarouselImg.join(','),
 									carouselImg: this.queryData.carouselImg.join(','),
 									descVal: this.queryData.descVal,
 									expId: this.expMoneyStatus ? this.queryData.expId : undefined,

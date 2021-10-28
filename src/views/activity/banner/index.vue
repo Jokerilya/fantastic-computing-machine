@@ -197,6 +197,22 @@ export default {
         {
           event: 7,
           name: "PC商城-机将机件",
+        },
+        {
+          event: 8,
+          name: "小程序-tab机云",
+        },
+        {
+          event: 9,
+          name: "小程序首页-星选",
+        },
+        {
+          event: 10,
+          name: "小程序首页-配件",
+        },
+        {
+          event: 11,
+          name: "PC人才首页",
         }
       ],
       eventTypes: [

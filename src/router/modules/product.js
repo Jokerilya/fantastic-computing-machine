@@ -46,6 +46,19 @@ const router = {
 			component: () => import('@/views/product/supplierList'),
 			meta: { title: '供应商管理', icon: 'el-icon-connection' },
 		},
+		{
+			path: 'weixinindexproducttuijianList',
+			name: 'weixinindexproducttuijianList',
+			component: () => import('@/views/product/weixinindex-producttuijian/producttuijian'),
+			meta: { title: '小程序首页商品推荐', icon: 'el-icon-sell' },
+		},
+		{
+			path: 'updateproducttuijianList',
+			name: 'updateproducttuijianList',
+			component: () => import('@/views/product/weixinindex-producttuijian/update'),
+			meta: { title: '更换小程序推荐商品', icon: 'el-icon-sell' },
+			hidden:true
+		},
 		// {
 		// 	path: 'cupboard-list',
 		// 	name: 'CupboardList',

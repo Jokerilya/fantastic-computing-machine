@@ -128,6 +128,22 @@ export function editProductAgentFn(data) {
 		data: data,
 	});
 }
+// 获取小程序首页商品推荐
+export function getqueryRecommendProduct(params) {
+	return request({
+		url: '/admin/product/queryRecommendProduct',
+		method: 'get',
+		params
+	});
+}
+// 更新小程序首页商品推荐
+export function updateRecommendProduct(data) {
+	return request({
+		url: '/admin/product/updateRecommendProduct ',
+		method: 'post',
+		data: data,
+	});
+}
 
 /* 供应商管理 */
 
