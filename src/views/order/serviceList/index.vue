@@ -338,7 +338,7 @@
 			},
 			// 审核
 			async refundCheckConfirm(){
-				const loading = this.$loading()
+				// const loading = this.$loading()
 				if(!this.refundCheckReason){
 					this.$message.error('请输入审核原因');
 					return
@@ -356,7 +356,10 @@
 					});
 					this.getDataListFn()
 				}
-				loading.close()
+				if(res.code === '001') {
+					this.refundCheckVisible = false
+				}
+				// loading.close()
 			},
 			// 查看订单详情
 			async detailFn(id){
