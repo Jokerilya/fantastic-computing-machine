@@ -4,11 +4,30 @@
       <el-form
         :model="queryData"
         ref="ruleForm"
-        label-width="88px"
+        label-width="120px"
         class="rule-form"
         label-position="right"
       >
         <el-row :gutter="20">
+          <el-col :span="5">
+            <el-form-item label="用户类型">
+              <el-select v-model="queryData.type" placeholder="请选择用户类型">
+                <el-option label="普通用户" value="1"></el-option>
+                <el-option label="企业用户" value="2"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="5">
+            <el-form-item label="是否绑定手机号">
+              <el-select
+                v-model="queryData.phoneFlag"
+                placeholder="请选择是否绑定手机号"
+              >
+                <el-option label="未绑定" value="0"></el-option>
+                <el-option label="已绑定" value="1"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
           <el-col :span="5">
             <el-form-item label="用户手机号">
               <el-input
@@ -27,11 +46,7 @@
           </el-col>
           <el-col :span="5">
             <el-form-item label="用户状态">
-              <el-select
-                v-model="queryData.status"
-                placeholder="请选择"
-                style="width: 100%"
-              >
+              <el-select v-model="queryData.status" placeholder="请选择">
                 <el-option
                   v-for="item in statusOptions"
                   :key="item.id"
@@ -41,7 +56,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col>
+          <el-col :span="5">
             <el-form-item>
               <el-button
                 type="primary"
@@ -67,20 +82,9 @@
       >
         <!-- <el-table-column type="selection" width="60"></el-table-column> -->
         <el-table-column
-          prop="uid"
-          label="用户ID"
-          width="230"
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="createTime"
-          label="注册时间"
-          width="200"
-          align="center"
-        ></el-table-column>
-        <el-table-column
           prop="nickName"
           label="用户昵称"
+          width="250"
           align="center"
         ></el-table-column>
         <el-table-column
@@ -98,24 +102,21 @@
             ></el-image>
           </template>
         </el-table-column>
-        <el-table-column label="是否VIP" width="180" align="center">
+        <el-table-column label="注册渠道" width="200" align="center">
           <template slot-scope="scope">
-            <el-switch
-              v-model="scope.row.vipFlag"
-              :active-value="1"
-              :inactive-value="0"
-              @change="accountvip(scope.row)"
-            ></el-switch>
-          </template>
-        </el-table-column>
-        <el-table-column label="订单数量" width="150" align="center">
-          <template slot-scope="scope">
-            <span>{{ scope.row.orderNum }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="订单总金额" width="180" align="center">
-          <template slot-scope="scope">
-            <span>{{ scope.row.payAmount }}</span>
+            <span>{{
+              scope.row.registerChannel === 1
+                ? "百度基木鱼"
+                : scope.row.registerChannel === 2
+                ? "海报资料包"
+                : scope.row.registerChannel === 3
+                ? "各类手机模拟应用"
+                : scope.row.registerChannel === 4
+                ? "早报节日等图片"
+                : scope.row.registerChannel === 5
+                ? "2021年机床展注册"
+                : "小程序/PC注册"
+            }}</span>
           </template>
         </el-table-column>
         <el-table-column label="企业认证名称" width="200" align="center">
@@ -145,6 +146,38 @@
               :src="scope.row.businessLicense"
               :preview-src-list="[scope.row.businessLicense]"
             ></el-image>
+          </template>
+        </el-table-column>
+        <el-table-column label="订单数量" width="150" align="center">
+          <template slot-scope="scope">
+            <span>{{ scope.row.orderNum }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="订单总金额" width="180" align="center">
+          <template slot-scope="scope">
+            <span>{{ scope.row.payAmount }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="uid"
+          label="用户ID"
+          width="230"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="createTime"
+          label="注册时间"
+          width="200"
+          align="center"
+        ></el-table-column>
+        <el-table-column label="是否VIP" width="180" align="center">
+          <template slot-scope="scope">
+            <el-switch
+              v-model="scope.row.vipFlag"
+              :active-value="1"
+              :inactive-value="0"
+              @change="accountvip(scope.row)"
+            ></el-switch>
           </template>
         </el-table-column>
         <el-table-column label="账号禁用" width="180" align="center">
@@ -208,7 +241,11 @@
 
 <script>
 import editinfodrawer from "./editdrawer.vue";
-import { queryUserInfoFn, editUserInfoStatusFn,editUservip } from "@/api/user.js";
+import {
+  queryUserInfoFn,
+  editUserInfoStatusFn,
+  editUservip,
+} from "@/api/user.js";
 export default {
   components: {
     editinfodrawer,
@@ -226,9 +263,11 @@ export default {
         loading: true,
       },
       queryData: {
+        type: "",
         status: "", // 订单状态：0-禁用 1-正常
         phone: "",
         userName: "",
+        phoneFlag: "",
       },
       statusOptions: [
         { id: 0, name: "禁用" },
@@ -251,6 +290,8 @@ export default {
         pageSize: this.dataConfig.pageSize,
         phone: this.queryData.phone || undefined,
         status: this.queryData.status,
+        type: this.queryData.type,
+        phoneFlag: this.queryData.phoneFlag,
       });
       const resData = this.resDataFn(res);
       this.dataConfig.total = resData.total;
@@ -279,6 +320,7 @@ export default {
         orderSn: "",
         phone: "",
         userName: "",
+        type: "",
       };
       this.getDataListFn();
     },

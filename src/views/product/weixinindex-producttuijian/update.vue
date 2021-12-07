@@ -134,7 +134,7 @@ export default {
       },
       categoryList: {
         lazy: true,
-        checkStrictly: false,
+        checkStrictly: true,
         lazyLoad(node, resolve) {
           queryProductCategoryFn({
             pid: node.value || 0,

@@ -53,6 +53,12 @@ const router = {
 			meta: { title: '小程序首页商品推荐', icon: 'el-icon-sell' },
 		},
 		{
+			path: 'dataCollect',
+			name: 'dataCollect',
+			component: () => import('@/views/product/data-collect'),
+			meta: { title: '数据采集', icon: 'el-icon-document-checked' },
+		},
+		{
 			path: 'updateproducttuijianList',
 			name: 'updateproducttuijianList',
 			component: () => import('@/views/product/weixinindex-producttuijian/update'),

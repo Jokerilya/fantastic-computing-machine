@@ -213,6 +213,14 @@ export default {
         {
           event: 11,
           name: "PC人才首页",
+        },
+        {
+          event: 12,
+          name: "小程序商城首页头部",
+        },
+        {
+          event: 13,
+          name: "小程序商城首页活动中部",
         }
       ],
       eventTypes: [

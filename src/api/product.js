@@ -144,6 +144,14 @@ export function updateRecommendProduct(data) {
 		data: data,
 	});
 }
+// 1688数据采集
+export function dataAcquisition(data) {
+	return request({
+		url: "/admin/product/dataAcquisition",
+		method: "post",
+		data: data
+	});
+}
 
 /* 供应商管理 */
 
