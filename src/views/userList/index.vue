@@ -57,6 +57,21 @@
             </el-form-item>
           </el-col>
           <el-col :span="5">
+            <el-form-item label="注册渠道">
+              <el-select
+                v-model="queryData.registerChannel"
+                placeholder="请选择"
+              >
+                <el-option
+                  v-for="item in registerOptions"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="5">
             <el-form-item>
               <el-button
                 type="primary"
@@ -268,10 +283,19 @@ export default {
         phone: "",
         userName: "",
         phoneFlag: "",
+        registerChannel: "",
       },
       statusOptions: [
         { id: 0, name: "禁用" },
         { id: 1, name: "正常" },
+      ],
+      registerOptions: [
+        { id: 0, name: "小程序/PC注册" },
+        { id: 1, name: "百度基木鱼" },
+        { id: 2, name: "海报资料包" },
+        { id: 3, name: "各类手机模拟应用" },
+        { id: 4, name: "早报节日等图片" },
+        { id: 5, name: "2021年机床展注册" },
       ],
     };
   },
@@ -291,7 +315,8 @@ export default {
         phone: this.queryData.phone || undefined,
         status: this.queryData.status,
         type: this.queryData.type,
-        phoneFlag: this.queryData.phoneFlag,
+        phoneFlag: Number(this.queryData.phoneFlag)||'',
+        registerChannel: Number(this.queryData.registerChannel)||'',
       });
       const resData = this.resDataFn(res);
       this.dataConfig.total = resData.total;
@@ -321,6 +346,8 @@ export default {
         phone: "",
         userName: "",
         type: "",
+        phoneFlag: "",
+        registerChannel: "",
       };
       this.getDataListFn();
     },
