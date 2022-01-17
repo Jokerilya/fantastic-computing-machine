@@ -15,18 +15,19 @@ import productRouter from './modules/product.js';
 import userListRouter from './modules/userList.js';
 import newsRouter from './modules/news.js';
 import talentRouter from './modules/talent.js'
+import bossRouter from './modules/boss.js'
 
 export const constantRoutes = [
 	{
-	  path: '/redirect',
-	  component: Layout,
-	  hidden: true,
-	  children: [
-	    {
-	      path: '/redirect/:path(.*)',
-	      component: () => import('@/views/redirect/index')
-	    }
-	  ]
+		path: '/redirect',
+		component: Layout,
+		hidden: true,
+		children: [
+			{
+				path: '/redirect/:path(.*)',
+				component: () => import('@/views/redirect/index')
+			}
+		]
 	},
 	{
 		path: '/login',
@@ -47,7 +48,7 @@ export const constantRoutes = [
 				path: 'dashboard',
 				name: 'Dashboard',
 				component: () => import('@/views/dashboard/index'),
-				meta: { title: '首页', icon: 'el-icon-s-home' ,affix: true},
+				meta: { title: '首页', icon: 'el-icon-s-home', affix: true },
 			},
 			{
 				path: '/401',
@@ -77,6 +78,7 @@ export const constantRoutes = [
 	userListRouter,
 	newsRouter,
 	talentRouter,
+	bossRouter,
 	// contentRouter,
 	// schoolRouter,
 	// userRouter,
@@ -92,6 +94,16 @@ const createRouter = () =>
 	});
 
 const router = createRouter();
+
+// router.beforeEach((to, from, next) => {
+// 	const whiteList = ['/boss/htToweixinurlscheme']
+// 	if (whiteList.indexOf(to.path) !== -1) {
+// 		next('/boss/htToweixinurlscheme')
+// 		return
+// 	}else {
+// 		next()
+// 	}
+// })
 
 // Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
 export function resetRouter() {

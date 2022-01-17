@@ -102,6 +102,7 @@ export default {
     },
     editDataFn(scope) {
       baseEditFn({
+        configKey:scope.row.configKey,
         configVal: scope.row.configVal,
         id: scope.row.id,
         remark: scope.row.remark,

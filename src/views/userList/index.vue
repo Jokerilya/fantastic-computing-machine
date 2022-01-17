@@ -94,6 +94,7 @@
         v-loading="dataConfig.loading"
         @selection-change="handleSelectionChange"
         style="width: 100%"
+        max-height="550"
       >
         <!-- <el-table-column type="selection" width="60"></el-table-column> -->
         <el-table-column
@@ -134,6 +135,12 @@
             }}</span>
           </template>
         </el-table-column>
+        <el-table-column
+          prop="createTime"
+          label="注册时间"
+          width="200"
+          align="center"
+        ></el-table-column>
         <el-table-column label="企业认证名称" width="200" align="center">
           <template slot-scope="scope">
             <span>{{ scope.row.enterpriseName || "-" }}</span>
@@ -173,18 +180,12 @@
             <span>{{ scope.row.payAmount }}</span>
           </template>
         </el-table-column>
-        <el-table-column
+        <!-- <el-table-column
           prop="uid"
           label="用户ID"
           width="230"
           align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="createTime"
-          label="注册时间"
-          width="200"
-          align="center"
-        ></el-table-column>
+        ></el-table-column> -->
         <el-table-column label="是否VIP" width="180" align="center">
           <template slot-scope="scope">
             <el-switch
