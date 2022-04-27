@@ -1,0 +1,123 @@
+const StatusEnum = [
+  {
+    value:0,
+    label:'正常',
+    class:'state_success'
+  },
+  {
+    value:1,
+    label:'禁用',
+    class:'state_error'
+  },
+]
+const whetherEnum = [
+  {
+    value:0,
+    label:'否',
+    class:'state_error'
+  },
+  {
+    value:1,
+    label:'是',
+    class:'state_success'
+  },
+]
+const CommodityStatusEnum = [
+  {
+    value:0,
+    label:'正常',
+    class:'state_success'
+  },
+  {
+    value:1,
+    label:'下架',
+    class:'state_error'
+  },
+]
+let sex = [
+  {
+    value:0,
+    label:'未知'
+  },
+  {
+    value:1,
+    label:'男'
+  },
+  {
+    value:2,
+    label:'女'
+  }
+]
+let payStatus = [
+  {
+    value:0,
+    label:'未支付',
+    class:'state_info'
+  },
+  {
+    value:1,
+    label:'已支付',
+    class:'state_success'
+  },
+  {
+    value:2,
+    label:'支付失败',
+    class:'state_error'
+  },
+]
+let checkStatus = [
+  {
+    value:0,
+    label:'未审核',
+    class:'state_info'
+  },
+  {
+    value:1,
+    label:'通过',
+    class:'state_success'
+  },
+  {
+    value:2,
+    label:'拒绝',
+    class:'state_error'
+  },
+]
+// 维保流程状态
+let maintenanceStatus = [
+  {
+    value:0,
+    label:'已取消'
+  },
+  {
+    value:1,
+    label:'已发布,待匹配'
+  },
+  {
+    value:2,
+    label:'已匹配'
+  },
+  {
+    value:3,
+    label:'进行中'
+  },
+  {
+    value:4,
+    label:'已完成'
+  }
+]
+// 故障类型
+let malfunctionType = [
+  {},
+  {
+    value:1,
+    label:'电气故障'
+  },
+  {
+    value:2,
+    label:'机械故障'
+  }
+]
+export default {
+  maintenanceStatus,
+  malfunctionType
+}

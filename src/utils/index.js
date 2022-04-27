@@ -1,3 +1,5 @@
+import global from './global';
+
 /**
  * Created by PanJiaChen on 16/11/18.
  */
@@ -165,4 +167,29 @@ export function localStorageData(key, value, prefix) {
 }
 export function removeLocalStorage(key, prefix) {
   if (key) localStorage.removeItem((prefix || "") + key);
+}
+
+function message(_self,status,message){
+  if( this.status.error.indexOf(status) != -1 ){
+    _self.$message.error(message)
+  }else if( this.status.success.indexOf(status) != -1 ){
+    _self.$message.success(message)
+  }else if( this.status.info.indexOf(status) != -1 ){
+    _self.$message.info(message)
+  }
+}
+
+export default {
+  status:{
+    success:['000'],
+    error:['002','004','007','009'],
+    info:['009']
+  },
+  global,
+  message,
+  // submitFileCOS,
+  // submitFilesCOS,
+  // parseTime,
+  // formatTime,
+  // param2Obj,
 }

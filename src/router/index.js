@@ -16,6 +16,7 @@ import userListRouter from './modules/userList.js';
 import newsRouter from './modules/news.js';
 import talentRouter from './modules/talent.js'
 import bossRouter from './modules/boss.js'
+import maintenanceRouter from './modules/maintenance.js'
 
 export const constantRoutes = [
 	{
@@ -70,6 +71,7 @@ export const constantRoutes = [
 	//     }
 	//   ]
 	// },
+	maintenanceRouter,
 	systemRouter,
 	activityRouter,
 	productRouter,

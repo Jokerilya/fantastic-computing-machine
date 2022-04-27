@@ -16,6 +16,10 @@ import App from "./App";
 import store from "./store";
 import router from "./router";
 
+import service from './utils/request-axios'
+import { Image, Model, Upload } from './components'
+import uploadImg from "@/components/uploadImg/upload-img.vue";
+import util from './utils'
 // import echarts from 'echarts'   
 
 // Vue.use(echarts)
@@ -31,6 +35,14 @@ Vue.prototype.$store = store;
 
 import "@/icons"; // icon
 import "@/permission"; // permission control
+
+Vue.component('y-image',Image)
+Vue.component('upload-img',uploadImg)
+Vue.component('upload',Upload)
+Vue.component('model',Model)
+
+Vue.prototype.util = util
+Vue.prototype.$axios = service
 
 // 引入vue-amap
 import VueAMap from 'vue-amap';

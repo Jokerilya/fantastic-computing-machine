@@ -9,7 +9,6 @@ function resolve(dir) {
 }
 
 const name = defaultSettings.title || 'vue Admin Template' // page title
-
 // 自动生成版本号,每打包一次就会加一个版本号
 if (process.env.NODE_ENV !== 'development') {
   webConfig.version += 1
@@ -40,10 +39,19 @@ module.exports = {
   productionSourceMap: false,
   devServer: {
     port: port,
-    open: false,
+    open: true,
     overlay: {
       warnings: false,
       errors: true
+    },
+    proxy: {
+      // 本地：http://192.168.0.108:8071
+      // 线上：https://japi.jijiangkeji.com
+      '/admin': {
+        target: 'http://192.168.0.108:8071/',
+        ws: true,
+        changeOrigin: true
+      }
     }
     // before: require('./mock/mock-server.js')
   },
@@ -58,6 +66,10 @@ module.exports = {
     }
   },
   chainWebpack(config) {
+    // less配置，以下俩行
+    const types = ['vue-modules', 'vue', 'normal-modules', 'normal']
+    types.forEach(type => addStyleResource(config.module.rule('less').oneOf(type)))
+
     // it can improve the speed of the first screen, it is recommended to turn on preload
     config.plugin('preload').tap(() => [
       {
@@ -129,4 +141,16 @@ module.exports = {
         }
       )
   }
+}
+
+
+// less
+function addStyleResource (rule) {
+  rule.use('style-resource')
+    .loader('style-resources-loader')
+    .options({
+      patterns: [
+        path.resolve(__dirname, './src/assets/less/var.less'),
+      ],
+    })
 }

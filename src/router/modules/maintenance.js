@@ -1,0 +1,37 @@
+// 供应商管理
+import Layout from "@/layout";
+
+const router = {
+  path: "/maintenance",
+  component: Layout,
+  redirect: "/maintenance",
+  name: "Maintenance",
+  meta: { title: "维保管理", icon: "el-icon-mouse" },
+  children: [
+    {
+      path: "/maintenance/system",
+      name: "System",
+      component: () => import("@/views/maintenance/system"),
+      meta: { title: "设备系统" }
+    },
+    {
+      path: "/maintenance/type",
+      name: "Type",
+      component: () => import("@/views/maintenance/type"),
+      meta: { title: "设备类型" }
+    },
+    {
+      path: "/maintenance/programme_order",
+      name: "programme_order",
+      component: () => import("@/views/maintenance/programme_order"),
+      meta: { title: "编程订单" }
+    },
+    {
+      path: "/maintenance/maintenance_order",
+      name: "maintenance_order",
+      component: () => import("@/views/maintenance/maintenance_order"),
+      meta: { title: "维保订单" }
+    }
+  ]
+};
+export default router;

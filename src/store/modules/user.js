@@ -63,6 +63,7 @@ const actions = {
 			login(userInfo)
 				.then(response => {
 					const { data } = response;
+					console.info(data)
 					commit('SET_USERINFO', {
 						userAccount: data.realName,
 						portrait: data.portrait,

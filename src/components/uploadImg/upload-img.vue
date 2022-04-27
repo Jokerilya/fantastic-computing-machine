@@ -5,7 +5,7 @@
     <span v-if="!img" class="no_text">点击上传</span>
     <el-upload
       class="upload-demo"
-	  action=""
+	    action=""
       :http-request="httpRequestFn"
       :show-file-list="false"
     >
@@ -53,9 +53,9 @@ export default {
   },
   methods: {
     httpRequestFn(data) {
-		const loading = this.$loading({text:'上传中..'})
-	  const formData = new FormData()
-	 formData.append('file', data.file)
+      const loading = this.$loading({text:'上传中..'})
+      const formData = new FormData()
+      formData.append('file', data.file)
       UploadImg(formData).then((res) => {
         this.$emit('uploadSuc', res.data)
         this.$message({
@@ -63,14 +63,14 @@ export default {
           message: '文件上传成功！',
           type: 'success'
         })
-		loading.close()
+        loading.close()
       }).catch(() => {
         this.$message({
           showClose: true,
           message: '文件上传失败！',
           type: 'warning'
         })
-		loading.close()
+        loading.close()
       })
     }
   }

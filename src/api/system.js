@@ -241,7 +241,7 @@ function getQiniuToken(data) {
 	});
 }
 
-export function UploadImg(data) {
+export async  function UploadImg(data) {
 	return request({
 		url: '/admin/base/uploadImg',
 		method: 'post',
