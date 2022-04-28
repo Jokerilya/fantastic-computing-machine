@@ -87,7 +87,7 @@
 						<span>{{scope.row.payTime}}</span>
 					 </template>
 				</el-table-column>
-				<el-table-column label="操作" width="200" fixed="right">
+				<el-table-column label="操作" width="200" align="center" fixed="right">
 					<template slot-scope="scope">
 						<el-button size="mini" type="primary" @click="detailFn(scope.row.id)">查看详情</el-button>
 						<el-button size="mini" type="success" v-if="scope.row.orderType === 3 && scope.row.status === 0">汇款信息</el-button>
@@ -98,13 +98,13 @@
 					 </template>
 				</el-table-column>
 			</el-table>
-			<el-pagination background @size-change="handleSizeChange" @current-change="currentChangeFn" :current-page.sync="dataConfig.pageNo" :page-size="dataConfig.pageSize" :page-sizes="[20, 30, 50, 100]" layout="total,sizes, prev, pager, next" :total="dataConfig.total">
-			</el-pagination>
 		</div>
 		<!--  -->
 		<div style="height: 16px;"></div>
-		<!-- <div class="table-block" v-show="dataList.length > 0">
-		</div> -->
+		<div class="table-block" v-show="dataList.length > 0">
+			<el-pagination background @size-change="handleSizeChange" @current-change="currentChangeFn" :current-page.sync="dataConfig.pageNo" :page-size="dataConfig.pageSize" :page-sizes="[20, 30, 50, 100]" layout="total,sizes, prev, pager, next" :total="dataConfig.total">
+			</el-pagination>
+		</div>
 		<!--  -->
 		<el-dialog title="订单详情" :visible.sync="dialogVisible" width="1050px" :close-on-click-modal="false">
 			<div class="order-detail-step">

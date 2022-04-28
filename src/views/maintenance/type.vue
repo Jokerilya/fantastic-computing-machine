@@ -1,41 +1,12 @@
 <template>
-  <div>
-    <div class="toolbar">
-      <div class="row">
-        <!-- <el-input v-model="searchForm.title" style="width:12%" placeholder="图标名称(模糊匹配)"></el-input> -->
-        <!-- <el-select v-model="searchForm.isTop" style="width:12%" placeholder="请选择是否置顶">
-          <el-option v-for="item in util.global.whetherEnum" :key="item.value" :label="item.label" :value="item.value">
-          </el-option>
-        </el-select>
-        <el-select v-model="searchForm.status" style="width:12%" placeholder="请选择状态">
-          <el-option v-for="item in util.global.StatusEnum" :key="item.value" :label="item.label" :value="item.value">
-          </el-option>
-        </el-select> -->
-        <el-button icon="el-icon-zoom-in" type="primary" plain @click="query()">查询</el-button>
-        <!-- <el-button icon="el-icon-refresh" type="info" plain @click="reset()">清空</el-button> -->
-        <el-button icon="el-icon-plus" type="primary" plain @click="grantInit()">新增</el-button>
-
-        <model ref="addModel" title="新增设备系统" @ok="handleSubmitForm" @close="handleClose">
-          <el-form :model="addForm" :rules="rules" ref="addForm" status-icon label-width="120px" class="demo-ruleForm">
-            <el-form-item label="设备类型名称" prop="name" style="width:calc(100% - 120px)">
-              <el-input type="text" v-model="addForm.name" autocomplete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="排序" prop="sort" style="width:calc(100% - 120px)">
-              <el-input type="number" v-model="addForm.sort" autocomplete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="设备类型图片" prop="icon" style="width:calc(100% - 120px)">
-              <upload ref="img" type="image/*" limit="1" :size="1024**2*2" />
-            </el-form-item>
-          </el-form>
-        </model>
-        <!-- <el-button icon="el-icon-close" type="danger" plain @click="remove()">批量删除</el-button> -->
-      </div>
+	<div class="app-container">
+    <div class="select_view">
+      <el-button icon="el-icon-zoom-in" type="primary" @click="query()">查询</el-button>
+      <el-button icon="el-icon-refresh" type="info" @click="reset()">重置</el-button>
     </div>
-    <el-table highlight-current-row v-loading.fullscreen.lock="loading" element-loading-text="拼命加载中"
-      element-loading-spinner="el-icon-loading" element-loading-background="rgba(0, 0, 0, 0.8)" border
-     :data="dataList" row-key="id" default-expand-all :tree-props="{children: 'list', hasChildren: 'hasChildren'}"
-      style="width: 100%;" @selection-change="handleSelectionChange"
-      :header-cell-style="{background: '#409EFF!important',color: 'white'}">
+		<div style="height: 16px;"></div>
+    <el-table highlight-current-row v-loading.fullscreen.lock="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading" 
+     :data="dataList" row-key="id" default-expand-all :tree-props="{children: 'list', hasChildren: 'hasChildren'}" style="width: 100%;">
       <!-- <el-table-column type="selection" width="45" show-overflow-tooltip></el-table-column> -->
       <el-table-column prop="id" label="id" show-overflow-tooltip></el-table-column>
       <el-table-column prop="name" label="名称" show-overflow-tooltip></el-table-column>
@@ -99,7 +70,6 @@
   </div>
 </template>
 <style lang="less" scoped>
-
 </style>
 <script>
   import tableMixin from '@/mixin/table'
@@ -140,7 +110,6 @@
           ...this.searchForm
         }).then(( {data} ) => {
           this.dataList = data;
-          console.info(data)
         }).catch(function (error) {
           console.info(error);
         });
