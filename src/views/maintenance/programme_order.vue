@@ -34,55 +34,51 @@
 		<div style="height: 16px;"></div>
     <el-table highlight-current-row v-loading.fullscreen.lock="loading" element-loading-text="拼命加载中"
       element-loading-spinner="el-icon-loading" :data="dataList" style="width: 100%;">
-      <el-table-column prop="orderSn" label="订单编号" show-overflow-tooltip width="200" align="center"></el-table-column>
-      <el-table-column prop="title" label="需求标题" show-overflow-tooltip width="200" align="center"></el-table-column>
-      <el-table-column prop="simpleDesc" label="需求描述" show-overflow-tooltip width="200" align="center"></el-table-column>
-      <el-table-column prop="status" label="状态" show-overflow-tooltip width="200" align="center">
-        <template slot-scope="{row}">
-          <span :class="util.global.maintenanceStatus[row.status].class">
-            {{util.global.maintenanceStatus[row.status].label}}
-          </span>
-        </template>
-      </el-table-column>
-
-      <el-table-column prop="deviceKnife" label="设备刀组" show-overflow-tooltip width="200" align="center"></el-table-column>
-      <el-table-column prop="deviceSystemName" label="设备系统名" show-overflow-tooltip width="200" align="center"></el-table-column>
-      <el-table-column prop="deviceTypeName" label="设备类型名" show-overflow-tooltip width="200" align="center"></el-table-column>
-
-      <el-table-column prop="enterpriseName" label="企业名称" show-overflow-tooltip width="200" align="center"></el-table-column>
+      <el-table-column prop="orderSn" label="订单编号" show-overflow-tooltip width="150" align="center"></el-table-column>
+      <el-table-column prop="title" label="需求标题" show-overflow-tooltip width="150" align="center"></el-table-column>
+      <el-table-column prop="simpleDesc" label="需求描述" show-overflow-tooltip width="150" align="center"></el-table-column>
       <el-table-column prop="images" label="故障图片" show-overflow-tooltip align="center">
-        <template slot-scope="{row}">
-          <y-image :src="row.imgUrl?row.imgUrl.split(',')[0]:''" 
-            :srcList="row.imgUrl?row.imgUrl.split(','):''"/>
-        </template>
-      </el-table-column>
+          <template slot-scope="{row}">
+            <y-image :src="row.images?row.images.split(',')[0]:''" 
+              :srcList="row.images?row.images.split(','):''"/>
+          </template>
+        </el-table-column>
+
+      <el-table-column prop="deviceKnife" label="设备刀组" show-overflow-tooltip width="150" align="center"></el-table-column>
+      <el-table-column prop="deviceSystemName" label="设备系统" show-overflow-tooltip width="150" align="center"></el-table-column>
+      <el-table-column prop="deviceTypeName" label="设备类型" show-overflow-tooltip width="150" align="center"></el-table-column>
+      <el-table-column prop="serviceTime" label="服务时间" show-overflow-tooltip width="150" align="center"></el-table-column>
+      <el-table-column prop="status" label="状态" show-overflow-tooltip width="150" align="center">
+          <template slot-scope="{row}">
+            <span :class="util.global.maintenanceStatus[row.status].class">
+              {{util.global.maintenanceStatus[row.status].label}}
+            </span>
+          </template>
+        </el-table-column>
       
-      <el-table-column prop="contactsPeople" label="联系人" show-overflow-tooltip width="200" align="center"></el-table-column>
-      <el-table-column prop="contactsPhone" label="联系电话" show-overflow-tooltip width="200" align="center"></el-table-column>
-      <el-table-column prop="phone" label="联系方式" show-overflow-tooltip width="200" align="center"></el-table-column>
-      <el-table-column prop="receiveTime" label="接单时间" show-overflow-tooltip width="200" align="center"></el-table-column>
+      <el-table-column prop="enterpriseName" label="企业名称" show-overflow-tooltip width="150" align="center"></el-table-column>
+      <el-table-column prop="contactsPeople" label="联系人" show-overflow-tooltip width="150" align="center"></el-table-column>
+      <el-table-column prop="contactsPhone" label="联系电话" show-overflow-tooltip width="150" align="center"></el-table-column>
+      <el-table-column prop="serviceArea" label="服务区域" show-overflow-tooltip width="150" align="center"></el-table-column>
+      <el-table-column prop="address" label="详细地址" show-overflow-tooltip width="150" align="center"></el-table-column>
 
-      <el-table-column prop="address" label="详细地址" show-overflow-tooltip width="200" align="center"></el-table-column>
-      <el-table-column prop="cancelReason" label="取消原因" show-overflow-tooltip width="200" align="center"></el-table-column>
-      <el-table-column prop="cancelTime" label="取消时间" show-overflow-tooltip width="200" align="center"></el-table-column>
-      <el-table-column prop="completeTime" label="完成时间" show-overflow-tooltip width="200" align="center"></el-table-column>
+      <el-table-column prop="worker" label="接单师傅" show-overflow-tooltip width="150" align="center"></el-table-column>
+      <el-table-column prop="workerPhone" label="师傅电话" show-overflow-tooltip width="150" align="center"></el-table-column>
+      <el-table-column prop="receiveTime" label="接单时间" show-overflow-tooltip width="150" align="center"></el-table-column>
 
-      <el-table-column prop="createTime" label="添加时间" show-overflow-tooltip width="200" align="center"></el-table-column>
+      <el-table-column prop="cancelReason" label="取消原因" show-overflow-tooltip width="150" align="center"></el-table-column>
+      <el-table-column prop="cancelTime" label="取消时间" show-overflow-tooltip width="150" align="center"></el-table-column>
+
+      <el-table-column prop="payAmount" label="订单金额" show-overflow-tooltip width="150" align="center"></el-table-column>
+      <el-table-column prop="completeTime" label="完成时间" show-overflow-tooltip width="150" align="center"></el-table-column>
       <el-table-column prop="completeImages" label="完结图片" show-overflow-tooltip align="center">
         <template slot-scope="{row}">
           <y-image :src="row.completeImages?row.completeImages.split(',')[0]:''" 
             :srcList="row.completeImages?row.completeImages.split(','):''"/>
         </template>
       </el-table-column>
-      <el-table-column prop="latitude" label="纬度" show-overflow-tooltip width="200" align="center"></el-table-column>
-      <el-table-column prop="longitude" label="经度" show-overflow-tooltip width="200" align="center"></el-table-column>
-      <el-table-column prop="price" label="价格" show-overflow-tooltip width="200" align="center"></el-table-column>
-
-      <el-table-column prop="payAmount" label="订单需支付金额" show-overflow-tooltip width="200" align="center"></el-table-column>
-      <el-table-column prop="serviceArea" label="服务区域" show-overflow-tooltip width="200" align="center"></el-table-column>
-      <el-table-column prop="serviceTime" label="服务时间" show-overflow-tooltip width="200" align="center"></el-table-column>
-      <el-table-column prop="worker" label="接单师傅" show-overflow-tooltip width="200" align="center"></el-table-column>
-      <el-table-column prop="workerPhone" label="师傅电话" show-overflow-tooltip width="200" align="center"></el-table-column>
+    
+      <el-table-column prop="createTime" label="创建时间" show-overflow-tooltip width="150" align="center"></el-table-column>
       <el-table-column label="操作" width="300px" fixed="right">
         <template slot-scope="{row}">
           <div class="settings">
