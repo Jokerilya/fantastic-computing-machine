@@ -39,7 +39,7 @@ module.exports = {
   productionSourceMap: false,
   devServer: {
     port: port,
-    open: true,
+    open: false,
     overlay: {
       warnings: false,
       errors: true
@@ -48,7 +48,7 @@ module.exports = {
       // 本地：http://192.168.0.108:8071
       // 线上：https://japi.jijiangkeji.com
       '/admin': {
-        target: 'http://192.168.0.108:8071/',
+        target: 'https://japi.jijiangkeji.com',
         ws: true,
         changeOrigin: true
       }

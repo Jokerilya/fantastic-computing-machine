@@ -27,6 +27,8 @@
       <!-- <el-table-column type="selection" width="45" show-overflow-tooltip></el-table-column> -->
       <el-table-column prop="id" label="id" show-overflow-tooltip></el-table-column>
       <el-table-column prop="name" label="名称" show-overflow-tooltip></el-table-column>
+      <el-table-column prop="sort" label="排序" show-overflow-tooltip></el-table-column>
+      
       <el-table-column prop="imgUrl" label="图片">
         <template slot-scope="{row}">
           <y-image :src="row.imgUrl" />
@@ -75,6 +77,9 @@
       <el-form :model="editForm" :rules="rules" ref="editForm" status-icon label-width="120px" class="demo-ruleForm">
         <el-form-item label="设备系统名称" prop="name" style="width:calc(100% - 120px)">
             <el-input type="text" v-model="editForm.name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="父级id" prop="pid" style="width:calc(100% - 120px)">
+          <el-input type="number" v-model="editForm.pid" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="排序" prop="sort" style="width:calc(100% - 120px)">
             <el-input type="number" v-model="editForm.sort" autocomplete="off"></el-input>
@@ -163,6 +168,7 @@
       },
       editInit(row) {
         this.editForm = row
+        delete this.editForm.list
         this.$refs.editModel.open()
         console.info(row.imgUrl)
         this.$nextTick(() => {
