@@ -18,7 +18,7 @@ import toolbar from './toolbar'
 import load from './dynamicLoadScript'
 
 // https://cdn.tiny.cloud/1/no-api-key/tinymce/6.0.2-4/tinymce.min.js
-const tinymceCDN = 'https://snk-1305456087.cos.ap-guangzhou.myqcloud.com/js/tinymce%406.0.2-4.min.js'
+const tinymceCDN = 'https://snk-1305456087.cos.ap-guangzhou.myqcloud.com/js/tinymce%404.9.3.min.js'
 
 export default {
   name: 'Tinymce',

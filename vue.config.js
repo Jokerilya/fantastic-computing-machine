@@ -44,15 +44,15 @@ module.exports = {
       warnings: false,
       errors: true
     },
-    proxy: {
-      // 本地：http://192.168.0.108:8071
-      // 线上：https://japi.jijiangkeji.com
-      '/admin': {
-        target: 'https://japi.jijiangkeji.com',
-        ws: true,
-        changeOrigin: true
-      }
-    }
+    // proxy: {
+    //   // 本地：http://192.168.0.108:8071
+    //   // 线上：https://japi.jijiangkeji.com
+    //   '/admin': {
+    //     target: 'https://japi.jijiangkeji.com',
+    //     ws: true,
+    //     changeOrigin: true
+    //   }
+    // }
     // before: require('./mock/mock-server.js')
   },
   configureWebpack: {
