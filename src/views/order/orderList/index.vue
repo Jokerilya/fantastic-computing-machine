@@ -474,6 +474,7 @@
 					this.expDetail.push({
 						receiver:this.details.expDetail.receiver,
 						phone:this.details.expDetail.phone,
+						remark:this.details.remark,
 						addressDetail:this.details.expDetail.addrPrefix + this.details.expDetail.addressDetail
 					})
 					let priceSum = 0,numSum=0
