@@ -176,6 +176,7 @@
 				    <el-table-column prop="receiver" label="收货人" align="center"></el-table-column>
 				    <el-table-column prop="phone" label="手机号" align="center"></el-table-column>
 				    <el-table-column prop="addressDetail" label="收货地址" align="center"></el-table-column>
+				    <el-table-column prop="remark" label="备注" align="center"></el-table-column>
 				</el-table>
 				<!--  -->
 				<div class="order-info-title"><span>商品信息</span></div>

@@ -1017,7 +1017,7 @@ export default {
       queryUserInfoFn({
         pageNo: this.dataConfig.pageNo,
         pageSize: this.dataConfig.pageSize,
-        nickName: this.queryData.nickName,
+        nickName: this.queryData.userName,
         phone: this.queryData.phone,
         invitationCode: this.queryData.invitationCode,
         shopNum: this.queryData.shopNum,
