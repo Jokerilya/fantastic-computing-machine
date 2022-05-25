@@ -427,7 +427,7 @@
           >
         </el-form-item>
         <el-form-item style="clear: both" label="商品详情">
-          <tinymce
+          <tinymce :key="addEditData.id"
             ref="ppp"
             :id="'agreement_' + addEditData.id"
             v-model="addEditData.content"

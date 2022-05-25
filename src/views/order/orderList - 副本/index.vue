@@ -94,7 +94,7 @@
 						<el-button size="mini" type="success" v-if="scope.row.orderType !== 3 && scope.row.status === 5" style="min-width: 80px;" @click="detailFn(scope.row.id)">去发货</el-button>
 						<el-button size="mini" type="infor" v-if="scope.row.status > 5" @click="orderHandle(3,scope.row.id)">物流信息</el-button>
 						<el-button size="mini" type="infor" v-if="scope.row.orderType !== 3 && scope.row.status === 0">关闭订单</el-button>
-						<el-button size="mini" type="danger" v-if="scope.row.status === -1">删除订单</el-button>
+						<!-- <el-button size="mini" type="danger" v-if="scope.row.status === -1">删除订单</el-button> -->
 					 </template>
 				</el-table-column>
 			</el-table>
@@ -190,7 +190,7 @@
 					</el-table-column>
 				</el-table>
 				<div style="display: flex;justify-content: flex-end;padding: 8px 0;">
-					<span style="flex: 0 0 25%;text-align: center;">合计：<span style="color: red;">￥{{priceSum.toFixed(2) || 0}}</span></span>
+					<span style="flex: 0 25% 0;text-align: center;">合计：<span style="color: red;">￥{{priceSum.toFixed(2) || 0}}</span></span>
 				</div>
 				<!--  -->
 				<div class="order-info-title"><span>费用信息</span></div>

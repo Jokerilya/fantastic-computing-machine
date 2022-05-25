@@ -54,9 +54,9 @@
 		<div class="manage-table">
 			<el-table ref="multipleTable" :data="dataList" v-loading="dataConfig.loading" @selection-change="handleSelectionChange"  style="width: 100%">
 				<!-- <el-table-column type="selection" width="60"></el-table-column> -->
-				<el-table-column label="订单编号" width="150" align="center">
+				<el-table-column label="退款订单编号" width="180" align="center">
 					<template slot-scope="scope">
-						{{scope.row.orderSn || scope.row.orderId}}
+						{{scope.row.refundCode }}
 					</template>
 				</el-table-column>
 				<el-table-column prop="nickName" label="用户昵称" width="160" align="center"></el-table-column>
@@ -87,7 +87,7 @@
 						<el-tag type="danger" v-if="scope.row.status === 3">审核失败</el-tag>
 					 </template>
 				</el-table-column>
-				<el-table-column label="提交时间" width="180" align="center">
+				<el-table-column label="提交时间" width="150" align="center">
 					<template slot-scope="scope">
 						<span>{{scope.row.createTime}}</span>
 					 </template>
@@ -97,12 +97,12 @@
 						<span>{{scope.row.refundReason}}</span>
 					 </template>
 				</el-table-column>
-				<el-table-column label="处理时间" width="180" align="center">
+				<el-table-column label="处理时间" width="150" align="center">
 					<template slot-scope="scope">
 						<span>{{scope.row.examineTime}}</span>
 					 </template>
 				</el-table-column>
-				<el-table-column label="操作" width="190" align="center" fixed="right">
+				<el-table-column label="操作" width="150" align="center" fixed="right">
 					<template slot-scope="scope">
 						<el-button size="mini" type="infor" @click="detailFn(scope.row.id)">查看详情</el-button>
 						<el-button size="mini" type="primary" @click="refundCheckHandle(scope.row.id)" v-if="scope.row.status === 1">退款审核</el-button>
@@ -186,7 +186,7 @@
 				    <el-table-column prop="addressDetail" label="收货地址" align="center"></el-table-column>
 				</el-table>
 				<!--  -->
-				<div class="order-info-title"><span>商品信息</span></div>
+				<div class="order-info-title"><span>11商品信息</span></div>
 				<el-table :data="details.list" style="width: 100%" border size="mini" :header-cell-style="{background:'#eee',color:'#454545'}">
 				    <el-table-column prop="productName" label="商品" align="center"></el-table-column>
 				    <el-table-column prop="skuName" label="规格" align="center"></el-table-column>
@@ -370,7 +370,8 @@
 				this.costInfo = []
 				// this.$router.push({name:'OrderDetail'})
 				const res = await getOrderDetailFn({
-					id
+					orderId: 0,
+					returnOrderId: id,
 				})
 				if(res.code === '000'){
 					this.dialogVisible = true
@@ -392,7 +393,7 @@
 					})
 					let priceSum = 0,numSum=0
 					this.details.list.forEach(item=>{
-						this.priceSum += item.price
+							this.priceSum += item.price*item.quantity;
 					})
 					this.costInfo.push({
 						priceSum:this.priceSum,
