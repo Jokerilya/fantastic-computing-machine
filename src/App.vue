@@ -11,6 +11,9 @@ export default {
 </script>
 
 <style lang="less">
+    .width50{
+      width: 50%;
+    }
     .manage-top{background: #fff;padding: 22px 30px 0;}
     .table-block{background: #fff;padding: 30px;}
     #app{

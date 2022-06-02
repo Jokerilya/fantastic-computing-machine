@@ -14,7 +14,7 @@
 					<el-col :span="5">
 						<el-form-item label="订单状态">
               <el-select v-model="searchForm.status" placeholder="请选择">
-                <el-option v-for="item in util.global.maintenanceStatus" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                <el-option v-for="item in util.global.mainStatus" :key="item.value" :label="item.label" :value="item.value"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -28,62 +28,37 @@
 		<div style="height: 16px;"></div>
     <el-table highlight-current-row v-loading.fullscreen.lock="loading" element-loading-text="拼命加载中"
       element-loading-spinner="el-icon-loading" :data="dataList" style="width: 100%;">
-      <el-table-column prop="orderSn" label="订单编号" show-overflow-tooltip width="200" align="center"></el-table-column>
+      <el-table-column prop="address" label="详细地址" show-overflow-tooltip width="200" align="center"></el-table-column>
+      <el-table-column prop="balanceAmount" label="尾款" show-overflow-tooltip width="150" align="center"></el-table-column>
+      <el-table-column prop="contactsPeople" label="联系人" show-overflow-tooltip width="150" align="center"></el-table-column>
+      <el-table-column prop="createTime" label="客户工单创建时间" show-overflow-tooltip width="150" align="center"></el-table-column>
+      <el-table-column prop="depositAmount" label="定价" show-overflow-tooltip width="100" align="center"></el-table-column>
+      <el-table-column prop="deviceBrand" label="设备品牌" show-overflow-tooltip width="200" align="center"></el-table-column>
       <el-table-column prop="devicePlace" label="设备产地" show-overflow-tooltip width="150" align="center"></el-table-column>
-      <el-table-column prop="deviceTypeName" label="设备类型" show-overflow-tooltip width="150" align="center"></el-table-column>
-      <el-table-column prop="num" label="设备数量" show-overflow-tooltip width="100" align="center"></el-table-column>
+      <el-table-column prop="deviceSystemName" label="设备系统名" show-overflow-tooltip width="150" align="center"></el-table-column>
+      <el-table-column prop="deviceTypeName" label="设备类型名" show-overflow-tooltip width="150" align="center"></el-table-column>
+      <el-table-column prop="enterpriseName" label="企业名称" show-overflow-tooltip width="100" align="center"></el-table-column>
+      <el-table-column prop="num" label="设备数量" show-overflow-tooltip width="200" align="center"></el-table-column>
+      <el-table-column prop="orderSn" label="订单编号" show-overflow-tooltip width="200" align="center"></el-table-column>
+      <el-table-column prop="phone" label="商户联系电话" show-overflow-tooltip width="200" align="center"></el-table-column>
+      <el-table-column prop="rejectReason" label="驳回原因" show-overflow-tooltip width="150" align="center"></el-table-column>
       <el-table-column prop="simpleDesc" label="故障描述" show-overflow-tooltip width="200" align="center"></el-table-column>
       <el-table-column prop="type" label="故障类型" show-overflow-tooltip width="200" align="center">
         <template slot-scope="{row}">
-          <span :class="util.global.malfunctionType[row.type].class">
-            {{util.global.malfunctionType[row.type].label}}
-          </span>
+          {{ util.global.getLabel('malfunctionType',row.type) }}
         </template>
       </el-table-column>
-       <el-table-column prop="images" label="故障图片" show-overflow-tooltip align="center">
+      <el-table-column prop="mainStatus" label="企业主状态" show-overflow-tooltip width="150" align="center" fixed="right">
         <template slot-scope="{row}">
-          <y-image :src="row.images?row.images.split(',')[0]:''" 
-            :srcList="row.images?row.images.split(','):''"/>
+          {{ util.global.getLabel('mainStatus',row.mainStatus) }}
         </template>
       </el-table-column>
-      
-       <el-table-column prop="serviceTime" label="服务时间" show-overflow-tooltip width="200" align="center"></el-table-column>
-      <el-table-column prop="status" label="状态" show-overflow-tooltip width="150" align="center">
-        <template slot-scope="{row}">
-          <span :class="util.global.maintenanceStatus[row.status].class">
-            {{util.global.maintenanceStatus[row.status].label}}
-          </span>
-        </template>
-      </el-table-column>
-      <el-table-column prop="enterpriseName" label="企业名称" show-overflow-tooltip width="150" align="center"></el-table-column>
-      <el-table-column prop="contactsPeople" label="联系人" show-overflow-tooltip width="150" align="center"></el-table-column>
-      <el-table-column prop="contactsPhone" label="联系电话" show-overflow-tooltip width="150" align="center"></el-table-column>
-      <el-table-column prop="serviceArea" label="服务区域" show-overflow-tooltip width="150" align="center"></el-table-column>
-      <el-table-column prop="address" label="详细地址" show-overflow-tooltip width="150" align="center"></el-table-column>
-     
-     <el-table-column prop="receiveTime" label="接单时间" show-overflow-tooltip width="200" align="center"></el-table-column>
-      <el-table-column prop="worker" label="接单师傅" show-overflow-tooltip width="200" align="center"></el-table-column>
-      <el-table-column prop="workerPhone" label="师傅电话" show-overflow-tooltip width="200" align="center"></el-table-column>
-
-      <el-table-column prop="cancelReason" label="取消原因" show-overflow-tooltip width="200" align="center"></el-table-column>
-      <el-table-column prop="cancelTime" label="取消时间" show-overflow-tooltip width="200" align="center"></el-table-column>
-
-       <el-table-column prop="payAmount" label="订单金额" show-overflow-tooltip width="200" align="center"></el-table-column>
-      <el-table-column prop="completeTime" label="完成时间" show-overflow-tooltip width="200" align="center"></el-table-column>
-      <el-table-column prop="completeImages" label="完结图片" show-overflow-tooltip align="center">
-        <template slot-scope="{row}">
-          <y-image :src="row.completeImages?row.completeImages.split(',')[0]:''" 
-            :srcList="row.completeImages?row.completeImages.split(','):''"/>
-        </template>
-      </el-table-column>
-     
-      <el-table-column prop="createTime" label="创建时间" show-overflow-tooltip width="200" align="center"></el-table-column>
       <el-table-column label="操作" width="300px" fixed="right">
         <template slot-scope="{row}">
           <div class="settings">
-            <el-button type="warning" size="mini" plain @click="editInit(row,['orderSn'])" :disabled="row.status != 1">分配师傅</el-button>
-            <el-button type="warning" size="mini" plain @click="dispatch(row)" :disabled="row.status != 2">派遣师傅</el-button>
-            <el-button type="warning" size="mini" plain @click="finishInit(row)" :disabled="row.status != 3">完结此单</el-button>
+            <el-button type="info" size="mini" plain @click="queryDesc(row)">查看详情</el-button>
+            <el-button type="info" size="mini" plain @click="querySnatchList(row)" :disabled="row.mainStatus<=0">抢单列表</el-button>
+            
           </div>
         </template>
       </el-table-column>
@@ -93,7 +68,51 @@
       layout="total, sizes, prev, pager, next, jumper" :total="page.dataSumNum">
     </el-pagination>
 
-    <model ref="editModel" title="分配师傅接单" @ok="edit" @close="resetEditForm">
+
+
+    <model ref="snatch" title="抢单列表" :isSubmit="false" :column="2" @close="closeSnatch">
+      <el-table highlight-current-row v-loading.fullscreen.lock="loading" element-loading-text="拼命加载中" border
+        element-loading-spinner="el-icon-loading" :data="snatchList" style="width: 100%;">
+        <el-table-column prop="createTime" label="创建时间" show-overflow-tooltip width="160" align="center"></el-table-column>
+        <el-table-column prop="industryExperience" label="行业经验" show-overflow-tooltip width="160" align="center"></el-table-column>
+        <el-table-column prop="industryExperienceImages" label="行业经验照片" show-overflow-tooltip width="160" align="center">
+          <template slot-scope="{row}">
+            <el-image style="width: 80px; height: 80px" :src="row.industryExperienceImages.split(',')[0]" :preview-src-list="row.industryExperienceImages.split(',')"></el-image>
+          </template>
+        </el-table-column>
+        <el-table-column prop="orderSn" label="订单编号" show-overflow-tooltip width="160" align="center"></el-table-column>
+        <el-table-column prop="realName" label="真实姓名" show-overflow-tooltip width="160" align="center"></el-table-column>
+        <el-table-column prop="realPortrait" label="真实头像" show-overflow-tooltip width="160" align="center">
+          <template slot-scope="{row}">
+            <el-image style="width: 80px; height: 80px" :src="row.realPortrait.split(',')[0]" :preview-src-list="row.realPortrait.split(',')"></el-image>
+          </template>
+        </el-table-column>
+        <el-table-column prop="serviceAreas" label="服务地区" show-overflow-tooltip width="160" align="center">
+          <template slot-scope="{row}">
+            <el-tag effect="plain" v-for="item in row.serviceAreas.split(',')" :key="item">{{item}}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="serviceTypes" label="服务类型" show-overflow-tooltip width="160" align="center">
+          <template slot-scope="{row}">
+            <el-tag effect="plain" v-for="item in row.serviceTypes.split(',')" :key="item">{{item}}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="skillCertificateImages" label="技能证书图书" show-overflow-tooltip width="160" align="center">
+          <template slot-scope="{row}">
+            <el-image style="width: 80px; height: 80px" :src="row.skillCertificateImages.split(',')[0]" :preview-src-list="row.skillCertificateImages.split(',')"></el-image>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="300px" fixed="right">
+          <template slot-scope="{row}">
+            <div class="settings">
+              <el-button type="primary" size="mini" plain :disabled="param.mainStatus!=1" @click="assign(row.orderSn)">指派师傅</el-button>
+            </div>
+          </template>
+        </el-table-column>
+      </el-table>
+
+    </model>
+    <!-- <model ref="editModel" title="分配师傅接单" @ok="edit" @close="resetEditForm">
       <el-form :model="editForm" :rules="rules" ref="editForm" status-icon label-width="120px" class="demo-ruleForm">
         <el-form-item label="接单人" prop="worker" style="width:calc(100% - 120px)">
             <el-input type="text" v-model="editForm.worker" autocomplete="off"></el-input>
@@ -102,18 +121,7 @@
             <el-input type="number" v-model="editForm.workerPhone" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
-    </model>
-
-    <model ref="finishModel" title="完结此单" @ok="finish" @close="resetFinishForm">
-      <el-form :model="finishForm" :rules="rules" ref="finishForm" status-icon label-width="120px" class="demo-ruleForm">
-        <el-form-item label="订单金额" prop="payAmount" style="width:calc(100% - 120px)">
-            <el-input-number  v-model="finishForm.payAmount" :precision="2" :step="0.5" autocomplete="off"></el-input-number>
-        </el-form-item>
-        <el-form-item label="图片" prop="completeImages" style="width:calc(100% - 120px)">
-            <upload ref="finishImg" type="image/*" limit="9" :size="1024**2*2" />
-        </el-form-item>
-      </el-form>
-    </model>
+    </model> -->
   </div>
 </template>
 <style lang="less" scoped>
@@ -129,13 +137,14 @@
         loading: false,
         typeData:[],
         courseList:[],
+        snatchList:[],
         courseDistriList:[],
         url: {
           query: '/admin/maintenance/queryRepairOrderList',
           queryType:'/admin/maintenance/queryDeviceTypeList',
-          edit: '/admin/maintenance/orderTaking',
-          dispatch: '/admin/maintenance/handleHavingOrder',
-          finish: '/admin/maintenance/handleCompleteOrder'
+          querySnatch:'/admin/maintenance/queryMasterGrabOrderList',
+          assign:'/admin/maintenance/handleAssignMaster',
+          handleMasterQuotation: '/admin/maintenance/handleMasterQuotation'
         },
         rules: {
           worker: [{
@@ -152,9 +161,14 @@
         finishForm:{
           payAmount:0
         },
+        param:{},
+        quotationForm:{},
       }
     },
     methods: {
+      queryDesc(row){
+        this.$router.push('/maintenance/maintenance_order_desc?enterpriseOrderSn='+row.orderSn)
+      },
       querySelectData(){
         this.loading = true;
         this.$axios.post(this.url.queryType).then(( {data} ) => {
@@ -164,52 +178,39 @@
         });
         this.loading = false
       },
-      dispatch(row){
-        this.$axios.post(this.url.dispatch,{
-          orderSn:row.orderSn
-        }).then(({code,message})=>{
-            this.util.message(this, code, message)
-            this.resetEditForm();
-            this.query();
-            fn(false)
-        }).catch(function (error) {
-          console.info(error);
-        });
+      querySnatchList({orderSn:enterpriseOrderSn,mainStatus}){
+        this.param = {
+          mainStatus : mainStatus,
+          enterpriseOrderSn : enterpriseOrderSn
+        }
+        this.$axios.get(this.url.querySnatch+"?enterpriseOrderSn="+enterpriseOrderSn).then(({data})=>{
+          this.snatchList = data
+          this.$refs.snatch.open()
+        }).catch((error)=>{
+          console.error(error)
+        })
       },
-      
-      finishInit(row) {
-        this.finishForm.orderSn = row.orderSn
-        this.$refs.finishModel.open()
+      closeSnatch(fn){
+        fn(false)
       },
-      finish(fn) {
-        this.$refs.finishForm.validate(async (valid) => {
-          if (valid) {
-            if (this.$refs.finishImg.isNull()) {
-              this.$message.error('请上传图片')
-              return false
-            }
-            let finishImg = (await this.$refs.finishImg.uploadFile()).join(',')
-            this.$refs.finishImg.reset([])
-            this.$axios.post(this.url.finish, { ...this.finishForm, completeImages :finishImg }).then((data) => {
-              this.util.message(this, data.code, data.message)
-              this.resetFinishForm();
-              this.query();
-              fn(false)
-            }).catch(function (error) {
-              console.info(error);
+      assign(masterOrderSn){
+        this.$axios.post(this.url.assign,{
+          enterpriseOrderSn : this.param.enterpriseOrderSn,
+          masterOrderSn: masterOrderSn
+        }).then((data)=>{
+          if(data.code == '000'){
+            this.$message({
+              showClose: true,
+              message: data.message,
+              type: 'success'
             });
-          } else {
-            return false
+            this.$refs.snatch.close()
+            this.query()
           }
-        });
+        }).catch((err)=>{
+          console.error(err)
+        })
       },
-      resetFinishForm(fn) {
-        if(fn)
-          fn(false)
-      },
-    },
-    mounted(){
-      console.info(this.handleEdit)
     }
   }
 

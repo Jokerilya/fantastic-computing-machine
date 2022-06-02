@@ -1,123 +1,326 @@
-const StatusEnum = [
-  {
-    value:0,
-    label:'正常',
-    class:'state_success'
-  },
-  {
-    value:1,
-    label:'禁用',
-    class:'state_error'
-  },
-]
-const whetherEnum = [
-  {
-    value:0,
-    label:'否',
-    class:'state_error'
-  },
-  {
-    value:1,
-    label:'是',
-    class:'state_success'
-  },
-]
-const CommodityStatusEnum = [
-  {
-    value:0,
-    label:'正常',
-    class:'state_success'
-  },
-  {
-    value:1,
-    label:'下架',
-    class:'state_error'
-  },
-]
-let sex = [
-  {
-    value:0,
-    label:'未知'
-  },
-  {
-    value:1,
-    label:'男'
-  },
-  {
-    value:2,
-    label:'女'
-  }
-]
-let payStatus = [
-  {
-    value:0,
-    label:'未支付',
-    class:'state_info'
-  },
-  {
-    value:1,
-    label:'已支付',
-    class:'state_success'
-  },
-  {
-    value:2,
-    label:'支付失败',
-    class:'state_error'
-  },
-]
-let checkStatus = [
-  {
-    value:0,
-    label:'未审核',
-    class:'state_info'
-  },
-  {
-    value:1,
-    label:'通过',
-    class:'state_success'
-  },
-  {
-    value:2,
-    label:'拒绝',
-    class:'state_error'
-  },
-]
-// 维保流程状态
-let maintenanceStatus = [
-  {
-    value:0,
-    label:'已取消'
-  },
-  {
-    value:1,
-    label:'已发布,待匹配'
-  },
-  {
-    value:2,
-    label:'已匹配'
-  },
-  {
-    value:3,
-    label:'进行中'
-  },
-  {
-    value:4,
-    label:'已完成'
-  }
-]
-// 故障类型
-let malfunctionType = [
-  {},
-  {
-    value:1,
-    label:'电气故障'
-  },
-  {
-    value:2,
-    label:'机械故障'
-  }
-]
 export default {
-  maintenanceStatus,
-  malfunctionType
+  getLabel:function(paramName,val){
+    if(val == undefined)
+      return 
+    let label = ''
+    try {
+      label = this[paramName].filter((item)=>{
+        return item.value == val
+      })[0].label
+    } catch (error) {
+      console.log(`getLabel(${paramName},${val})`)
+      console.log(error)
+    }
+    return label
+    return this[paramName].filter((item)=>{
+      return item.value == val
+    })[0].label
+  },
+  StatusEnum : [
+    {
+      value:0,
+      label:'正常',
+      class:'state_success'
+    },
+    {
+      value:1,
+      label:'禁用',
+      class:'state_error'
+    },
+  ],
+  whetherEnum : [
+    {
+      value:0,
+      label:'否',
+      class:'state_error'
+    },
+    {
+      value:1,
+      label:'是',
+      class:'state_success'
+    },
+  ],
+  CommodityStatusEnum : [
+    {
+      value:0,
+      label:'正常',
+      class:'state_success'
+    },
+    {
+      value:1,
+      label:'下架',
+      class:'state_error'
+    },
+  ],
+  sex : [
+    {
+      value:0,
+      label:'未知'
+    },
+    {
+      value:1,
+      label:'男'
+    },
+    {
+      value:2,
+      label:'女'
+    }
+  ],
+  payStatus : [
+    {
+      value:0,
+      label:'未支付',
+      class:'state_info'
+    },
+    {
+      value:1,
+      label:'已支付',
+      class:'state_success'
+    },
+    {
+      value:2,
+      label:'支付失败',
+      class:'state_error'
+    },
+  ],
+  checkStatus : [
+    {
+      value:0,
+      label:'未审核',
+      class:'state_info'
+    },
+    {
+      value:1,
+      label:'通过',
+      class:'state_success'
+    },
+    {
+      value:2,
+      label:'拒绝',
+      class:'state_error'
+    },
+  ],
+  // 故障类型
+  malfunctionType : [
+    {},
+    {
+      value:1,
+      label:'电气故障'
+    },
+    {
+      value:2,
+      label:'机械故障'
+    }
+  ],
+  // 主状态
+  mainStatus : [
+    {
+      value:-2,
+      label:'已废弃'
+    },
+    {
+      value:-1,
+      label:'已取消'
+    },
+    {
+      value:0,
+      label:'待报名'
+    },
+    {
+      value:1,
+      label:'待指派'
+    },
+    {
+      value:2,
+      label:'待服务'
+    },
+    {
+      value:3,
+      label:'服务中'
+    },
+    {
+      value:4,
+      label:'待验收'
+    },
+    {
+      value:5,
+      label:'待收款'
+    },
+    {
+      value:6,
+      label:'已完成'
+    }
+  ],
+  // 师傅子状态 
+  masterSubStatus : [
+    {
+      value:"3001",
+      label:"待报名"
+    },
+    {
+      value:"3101",
+      label:"待指派"
+    },
+    {
+      value:"3201",
+      label:"待服务"
+    },
+    {
+      value:"3301",
+      label:"待企业确认定价"
+    },
+    {
+      value:"3302",
+      label:"报价已驳回,请修改后重新提交报价"
+    },
+    {
+      value:"3303",
+      label:"待企业重新确认定价"
+    },
+    {
+      value:"3304",
+      label:"报价再次驳回,请修改后重新提交报价"
+    },
+    {
+      value:"3305",
+      label:"待收预付款"
+    },
+    {
+      value:"3306",
+      label:"服务中"
+    },
+    {
+      value:"3401",
+      label:"等待企业验收"
+    },
+    {
+      value:"3402",
+      label:"企业验收已驳回"
+    },
+    {
+      value:"3403",
+      label:"待企业重新验收"
+    },
+    {
+      value:"3404",
+      label:"验收再次驳回"
+    },
+    {
+      value:"3501",
+      label:"待收款"
+    },
+    {
+      value:"3601",
+      label:"已完成"
+    }
+  ],
+  // 企业子状态 , 
+  enterpriseSubStatus : [
+    {
+      value:"2001",
+      label:"待报名"
+    },
+    {
+      value:"2101",
+      label:"待指派"
+    },
+    {
+      value:"2201",
+      label:"待服务"
+    },
+    {
+      value:"2301",
+      label:"待确认定价"
+    },
+    {
+      value:"2302",
+      label:"报价已驳回,待师傅修改后提交报价"
+    },
+    {
+      value:"2303",
+      label:"待重新确认定价"
+    },
+    {
+      value:"2304",
+      label:"报价再次驳回,待师傅修改后提交报价"
+    },
+    {
+      value:"2305",
+      label:"待支付预付款"
+    },
+    {
+      value:"2306",
+      label:"待平台确认收款"
+    },
+    {
+      value:"2307",
+      label:"待师傅确认收款"
+    },
+    {
+      value:"2308",
+      label:"服务中"
+    },
+    {
+      value:"2401",
+      label:"待验收"
+    },
+    {
+      value:"2402",
+      label:"验收已驳回"
+    },
+    {
+      value:"2403",
+      label:"等待重新验收"
+    },
+    {
+      value:"2404",
+      label:"验收再次驳回"
+    },
+    {
+      value:"2501",
+      label:"待支付剩余金额"
+    },
+    {
+      value:"2502",
+      label:"待平台确认收款"
+    },
+    {
+      value:"2601",
+      label:"已完成"
+    }
+  ],
+  rejectStatus : [
+    {
+      value:"0",
+      label:"驳回"
+    },
+    {
+      value:"1",
+      label:"确认"
+    }
+  ],
+  modalityType : [
+    {
+      value:"1",
+      label:"小修"
+    },
+    {
+      value:"2",
+      label:"大修"
+    }
+  ],
+  operator : [
+    {
+      value:"1",
+      label:"平台"
+    },
+    {
+      value:"2",
+      label:"企业"
+    },
+    {
+      value:"2",
+      label:"师傅"
+    }
+  ]
 }

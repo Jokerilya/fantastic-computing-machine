@@ -31,7 +31,14 @@ const router = {
       name: "maintenance_order",
       component: () => import("@/views/maintenance/maintenance_order"),
       meta: { title: "维保订单" }
+    },
+    {
+      path: "/maintenance/maintenance_order_desc",
+      name: "maintenance_order_desc",
+      component: () => import("@/views/maintenance/maintenance_order_desc"),
+      meta: { title: "维保订单详情" }
     }
+    
   ]
 };
 export default router;

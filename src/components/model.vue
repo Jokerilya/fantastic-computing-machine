@@ -53,6 +53,9 @@ export default {
         open(){
             this.show = true;
             this.$emit('open')
+        },
+        close(){
+            this.show = false;
         }
     }
 }

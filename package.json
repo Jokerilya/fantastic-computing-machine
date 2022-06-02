@@ -16,7 +16,7 @@
     "axios": "^0.21.1",
     "core-js": "^3.22.4",
     "echarts": "^4.9.0",
-    "element-ui": "2.13.2",
+    "element-ui": "^2.15.7",
     "es6-promise": "^4.2.8",
     "js-cookie": "2.2.0",
     "js-md5": "^0.7.3",

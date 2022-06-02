@@ -20,28 +20,17 @@ const tableMixin = {
   methods: {
     query() {
       this.loading = true;
-      // var url = '';
-      // for(let s in this.searchForm){
-      //   if(['startTime','endTime'].includes(s)){
-      //     url+=`&${s}=${this.searchForm[s].format('yyyy-MM-dd hh:mm:ss')}`
-      //   }else if(this.searchForm[s] !== ''){
-      //     url+=`&${s}=${this.searchForm[s]}`
-      //   }
-      // }pageSize
       this.$axios.post(this.url.query,{
         pageNo:this.page.pageNo,
         pageSize:this.page.dataNum,
         ...this.searchForm
       })
-      // this.$axios.get(this.url.query+'?pageNo=' + this.page.pageNo + '&pageSize=' + this.page.dataNum + url)
-      // .then(({ data, list}) => {
       .then(( {data:{records,total,current}} ) => {
         this.dataList = records//list;
-        console.info(records)
         this.page.dataSumNum = total;
         this.page.pageNo = current;
       }).catch(function (error) {
-        console.info(error);
+        console.error(error);
       });
       this.loading = false
     },
