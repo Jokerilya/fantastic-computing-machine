@@ -5,10 +5,11 @@
       <el-tab-pane label="订单详情" name="desc">
         <div class="big_title">
           <span>订单号：{{ data.orderSn }}</span>
-          <span>{{ util.global.getLabel('mainStatus',data.enterpriseMainStatus) }}</span>
+          <span>{{ util.global.getLabel('mainStatus',data.enterpriseMainStatus) }} - {{ util.global.getLabel('enterpriseSubStatus',data.enterpriseSubStatus) }}</span>
           <div style="float:right">
-            <el-button type="primary" size="mini" plain @click="quotationInit()" v-if="data.enterpriseMainStatus==3">确认报价</el-button>
-            <el-button type="primary" size="mini" plain @click="quotationInit()" v-if="data.enterpriseMainStatus==4">确认报价</el-button>
+            <el-button type="primary" size="mini" plain @click="quotationInit()" v-if="['2301','2303'].includes(data.enterpriseSubStatus)">确认报价</el-button>
+            <el-button type="primary" size="mini" plain @click="pay()" v-if="['2305','2501'].includes(data.enterpriseSubStatus)">支付定价/尾款</el-button>
+            <el-button type="primary" size="mini" plain @click="checkInit()" v-if="data.enterpriseSubStatus=='2401'">订单验收</el-button>
           </div>
         </div>
         <!-- 需求信息 -->
@@ -62,8 +63,8 @@
               <el-descriptions-item label="距离约"> {{ data.distance }}km </el-descriptions-item>
           </el-descriptions>
           <el-descriptions title="师傅联系方式" v-if="data.enterpriseMainStatus>1">
-              <el-descriptions-item label="联系人"> {{ data.contactsPeople }} </el-descriptions-item>
-              <el-descriptions-item label="联系电话"> {{ data.phone }} </el-descriptions-item>
+              <el-descriptions-item label="联系人"> {{ data.masterRealName }} </el-descriptions-item>
+              <el-descriptions-item label="联系电话"> {{ data.masterPhone }} </el-descriptions-item>
           </el-descriptions>
         </div>
         <!-- 故障解决方案 -->
@@ -84,7 +85,7 @@
               {{ item.analysis }}
             </el-col>
             <el-col :span="8">
-              <span>设备产地</span>
+              <span>维保方案:</span>
               {{ item.programme }}
             </el-col>
           </el-row>
@@ -159,6 +160,10 @@
           <span>订单金额：{{ data.totalAmount }}</span>
           <span>待收款：{{ data.totalAmount }}</span>
           <span>待付款：{{ data.totalAmount }}</span>
+          <div style="float:right">
+            <el-button type="primary" size="mini" plain @click="platformPayInit()" v-if="['2306','2502'].includes(data.enterpriseSubStatus)">支付定价/尾款</el-button>
+            <el-button type="primary" size="mini" plain @click="platformPayInit()" v-if="data.enterpriseSubStatus=='2601'">打款师傅</el-button>
+          </div>
         </div>
         
         
@@ -193,7 +198,7 @@
 
 
     <model ref="quotationForm" title="确认报价" @ok="sumbitQuotation" @close="resetQuotationForm">
-      <el-form :model="quotationForm" :rules="rules" status-icon label-width="120px" class="demo-ruleForm">
+      <el-form :model="quotationForm" status-icon label-width="120px" class="demo-ruleForm">
         <el-form-item label="状态" prop="status" style="width:calc(100% - 120px)">
           <el-radio-group v-model="quotationForm.status">
             <el-radio v-for="item in util.global.rejectStatus" :key="item.label" :label="item.value">{{item.label}}</el-radio>
@@ -204,14 +209,45 @@
         </el-form-item>
       </el-form>
     </model>
+
+    <model ref="checkForm" title="确认验收" @ok="sumbitCheck" @close="resetCheckForm">
+      <el-form :model="checkForm" status-icon label-width="120px" class="demo-ruleForm">
+        <el-form-item label="状态" prop="status" style="width:calc(100% - 120px)">
+          <el-radio-group v-model="checkForm.status">
+            <el-radio v-for="item in util.global.rejectStatus" :key="item.label" :label="item.value">{{item.label}}</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="驳回原因" prop="rejectReason" style="width:calc(100% - 120px)">
+            <el-input type="text" v-model="checkForm.rejectReason" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+    </model>
+    
+    
+    <model ref="platform" title="打款信息" @ok="sumbitPlatformPay()" @close="resetPlatformPay">
+      <el-form status-icon label-width="120px" class="demo-ruleForm">
+        <el-form-item label="师傅卡号" style="width:calc(100% - 120px)">
+          {{data.bankCode}}
+        </el-form-item>
+        <el-form-item label="所属银行" style="width:calc(100% - 120px)">
+          {{data.bankName}}
+        </el-form-item>
+        <!-- 请核实打款信息，再点击确认按钮 -->
+      </el-form>
+    </model>
   </div>
 </template>
 <style lang="less" scoped>
   .box {
     width: 100%;
     height: 100vh;
+    overflow: auto;
     background: #FFF;
   }
+  .el-tabs__content {
+    overflow: auto;
+    height: 88vh;
+}
   .big_title{
     color: #333;
     font-size: 18px;
@@ -247,6 +283,10 @@
     display: flex;
     justify-content: space-between;
   }
+  /deep/.el-tabs__content {
+    overflow: auto;
+    height: 88vh;
+  }
 </style>
 <script>
   export default {
@@ -256,9 +296,18 @@
         data: {},
         activeName: 'desc',
         url: {
-          handleMasterQuotation: '/admin/maintenance/handleMasterQuotation'
+          handleMasterQuotation: '/admin/maintenance/handleMasterQuotation',// 企业确认报价
+          handleConfirmDeposit:'/admin/maintenance/handleConfirmDeposit',// 企业确认支付定金/尾款
+          handleEnterpriseCheck:'/admin/maintenance/handleEnterpriseCheck',// 企业验收
+          handleConfirmDepositToMaster:'/admin/maintenance/handleConfirmDepositToMaster',// 平台确认企业定金并打款给师傅/平台确认企业支付尾款
+          handleConfirmBalanceToMaster:'/admin/maintenance/handleConfirmBalanceToMaster',// 平台打款至师傅(质保期已到)
         },
-        quotationForm:{},
+        quotationForm:{
+          rejectReason:""
+        },
+        checkForm:{
+          rejectReason:""
+        }
       }
     },
     methods: {
@@ -279,6 +328,12 @@
         this.$refs.quotationForm.open()
       },
       sumbitQuotation(fn){
+        if(this.quotationForm.status == '0' && !this.quotationForm.rejectReason){
+          this.$message.error("请输入驳回原因")
+          return
+        }
+        
+          
         this.$axios.post(this.url.handleMasterQuotation,this.quotationForm).then((data)=>{
           if(data.code == '000'){
             this.$message({
@@ -295,6 +350,105 @@
       resetQuotationForm(fn){
         this.init()
         fn(false)
+      },
+      pay(){
+        this.$axios.post(this.url.handleConfirmDeposit,{
+          enterpriseOrderSn: location.hash.split('?enterpriseOrderSn=')[1],
+          // type (integer, optional): 类型: 1 定金 2 尾款
+          type: this.data.enterpriseSubStatus == 2305 ? 1 :2
+        }).then((data)=>{
+          if(data.code == '000'){
+            this.$message({
+              showClose: true,
+              message: data.message,
+              type: 'success'
+            });
+            this.init()
+          }
+        }).catch((err)=>{
+          console.error(err)
+        })
+      },
+      // 显示企业报价弹框
+      checkInit(){
+        this.checkForm = {
+          enterpriseOrderSn: this.data.orderSn,
+          status: "0"
+        }
+        this.$refs.checkForm.open()
+      },
+      sumbitCheck(fn){
+        if(this.checkForm.status == '0' && !this.checkForm.rejectReason){
+          this.$message.error("请输入驳回原因")
+          return
+        }
+        this.$axios.post(this.url.handleEnterpriseCheck,this.checkForm).then((data)=>{
+          if(data.code == '000'){
+            this.$message({
+              showClose: true,
+              message: data.message,
+              type: 'success'
+            });
+            this.resetCheckForm(fn)
+          }
+        }).catch((err)=>{
+          console.error(err)
+        })
+      },
+      resetCheckForm(fn){
+        this.init()
+        fn(false)
+      },
+      handleConfirmDepositToMaster(){
+        this.$axios.post(this.url.handleConfirmDepositToMaster,{
+          enterpriseOrderSn: location.hash.split('?enterpriseOrderSn=')[1],
+          type: this.data.enterpriseSubStatus == '2306' ? 1 : 2
+        }).then((data)=>{
+          if(data.code == '000'){
+            this.$message({
+              showClose: true,
+              message: data.message,
+              type: 'success'
+            });
+          }
+          this.init()
+        }).catch((err)=>{
+          console.error(err)
+        })
+      },
+      platformPayInit(){
+        if(this.data.enterpriseSubStatus != '2502'){
+          this.$refs.platform.open()
+        }else{
+          this.handleConfirmDepositToMaster()
+        }
+      },
+      sumbitPlatformPay(){
+        if(this.data.enterpriseSubStatus == '2601'){
+          this.remit()
+        }else{
+          this.handleConfirmDepositToMaster()
+        }
+      },
+      resetPlatformPay(fn){
+        this.init()
+        fn(false)
+      },
+      remit(){
+        this.$axios.post(this.url.handleConfirmBalanceToMaster,{
+          enterpriseOrderSn: location.hash.split('?enterpriseOrderSn=')[1]
+        }).then((data)=>{
+          if(data.code == '000'){
+            this.$message({
+              showClose: true,
+              message: data.message,
+              type: 'success'
+            });
+          }
+          this.init()
+        }).catch((err)=>{
+          console.error(err)
+        })
       }
     },
     mounted() {
