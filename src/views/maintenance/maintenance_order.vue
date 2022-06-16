@@ -28,6 +28,14 @@
 		<div style="height: 16px;"></div>
     <el-table highlight-current-row v-loading.fullscreen.lock="loading" element-loading-text="拼命加载中"
       element-loading-spinner="el-icon-loading" :data="dataList" style="width: 100%;">
+
+      <el-table-column prop="orderSn" label="订单编号" show-overflow-tooltip width="200" align="center"></el-table-column>
+      <el-table-column prop="simpleDesc" label="故障描述" show-overflow-tooltip width="200" align="center"></el-table-column>
+      <el-table-column prop="deviceBrand" label="设备品牌" show-overflow-tooltip width="200" align="center"></el-table-column>
+      <el-table-column prop="devicePlace" label="设备产地" show-overflow-tooltip width="150" align="center"></el-table-column>
+      <el-table-column prop="deviceSystemName" label="设备系统名" show-overflow-tooltip width="150" align="center"></el-table-column>
+      <el-table-column prop="deviceTypeName" label="设备类型名" show-overflow-tooltip width="150" align="center"></el-table-column>
+      <el-table-column prop="num" label="设备数量" show-overflow-tooltip width="200" align="center"></el-table-column>
       <el-table-column prop="modalityType" label="维保模式" show-overflow-tooltip width="200" align="center">
         <template slot-scope="{row}">
           {{ util.global.getLabel('modalityType',row.modalityType) }}
@@ -38,32 +46,24 @@
           {{ util.global.getLabel('malfunctionType',row.type) }}
         </template>
       </el-table-column>
-      <el-table-column prop="simpleDesc" label="故障描述" show-overflow-tooltip width="200" align="center"></el-table-column>
-      <el-table-column prop="deviceBrand" label="设备品牌" show-overflow-tooltip width="200" align="center"></el-table-column>
-      <el-table-column prop="devicePlace" label="设备产地" show-overflow-tooltip width="150" align="center"></el-table-column>
-      <el-table-column prop="deviceSystemName" label="设备系统名" show-overflow-tooltip width="150" align="center"></el-table-column>
-      <el-table-column prop="deviceTypeName" label="设备类型名" show-overflow-tooltip width="150" align="center"></el-table-column>
-      <el-table-column prop="num" label="设备数量" show-overflow-tooltip width="200" align="center"></el-table-column>
-      <el-table-column prop="address" label="详细地址" show-overflow-tooltip width="200" align="center"></el-table-column>
-      <el-table-column prop="balanceAmount" label="尾款" show-overflow-tooltip width="150" align="center"></el-table-column>
-      <el-table-column prop="contactsPeople" label="联系人" show-overflow-tooltip width="150" align="center"></el-table-column>
-      <el-table-column prop="createTime" label="客户工单创建时间" show-overflow-tooltip width="150" align="center"></el-table-column>
-      <el-table-column prop="depositAmount" label="定价" show-overflow-tooltip width="100" align="center"></el-table-column>
       <el-table-column prop="enterpriseName" label="企业名称" show-overflow-tooltip width="100" align="center"></el-table-column>
-      <el-table-column prop="orderSn" label="订单编号" show-overflow-tooltip width="200" align="center"></el-table-column>
-      <el-table-column prop="phone" label="商户联系电话" show-overflow-tooltip width="200" align="center"></el-table-column>
-      <el-table-column prop="rejectReason" label="驳回原因" show-overflow-tooltip width="150" align="center"></el-table-column>
+      <el-table-column prop="address" label="详细地址" show-overflow-tooltip width="200" align="center"></el-table-column>
+      <el-table-column prop="contactsPeople" label="联系人" show-overflow-tooltip width="150" align="center"></el-table-column>
+      <el-table-column prop="contactsPhone" label="联系电话" show-overflow-tooltip width="200" align="center"></el-table-column>
+      <el-table-column prop="depositAmount" label="定价" show-overflow-tooltip width="100" align="center"></el-table-column>
+      <el-table-column prop="balanceAmount" label="尾款" show-overflow-tooltip width="150" align="center"></el-table-column>
       <el-table-column prop="mainStatus" label="企业主状态" show-overflow-tooltip width="150" align="center" fixed="right">
         <template slot-scope="{row}">
           {{ util.global.getLabel('mainStatus',row.mainStatus) }}
         </template>
-      </el-table-column>
+      </el-table-column> -->
+      <el-table-column prop="rejectReason" label="驳回原因" show-overflow-tooltip width="150" align="center"></el-table-column>
+      <el-table-column prop="createTime" label="下单时间" show-overflow-tooltip width="150" align="center"></el-table-column>
       <el-table-column label="操作" width="300px" fixed="right">
         <template slot-scope="{row}">
           <div class="settings">
             <el-button type="info" size="mini" plain @click="queryDesc(row)">查看详情</el-button>
             <el-button type="info" size="mini" plain @click="querySnatchList(row)" :disabled="row.mainStatus<=0">抢单列表</el-button>
-            
           </div>
         </template>
       </el-table-column>
