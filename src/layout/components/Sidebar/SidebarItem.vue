@@ -14,6 +14,7 @@
       </template>
       <sidebar-item
         v-for="child in item.children"
+        v-show="!child.meta.noShow"
         :key="child.path"
         :is-nest="true"
         :item="child"

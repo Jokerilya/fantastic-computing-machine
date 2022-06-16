@@ -49,12 +49,12 @@
       <el-table-column prop="deviceTypeName" label="设备类型" show-overflow-tooltip width="150" align="center"></el-table-column>
       <el-table-column prop="serviceTime" label="服务时间" show-overflow-tooltip width="150" align="center"></el-table-column>
       <el-table-column prop="status" label="状态" show-overflow-tooltip width="150" align="center">
-          <template slot-scope="{row}">
-            <span :class="util.global.maintenanceStatus[row.status].class">
-              {{util.global.maintenanceStatus[row.status].label}}
-            </span>
-          </template>
-        </el-table-column>
+        <template slot-scope="{row}">
+          <span :class="util.global.mainStatus[row.status].class">
+            {{util.global.mainStatus[row.status].label}}
+          </span>
+        </template>
+      </el-table-column>
       
       <el-table-column prop="enterpriseName" label="企业名称" show-overflow-tooltip width="150" align="center"></el-table-column>
       <el-table-column prop="contactsPeople" label="联系人" show-overflow-tooltip width="150" align="center"></el-table-column>

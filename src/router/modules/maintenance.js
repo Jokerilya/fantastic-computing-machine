@@ -36,8 +36,14 @@ const router = {
       path: "/maintenance/maintenance_order_desc",
       name: "maintenance_order_desc",
       component: () => import("@/views/maintenance/maintenance_order_desc"),
-      meta: { title: "维保订单详情" }
-    }
+      meta: { title: "维保订单详情", noShow: 'true' }
+    },
+    {
+      path: "/maintenance/worker",
+      name: "worker",
+      component: () => import("@/views/maintenance/worker"),
+      meta: { title: "师傅列表" }
+    },
     
   ]
 };

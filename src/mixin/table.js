@@ -10,6 +10,7 @@ const tableMixin = {
         //当前页码
         pageNo: 1
       },
+      queryMethod:'post',
       searchForm:{},
       addForm:{},
       editForm:{},
@@ -20,18 +21,29 @@ const tableMixin = {
   methods: {
     query() {
       this.loading = true;
-      this.$axios.post(this.url.query,{
-        pageNo:this.page.pageNo,
-        pageSize:this.page.dataNum,
-        ...this.searchForm
-      })
-      .then(( {data:{records,total,current}} ) => {
-        this.dataList = records//list;
-        this.page.dataSumNum = total;
-        this.page.pageNo = current;
-      }).catch(function (error) {
-        console.error(error);
-      });
+      if(this.queryMethod == 'post'){
+        this.$axios.post(this.url.query,{
+          pageNo:this.page.pageNo,
+          pageSize:this.page.dataNum,
+          ...this.searchForm
+        })
+        .then(( {data:{records,total,current}} ) => {
+          this.dataList = records//list;
+          this.page.dataSumNum = total;
+          this.page.pageNo = current;
+        }).catch(function (error) {
+          console.error(error);
+        });
+      }else{
+        this.$axios.get(`${this.url.query}?pageNo=${this.page.pageNo}&pageSize=${this.page.dataNum}`)
+        .then(( {data:{records,total,current}} ) => {
+          this.dataList = records//list;
+          this.page.dataSumNum = total;
+          this.page.pageNo = current;
+        }).catch(function (error) {
+          console.error(error);
+        });
+      }
       this.loading = false
     },
     querySelectData(){

@@ -31,7 +31,7 @@ Vue.prototype.$webData = {
   apiHost: process.env.VUE_APP_BASE_API
 };
 Vue.mixin(vueMixin);
-Vue.prototype.$store = store;
+// Vue.prototype.$store = store;
 
 import "@/icons"; // icon
 import "@/permission"; // permission control

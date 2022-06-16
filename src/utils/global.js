@@ -319,8 +319,31 @@ export default {
       label:"企业"
     },
     {
-      value:"2",
+      value:"3",
       label:"师傅"
     }
+  ],
+  // 是否锁定
+  isLock : [
+    {
+      value:"0",
+      label:"不锁定"
+    },
+    {
+      value:"1",
+      label:"锁定"
+    }
+  ],
+  // 审核状态
+  checkStatus : [
+    {
+      value:"1",
+      label:"审核中"
+    },
+    {
+      value:"2",
+      label:"审核通过"
+    }
   ]
+
 }
