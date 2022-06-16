@@ -59,7 +59,7 @@
             <el-table-column label="操作" width="300px" fixed="right">
                 <template slot-scope="{row}">
                     <div class="settings">
-                        <el-button type="warning" size="mini" plain @click="open(row)" :disabled="row.status != 3">审核</el-button>
+                        <el-button type="warning" size="mini" plain @click="open(row)" :disabled="row.status == 2">审核</el-button>
                         <el-button type="danger" size="mini" plain @click="isLock(row)" v-show="!row.isLock">
                             锁定
                         </el-button>
