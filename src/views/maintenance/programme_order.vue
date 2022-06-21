@@ -78,7 +78,7 @@
         </template>
       </el-table-column>
     
-      <el-table-column prop="createTime" label="创建时间" show-overflow-tooltip width="150" align="center"></el-table-column>
+      <el-table-column prop="createTime" label="下单时间" show-overflow-tooltip width="150" align="center" fixed="right"></el-table-column>
       <el-table-column label="操作" width="300px" fixed="right">
         <template slot-scope="{row}">
           <div class="settings">
