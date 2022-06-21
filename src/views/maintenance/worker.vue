@@ -141,8 +141,16 @@
                 }
             },
             handleEdit(fn){
-                this.editForm.status = this.editForm.status?3:2
-                this.updateStatus(fn, this.editForm)
+                this.$axios.post(this.url.updateStatus, {
+                    ...this.editForm,
+                    status:this.editForm.status?2:3
+                }).then((data) => {
+                    this.util.message(this, data.status, data.message)
+                    this.query();
+                }).catch(function (error) {
+                    console.info(error);
+                });
+                fn(false)
             }
         }
     }

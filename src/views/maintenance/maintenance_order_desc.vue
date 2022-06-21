@@ -6,10 +6,15 @@
         <div class="big_title">
           <span>订单号：{{ data.orderSn }}</span>
           <span>{{ util.global.getLabel('mainStatus',data.enterpriseMainStatus) }} - {{ util.global.getLabel('enterpriseSubStatus',data.enterpriseSubStatus) }}</span>
+          <span>订单金额：{{ data.totalAmount }}</span>
+          <span>待收款：{{ data.totalAmount }}</span>
+          <span>待付款：{{ data.totalAmount }}</span>
           <div style="float:right">
             <el-button type="primary" size="mini" plain @click="quotationInit()" v-if="['2301','2303'].includes(data.enterpriseSubStatus)">确认报价</el-button>
             <el-button type="primary" size="mini" plain @click="pay()" v-if="['2305','2501'].includes(data.enterpriseSubStatus)">支付定价/尾款</el-button>
             <el-button type="primary" size="mini" plain @click="checkInit()" v-if="['2401','2403'].includes(data.enterpriseSubStatus)">订单验收</el-button>
+            <el-button type="primary" size="mini" plain @click="platformPayInit()" v-if="['2306','2502'].includes(data.enterpriseSubStatus)">支付定价/尾款</el-button>
+            <el-button type="primary" size="mini" plain @click="platformPayInit()" v-if="data.enterpriseSubStatus=='2601'">打款师傅</el-button>
           </div>
         </div>
         <div>
@@ -84,7 +89,6 @@
           </el-descriptions>
         </div>
         <!-- 故障解决方案 -->
-        
         <el-descriptions title="故障解决方案" v-if="data.enterpriseMainStatus > 2" :column="1">
             <el-descriptions-item v-for="(item,index) in data.programmeList" :key="item.desc+index" :label="'解决方案'+(index+1)">
               <el-row :gutter="20" v-for="(item,index) in data.programmeList" :key="item.desc+index" style="font-size:12px !important">
@@ -155,6 +159,16 @@
               </div>
             </el-descriptions-item>
         </el-descriptions>
+        <el-descriptions title="交付方案" v-if="data.enterpriseMainStatus > 2" :column="1">
+            <el-descriptions-item label="完工信息">
+              <div :gutter="20" v-for="(item) in data.completePictureList" :key="item">
+                <img :src="item" style="height:100px">
+              </div>
+              <div :gutter="20" v-for="(item) in data.completeVideoList" :key="item">
+                  <video :src="item" style="height:100px"></video>
+              </div>
+            </el-descriptions-item>
+        </el-descriptions>
         <el-descriptions title="订单费用" v-if="data.enterpriseMainStatus > 2" :column="1">
             <!-- <el-descriptions-item v-for="(item,index) in data.programmeList" :key="item.desc+index" :label="'解决方案'+(index+1)"> -->
               <el-descriptions-item label="维保预付" v-if="data.depositAmount"> {{ data.depositAmount }} </el-descriptions-item>
@@ -199,7 +213,7 @@
           </el-row>
         </div> -->
       </el-tab-pane>
-      <el-tab-pane label="收付款" name="receiving">
+      <!-- <el-tab-pane label="收付款" name="receiving">
         <div class="big_title">
           <span>订单号：{{ data.orderSn }}</span>
           <span>{{ util.global.getLabel('mainStatus',data.enterpriseMainStatus) }}</span>
@@ -211,15 +225,13 @@
             <el-button type="primary" size="mini" plain @click="platformPayInit()" v-if="data.enterpriseSubStatus=='2601'">打款师傅</el-button>
           </div>
         </div>
-        
-        
-      </el-tab-pane>
+      </el-tab-pane> -->
       <el-tab-pane label="操作日志" name="log">
         <div class="big_title">
           <span>订单号：{{ data.orderSn }}</span>
           <span>{{ util.global.getLabel('mainStatus',data.enterpriseMainStatus) }}</span>
         </div>
-        <el-table :data="data.OrderTrackOut" border style="width: 100%">
+        <el-table :data="data.orderTrackOutList" border style="width: 100%">
           <el-table-column prop="title" label="标题"></el-table-column>
           <el-table-column prop="simpleDesc" label="描述"></el-table-column>
           <el-table-column fixed prop="operator" label="业务触发方">
@@ -231,12 +243,6 @@
             <template slot-scope="{row}">
               {{ util.global.getLabel('operator',row.type) }}
             </template>
-          </el-table-column>
-          <el-table-column label="操作" width="300px" fixed="right">
-              <template slot-scope="{row}">
-                  <el-button type="text" size="small">查看</el-button>
-                  <el-button type="text" size="small">编辑</el-button>
-              </template>
           </el-table-column>
         </el-table>
       </el-tab-pane>

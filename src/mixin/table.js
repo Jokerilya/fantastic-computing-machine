@@ -72,7 +72,7 @@ const tableMixin = {
       this.$refs.addForm.validate((valid) => {
         if (valid) {
           this.$axios.post(this.url.add, {...this.addForm,...param}).then((data) => {
-            this.util.message(this, data.status, data.errorMsg);
+            this.util.message(this, data.status, data.message);
             this.query()
             this.handleClose()
             this.loading = false
@@ -133,7 +133,7 @@ const tableMixin = {
         id: row.id,
         status: Number(!row.status)
       }).then((data) => {
-        this.util.message(this, data.status, data.errorMsg)
+        this.util.message(this, data.status, data.message)
         this.query();
       }).catch(function (error) {
         console.info(error);
@@ -144,7 +144,7 @@ const tableMixin = {
         id: row.id,
         isTop: Number(!row.isTop)
       }).then((data) => {
-        this.util.message(this, data.status, data.errorMsg)
+        this.util.message(this, data.status, data.message)
         this.query();
       }).catch(function (error) {
         console.info(error);

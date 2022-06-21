@@ -73,8 +73,6 @@
       layout="total, sizes, prev, pager, next, jumper" :total="page.dataSumNum">
     </el-pagination>
 
-
-
     <model ref="snatch" title="抢单列表" :isSubmit="false" :column="2" @close="closeSnatch">
       <el-table highlight-current-row v-loading.fullscreen.lock="loading" element-loading-text="拼命加载中" border
         element-loading-spinner="el-icon-loading" :data="snatchList" style="width: 100%;">
@@ -92,14 +90,16 @@
             <el-image style="width: 80px; height: 80px" :src="row.realPortrait.split(',')[0]" :preview-src-list="row.realPortrait.split(',')"></el-image>
           </template>
         </el-table-column>
-        <el-table-column prop="serviceAreas" label="服务地区" show-overflow-tooltip width="160" align="center">
+        <el-table-column prop="serviceAreas" label="服务地区" width="240" align="center">
           <template slot-scope="{row}">
             <el-tag effect="plain" v-for="item in row.serviceAreas.split(',')" :key="item">{{item}}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="serviceTypes" label="服务类型" show-overflow-tooltip width="160" align="center">
+        <el-table-column prop="serviceTypes" label="服务类型" width="240" align="center">
           <template slot-scope="{row}">
-            <el-tag effect="plain" v-for="item in row.serviceTypes.split(',')" :key="item">{{item}}</el-tag>
+            <el-tag effect="plain" v-for="item in row.serviceTypes.split(',')" :key="item">
+              {{getType(item)}}
+            </el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="skillCertificateImages" label="技能证书图书" show-overflow-tooltip width="160" align="center">
@@ -216,6 +216,13 @@
           console.error(err)
         })
       },
+      getType(val) {
+        return this.typeData.filter((item)=>{
+          if(item.id == val){
+            return item
+          }
+        })[0].name
+      }
     }
   }
 
