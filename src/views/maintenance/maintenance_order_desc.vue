@@ -244,6 +244,7 @@
               {{ util.global.getLabel('operator',row.type) }}
             </template>
           </el-table-column>
+          <el-table-column prop="createTime" label="触发时间"></el-table-column>
         </el-table>
       </el-tab-pane>
     </el-tabs>
