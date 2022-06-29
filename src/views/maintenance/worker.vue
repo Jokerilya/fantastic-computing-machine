@@ -66,6 +66,7 @@
                         <el-button type="success" size="mini" plain @click="isLock(row)" v-show="row.isLock">
                             解锁
                         </el-button>
+                        <el-button type="warning" size="mini" plain @click="editInit(row)">编辑</el-button>
                     </div>
                 </template>
             </el-table-column>
@@ -74,11 +75,79 @@
             :current-page="page.pageNo" :page-sizes="[10, 20, 50, 100]" :page-size="page.dataNum"
             layout="total, sizes, prev, pager, next, jumper" :total="page.dataSumNum">
         </el-pagination>
-        <model ref="editModel" title="师傅审核" @ok="handleEdit" @close="resetEditForm">
+        <model ref="editStatusModel" title="师傅审核" @ok="handleEditStatus" @close="resetEditForm">
             <el-form :model="editForm" :rules="rules" ref="editForm" status-icon label-width="120px" class="demo-ruleForm">
                 <el-form-item label="审核状态" prop="name" style="width:calc(100% - 120px)">
                     <el-switch v-model="editForm.status" ></el-switch>
                 </el-form-item>
+            </el-form>
+        </model>
+        <model :column="2" ref="editModel" title="编辑师傅信息" @ok="handleEdit" @close="resetEditForm">
+            <el-form :model="editForm" :rules="rules" ref="editForm" status-icon label-width="120px" class="demo-ruleForm">
+                <el-row>
+                    <el-col :span="12">
+                        <el-form-item label="真实姓名" prop="realName" style="width:calc(100% - 120px)">
+                            <el-input v-model="editForm.realName" placeholder="请输入内容"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="身份证号" prop="identityNumber" style="width:calc(100% - 120px)">
+                            <el-input v-model="editForm.identityNumber" placeholder="请输入内容"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="服务地区" prop="serviceAreas" style="width:calc(100% - 120px)">
+                            <el-cascader v-model="editForm.serviceAreas" :props="props" :show-all-levels="false" placeholder="请选择" :multiple-limit="5" style="width:100%"></el-cascader>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="服务类型" prop="serviceTypes" style="width:calc(100% - 120px)">
+                            <el-select multiple v-model="editForm.serviceTypes" placeholder="请选择" style="width:100%">
+                                <el-option v-for="item in typeData" :key="item.id" :label="item.name" :value="item.id"></el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="详细地址" prop="address" style="width:calc(100% - 120px)">
+                            <el-input v-model="editForm.address" placeholder="请输入内容"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="行业经验" prop="industryExperience" style="width:calc(100% - 120px)">
+                            <el-input v-model="editForm.industryExperience" placeholder="请输入内容"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="排序" prop="sort" style="width:calc(100% - 120px)">
+                            <el-input v-model.number="editForm.sort" placeholder="请输入内容"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="真实头像" prop="realPortrait" style="width:calc(100% - 120px)">
+                            <upload ref="realPortrait" type="image/*" limit="1" :size="1024**2*50" />
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="行业经验照片" prop="industryExperienceImages" style="width:calc(100% - 120px)">
+                            <upload ref="industryExperienceImages" type="image/*" limit="9" :size="1024**2*50" />
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="技能证书图书" prop="skillCertificateImages" style="width:calc(100% - 120px)">
+                            <upload ref="skillCertificateImages" type="image/*" limit="9" :size="1024**2*50" />
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="身份证正面照" prop="identityFrontImage" style="width:calc(100% - 120px)">
+                            <upload ref="identityFrontImage" type="image/*" limit="1" :size="1024**2*50" />
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="身份证反面照" prop="identityBackImage" style="width:calc(100% - 120px)">
+                            <upload ref="identityBackImage" type="image/*" limit="1" :size="1024**2*50" />
+                        </el-form-item>
+                    </el-col>
+                </el-row>
             </el-form>
         </model>
     </div>
@@ -101,8 +170,12 @@
                 courseDistriList: [],
                 url: {
                     query: '/admin/maintenance/queryMasterList',
-                    edit: '/admin/maintenance/handleMasterLock',
-                    updateStatus: '/admin/maintenance/handleMasterExamine'
+                    queryType:'/admin/maintenance/queryDeviceTypeList',
+                    queryAddress: '/admin/base/address',
+                    edit: '/admin/maintenance/editMasterInfo',
+                    lock: '/admin/maintenance/handleMasterLock',
+                    updateStatus: '/admin/maintenance/handleMasterExamine',
+
                 },
                 rules: {
                     worker: [{
@@ -119,11 +192,50 @@
                 finishForm: {
                     payAmount: 0
                 },
+                props: {
+                    value:'id',
+                    label:'name',
+                    multiple: true,
+                    lazy: true,
+                    emitPath:false,
+                    lazyLoad: async (node, resolve) => {
+                        let pid = 0
+                        // let disabled = true
+                        if (node.level != 0 ){
+                            pid = node.data.id
+                            // disabled = false
+                        }
+                        if (node.level>1){
+                            console.info(node.level)
+                            resolve([])
+                            return
+                        }
+                        let res = await this.$axios.get(this.url.queryAddress+'?pid='+pid)
+                        if(res.code == '000')
+                            resolve(res.data.map((item)=>{
+                                return {
+                                    ...item,
+                                    // disabled:disabled
+                                }
+                            }))
+                        else
+                            resolve([])
+                    }
+                }
             }
         },
         methods: {
+            querySelectData(){
+                this.loading = true;
+                this.$axios.post(this.url.queryType).then(( {data} ) => {
+                    this.typeData = data
+                }).catch(function (error) {
+                    console.info(error);
+                });
+                this.loading = false
+            },
             isLock(row){
-                this.$axios.post(this.url.edit,{
+                this.$axios.post(this.url.lock,{
                     id:row.id,
                     lock:Number(!row.isLock)
                 }).then(( {code,message} ) => {
@@ -134,23 +246,79 @@
                 })
             },
             open(row){
-                this.$refs.editModel.open()
+                this.$refs.editStatusModel.open()
                 this.editForm = {
                     id:row.id,
                     status:false
                 }
             },
-            handleEdit(fn){
+            handleEditStatus(fn){
                 this.$axios.post(this.url.updateStatus, {
                     ...this.editForm,
                     status:this.editForm.status?2:3
                 }).then((data) => {
                     this.util.message(this, data.status, data.message)
                     this.query();
+                    this.resetEditForm(false)
                 }).catch(function (error) {
                     console.info(error);
                 });
+            },
+            editInit(row) {
+                this.editForm = row
+                this.editForm.serviceAreas = this.editForm.serviceAreas?this.editForm.serviceAreas.split(','):[]
+                this.editForm.serviceTypes = this.editForm.serviceTypes?this.editForm.serviceTypes.split(',').map((item)=>{
+                    return Number(item)
+                }):[]
+                delete this.editForm.createTime
+                this.$nextTick(()=>{
+                    this.$refs.realPortrait.reset([])
+                    this.$refs.industryExperienceImages.reset([])
+                    this.$refs.skillCertificateImages.reset([])
+                    this.$refs.identityFrontImage.reset([])
+                    this.$refs.identityBackImage.reset([])
+                    this.$refs.realPortrait.reset(row.realPortrait.split(',').map((item)=>{
+                        return {
+                            url:item
+                        }
+                    }))
+                    this.$refs.industryExperienceImages.reset(row.industryExperienceImages.split(',').map((item)=>{
+                        return {
+                            url:item
+                        }
+                    }))
+                    this.$refs.skillCertificateImages.reset(row.skillCertificateImages.split(',').map((item)=>{
+                        return {
+                            url:item
+                        }
+                    }))
+                    this.$refs.identityFrontImage.reset(row.identityFrontImage.split(',').map((item)=>{
+                        return {
+                            url:item
+                        }
+                    }))
+                    this.$refs.identityBackImage.reset(row.identityBackImage.split(',').map((item)=>{
+                        return {
+                            url:item
+                        }
+                    }))
+                })
+                this.$refs.editModel.open()
+            },
+            async handleEdit(fn){
+                this.edit(fn,{
+                    serviceAreas: this.editForm.serviceAreas.join(','),
+                    serviceTypes: this.editForm.serviceTypes.join(','),
+                    realPortrait:(await this.$refs.realPortrait.uploadFile()).join(','),
+                    industryExperienceImages:(await this.$refs.industryExperienceImages.uploadFile()).join(','),
+                    skillCertificateImages:(await this.$refs.skillCertificateImages.uploadFile()).join(','),
+                    identityFrontImage:(await this.$refs.identityFrontImage.uploadFile()).join(','),
+                    identityBackImage:(await this.$refs.identityBackImage.uploadFile()).join(',')
+                })
+            },
+            resetEditForm(fn){
                 fn(false)
+                this.query()
             }
         }
     }

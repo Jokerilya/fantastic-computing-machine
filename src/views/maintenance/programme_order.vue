@@ -50,8 +50,8 @@
       <el-table-column prop="serviceTime" label="服务时间" show-overflow-tooltip width="150" align="center"></el-table-column>
       <el-table-column prop="status" label="状态" show-overflow-tooltip width="150" align="center">
         <template slot-scope="{row}">
-          <span :class="util.global.mainStatus[row.status].class">
-            {{util.global.mainStatus[row.status].label}}
+          <span :class="util.global.mainStatus2[row.status].class">
+            {{util.global.mainStatus2[row.status].label}}
           </span>
         </template>
       </el-table-column>
@@ -111,7 +111,7 @@
             <el-input-number  v-model="finishForm.payAmount" :precision="2"></el-input-number>
         </el-form-item>
         <el-form-item label="图片" prop="completeImages" style="width:calc(100% - 120px)">
-            <upload ref="finishImg" type="image/*" limit="9" :size="1024**2*2" />
+            <upload ref="completeImages" type="image/*" limit="9" :size="1024**2*2" />
         </el-form-item>
       </el-form>
     </model>
@@ -194,13 +194,13 @@
       finish(fn) {
         this.$refs.finishForm.validate(async (valid) => {
           if (valid) {
-            if (this.$refs.finishImg.isNull()) {
+            if (this.$refs.completeImages.isNull()) {
               this.$message.error('请上传图片')
               return false
             }
-            let finishImg = (await this.$refs.finishImg.uploadFile()).join(',')
-            this.$refs.finishImg.reset([])
-            this.$axios.post(this.url.finish, { ...this.finishForm, completeImages :finishImg }).then((data) => {
+            let completeImages = (await this.$refs.completeImages.uploadFile()).join(',')
+            this.$refs.completeImages.reset([])
+            this.$axios.post(this.url.finish, { ...this.finishForm, completeImages :completeImages }).then((data) => {
               this.util.message(this, data.code, data.message)
               this.resetFinishForm();
               this.query();

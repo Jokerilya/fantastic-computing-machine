@@ -112,7 +112,7 @@ export default {
       label:'机械故障'
     }
   ],
-  // 主状态
+  // 维保主状态
   mainStatus : [
     {
       value:-2,
@@ -148,6 +148,29 @@ export default {
     },
     {
       value:6,
+      label:'已完成'
+    }
+  ],
+  // 编程主状态
+  mainStatus2 : [
+    {
+      value:0,
+      label:'已取消'
+    },
+    {
+      value:1,
+      label:'已发布,待匹配'
+    },
+    {
+      value:2,
+      label:'已匹配'
+    },
+    {
+      value:3,
+      label:'进行中'
+    },
+    {
+      value:4,
       label:'已完成'
     }
   ],
@@ -336,6 +359,10 @@ export default {
   ],
   // 审核状态
   checkStatus : [
+    {
+      value:"0",
+      label:"未审核"
+    },
     {
       value:"1",
       label:"审核中"

@@ -1,6 +1,7 @@
 <template>
 	<div class="app-container">
     <div class="select_view">
+      <el-button icon="el-icon-plus" type="primary" @click="addInit()">新增</el-button>
       <el-button icon="el-icon-zoom-in" type="primary" @click="query()">查询</el-button>
       <el-button icon="el-icon-refresh" type="info" @click="reset()">重置</el-button>
     </div>
@@ -53,8 +54,21 @@
       layout="total, sizes, prev, pager, next, jumper" :total="page.dataSumNum">
     </el-pagination> -->
 
+    <model ref="addModel" title="新增设备类型" @ok="handleAdd" @close="resetAddForm">
+      <el-form :model="addForm" :rules="rules" ref="addForm" status-icon label-width="120px" class="demo-ruleForm">
+        <el-form-item label="设备类型名称" prop="name" style="width:calc(100% - 120px)">
+            <el-input type="text" v-model="addForm.name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="排序" prop="sort" style="width:calc(100% - 120px)">
+            <el-input type="number" v-model="addForm.sort" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="设备类型图片" prop="icon" style="width:calc(100% - 120px)">
+            <upload ref="addImg" type="image/*" limit="1" :size="1024**2*2" />
+        </el-form-item>
+      </el-form>
+    </model>
 
-    <model ref="editModel" title="编辑轮播图" @ok="handleEdit" @close="resetEditForm">
+    <model ref="editModel" title="编辑设备类型" @ok="handleEdit" @close="resetEditForm">
       <el-form :model="editForm" :rules="rules" ref="editForm" status-icon label-width="120px" class="demo-ruleForm">
         <el-form-item label="设备类型名称" prop="name" style="width:calc(100% - 120px)">
             <el-input type="text" v-model="editForm.name" autocomplete="off"></el-input>
@@ -91,6 +105,7 @@
             trigger: 'blur'
           }],
         },
+        addForm:{},
         url: {
           query: '/admin/maintenance/queryDeviceTypeList',
           add: '/admin//maintenance/editDeviceType',
@@ -140,6 +155,29 @@
       },
       handleClose(fn) {
         this.addForm = {}
+        if (fn)
+          fn(false)
+      },
+      addInit() {
+        this.$refs.addModel.open()
+      },
+      handleAdd(fn) {
+        this.$refs.addForm.validate(async (valid) => {
+          if (valid) {
+            if (this.$refs.addImg.isNull()) {
+              this.$message.error('请上传图标文件')
+              return false
+            }
+            let img = (await this.$refs.addImg.uploadFile())[0]
+            this.submitForm(fn, {
+              imgUrl: img
+            })
+          } else {
+            return false
+          }
+        });
+      },
+      resetAddForm(fn) {
         if (fn)
           fn(false)
       },
