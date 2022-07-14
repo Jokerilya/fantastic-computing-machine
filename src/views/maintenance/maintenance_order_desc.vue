@@ -24,7 +24,7 @@
               <el-descriptions-item label="设备类型"> {{ data.deviceTypeName }} </el-descriptions-item>
               <el-descriptions-item label="设备品牌"> {{ data.deviceBrand }} </el-descriptions-item>
               <el-descriptions-item label="设备系统"> {{ data.deviceSystemName }} </el-descriptions-item>
-              <el-descriptions-item label="设备数量"> {{ data.num }}km </el-descriptions-item>
+              <el-descriptions-item label="设备数量"> {{ data.num }}台 </el-descriptions-item>
               <el-descriptions-item label="服务时间"> {{ data.serviceTime }} </el-descriptions-item>
               <el-descriptions-item label="故障描述"> {{ data.simpleDesc }} </el-descriptions-item>
               <el-descriptions-item label="设备视图">
