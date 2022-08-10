@@ -10,11 +10,12 @@
           <span>待收款：{{ data.totalAmount }}</span>
           <span>待付款：{{ data.totalAmount }}</span>
           <div style="float:right">
-            <el-button type="primary" size="mini" plain @click="quotationInit()" v-if="['2301','2303'].includes(data.enterpriseSubStatus)">确认报价</el-button>
-            <el-button type="primary" size="mini" plain @click="pay()" v-if="['2305','2501'].includes(data.enterpriseSubStatus)">支付定价/尾款</el-button>
-            <el-button type="primary" size="mini" plain @click="checkInit()" v-if="['2401','2403'].includes(data.enterpriseSubStatus)">订单验收</el-button>
-            <el-button type="primary" size="mini" plain @click="platformPayInit()" v-if="['2306','2502'].includes(data.enterpriseSubStatus)">支付定价/尾款</el-button>
-            <el-button type="primary" size="mini" plain @click="platformPayInit()" v-if="data.enterpriseSubStatus=='2601'">打款师傅</el-button>
+            <!-- <el-button type="primary" size="mini" plain @click="quotationInit()" v-if="['2301','2303'].includes(data.enterpriseSubStatus)">确认报价</el-button> -->
+            <!-- <el-button type="primary" size="mini" plain @click="pay()" v-if="['2305','2501'].includes(data.enterpriseSubStatus)">支付定价/尾款</el-button> -->
+            <!-- <el-button type="primary" size="mini" plain @click="checkInit()" v-if="['2401','2403'].includes(data.enterpriseSubStatus)">订单验收</el-button> -->
+            <el-button type="primary" size="mini" plain @click="platformPayInit()" v-if="['2306'].includes(data.enterpriseSubStatus)">确认企业支付定价并打款给师傅</el-button>
+            <el-button type="primary" size="mini" plain @click="platformPayInit()" v-if="['2502'].includes(data.enterpriseSubStatus)">确认企业支付尾款</el-button>
+            <el-button type="primary" size="mini" plain @click="platformPayInit()" v-if="data.enterpriseSubStatus=='2601' && data.masterSubStatus=='3501'">打款至师傅(质保期到后)</el-button>
           </div>
         </div>
         <div>
@@ -219,9 +220,9 @@
           <span>{{ util.global.getLabel('mainStatus',data.enterpriseMainStatus) }}</span>
           <span>订单金额：{{ data.totalAmount }}</span>
           <span>待收款：{{ data.totalAmount }}</span>
-          <span>待付款：{{ data.totalAmount }}</span>
+          <span>待付款：{{ data.totalAmount }}</span>{{data.enterpriseSubStatus}}
           <div style="float:right">
-            <el-button type="primary" size="mini" plain @click="platformPayInit()" v-if="['2306','2502'].includes(data.enterpriseSubStatus)">支付定价/尾款</el-button>
+            <el-button type="primary" size="mini" plain @click="platformPayInit()" v-if="['2306','2502'].includes(data.enterpriseSubStatus)">确认企业支付定价并打款给师傅/尾款</el-button>
             <el-button type="primary" size="mini" plain @click="platformPayInit()" v-if="data.enterpriseSubStatus=='2601'">打款师傅</el-button>
           </div>
         </div>
