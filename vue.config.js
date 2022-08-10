@@ -45,10 +45,10 @@ module.exports = {
       errors: true
     },
     proxy: {
-      // 本地：http://192.168.0.108:8071
+      // 本地：http://192.168.0.108:8073
       // 线上：https://japi.jijiangkeji.com
       '/admin': {
-        target: 'http://192.168.0.108:8071',
+        target: 'http://192.168.0.108:8073',
         ws: true,
         changeOrigin: true
       }
