@@ -9,6 +9,22 @@ export function queryUserInfoFn(data) {
 		data: data,
 	});
 }
+//师傅列表
+export function getMasterList(data) {
+	return request({
+		url: '/admin/maintenance/queryMasterList',
+		method: 'get',
+		params: data,
+	});
+}
+//企业信息列表
+export function getEnterpriseList(data) {
+	return request({
+		url: '/admin/maintenance/queryEnterpriseList',
+		method: 'get',
+		params: data,
+	});
+}
 // 启用/禁用
 export function editUserInfoStatusFn(data) {
 	return request({

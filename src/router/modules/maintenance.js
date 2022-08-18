@@ -44,6 +44,12 @@ const router = {
       component: () => import("@/views/maintenance/worker"),
       meta: { title: "师傅列表" }
     },
+    {
+      path: "/maintenance/enterpriseList",
+      name: "enterpriseList",
+      component: () => import("@/views/maintenance/enterpriseList"),
+      meta: { title: "企业列表" }
+    },
     
   ]
 };
