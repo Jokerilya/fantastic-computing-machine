@@ -31,7 +31,7 @@ module.exports = {
    * In most cases please use '/' !!!
    * Detail: https://cli.vuejs.org/config/#publicpath
    */
-	publicPath: process.env.NODE_ENV === 'development' ? '/' : '/jadminWeb',
+	publicPath: process.env.NODE_ENV === 'development' ? '/jadminWeb' : '/jadminWeb',
   outputDir: 'dist',
   assetsDir: 'static',
   // lintOnSave: process.env.NODE_ENV === 'development',
@@ -40,15 +40,17 @@ module.exports = {
   devServer: {
     port: port,
     open: false,
+    disableHostCheck: true,
     overlay: {
       warnings: false,
       errors: true
     },
+    
     proxy: {
       // 本地：http://192.168.0.108:8073
       // 线上：https://japi.jijiangkeji.com
       '/admin': {
-        target: 'https://japi.jijiangkeji.com',
+        target: 'http://natapp.snkcnc.cn',
         ws: true,
         changeOrigin: true
       }
