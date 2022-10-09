@@ -39,7 +39,7 @@
       <div class="custorName">
         <div class="name">贴牌编码</div>
         <div class="nameInput">
-          <el-input v-model="param.no" placeholder="输入贴牌编码"></el-input>
+          <el-input v-model="deviceList.no" placeholder="输入贴牌编码"></el-input>
         </div>
       </div>
       <div class="custorCode">
@@ -52,7 +52,7 @@
         <div class="code">出厂时间</div>
         <div class="codeInput">
           <el-date-picker
-            v-model="param.factoryTime"
+            v-model="deviceList.factoryTime"
             type="date"
             value-format="yyyy-MM-dd HH:mm:ss"
             placeholder="选择日期"
@@ -64,19 +64,19 @@
       <div class="custorName">
         <div class="name">设备品牌</div>
         <div class="nameInput">
-          <el-input v-model="param.deviceBrand" placeholder="输入贴牌编码"></el-input>
+          <el-input v-model="deviceList.deviceBrand" placeholder="输入贴牌编码"></el-input>
         </div>
       </div>
       <div class="custorCode">
         <div class="code">设备型号</div>
         <div class="codeInput">
-          <el-input v-model="param.deviceModel" placeholder="输入设备型号"></el-input>
+          <el-input v-model="deviceList.deviceModel" placeholder="输入设备型号"></el-input>
         </div>
       </div>
       <div class="custorCode">
         <div class="code">价格</div>
         <div class="codeInput">
-          <el-input v-model="param.price" placeholder="输入价格"></el-input>
+          <el-input v-model="deviceList.price" placeholder="输入价格"></el-input>
         </div>
       </div>
     </div>
@@ -164,7 +164,7 @@
       <el-button icon="el-icon-refresh" plain type="primary" @click="delited">删除全部</el-button>
     </div>
     <div class="listPart" v-if="activeName=='second'">
-      <el-table highlight-current-row :data="param.partsList" style="width: 100%;">
+      <el-table highlight-current-row :data="deviceList.partsList" style="width: 100%;">
         <el-table-column
           prop="category"
           label="项目大类"
@@ -198,8 +198,8 @@
         <el-table-column label="操作" width="300px" fixed="right">
           <template slot-scope="{row}">
             <div class="settings">
-              <el-button type="info" size="mini" plain @click="queryDesc(row)">修改</el-button>
-              <el-button type="info" size="mini" plain @click="querySnatchList(row)">删除</el-button>
+              <el-button type="info" size="mini" plain @click="changePart(row)">修改</el-button>
+              <!-- <el-button type="info" size="mini" plain @click="querySnatchList(row)">删除</el-button> -->
             </div>
           </template>
         </el-table-column>
@@ -208,8 +208,6 @@
 
     <div class="titlePart" v-if="activeName=='third'">
       <div class="titleOne">投保设备列表</div>
-      <!-- <el-button icon="el-icon-refresh" plain type="primary" @click="addPart">新增</el-button>
-      <el-button icon="el-icon-refresh" plain type="primary" @click="delited">删除全部</el-button>-->
     </div>
     <div class="listPart" v-if="activeName=='third'">
       <el-table highlight-current-row :data="param.deviceList" style="width: 100%;">
@@ -277,8 +275,6 @@
     </div>
     <div class="titlePart" v-if="activeName=='fourth'">
       <div class="titleOne">支付信息列表</div>
-      <!-- <el-button icon="el-icon-refresh" plain type="primary" @click="addPart">新增</el-button>
-      <el-button icon="el-icon-refresh" plain type="primary" @click="delited">删除全部</el-button>-->
     </div>
     <div class="listPart" v-if="activeName=='fourth'">
       <el-table highlight-current-row :data="param.payInfoList" style="width: 100%;">
@@ -329,27 +325,43 @@
         <div class="addPart">
           <div class="addcontent">
             <div class="name">项目大类:</div>
-            <el-input v-model="partsList.category" placeholder="请填写项目大类"></el-input>
+            <el-input
+              v-model="partsList.category"
+              :value="partsList.category"
+              placeholder="请填写项目大类"
+            ></el-input>
           </div>
           <div class="addcontent">
             <div class="name">项目名称:</div>
-            <el-input v-model="partsList.name" placeholder="请填写项目名称"></el-input>
+            <el-input v-model="partsList.name" :value="partsList.name" placeholder="请填写项目名称"></el-input>
           </div>
           <div class="addcontent">
             <div class="name">品牌:</div>
-            <el-input v-model="partsList.deviceBrand" placeholder="请输入品牌"></el-input>
+            <el-input
+              v-model="partsList.deviceBrand"
+              :value="partsList.deviceBrand"
+              placeholder="请输入品牌"
+            ></el-input>
           </div>
           <div class="addcontent">
             <div class="name">型号:</div>
-            <el-input v-model="partsList.deviceModel" placeholder="请填写型号"></el-input>
+            <el-input
+              v-model="partsList.deviceModel"
+              :value="partsList.deviceModel"
+              placeholder="请填写型号"
+            ></el-input>
           </div>
           <div class="addcontent">
             <div class="name">单位:</div>
-            <el-input v-model="partsList.unit" placeholder="请填写配件单位"></el-input>
+            <el-input v-model="partsList.unit" :value="partsList.unit" placeholder="请填写配件单位"></el-input>
           </div>
           <div class="addcontent">
             <div class="name">规格:</div>
-            <el-input v-model="partsList.specification" placeholder="请填写配件规格"></el-input>
+            <el-input
+              v-model="partsList.specification"
+              :value="partsList.specification"
+              placeholder="请填写配件规格"
+            ></el-input>
           </div>
         </div>
       </el-from>
@@ -427,19 +439,19 @@
           </div>
           <div class="addcontent">
             <div class="name">支付金额</div>
-            <el-input :value="partDetail.payAmount" ></el-input>
+            <el-input :value="partDetail.payAmount"></el-input>
           </div>
           <div class="addcontent">
             <div class="name">付款时间</div>
-            <el-input :value="partDetail.payTime" ></el-input>
+            <el-input :value="partDetail.payTime"></el-input>
           </div>
           <div class="addcontent">
             <div class="name">备注</div>
-            <el-input :value="partDetail.remarks" ></el-input>
+            <el-input :value="partDetail.remarks"></el-input>
           </div>
           <div class="addcontent">
             <div class="name">付款凭证:</div>
-            <img :src="partDetail.enclosure" alt="">
+            <img :src="partDetail.enclosure" alt />
           </div>
         </div>
       </el-from>
@@ -516,18 +528,9 @@ export default {
         }
       ],
       param: {
-        no: "",
         contactsPeople: "",
         contactsPhone: "",
         deviceList: [],
-        deviceSystemId: "",
-        deviceTypeId: "",
-        endTime: "",
-        factoryTime: "",
-        nameplateImg: "",
-        partsList: [],
-        price: "",
-        startTime: "",
         payInfoList: []
       },
       partsList: {
@@ -539,6 +542,7 @@ export default {
         unit: ""
       },
       deviceList: {
+        factoryTime: "",
         no: "",
         deviceTypeId: "",
         nameplateImg: "",
@@ -548,7 +552,8 @@ export default {
         deviceSystemId: "",
         price: "",
         startTime: "",
-        endTime: ""
+        endTime: "",
+        partsList: []
       },
       payInfoList: {
         enclosure: "",
@@ -557,7 +562,7 @@ export default {
         paymentEnterpriseName: "",
         remarks: ""
       },
-      partDetail:[]
+      partDetail: []
     };
   },
   created() {
@@ -565,14 +570,23 @@ export default {
     this._queryDeviceSystemList();
   },
   methods: {
-    _addFalse(){
-      this.payDetail = false
+    changePart(row) {
+      this.dialogpop = true;
+      this.partsList = row;
+    },
+    queryDesc(row) {
+      console.log(row);
+      this.deviceList = row;
+      this.activeName = "second";
+    },
+    _addFalse() {
+      this.payDetail = false;
     },
     addPayTrue() {
       this.param.payInfoList.push(this.payInfoList);
-        alert("添加成功");
-        this.addPay = false;
-        console.log(this.param.payInfoList);
+      alert("添加成功");
+      this.addPay = false;
+      console.log(this.param.payInfoList);
     },
     addPayFalse() {
       this.addPay = false;
@@ -582,31 +596,25 @@ export default {
     },
     _payDetail(row) {
       this.payDetail = true;
-      console.log('详情',row)
-      this.partDetail = row
+      console.log("详情", row);
+      this.partDetail = row;
     },
     _editButlerOrder() {
-      this.deviceList.no = this.param.no;
-      this.deviceList.nameplateImg = this.param.nameplateImg;
-      this.deviceList.devicePlace = this.param.devicePlace;
-      this.deviceList.deviceBrand = this.param.deviceBrand;
-      this.deviceList.deviceModel = this.param.deviceModel;
-      this.deviceList.deviceTypeId = this.param.deviceTypeId;
-      this.deviceSystemId = this.param.deviceSystemId;
-      this.deviceList.price = this.param.price;
-      this.deviceList.startTime = this.param.startTime;
-      this.deviceList.endTime = this.param.endTime;
       console.log(this.deviceList);
       this.param.deviceList.push(this.deviceList);
       console.log(this.param.deviceList);
-      this.activeName = 'third'
+      this.activeName = "third";
+      this.deviceList = "";
     },
     _editButlerOrderAll() {
       let param = this.param;
       editButlerOrder(param).then(res => {
         if (res) {
           console.log("提交", res);
-          alert('添加成功')
+          alert("添加成功");
+          this.$router.push({
+            name: "customer",
+          });
         }
       });
     },
@@ -626,8 +634,8 @@ export default {
             type: "success"
           });
           loading.close();
-          this.param.nameplateImg = res.data;
-          console.log(this.param.nameplateImg, "图片上传");
+          this.deviceList.nameplateImg = res.data;
+          console.log(this.deviceList.nameplateImg, "图片上传");
         })
         .catch(() => {
           this.$message({
@@ -676,23 +684,28 @@ export default {
       });
     },
     placeChange(value) {
-      this.param.devicePlace = value;
-      console.log(this.param.devicePlace, value, "产地");
+      this.deviceList.devicePlace = value;
+      console.log(this.deviceList.devicePlace, value, "产地");
     },
     systemChange(value) {
       console.log(value);
-      this.param.deviceSystemId = value[1];
-      console.log("系统id", this.param.deviceSystemId);
+      this.deviceList.deviceSystemId = value[1];
+      console.log("系统id", this.deviceList.deviceSystemId);
     },
     timeChange(e) {
-      this.param.startTime = e[0];
-      this.param.endTime = e[1];
-      console.log("时间", this.param.startTime, this.param.endTime, e);
+      this.deviceList.startTime = e[0];
+      this.deviceList.endTime = e[1];
+      console.log(
+        "时间",
+        this.deviceList.startTime,
+        this.deviceList.endTime,
+        e
+      );
     },
     typeChange(value) {
       console.log(value);
-      this.param.deviceTypeId = value;
-      console.log("设备类型id", this.param.deviceTypeId);
+      this.deviceList.deviceTypeId = value;
+      console.log("设备类型id", this.deviceList.deviceTypeId);
     },
     handleRemove(file, fileList) {
       console.log(file, fileList);
@@ -721,8 +734,9 @@ export default {
       ) {
         alert("表单未填写完整");
       } else {
-        this.param.partsList.push(this.partsList);
-        this.part = {
+        this.deviceList.partsList.push(this.partsList);
+        console.log(this.deviceList.partsList);
+        this.partsList = {
           category: "",
           deviceBrand: "",
           deviceModel: "",

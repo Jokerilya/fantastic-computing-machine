@@ -6,15 +6,15 @@
       <div class="detail">
         <div class="name">
           客户名称
-          <div class="cont">{{orderDetail.enterpriseName}}</div>
+          <div class="cont">{{orderMsg.enterpriseName}}</div>
         </div>
         <div class="name">
           客户负责人
-          <div class="cont">{{orderDetail.contactsPeople}}</div>
+          <div class="cont">{{orderMsg.contactsPeople}}</div>
         </div>
         <div class="name">
           客户电话
-          <div class="cont">{{orderDetail.contactsPhone}}</div>
+          <div class="cont">{{orderMsg.contactsPhone}}</div>
         </div>
       </div>
     </div>
@@ -27,53 +27,60 @@
       :data="orderDetail"
       style="width: 100%;"
     >
-      <el-table-column prop="orderSn" label="设备编号" show-overflow-tooltip width="200" align="center"></el-table-column>
-      <el-table-column prop="status" label="设备铭牌" show-overflow-tooltip width="200" align="center"></el-table-column>
-      <el-table-column prop="status" label="设备类型" show-overflow-tooltip width="200" align="center"></el-table-column>
+      <el-table-column prop="no" label="设备编号" show-overflow-tooltip width="200" align="center"></el-table-column>
+      <el-table-column  label="设备铭牌" show-overflow-tooltip width="200" align="center">
+        <template slot-scope="{row}">
+            <y-image
+              :src="row.nameplateImg?row.nameplateImg.split(',')[0]:''"
+              :srcList="row.nameplateImg?row.nameplateImg.split(','):''"
+            />
+          </template>
+      </el-table-column>
+      <el-table-column prop="deviceTypeId" label="设备类型" show-overflow-tooltip width="200" align="center"></el-table-column>
       <el-table-column
-        prop="enterpriseName"
+        prop="deviceBrand"
         label="设备品牌"
         show-overflow-tooltip
         width="150"
         align="center"
       ></el-table-column>
       <el-table-column
-        prop="contactsPeople"
+        prop="deviceModel"
         label="设备型号"
         show-overflow-tooltip
         width="150"
         align="center"
       ></el-table-column>
       <el-table-column
-        prop="contactsPhone"
+        prop="deviceSystemId"
         label="设备系统"
         show-overflow-tooltip
         width="150"
         align="center"
       ></el-table-column>
       <el-table-column
-        prop="createTime"
+        prop="devicePlace"
         label="设备产地"
         show-overflow-tooltip
         width="150"
         align="center"
       ></el-table-column>
       <el-table-column
-        prop="createTime"
+        prop="price"
         label="维保价格"
         show-overflow-tooltip
         width="150"
         align="center"
       ></el-table-column>
       <el-table-column
-        prop="createTime"
+        prop="startTime"
         label="投保时间"
         show-overflow-tooltip
         width="150"
         align="center"
       ></el-table-column>
       <el-table-column
-        prop="createTime"
+        prop="endTime"
         label="到期时间"
         show-overflow-tooltip
         width="150"
@@ -129,6 +136,7 @@ export default {
   mixins: [tableMixin],
   data() {
     return {
+      orderMsg:[],
       id: "",
       People: "",
       Name: "",
@@ -186,7 +194,8 @@ export default {
       };
       getButlerOrderDetail(data).then(res => {
         if (res) {
-          this.orderDetail = res.data;
+          this.orderDetail = res.data.deviceList;
+          this.orderMsg = res.data
           console.log("详情", res);
         }
       });

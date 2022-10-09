@@ -71,7 +71,7 @@
         <template slot-scope="{row}">
           <div class="settings">
             <el-button type="info" size="mini" plain @click="jump2Detail(row)">查看详情</el-button>
-            <el-button type="info" size="mini" plain>编辑</el-button>
+            <!-- <el-button type="info" size="mini" plain>编辑</el-button> -->
           </div>
           <!-- :disabled="row.mainStatus !=1" -->
         </template>
