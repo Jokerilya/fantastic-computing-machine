@@ -17,6 +17,22 @@ export function getMasterList(data) {
 		params: data,
 	});
 }
+// 指派师傅
+export function handleAssignMaster(data) {
+	return request({
+		url: '/admin/maintenance/handleAssignMaster',
+		method: 'post',
+		data
+	});
+}
+// 指派师傅
+export function getRepairOrderDetail(data) {
+	return request({
+		url: '/admin/maintenance/getRepairOrderDetail',
+		method: 'get',
+		params:data,
+	});
+}
 //企业信息列表
 export function getEnterpriseList(data) {
 	return request({

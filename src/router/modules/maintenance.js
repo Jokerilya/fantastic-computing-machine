@@ -50,7 +50,30 @@ const router = {
       component: () => import("@/views/maintenance/enterpriseList"),
       meta: { title: "企业列表" }
     },
-    
+    {
+      path: "/maintenance/checkPricing",
+      name: "checkPricing",
+      component: () => import("@/views/maintenance/checkPricing"),
+      meta: { title: "检测定价" ,noShow: 'true'}
+    },
+    {
+      path: "/maintenance/maintenance",
+      name: "maintenance",
+      component: () => import("@/views/maintenance/maintenance"),
+      meta: { title: "新增订单" ,noShow: 'true'}
+    },
+    {
+      path: "/maintenance/customer",
+      name: "customer",
+      component: () => import("@/views/maintenance/customer"),
+      meta: { title: "年保订单" ,}
+    },
+    {
+      path: "/maintenance/customerDetail",
+      name: "customerDetail",
+      component: () => import("@/views/maintenance/customerDetail"),
+      meta: { title: "年保订单详情" ,noShow: 'true'}
+    },
   ]
 };
 export default router;

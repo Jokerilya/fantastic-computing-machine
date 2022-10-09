@@ -1,6 +1,47 @@
 import request from '@/utils/request';
 import { publicData } from '@/webConfig.js';
 
+
+//查询管家订单详情
+export function getButlerOrderDetail(data) {
+	return request({
+		url: '/admin/maintenance/getButlerOrderDetail',
+		method: 'get',
+		params:data
+	});
+}
+//查询管家订单列表
+export function queryButlerOrderList(data) {
+	return request({
+		url: '/admin/maintenance/queryButlerOrderList',
+		method: 'post',
+		data
+	});
+}
+//查询系统类型
+export function queryDeviceSystemList() {
+	return request({
+		url: '/admin/maintenance/queryDeviceSystemList',
+		method: 'post',
+		
+	});
+}
+//查询设备类型
+export function queryDeviceTypeList() {
+	return request({
+		url: '/admin/maintenance/queryDeviceTypeList',
+		method: 'post',
+		
+	});
+}
+// 新增/录入管家订单
+export function editButlerOrder(data) {
+	return request({
+		url: '/admin/maintenance/editButlerOrder',
+		method: 'post',
+		data
+	});
+}
 // 订单列表
 export function queryOrderFn(data) {
 	return request({
@@ -15,6 +56,14 @@ export function getOrderDetailFn(data) {
 		url: '/admin/order/getOrderDetail',
 		method: 'get',
 		params: data,
+	});
+}
+// 平台定价
+export function handleMasterQuotation(data) {
+	return request({
+		url: '/admin/maintenance/handleMasterQuotation',
+		method: 'post',
+		data:data
 	});
 }
 // 订单发货
