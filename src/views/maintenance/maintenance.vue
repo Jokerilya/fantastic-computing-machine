@@ -161,7 +161,7 @@
     <div class="titlePart" v-if="activeName=='second'">
       <div class="titleOne">设备配置信息</div>
       <el-button icon="el-icon-refresh" plain type="primary" @click="addPart">新增</el-button>
-      <el-button icon="el-icon-refresh" plain type="primary" @click="delited">删除全部</el-button>
+      <!-- <el-button icon="el-icon-refresh" plain type="primary" @click="delited">删除全部</el-button> -->
     </div>
     <div class="listPart" v-if="activeName=='second'">
       <el-table highlight-current-row :data="deviceList.partsList" style="width: 100%;">
@@ -196,10 +196,10 @@
           align="center"
         ></el-table-column>
         <el-table-column label="操作" width="300px" fixed="right">
-          <template slot-scope="{row}">
+          <template slot-scope="scope">
             <div class="settings">
-              <el-button type="info" size="mini" plain @click="changePart(row)">修改</el-button>
-              <!-- <el-button type="info" size="mini" plain @click="querySnatchList(row)">删除</el-button> -->
+              <el-button type="info" size="mini" plain @click="changePart(scope.$index,scope)">修改</el-button>
+              <el-button type="info" size="mini" plain @click="removePart(scope.$index,scope)">删除</el-button>
             </div>
           </template>
         </el-table-column>
@@ -264,9 +264,9 @@
           align="center"
         ></el-table-column>
         <el-table-column label="操作" width="300px" fixed="right">
-          <template slot-scope="{row}">
+          <template slot-scope="scope">
             <div class="settings">
-              <el-button type="info" size="mini" plain @click="queryDesc(row)">修改</el-button>
+              <el-button type="info" size="mini" plain @click="queryDesc(scope.$index,scope)">修改</el-button>
               <el-button type="info" size="mini" plain @click="querySnatchList(row)">删除</el-button>
             </div>
           </template>
@@ -367,7 +367,8 @@
       </el-from>
       <div class="addPartBtn">
         <el-button type="primary" @click="addFalse">取消</el-button>
-        <el-button type="primary" @click="addTrue">添加</el-button>
+        <el-button type="primary" v-if="!PartChange" @click="addTrue">添加</el-button>
+        <el-button type="primary" v-if="PartChange" @click="addChange">修改</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -468,6 +469,8 @@ import { queryDeviceTypeList, queryDeviceSystemList } from "@/api/order.js";
 export default {
   data() {
     return {
+      partIndex: "",
+      PartChange: false,
       addPay: false,
       payDetail: false,
       activeName: "first",
@@ -570,13 +573,35 @@ export default {
     this._queryDeviceSystemList();
   },
   methods: {
-    changePart(row) {
-      this.dialogpop = true;
-      this.partsList = row;
+    removePart(){
+      this.deviceList.partsList.splice(this.partIndex,1);
     },
-    queryDesc(row) {
-      console.log(row);
-      this.deviceList = row;
+    addChange() {
+      this.deviceList.partsList[this.partIndex] = this.partsList;
+      console.log(this.deviceList.partsList);
+      this.partsList = {
+          category: "",
+          deviceBrand: "",
+          deviceModel: "",
+          name: "",
+          specification: "",
+          unit: ""
+        };
+      this.PartChange = false;
+      this.dialogpop = false;
+      this.partIndex = "";
+      console.log("当前索引",this.partIndex);
+    },
+    changePart(index, scope) {
+      this.dialogpop = true;
+      this.partsList = scope.row;
+      this.PartChange = true;
+      this.partIndex = index;
+      console.log("当前索引",this.partIndex,this.deviceList.partsList);
+    },
+    queryDesc(scope) {
+      console.log(scope.row);
+      this.deviceList = scope.row;
       this.activeName = "second";
     },
     _addFalse() {
@@ -613,7 +638,7 @@ export default {
           console.log("提交", res);
           alert("添加成功");
           this.$router.push({
-            name: "customer",
+            name: "customer"
           });
         }
       });
@@ -718,12 +743,22 @@ export default {
       this.dialogVisible = true;
     },
     addPart() {
+      this.partsList = {
+          category: "",
+          deviceBrand: "",
+          deviceModel: "",
+          name: "",
+          specification: "",
+          unit: ""
+        };
+      this.PartChange = false;
       this.dialogpop = true;
     },
     addFalse() {
       this.dialogpop = false;
     },
     addTrue() {
+      
       if (
         !this.partsList.category ||
         !this.partsList.name ||
