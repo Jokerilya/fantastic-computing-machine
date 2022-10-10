@@ -89,7 +89,7 @@
     ></el-pagination>
 
     <div style="margin:20px 0">
-      <el-button icon="el-icon-zoom-in" plain type="primary" @click="_queryButlerOrderList">新增</el-button>
+      <!-- <el-button icon="el-icon-zoom-in" plain type="primary" @click="_queryButlerOrderList">新增</el-button> -->
       <el-button icon="el-icon-zoom-in" plain type="primary" @click="_addOrder">信息录入</el-button>
     </div>
   </div>

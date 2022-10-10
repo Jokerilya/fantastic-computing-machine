@@ -1,10 +1,10 @@
 <template>
   <div class="mainPart">
     <el-tabs v-model="activeName" @tab-click="handleClick">
-      <el-tab-pane label="客户基本信息" name="first">客户基本信息</el-tab-pane>
-      <el-tab-pane label="设备基本信息" name="second">设备基本信息</el-tab-pane>
-      <el-tab-pane label="设备列表" name="third">设备列表</el-tab-pane>
-      <el-tab-pane label="支付信息" name="fourth">支付信息</el-tab-pane>
+      <el-tab-pane label="客户基本信息" name="first"></el-tab-pane>
+      <el-tab-pane label="设备基本信息" name="second"></el-tab-pane>
+      <el-tab-pane label="设备列表" name="third"></el-tab-pane>
+      <el-tab-pane label="支付信息" name="fourth"></el-tab-pane>
     </el-tabs>
     <div class="titleOne" v-if="activeName=='first'">客户基本信息</div>
     <div class="topLine" v-if="activeName=='first'">
