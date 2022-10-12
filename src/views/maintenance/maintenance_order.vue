@@ -164,7 +164,7 @@
         <template slot-scope="{row}">
           <div class="settings">
             <el-button type="info" size="mini" plain @click="queryDesc(row)">查看详情</el-button>
-            <el-button type="info" size="mini" plain @click="querySnatchList(row)">指派列表</el-button>
+            <el-button type="info" size="mini" plain  v-show="row.platformStatus == 1" @click="querySnatchList(row) ">指派列表</el-button>
           </div>
           <!-- :disabled="row.mainStatus !=1" -->
         </template>

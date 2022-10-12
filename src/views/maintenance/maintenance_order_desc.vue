@@ -447,19 +447,19 @@ export default {
         }
       });
     },
-    init() {
-      this.$axios
-        .get(
-          "/admin/maintenance/getRepairOrderDetail?enterpriseOrderSn=" +
-            location.hash.split("?enterpriseOrderSn=")[1]
-        )
-        .then(({ data }) => {
-          this.data = data;
-        })
-        .catch(err => {
-          console.error(err);
-        });
-    },
+    // init() {
+    //   this.$axios
+    //     .get(
+    //       "/admin/maintenance/getRepairOrderDetail?enterpriseOrderSn=" +
+    //         location.hash.split("?enterpriseOrderSn=")[1]
+    //     )
+    //     .then(({ data }) => {
+    //       this.data = data;
+    //     })
+    //     .catch(err => {
+    //       console.error(err);
+    //     });
+    // },
     // 显示企业报价弹框
     quotationInit() {
       this.quotationForm = {
@@ -494,7 +494,7 @@ export default {
 
     // },
     resetQuotationForm(fn) {
-      this.init();
+      this._getRepairOrderDetail()
       fn(false);
     },
     jump2check() {
@@ -517,7 +517,7 @@ export default {
               message: data.message,
               type: "success"
             });
-            this.init();
+            this._getRepairOrderDetail()
           }
         })
         .catch(err => {
@@ -554,7 +554,7 @@ export default {
         });
     },
     resetCheckForm(fn) {
-      this.init();
+      this._getRepairOrderDetail()
       fn(false);
     },
     handleConfirmDepositToMaster(fn) {
@@ -592,7 +592,7 @@ export default {
       }
     },
     resetPlatformPay(fn) {
-      this.init();
+      this._getRepairOrderDetail()
       fn(false);
     },
     _getRepairOrderDetail() {
@@ -632,7 +632,7 @@ export default {
     }
   },
   mounted() {
-    this.init();
+    this._getRepairOrderDetail()
     console.info(this.$store);
   },
   created() {
