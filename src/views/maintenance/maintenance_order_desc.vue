@@ -12,7 +12,7 @@
           <!-- <span style="color:red">待定价!</span> -->
           <!-- v-if="data.orderTyper == 2" -->
           <div style="float:right">
-            <el-button type="primary" size="mini" plain @click="jump2check" v-if="['0'].includes(data.platformStatus)">检测定价</el-button>
+            <el-button type="primary" size="mini" plain @click="jump2check" v-if="data.platformStatus == 0">检测定价</el-button>
             <el-button
               type="primary"
               size="mini"
