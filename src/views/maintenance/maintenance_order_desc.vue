@@ -13,7 +13,13 @@
           <!-- v-if="data.orderTyper == 2" -->
           <div style="float:right">
             <el-button type="primary" size="mini" plain @click="jump2check">检测定价</el-button>
-            <!-- <el-button type="primary" size="mini" plain @click="pay()" v-if="['2305','2501'].includes(data.enterpriseSubStatus)">支付定价/尾款</el-button> -->
+            <el-button
+              type="primary"
+              size="mini"
+              plain
+              @click="srueAccomont()"
+              v-if="['2204'].includes(data.enterpriseSubStatus)"
+            >确认报价</el-button>
             <!-- <el-button type="primary" size="mini" plain @click="checkInit()" v-if="['2401','2403'].includes(data.enterpriseSubStatus)">订单验收</el-button> -->
             <el-button
               type="primary"
@@ -297,12 +303,13 @@
               v-for="item in util.global.rejectStatus"
               :key="item.label"
               :label="item.value"
+              @change="changeStuta(item)"
             >{{item.label}}</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="驳回原因" prop="rejectReason" style="width:calc(100% - 120px)">
+        <!-- <el-form-item label="驳回原因" prop="rejectReason" style="width:calc(100% - 120px)">
           <el-input type="text" v-model="quotationForm.rejectReason" autocomplete="off"></el-input>
-        </el-form-item>
+        </el-form-item>-->
       </el-form>
     </model>
 
@@ -385,13 +392,15 @@
 </style>
 <script>
 import { getRepairOrderDetail } from "@/api/user.js";
+import { examineMasterQuotation } from "@/api/order.js";
 export default {
   title: "maintenance_order_desc",
   data() {
     return {
-      orderSn:'',
+      orderSn: "",
       data: {},
       activeName: "desc",
+      status: "",
       url: {
         handleMasterQuotation: "/admin/maintenance/handleMasterQuotation", // 企业确认报价
         handleConfirmDeposit: "/admin/maintenance/handleConfirmDeposit", // 企业确认支付定金/尾款
@@ -410,6 +419,34 @@ export default {
     };
   },
   methods: {
+    changeStuta(e) {
+      console.log(e);
+      if (e.value == 1) {
+        this.status = 2;
+      } else {
+        this.status = 3;
+      }
+      console.log(this.status);
+    },
+    srueAccomont() {
+      this.$refs.quotationForm.open();
+    },
+    sumbitQuotation(fn) {
+      let data = {
+        orderSn: this.orderSn,
+        status: this.status
+      };
+      examineMasterQuotation(data).then(res => {
+        if (res.success) {
+          console.log("审核", res);
+          this.$message({
+            showClose: true,
+            message: res.message,
+            type: "success"
+          });
+        }
+      });
+    },
     init() {
       this.$axios
         .get(
@@ -431,41 +468,40 @@ export default {
       };
       this.$refs.quotationForm.open();
     },
-    sumbitQuotation(fn) {
-      if (
-        this.quotationForm.status == "0" &&
-        !this.quotationForm.rejectReason
-      ) {
-        this.$message.error("请输入驳回原因");
-        return;
-      }
-      this.$axios
-        .post(this.url.handleMasterQuotation, this.quotationForm)
-        .then(data => {
-          if (data.code == "000") {
-            this.$message({
-              showClose: true,
-              message: data.message,
-              type: "success"
-            });
-            this.resetQuotationForm(fn);
-          }
-        })
-        .catch(err => {
-          console.error(err);
-        });
-    },
+    // sumbitQuotation(fn) {
+    //   if (
+    //     this.quotationForm.status == "0" &&
+    //     !this.quotationForm.rejectReason
+    //   ) {
+    //     this.$message.error("请输入驳回原因");
+    //     return;
+    //   }
+    //   this.$axios
+    //     .post(this.url.handleMasterQuotation, this.quotationForm)
+    //     .then(data => {
+    //       if (data.code == "000") {
+    //         this.$message({
+    //           showClose: true,
+    //           message: data.message,
+    //           type: "success"
+    //         });
+    //         this.resetQuotationForm(fn);
+    //       }
+    //     })
+    //     .catch(err => {
+    //       console.error(err);
+    //     });
+
+    // },
     resetQuotationForm(fn) {
       this.init();
       fn(false);
     },
     jump2check() {
-      this.$router.push(
-       {
-         name:'checkPricing',
-         query:{orderSn:this.data.orderSn}
-       }
-      );
+      this.$router.push({
+        name: "checkPricing",
+        query: { orderSn: this.data.orderSn }
+      });
     },
     pay() {
       this.$axios
@@ -599,7 +635,7 @@ export default {
     this.init();
     console.info(this.$store);
   },
-  created(){
+  created() {
     this.orderSn = this.$route.query.orderSn;
     console.log("订单号", this.orderSn);
     this._getRepairOrderDetail();

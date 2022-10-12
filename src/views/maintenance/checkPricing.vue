@@ -203,6 +203,7 @@ export default {
         unit: ""
       },
       param: {
+        orderSn:'',
         warrantyTime: "",
         parts: [],
         programme: [],
@@ -318,7 +319,7 @@ export default {
     }
   },
   created() {
-    this.orderSn = this.$route.query.orderSn;
+    this.param.orderSn = this.$route.query.orderSn;
     console.log("订单号", this.orderSn);
     this._getRepairOrderDetail();
   },

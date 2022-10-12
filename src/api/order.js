@@ -2,6 +2,16 @@ import request from '@/utils/request';
 import { publicData } from '@/webConfig.js';
 
 
+
+
+//平台审核报价
+export function examineMasterQuotation(data) {
+	return request({
+		url: '/admin/maintenance/examineMasterQuotation',
+		method: 'POST',
+		data
+	});
+}
 //查询管家订单详情
 export function getButlerOrderDetail(data) {
 	return request({
