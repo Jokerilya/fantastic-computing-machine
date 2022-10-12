@@ -307,9 +307,9 @@
             >{{item.label}}</el-radio>
           </el-radio-group>
         </el-form-item>
-        <!-- <el-form-item label="驳回原因" prop="rejectReason" style="width:calc(100% - 120px)">
+        <el-form-item label="驳回原因" prop="rejectReason" style="width:calc(100% - 120px)">
           <el-input type="text" v-model="quotationForm.rejectReason" autocomplete="off"></el-input>
-        </el-form-item>-->
+        </el-form-item>
       </el-form>
     </model>
 
@@ -434,7 +434,8 @@ export default {
     sumbitQuotation(fn) {
       let data = {
         orderSn: this.orderSn,
-        status: this.status
+        status: this.status,
+        rejectReason:this.quotationForm.rejectReason
       };
       examineMasterQuotation(data).then(res => {
         if (res.success) {
