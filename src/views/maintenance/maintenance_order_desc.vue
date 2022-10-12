@@ -5,7 +5,7 @@
       <el-tab-pane label="订单详情" name="desc">
         <div class="big_title">
           <span>订单号：{{ data.orderSn }}</span>
-          <span>{{ util.global.getLabel('mainStatus',data.enterpriseMainStatus) }} - {{ util.global.getLabel('enterpriseSubStatus',data.enterpriseSubStatus) }}</span>
+          <!-- <span>{{ util.global.getLabel('mainStatus',data.enterpriseMainStatus) }} - {{ util.global.getLabel('enterpriseSubStatus',data.enterpriseSubStatus) }}</span> -->
           <span>订单金额：{{ data.totalAmount }}</span>
           <span>待收款：{{ data.totalAmount }}</span>
           <span>待付款：{{ data.totalAmount }}</span>
@@ -21,7 +21,7 @@
               v-if="['2204'].includes(data.enterpriseSubStatus)"
             >确认报价</el-button>
             <!-- <el-button type="primary" size="mini" plain @click="checkInit()" v-if="['2401','2403'].includes(data.enterpriseSubStatus)">订单验收</el-button> -->
-            <el-button
+            <!-- <el-button
               type="primary"
               size="mini"
               plain
@@ -41,7 +41,7 @@
               plain
               @click="platformPayInit()"
               v-if="data.enterpriseSubStatus=='2601' && data.masterSubStatus=='3501'"
-            >打款至师傅(质保期到后)</el-button>
+            >打款至师傅(质保期到后)</el-button> -->
           </div>
         </div>
         <div>
