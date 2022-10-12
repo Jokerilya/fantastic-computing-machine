@@ -280,7 +280,7 @@ export default {
     //订单信息
     _getRepairOrderDetail() {
       let params = {
-        enterpriseOrderSn: this.orderSn
+        enterpriseOrderSn: this.param.orderSn
       };
       getRepairOrderDetail(params).then(res => {
         console.log("订单详情", res);
