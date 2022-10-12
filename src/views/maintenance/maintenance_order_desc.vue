@@ -9,10 +9,10 @@
           <span>订单金额：{{ data.totalAmount }}</span>
           <span>待收款：{{ data.totalAmount }}</span>
           <span>待付款：{{ data.totalAmount }}</span>
-          <span style="color:red">待定价!</span>
+          <!-- <span style="color:red">待定价!</span> -->
           <!-- v-if="data.orderTyper == 2" -->
           <div style="float:right">
-            <el-button type="primary" size="mini" plain @click="jump2check">检测定价</el-button>
+            <el-button type="primary" size="mini" plain @click="jump2check" v-if="['0'].includes(data.platformStatus)">检测定价</el-button>
             <el-button
               type="primary"
               size="mini"
