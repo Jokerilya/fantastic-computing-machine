@@ -151,6 +151,53 @@ export default {
       label:'已完成'
     }
   ],
+    // 维保主状态
+    enterpriseMainStatus : [
+      {
+        value:2001,
+        label:'带派发'
+      },
+      {
+        value:2101,
+        label:'待接单'
+      },
+      {
+        value:2202,
+        label:'带确认定价'
+      },
+      {
+        value:2203,
+        label:'待服务'
+      },
+      {
+        value:2204,
+        label:'待平台审核'
+      },
+      {
+        value:22041,
+        label:'平台审核驳回'
+      },
+      {
+        value:2205,
+        label:'待服务'
+      },
+      {
+        value:2301,
+        label:'服务中'
+      },
+      {
+        value:2401,
+        label:'待验收'
+      },
+      {
+        value:2501,
+        label:'待支付'
+      },
+      {
+        value:2601,
+        label:'已完成'
+      }
+    ],
   // 编程主状态
   mainStatus2 : [
     {

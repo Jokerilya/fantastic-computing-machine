@@ -143,14 +143,14 @@
         align="center"
       ></el-table-column>
       <el-table-column
-        prop="mainStatus"
+        prop="enterpriseMainStatus"
         label="状态"
         show-overflow-tooltip
         width="150"
         align="center"
         fixed="right"
       >
-        <template slot-scope="{row}">{{ util.global.getLabel('mainStatus',row.mainStatus) }}</template>
+        <template slot-scope="{row}">{{ util.global.getLabel('enterpriseMainStatus',row.enterpriseMainStatus) }}</template>
       </el-table-column>
       <el-table-column
         prop="createTime"

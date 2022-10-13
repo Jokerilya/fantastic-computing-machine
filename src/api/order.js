@@ -12,6 +12,15 @@ export async  function uploadButlerOrder(data) {
 	});
 }
 
+//维保订单列表
+export function queryRepairOrderList(data) {
+	return request({
+		url: '/admin/maintenance/queryRepairOrderList',
+		method: 'POST',
+		data
+	});
+}
+
 //平台审核报价
 export function examineMasterQuotation(data) {
 	return request({
