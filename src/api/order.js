@@ -3,6 +3,14 @@ import { publicData } from '@/webConfig.js';
 
 
 
+//合同上传
+export async  function uploadButlerOrder(data) {
+	return request({
+		url: '/admin/maintenance/uploadButlerOrder',
+		method: 'POST',
+		data
+	});
+}
 
 //平台审核报价
 export function examineMasterQuotation(data) {

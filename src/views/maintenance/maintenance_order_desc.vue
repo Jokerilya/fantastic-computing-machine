@@ -432,7 +432,7 @@ export default {
       this.$refs.quotationForm.open();
     },
     sumbitQuotation(fn) {
-      let data = {
+      let data = {  
         orderSn: this.orderSn,
         status: this.status,
         rejectReason:this.quotationForm.rejectReason

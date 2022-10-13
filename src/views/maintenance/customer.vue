@@ -3,7 +3,7 @@
   <div class="app-container">
     <div class="manage-top">
       <el-form label-width="88px" class="rule-form" label-position="right">
-        <el-row :gutter="20">
+        <el-row :gutter="30">
           <el-col :span="5">
             <el-form-item label="企业名称">
               <el-input placeholder="请输入企业名称" v-model="Name"></el-input>
@@ -19,9 +19,27 @@
               <el-input placeholder="请输入联系人" v-model="People"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="5">
+          <el-col :span="9">
             <el-button icon="el-icon-zoom-in" plain type="primary" @click="_getOrderList()">查询</el-button>
             <el-button icon="el-icon-refresh" plain type="info" @click="_queryButlerOrderList">重置</el-button>
+            <el-button icon="el-icon-zoom-in" plain type="primary" @click="_addOrder">信息录入</el-button>
+            <el-upload
+              class="upload-demo"
+              action
+              :http-request="httpRequestFn"
+              multiple
+            >
+              <el-button size="small" type="primary">合同上传</el-button>
+              <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+            </el-upload>
+            <!-- <el-upload
+              action
+              list-type="picture-card"
+              :on-remove="handleRemove"
+              :http-request="httpRequestFnfujian"
+            >
+              <i class="el-icon-plus"></i>
+            </el-upload> -->
           </el-col>
         </el-row>
       </el-form>
@@ -88,17 +106,20 @@
       :total="page.dataSumNum"
     ></el-pagination>
 
-    <div style="margin:20px 0">
-      <!-- <el-button icon="el-icon-zoom-in" plain type="primary" @click="_queryButlerOrderList">新增</el-button> -->
-      <el-button icon="el-icon-zoom-in" plain type="primary" @click="_addOrder">信息录入</el-button>
-    </div>
+    <div style="margin:20px 0"></div>
   </div>
 </template>
 <style lang="less" scoped>
+.manage-top {
+  width: 1500px;
+}
+.upload-demo{
+  margin: 10px 0;
+}
 </style>
 <script>
 import { getMasterList, handleAssignMaster } from "@/api/user.js";
-import { queryButlerOrderList } from "@/api/order.js";
+import { queryButlerOrderList,uploadButlerOrder } from "@/api/order.js";
 import tableMixin from "@/mixin/table";
 export default {
   title: "course",
@@ -156,6 +177,34 @@ export default {
     this._queryButlerOrderList();
   },
   methods: {
+    handleRemove(file, fileList) {
+      console.log(file, fileList);
+    },
+    httpRequestFn(data) {
+      const loading = this.$loading({ text: "上传中.." });
+      const formData = new FormData();
+      formData.append("file", data.file);
+      uploadButlerOrder(formData)
+        .then(res => {
+          this.$emit("uploadSuc", res.data);
+          this.$message({
+            showClose: true,
+            message: "文件上传成功！",
+            type: "success"
+          });
+          loading.close();
+          // this.deviceList.nameplateImg = res.data;
+          // console.log(this.deviceList.nameplateImg, "文件上传");
+        })
+        .catch(() => {
+          this.$message({
+            showClose: true,
+            message: "文件上传失败！",
+            type: "warning"
+          });
+          loading.close();
+        });
+    },
     _getOrderList() {
       let params = {
         contactsPeople: this.People,
