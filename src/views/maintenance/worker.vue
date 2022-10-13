@@ -12,7 +12,7 @@
           <el-form-item label="联系电话">
             <el-input placeholder="请输入联系电话" v-model="Phone"></el-input>
           </el-form-item>
-        </el-col> -->
+        </el-col>-->
         <el-col :span="5">
           <el-button icon="el-icon-zoom-in" plain type="primary" @click="_getMasterList()">查询</el-button>
           <!-- <el-button icon="el-icon-refresh" plain type="info" @click="_getEnterpriseList()">重置</el-button> -->
@@ -165,12 +165,11 @@
     <el-pagination
       background
       @size-change="handleSizeChange"
-      @current-change="updatePageNo"
-      :current-page="page.pageNo"
-      :page-sizes="[10, 20, 50, 100]"
-      :page-size="page.dataNum"
+      @current-change="handleCurrentChange"
+      :current-page="currentPage "
+      :page-size="10"
       layout="total, sizes, prev, pager, next, jumper"
-      :total="page.dataSumNum"
+      :total="pageCount"
     ></el-pagination>
     <model ref="editStatusModel" title="师傅审核" @ok="handleEditStatus" @close="resetEditForm">
       <el-form
@@ -298,6 +297,8 @@ export default {
   mixins: [tableMixin],
   data() {
     return {
+      pageCount: 0,
+      currentPage: 1,
       masterList: [],
       Name: "",
       Phone: "",
@@ -369,22 +370,29 @@ export default {
       }
     };
   },
-  created(){
-      this._getMasterList()
+  created() {
+    this._getMasterList();
   },
   methods: {
+    handleCurrentChange(val) {
+      this.currentPage = val;
+      // this.currentPage2 = val;
+      this._getMasterList();
+    },
     _getMasterList() {
       let params = {
-        pageNo: 1,
+        pageNo: this.currentPage,
         pageSize: 10,
         realName: this.Name,
         phone: this.Phone
       };
       getMasterList(params).then(res => {
         if (res) {
-            console.log(res);
+          console.log(res);
           this.masterList = res.data.records;
           console.log("师傅列表", this.masterList);
+          this.pageCount = res.data.total;
+          this.currentPage = res.data.current;
         }
         console.log("名称", Name);
         console.log("手机", Phone);

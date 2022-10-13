@@ -3,7 +3,7 @@
   <div class="app-container">
     <div class="manage-top">
       <el-form label-width="88px" class="rule-form" label-position="right">
-        <el-row :gutter="30">
+        <el-row :gutter="60">
           <el-col :span="5">
             <el-form-item label="企业名称">
               <el-input placeholder="请输入企业名称" v-model="Name"></el-input>

@@ -150,7 +150,9 @@
         align="center"
         fixed="right"
       >
-        <template slot-scope="{row}">{{ util.global.getLabel('enterpriseMainStatus',row.enterpriseMainStatus) }}</template>
+        <template
+          slot-scope="{row}"
+        >{{ util.global.getLabel('enterpriseMainStatus',row.enterpriseMainStatus) }}</template>
       </el-table-column>
       <el-table-column
         prop="createTime"
@@ -164,7 +166,13 @@
         <template slot-scope="{row}">
           <div class="settings">
             <el-button type="info" size="mini" plain @click="queryDesc(row)">查看详情</el-button>
-            <el-button type="info" size="mini" plain  v-show="row.platformStatus == 1" @click="querySnatchList(row) ">指派列表</el-button>
+            <el-button
+              type="info"
+              size="mini"
+              plain
+              v-show="row.platformStatus == 1"
+              @click="querySnatchList(row) "
+            >指派列表</el-button>
           </div>
           <!-- :disabled="row.mainStatus !=1" -->
         </template>
@@ -246,11 +254,20 @@
           </template>-->
         </el-table-column>
       </el-table>
+      <el-pagination
+        background
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="currentPage "
+        :page-size="10"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="pageCount"
+      ></el-pagination>
     </model>
     <!-- <div style="margin:20px 0">
       <el-button icon="el-icon-zoom-in" plain type="primary" >新增</el-button>
       <el-button icon="el-icon-zoom-in" plain type="primary" @click="_addOrder">信息录入</el-button>
-    </div> -->
+    </div>-->
   </div>
 </template>
 <style lang="less" scoped>
@@ -263,6 +280,8 @@ export default {
   mixins: [tableMixin],
   data() {
     return {
+      pageCount: 0,
+      currentPage: 1,
       tabelList: [],
       changeData: [],
       masterList: [],
@@ -308,9 +327,14 @@ export default {
     this._getMasterList();
   },
   methods: {
+    handleCurrentChange(val) {
+      this.currentPage = val;
+      // this.currentPage2 = val;
+      this._getMasterList();
+    },
     _addOrder() {
       this.$router.push({
-        name: "maintenance",
+        name: "maintenance"
       });
     },
     changeMaster(row) {
@@ -400,7 +424,7 @@ export default {
     },
     _getMasterList() {
       let params = {
-        pageNo: 1,
+        pageNo: this.currentPage,
         pageSize: 10,
         realName: this.Name,
         phone: this.Phone
@@ -410,6 +434,8 @@ export default {
           console.log(res);
           this.masterList = res.data.records;
           console.log("师傅列表", this.masterList);
+          this.pageCount = res.data.total;
+          this.currentPage = res.data.current;
         }
       });
     },
