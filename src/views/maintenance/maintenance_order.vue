@@ -121,7 +121,7 @@
         width="200"
         align="center"
       ></el-table-column>
-      <el-table-column
+      <!-- <el-table-column
         prop="depositAmount"
         label="定金"
         show-overflow-tooltip
@@ -134,7 +134,7 @@
         show-overflow-tooltip
         width="150"
         align="center"
-      ></el-table-column>
+      ></el-table-column> -->
       <el-table-column
         prop="rejectReason"
         label="驳回原因"
