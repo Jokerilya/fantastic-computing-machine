@@ -72,13 +72,13 @@
         width="150"
         align="center"
       ></el-table-column>
-      <el-table-column
+      <!-- <el-table-column
         prop="deviceSystemName"
         label="设备系统名"
         show-overflow-tooltip
         width="150"
         align="center"
-      ></el-table-column>
+      ></el-table-column> -->
       <el-table-column
         prop="deviceTypeName"
         label="设备类型名"
@@ -87,7 +87,7 @@
         align="center"
       ></el-table-column>
       <el-table-column prop="num" label="设备数量" show-overflow-tooltip width="200" align="center"></el-table-column>
-      <el-table-column
+      <!-- <el-table-column
         prop="modalityType"
         label="维保模式"
         show-overflow-tooltip
@@ -95,10 +95,10 @@
         align="center"
       >
         <template slot-scope="{row}">{{ util.global.getLabel('modalityType',row.modalityType) }}</template>
-      </el-table-column>
-      <el-table-column prop="type" label="故障类型" show-overflow-tooltip width="200" align="center">
+      </el-table-column> -->
+      <!-- <el-table-column prop="type" label="故障类型" show-overflow-tooltip width="200" align="center">
         <template slot-scope="{row}">{{ util.global.getLabel('malfunctionType',row.type) }}</template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column
         prop="enterpriseName"
         label="企业名称"
@@ -143,7 +143,7 @@
         align="center"
       ></el-table-column>
       <el-table-column
-        prop="enterpriseMainStatus"
+        prop="subStatus"
         label="状态"
         show-overflow-tooltip
         width="150"
@@ -152,7 +152,7 @@
       >
         <template
           slot-scope="{row}"
-        >{{ util.global.getLabel('enterpriseMainStatus',row.enterpriseMainStatus) }}</template>
+        >{{ util.global.getLabel('subStatus',row.subStatus) }}</template>
       </el-table-column>
       <el-table-column
         prop="createTime"

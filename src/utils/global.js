@@ -152,10 +152,10 @@ export default {
     }
   ],
     // 维保主状态
-    enterpriseMainStatus : [
+    subStatus : [
       {
         value:2001,
-        label:'带派发'
+        label:'待派发'
       },
       {
         value:2101,
@@ -163,7 +163,7 @@ export default {
       },
       {
         value:2202,
-        label:'带确认定价'
+        label:'待确认定价'
       },
       {
         value:2203,
