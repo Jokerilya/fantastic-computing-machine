@@ -38,6 +38,20 @@
         align="center"
       ></el-table-column>
       <el-table-column
+        prop="maintenancePhone"
+        label="联系电话"
+        show-overflow-tooltip
+        width="100"
+        align="center"
+      ></el-table-column>
+      <el-table-column
+        prop="maintenancePeople"
+        label="联系人"
+        show-overflow-tooltip
+        width="100"
+        align="center"
+      ></el-table-column>
+      <el-table-column
         prop="nickName"
         label="微信昵称"
         show-overflow-tooltip

@@ -43,8 +43,8 @@
         </template>
       </el-table-column>
       <el-table-column
-        prop="identityNumber"
-        label="身份证号"
+        prop="phone"
+        label="联系电话"
         show-overflow-tooltip
         width="150"
         align="center"
