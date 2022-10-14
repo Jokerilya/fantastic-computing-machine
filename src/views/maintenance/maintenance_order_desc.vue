@@ -12,7 +12,13 @@
           <!-- <span style="color:red">待定价!</span> -->
           <!-- v-if="data.orderTyper == 2" -->
           <div style="float:right">
-            <el-button type="primary" size="mini" plain @click="jump2check" v-if="data.platformStatus == 0">检测定价</el-button>
+            <el-button
+              type="primary"
+              size="mini"
+              plain
+              @click="jump2check"
+              v-if="data.platformStatus == 0"
+            >检测定价</el-button>
             <el-button
               type="primary"
               size="mini"
@@ -20,28 +26,29 @@
               @click="srueAccomont()"
               v-if="['2204'].includes(data.enterpriseSubStatus)"
             >确认报价</el-button>
+            <!-- <el-button type="primary" size="mini" plain @click="platformPayInit()">打款至师傅</el-button> -->
+            <el-button
+              type="primary"
+              size="mini"
+              plain
+              @click="_changePayment()"
+              v-if="['2203'].includes(data.masterSubStatus) ||['2204','2205'].includes(data.masterSubStatus)||['2205'].includes(data.masterSubStatus)  "
+            >修改报价</el-button>
             <!-- <el-button type="primary" size="mini" plain @click="checkInit()" v-if="['2401','2403'].includes(data.enterpriseSubStatus)">订单验收</el-button> -->
+            <el-button
+              type="primary"
+              size="mini"
+              plain
+              @click="_handleMasterPayment()"
+              v-if="['3502'].includes(data.masterSubStatus)"
+            >打款至师傅</el-button>
             <!-- <el-button
               type="primary"
               size="mini"
               plain
               @click="platformPayInit()"
-              v-if="['2306'].includes(data.enterpriseSubStatus)"
-            >确认企业支付定价并打款给师傅</el-button>
-            <el-button
-              type="primary"
-              size="mini"
-              plain
-              @click="platformPayInit()"
               v-if="['2502'].includes(data.enterpriseSubStatus)"
-            >确认企业支付尾款</el-button>
-            <el-button
-              type="primary"
-              size="mini"
-              plain
-              @click="platformPayInit()"
-              v-if="data.enterpriseSubStatus=='2601' && data.masterSubStatus=='3501'"
-            >打款至师傅(质保期到后)</el-button> -->
+            >确认企业支付尾款</el-button>-->
           </div>
         </div>
         <div>
@@ -312,6 +319,39 @@
         </el-form-item>
       </el-form>
     </model>
+    <el-dialog
+      title="修改报价"
+      :visible.sync="changePayment"
+      :close-on-click-modal="true"
+      :modal="true"
+      :show-close="true"
+      :center="true"
+    >
+      <el-from label-width="1000px">
+        <div class="addPart">
+          <div class="addcontent">
+            <div class="name">上面费用:</div>
+            <el-input v-model="parts.doorAmount" placeholder="元"></el-input>
+          </div>
+          <div class="addcontent">
+            <div class="name">其他费用:</div>
+            <el-input v-model="parts.otherAmount" placeholder="元"></el-input>
+          </div>
+          <div class="addcontent">
+            <div class="name">配件费用:</div>
+            <el-input v-model="parts.partsAmount" placeholder="元"></el-input>
+          </div>
+          <div class="addcontent">
+            <div class="name">技术服务费:</div>
+            <el-input v-model="parts.technologyAmount" placeholder="元"></el-input>
+          </div>
+        </div>
+      </el-from>
+      <div class="addPartBtn">
+        <el-button type="primary" @click="changeFalse">取消</el-button>
+        <el-button type="primary" @click="changeTrue">确认修改</el-button>
+      </div>
+    </el-dialog>
 
     <model ref="checkForm" title="确认验收" @ok="sumbitCheck" @close="resetCheckForm">
       <el-form :model="checkForm" status-icon label-width="120px" class="demo-ruleForm">
@@ -392,11 +432,16 @@
 </style>
 <script>
 import { getRepairOrderDetail } from "@/api/user.js";
-import { examineMasterQuotation } from "@/api/order.js";
+import {
+  examineMasterQuotation,
+  handleMasterPayment,
+  updateMasterPrice
+} from "@/api/order.js";
 export default {
   title: "maintenance_order_desc",
   data() {
     return {
+      changePayment: false,
       orderSn: "",
       data: {},
       activeName: "desc",
@@ -415,10 +460,36 @@ export default {
       },
       checkForm: {
         rejectReason: ""
+      },
+      parts: {
+        orderSn: "",
+        doorAmount: "",
+        otherAmount: "",
+        partsAmount: "",
+        technologyAmount: ""
       }
     };
   },
   methods: {
+    changeFalse() {
+      this.changePayment = false;
+    },
+    changeTrue() {
+      this.parts.orderSn = this.orderSn;
+      updateMasterPrice(this.parts).then(res => {
+        if (res) {
+          this.$message({
+            showClose: true,
+            message: res.message,
+            type: "success"
+          });
+        }
+        this.changePayment = false;
+      });
+    },
+    _changePayment() {
+      this.changePayment = true;
+    },
     changeStuta(e) {
       console.log(e);
       if (e.value == 1) {
@@ -431,11 +502,25 @@ export default {
     srueAccomont() {
       this.$refs.quotationForm.open();
     },
+    _handleMasterPayment() {
+      let params = {
+        orderSn: this.orderSn
+      };
+      handleMasterPayment(params).then(res => {
+        if (res) {
+          this.$message({
+            showClose: true,
+            message: res.message,
+            type: "success"
+          });
+        }
+      });
+    },
     sumbitQuotation(fn) {
-      let data = {  
+      let data = {
         orderSn: this.orderSn,
         status: this.status,
-        rejectReason:this.quotationForm.rejectReason
+        rejectReason: this.quotationForm.rejectReason
       };
       examineMasterQuotation(data).then(res => {
         if (res.success) {
@@ -495,7 +580,7 @@ export default {
 
     // },
     resetQuotationForm(fn) {
-      this._getRepairOrderDetail()
+      this._getRepairOrderDetail();
       fn(false);
     },
     jump2check() {
@@ -518,7 +603,7 @@ export default {
               message: data.message,
               type: "success"
             });
-            this._getRepairOrderDetail()
+            this._getRepairOrderDetail();
           }
         })
         .catch(err => {
@@ -555,7 +640,7 @@ export default {
         });
     },
     resetCheckForm(fn) {
-      this._getRepairOrderDetail()
+      this._getRepairOrderDetail();
       fn(false);
     },
     handleConfirmDepositToMaster(fn) {
@@ -593,7 +678,7 @@ export default {
       }
     },
     resetPlatformPay(fn) {
-      this._getRepairOrderDetail()
+      this._getRepairOrderDetail();
       fn(false);
     },
     _getRepairOrderDetail() {
@@ -633,7 +718,7 @@ export default {
     }
   },
   mounted() {
-    this._getRepairOrderDetail()
+    this._getRepairOrderDetail();
     console.info(this.$store);
   },
   created() {

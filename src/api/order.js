@@ -1,10 +1,25 @@
 import request from '@/utils/request';
 import { publicData } from '@/webConfig.js';
 
-
+//平台修改师傅报价
+export function updateMasterPrice(data) {
+	return request({
+		url: '/admin/maintenance/updateMasterPrice',
+		method: 'POST',
+		data
+	});
+}
+//打款至师傅
+export function handleMasterPayment(data) {
+	return request({
+		url: '/admin/maintenance/handleMasterPayment',
+		method: 'get',
+		params: data
+	});
+}
 
 //合同上传
-export async  function uploadButlerOrder(data) {
+export async function uploadButlerOrder(data) {
 	return request({
 		url: '/admin/maintenance/uploadButlerOrder',
 		method: 'POST',
@@ -34,7 +49,7 @@ export function getButlerOrderDetail(data) {
 	return request({
 		url: '/admin/maintenance/getButlerOrderDetail',
 		method: 'get',
-		params:data
+		params: data
 	});
 }
 //查询管家订单列表
@@ -50,7 +65,7 @@ export function queryDeviceSystemList() {
 	return request({
 		url: '/admin/maintenance/queryDeviceSystemList',
 		method: 'post',
-		
+
 	});
 }
 //查询设备类型
@@ -58,7 +73,7 @@ export function queryDeviceTypeList() {
 	return request({
 		url: '/admin/maintenance/queryDeviceTypeList',
 		method: 'post',
-		
+
 	});
 }
 // 新增/录入管家订单
@@ -90,7 +105,7 @@ export function handleMasterQuotation(data) {
 	return request({
 		url: '/admin/maintenance/handleMasterQuotation',
 		method: 'post',
-		data:data
+		data: data
 	});
 }
 // 订单发货
