@@ -32,7 +32,7 @@
               size="mini"
               plain
               @click="_changePayment()"
-              v-if="['2203'].includes(data.masterSubStatus) ||['2204','2205'].includes(data.masterSubStatus)||['2205'].includes(data.masterSubStatus)  "
+              v-if="data.masterSubStatus<3502"
             >修改报价</el-button>
             <!-- <el-button type="primary" size="mini" plain @click="checkInit()" v-if="['2401','2403'].includes(data.enterpriseSubStatus)">订单验收</el-button> -->
             <el-button
