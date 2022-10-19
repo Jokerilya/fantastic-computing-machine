@@ -35,9 +35,11 @@
             class="demo-table-expand"
             v-for="(item,index) in props.row.partsList"
             :key="index"
+            label-width="200px"
+            style="margin-left:110px;"
           >
             <el-form-item label="配件大类">
-              <span>{{ item. category}}</span>
+              <span style="">{{ item. category}}</span>
             </el-form-item>
             <el-form-item label="配件品牌">
               <span>{{ item.deviceBrand }}</span>
@@ -139,6 +141,7 @@
 }
 .detail {
   display: flex;
+  
 }
 .name {
   margin: 20px 0;
