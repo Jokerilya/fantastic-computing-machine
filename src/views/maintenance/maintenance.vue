@@ -99,14 +99,24 @@
       <div class="custorCode">
         <div class="code">设备类型</div>
         <div class="codeInput">
-          <el-select v-model="type" placeholder="请选择设备类型" @change="typeChange">
+          <!-- <el-select v-model="type" placeholder="请选择设备类型" >
             <el-option
               v-for="(item,index) in typeList"
               :key="index"
               :label="item.name"
               :value="item.id"
             ></el-option>
-          </el-select>
+          </el-select>-->
+          <el-cascader
+            v-model="value3"
+            :options="typeList"
+            :props="{
+              children:'list',
+              label:'name',
+              value:'id'
+          }"
+            @change="typeChange"
+          ></el-cascader>
         </div>
       </div>
       <div class="custorCode">
@@ -150,7 +160,8 @@
         </div>
       </div>
       <div class="btnSmbit" v-if="activeName=='second'">
-        <el-button type="success" size plain @click="_editButlerOrder">保存基本信息</el-button>
+        <el-button v-if="!change" type="success" size plain @click="_editButlerOrder">保存基本信息</el-button>
+        <el-button v-if="change" type="success" size plain @click="_changeForm">确认修改</el-button>
       </div>
     </div>
 
@@ -161,7 +172,6 @@
     <div class="titlePart" v-if="activeName=='second'">
       <div class="titleOne">设备配置信息</div>
       <el-button icon="el-icon-refresh" plain type="primary" @click="addPart">新增</el-button>
-      <!-- <el-button icon="el-icon-refresh" plain type="primary" @click="delited">删除全部</el-button> -->
     </div>
     <div class="listPart" v-if="activeName=='second'">
       <el-table highlight-current-row :data="deviceList.partsList" style="width: 100%;">
@@ -199,7 +209,7 @@
           <template slot-scope="scope">
             <div class="settings">
               <el-button type="info" size="mini" plain @click="changePart(scope.$index,scope)">修改</el-button>
-              <el-button type="info" size="mini" plain @click="removePart(scope.$index,scope)">删除</el-button>
+              <el-button type="info" size="mini" plain @click="removePart(scope)">删除</el-button>
             </div>
           </template>
         </el-table-column>
@@ -208,6 +218,7 @@
 
     <div class="titlePart" v-if="activeName=='third'">
       <div class="titleOne">投保设备列表</div>
+      <el-button icon="el-icon-refresh" plain type="primary" @click="keepAdd">继续新增设备</el-button>
     </div>
     <div class="listPart" v-if="activeName=='third'">
       <el-table highlight-current-row :data="param.deviceList" style="width: 100%;">
@@ -266,8 +277,8 @@
         <el-table-column label="操作" width="300px" fixed="right">
           <template slot-scope="scope">
             <div class="settings">
-              <el-button type="info" size="mini" plain @click="queryDesc(scope.$index,scope)">修改</el-button>
-              <el-button type="info" size="mini" plain @click="querySnatchList(row)">删除</el-button>
+              <el-button type="info" size="mini" plain @click="queryDesc(scope)">修改</el-button>
+              <el-button type="info" size="mini" plain @click="delited(scope)">删除</el-button>
             </div>
           </template>
         </el-table-column>
@@ -469,6 +480,8 @@ import { queryDeviceTypeList, queryDeviceSystemList } from "@/api/order.js";
 export default {
   data() {
     return {
+      pageIndex: "",
+      change: false,
       partIndex: "",
       PartChange: false,
       addPay: false,
@@ -516,6 +529,7 @@ export default {
       },
       value1: "",
       value: [],
+      value3: [],
       protecTime: [],
       value2: [],
       options: [
@@ -573,36 +587,74 @@ export default {
     this._queryDeviceSystemList();
   },
   methods: {
-    removePart(){
-      this.deviceList.partsList.splice(this.partIndex,1);
+    keepAdd() {
+      this.activeName = "second";
+    },
+    removePart(scope) {
+      console.log(scope)
+      this.deviceList.partsList.splice(this.partIndex, scope.$index);
     },
     addChange() {
       this.deviceList.partsList[this.partIndex] = this.partsList;
       console.log(this.deviceList.partsList);
       this.partsList = {
-          category: "",
-          deviceBrand: "",
-          deviceModel: "",
-          name: "",
-          specification: "",
-          unit: ""
-        };
+        category: "",
+        deviceBrand: "",
+        deviceModel: "",
+        name: "",
+        specification: "",
+        unit: ""
+      };
       this.PartChange = false;
       this.dialogpop = false;
       this.partIndex = "";
-      console.log("当前索引",this.partIndex);
+      console.log("当前索引", this.partIndex);
     },
     changePart(index, scope) {
       this.dialogpop = true;
       this.partsList = scope.row;
       this.PartChange = true;
       this.partIndex = index;
-      console.log("当前索引",this.partIndex,this.deviceList.partsList);
+      console.log("当前索引", this.partIndex, this.deviceList.partsList);
     },
     queryDesc(scope) {
-      console.log(scope.row);
-      this.deviceList = scope.row;
+      this.pageIndex = scope.$index;
+      console.log(scope, "修改传值", this.param);
       this.activeName = "second";
+      this.change = true;
+      this.deviceList = this.param.deviceList[this.pageIndex];
+      this.partsList = this.param.deviceList[this.pageIndex].partsList;
+    },
+    _changeForm() {
+      this.param.deviceList[this.pageIndex].partsList = this.partsList;
+      this.param.deviceList[this.pageIndex] = this.deviceList;
+      this.deviceList = {
+        factoryTime: "",
+        no: "",
+        deviceTypeId: "",
+        nameplateImg: "",
+        devicePlace: "",
+        deviceBrand: "",
+        deviceModel: "",
+        deviceSystemId: "",
+        price: "",
+        startTime: "",
+        endTime: ""
+      };
+      this.partsList = {
+        category: "",
+        deviceBrand: "",
+        deviceModel: "",
+        name: "",
+        specification: "",
+        unit: ""
+      };
+      this.value = "";
+      this.value3 = "";
+      this.place = "";
+      this.choseeTime = "";
+      this.activeName = "third";
+      this.change = false;
     },
     _addFalse() {
       this.payDetail = false;
@@ -629,7 +681,32 @@ export default {
       this.param.deviceList.push(this.deviceList);
       console.log(this.param.deviceList);
       this.activeName = "third";
-      this.deviceList = "";
+      this.deviceList = {
+        factoryTime: "",
+        no: "",
+        deviceTypeId: "",
+        nameplateImg: "",
+        devicePlace: "",
+        deviceBrand: "",
+        deviceModel: "",
+        deviceSystemId: "",
+        price: "",
+        startTime: "",
+        endTime: "",
+        partsList: []
+      };
+      this.partsList = {
+        category: "",
+        deviceBrand: "",
+        deviceModel: "",
+        name: "",
+        specification: "",
+        unit: ""
+      };
+      this.value = "";
+      this.value3 = "";
+      this.place = "";
+      this.choseeTime = "";
     },
     _editButlerOrderAll() {
       let param = this.param;
@@ -729,7 +806,7 @@ export default {
     },
     typeChange(value) {
       console.log(value);
-      this.deviceList.deviceTypeId = value;
+      this.deviceList.deviceTypeId = value[1];
       console.log("设备类型id", this.deviceList.deviceTypeId);
     },
     handleRemove(file, fileList) {
@@ -744,13 +821,13 @@ export default {
     },
     addPart() {
       this.partsList = {
-          category: "",
-          deviceBrand: "",
-          deviceModel: "",
-          name: "",
-          specification: "",
-          unit: ""
-        };
+        category: "",
+        deviceBrand: "",
+        deviceModel: "",
+        name: "",
+        specification: "",
+        unit: ""
+      };
       this.PartChange = false;
       this.dialogpop = true;
     },
@@ -758,7 +835,6 @@ export default {
       this.dialogpop = false;
     },
     addTrue() {
-      
       if (
         !this.partsList.category ||
         !this.partsList.name ||
@@ -782,7 +858,10 @@ export default {
         this.dialogpop = false;
       }
     },
-    delited() {}
+    delited(scope) {
+      console.log(scope,"删除设备")
+      this.param.deviceList.splice(this.deviceList,scope.$index+1)
+    }
   }
 };
 </script>

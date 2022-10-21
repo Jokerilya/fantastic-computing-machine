@@ -55,7 +55,7 @@
     >
       <el-table-column prop="orderSn" label="订单号" show-overflow-tooltip width="200" align="center"></el-table-column>
       <el-table-column prop="status" label="订单状态" show-overflow-tooltip width="200" align="center"></el-table-column>
-      <el-table-column prop="status" label="付款状态" show-overflow-tooltip width="200" align="center"></el-table-column>
+      <!-- <el-table-column prop="statusName" label="付款状态" show-overflow-tooltip width="200" align="center"></el-table-column> -->
       <el-table-column
         prop="enterpriseName"
         label="客户名称"

@@ -143,16 +143,16 @@
         align="center"
       ></el-table-column>
       <el-table-column
-        prop="subStatus"
+        prop="orderStatusName"
         label="状态"
         show-overflow-tooltip
         width="150"
         align="center"
         fixed="right"
       >
-        <template
+        <!-- <template
           slot-scope="{row}"
-        >{{ util.global.getLabel('subStatus',row.subStatus) }}</template>
+        >{{ util.global.getLabel('subStatus',row.subStatus) }}</template> -->
       </el-table-column>
       <el-table-column
         prop="createTime"

@@ -34,6 +34,13 @@
               @click="_changePayment()"
               v-if="data.masterSubStatus<3502"
             >修改报价</el-button>
+            <el-button
+              type="primary"
+              size="mini"
+              plain
+              @click="_cancelRepairOrder()"
+              v-if="data.enterpriseMainStatus<3"
+            >取消订单</el-button>
             <!-- <el-button type="primary" size="mini" plain @click="checkInit()" v-if="['2401','2403'].includes(data.enterpriseSubStatus)">订单验收</el-button> -->
             <el-button
               type="primary"
@@ -435,7 +442,8 @@ import { getRepairOrderDetail } from "@/api/user.js";
 import {
   examineMasterQuotation,
   handleMasterPayment,
-  updateMasterPrice
+  updateMasterPrice,
+  cancelRepairOrder
 } from "@/api/order.js";
 export default {
   title: "maintenance_order_desc",
@@ -471,6 +479,23 @@ export default {
     };
   },
   methods: {
+    _cancelRepairOrder() {
+      let params = {
+        orderSn: this.orderSn
+      };
+      cancelRepairOrder(params).then(res => {
+        if (res) {
+          this.$message({
+            showClose: true,
+            message: res.message,
+            type: "success"
+          });
+          this.$router.push({
+            name: "maintenance_order",
+          });
+        }
+      });
+    },
     changeFalse() {
       this.changePayment = false;
     },

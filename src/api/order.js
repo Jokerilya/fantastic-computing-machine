@@ -1,6 +1,16 @@
 import request from '@/utils/request';
 import { publicData } from '@/webConfig.js';
 
+//平台取消订单
+export function cancelRepairOrder(data) {
+	return request({
+		url: '/admin/maintenance/cancelRepairOrder',
+		method: 'GET',
+		params:data
+	});
+}
+
+
 //平台修改师傅报价
 export function updateMasterPrice(data) {
 	return request({
