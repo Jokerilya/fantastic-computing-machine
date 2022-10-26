@@ -50,6 +50,20 @@
         align="center"
       ></el-table-column>
       <el-table-column
+        prop="superiorMasterName"
+        label="团长"
+        show-overflow-tooltip
+        width="150"
+        align="center"
+      ></el-table-column>
+      <el-table-column
+        prop="recommendMasterName"
+        label="推荐人"
+        show-overflow-tooltip
+        width="150"
+        align="center"
+      ></el-table-column>
+      <el-table-column
         prop="identityFrontImage"
         label="身份证正面照"
         show-overflow-tooltip

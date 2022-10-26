@@ -52,6 +52,20 @@
     >
       <el-table-column prop="orderSn" label="订单编号" show-overflow-tooltip width="200" align="center"></el-table-column>
       <el-table-column
+        prop="no"
+        label="设备编码"
+        show-overflow-tooltip
+        width="200"
+        align="center"
+      ></el-table-column>
+      <!-- <el-table-column
+        prop="simpleDesc"
+        label="推荐人"
+        show-overflow-tooltip
+        width="200"
+        align="center"
+      ></el-table-column> -->
+      <el-table-column
         prop="simpleDesc"
         label="故障描述"
         show-overflow-tooltip

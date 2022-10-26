@@ -61,6 +61,7 @@
         <div>
           <!-- 需求信息 -->
           <el-descriptions title="需求信息">
+            <el-descriptions-item label="设备编码">{{ data.no }}</el-descriptions-item>
             <el-descriptions-item label="设备产地">{{ data.devicePlace }}</el-descriptions-item>
             <el-descriptions-item label="设备类型">{{ data.deviceTypeName }}</el-descriptions-item>
             <el-descriptions-item label="设备品牌">{{ data.deviceBrand }}</el-descriptions-item>
@@ -491,7 +492,7 @@ export default {
             type: "success"
           });
           this.$router.push({
-            name: "maintenance_order",
+            name: "maintenance_order"
           });
         }
       });

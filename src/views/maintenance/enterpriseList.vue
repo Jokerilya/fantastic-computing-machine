@@ -52,6 +52,20 @@
         align="center"
       ></el-table-column>
       <el-table-column
+        prop="superiorEnterpriseName"
+        label="团长"
+        show-overflow-tooltip
+        width="100"
+        align="center"
+      ></el-table-column>
+      <el-table-column
+        prop="recommendMasterName"
+        label="直推师傅"
+        show-overflow-tooltip
+        width="100"
+        align="center"
+      ></el-table-column>
+      <el-table-column
         prop="nickName"
         label="微信昵称"
         show-overflow-tooltip
