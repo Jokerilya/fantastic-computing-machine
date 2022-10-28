@@ -58,13 +58,13 @@
         width="200"
         align="center"
       ></el-table-column>
-      <!-- <el-table-column
-        prop="simpleDesc"
-        label="推荐人"
+      <el-table-column
+        prop="type"
+        label="故障类型"
         show-overflow-tooltip
         width="200"
         align="center"
-      ></el-table-column> -->
+      ></el-table-column>
       <el-table-column
         prop="simpleDesc"
         label="故障描述"

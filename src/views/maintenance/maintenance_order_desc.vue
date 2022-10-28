@@ -69,6 +69,8 @@
             <el-descriptions-item label="设备数量">{{ data.num }}台</el-descriptions-item>
             <el-descriptions-item label="服务时间">{{ data.serviceTime }}</el-descriptions-item>
             <el-descriptions-item label="故障描述">{{ data.simpleDesc }}</el-descriptions-item>
+            <el-descriptions-item label="故障描述">{{ data.simpleDesc }}</el-descriptions-item>
+            <el-descriptions-item label="故障类型">{{ data.type }}</el-descriptions-item>
             <el-descriptions-item label="设备视图">
               <!-- <div style="margin-bottom:10px">上传设备铝牌和故障相关照片和视频</div> -->
               <!-- <div> -->
