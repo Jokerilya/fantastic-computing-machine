@@ -10,6 +10,7 @@
      :data="dataList" row-key="id" default-expand-all :tree-props="{children: 'list', hasChildren: 'hasChildren'}" style="width: 100%;">
       <!-- <el-table-column type="selection" width="45" show-overflow-tooltip></el-table-column> -->
       <el-table-column prop="id" label="id" show-overflow-tooltip></el-table-column>
+      
       <el-table-column prop="name" label="名称" show-overflow-tooltip></el-table-column>
       <el-table-column prop="imgUrl" label="图片">
         <template slot-scope="{row}">
@@ -59,9 +60,13 @@
         <el-form-item label="设备类型名称" prop="name" style="width:calc(100% - 120px)">
             <el-input type="text" v-model="addForm.name" autocomplete="off"></el-input>
         </el-form-item>
+        <el-form-item label="父级id" prop="pid" style="width:calc(100% - 120px)">
+              <el-input type="number" v-model="addForm.pid" autocomplete="off"></el-input>
+            </el-form-item>
         <el-form-item label="排序" prop="sort" style="width:calc(100% - 120px)">
             <el-input type="number" v-model="addForm.sort" autocomplete="off"></el-input>
         </el-form-item>
+        
         <el-form-item label="设备类型图片" prop="icon" style="width:calc(100% - 120px)">
             <upload ref="addImg" type="image/*" limit="1" :size="1024**2*2" />
         </el-form-item>

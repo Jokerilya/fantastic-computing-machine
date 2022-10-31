@@ -1,6 +1,15 @@
 import request from '@/utils/request';
 import { publicData } from '@/webConfig.js';
 
+
+// 绑定企业
+export function bindUserAccount(data) {
+	return request({
+		url: '/admin/maintenance/bindUserAccount',
+		method: 'post',
+		data: data,
+	});
+}
 // 用户信息列表
 export function queryUserInfoFn(data) {
 	return request({

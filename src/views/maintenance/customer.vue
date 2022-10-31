@@ -89,6 +89,7 @@
         <template slot-scope="{row}">
           <div class="settings">
             <el-button type="info" size="mini" plain @click="jump2Detail(row)">查看详情</el-button>
+            <el-button v-if="!row.uid" type="info" size="mini" plain @click="foremp(row)">绑定账号</el-button>
             <!-- <el-button type="info" size="mini" plain>编辑</el-button> -->
           </div>
           <!-- :disabled="row.mainStatus !=1" -->
@@ -107,7 +108,64 @@
     ></el-pagination>
 
     <div style="margin:20px 0"></div>
+    <model ref="enterpriseList" title="企业列表" :isSubmit="false" :column="2" @close="closeSnatch">
+      <el-form label-width="88px" class="rule-form" label-position="right">
+        <el-row :gutter="20">
+          <el-col :span="5">
+            <el-form-item label="企业名称">
+              <el-input placeholder="请输入企业名称" v-model="enterpriseName"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="15">
+            <el-button icon="el-icon-zoom-in" plain type="primary" @click="_getEnterpriseList">查询</el-button>
+          </el-col>
+        </el-row>
+      </el-form>
+      <el-table
+        highlight-current-row
+        v-loading.fullscreen.lock="loading"
+        element-loading-text="拼命加载中"
+        border
+        element-loading-spinner="el-icon-loading"
+        :data="enterpriseList"
+        style="width: 1500px;"
+      >
+        <el-table-column
+          prop="enterpriseName"
+          label="企业名称"
+          show-overflow-tooltip
+          width="160"
+          align="center"
+        ></el-table-column>
+       <el-table-column
+        prop="enterpriseAddress"
+        label="企业地址"
+        show-overflow-tooltip
+        width="300"
+        align="center"
+      ></el-table-column>
+      
+        <el-table-column prop="phone" label="联系电话" show-overflow-tooltip width="160" align="center"></el-table-column>
+        <el-table-column label="操作" width="300px" fixed="right">
+          <template slot-scope="{row}">
+            <div class="settings">
+              <el-button type="primary" size="mini" plain @click="_bindUserAccount(row)">绑定企业</el-button>
+            </div>
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-pagination
+        background
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="currentPage "
+        :page-size="10"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="pageCount"
+      ></el-pagination>
+    </model>
   </div>
+  
 </template>
 <style lang="less" scoped>
 .manage-top {
@@ -120,12 +178,17 @@
 <script>
 import { getMasterList, handleAssignMaster } from "@/api/user.js";
 import { queryButlerOrderList,uploadButlerOrder } from "@/api/order.js";
+import { getEnterpriseList,bindUserAccount } from "@/api/user.js";
 import tableMixin from "@/mixin/table";
 export default {
   title: "course",
   mixins: [tableMixin],
   data() {
     return {
+      bindOrderSn:'',
+      bindUid:'',
+      enterpriseName:'',
+      enterpriseList:[],
       orderSn: "",
       People: "",
       Name: "",
@@ -175,8 +238,48 @@ export default {
   created() {
     this._getMasterList();
     this._queryButlerOrderList();
+     this._getEnterpriseList();
   },
   methods: {
+    _bindUserAccount(e){
+      console.log(e)
+      this.bindUid = e.uid
+      let params = {
+        orderSn:this.bindOrderSn,
+        uid:this.bindUid
+      };
+      bindUserAccount(params).then(res => {
+        if (res) {
+          this.$message({
+            showClose: true,
+            message:res.message,
+            type: "success"
+          });;
+        }
+        this.$refs.enterpriseList.close();
+      });
+    },
+    _getEnterpriseList() {
+      let params = {
+        pageNo: 1,
+        pageSize:20,
+        name: this.enterpriseName,
+        phone: ''
+      };
+      getEnterpriseList(params).then(res => {
+        if (res) {
+          //   console.log(res);
+          this.enterpriseList = res.data.records;
+          console.log("企业列表", this.enterpriseList);
+        }
+        console.log("名称", this.enterpriseName);
+      });
+    },
+    foremp(e){
+      this.$refs.enterpriseList.open();
+      console.log(e)
+      this.bindOrderSn = e.orderSn
+    },
     handleRemove(file, fileList) {
       console.log(file, fileList);
     },
