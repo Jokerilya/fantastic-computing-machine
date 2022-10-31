@@ -54,7 +54,7 @@
       style="width: 100%;"
     >
       <el-table-column prop="orderSn" label="订单号" show-overflow-tooltip width="200" align="center"></el-table-column>
-      <el-table-column prop="status" label="订单状态" show-overflow-tooltip width="200" align="center"></el-table-column>
+      <el-table-column prop="statusName" label="订单状态" show-overflow-tooltip width="200" align="center"></el-table-column>
       <!-- <el-table-column prop="statusName" label="付款状态" show-overflow-tooltip width="200" align="center"></el-table-column> -->
       <el-table-column
         prop="enterpriseName"
@@ -257,6 +257,7 @@ export default {
           });;
         }
         this.$refs.enterpriseList.close();
+        this._queryButlerOrderList();
       });
     },
     _getEnterpriseList() {
