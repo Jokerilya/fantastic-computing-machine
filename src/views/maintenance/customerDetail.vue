@@ -69,7 +69,7 @@
         </template>
       </el-table-column>
       <el-table-column
-        prop="deviceTypeId"
+        prop="deviceTypeName"
         label="设备类型"
         show-overflow-tooltip
         width="200"
@@ -90,7 +90,7 @@
         align="center"
       ></el-table-column>
       <el-table-column
-        prop="deviceSystemId"
+        prop="deviceSystemName"
         label="设备系统"
         show-overflow-tooltip
         width="150"
