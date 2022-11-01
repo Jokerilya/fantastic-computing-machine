@@ -67,7 +67,7 @@
       ></el-table-column>
       <el-table-column
         prop="nickName"
-        label="微信昵称"
+        label="用户昵称"
         show-overflow-tooltip
         width="100"
         align="center"
@@ -148,6 +148,12 @@
               @click="open(row)"
               :disabled="row.enterpriseFlag == 2"
             > {{row.enterpriseFlag == 2? '已通过':row.enterpriseFlag == 3? '已驳回':'审核'}}  </el-button>
+            <el-button
+              type="warning"
+              size="mini"
+              plain
+              @click="openTeam(row)"
+            > 查看团队</el-button>
           </div>
         </template>
         <model ref="enterpriseList" title="企业审核" @ok="handleEnterpriseExamine" @close="resetEditForm">
@@ -211,6 +217,9 @@ export default {
     this._getEnterpriseList();
   },
   methods: {
+    openTeam(){
+
+    },
     handleEnterpriseExamine() {
    
       this.$axios

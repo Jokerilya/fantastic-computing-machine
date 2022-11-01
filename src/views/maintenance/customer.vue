@@ -297,6 +297,7 @@ export default {
             type: "success"
           });
           loading.close();
+          this._getOrderList()
           // this.deviceList.nameplateImg = res.data;
           // console.log(this.deviceList.nameplateImg, "文件上传");
         })
