@@ -100,11 +100,11 @@
       background
       @size-change="handleSizeChange"
       @current-change="updatePageNo"
-      :current-page="page.pageNo"
+      :current-page="currentPage"
       :page-sizes="[10, 20, 50, 100]"
-      :page-size="page.dataNum"
+      :page-size="10"
       layout="total, sizes, prev, pager, next, jumper"
-      :total="page.dataSumNum"
+      :total="pageCount"
     ></el-pagination>
 
     <div style="margin:20px 0"></div>
@@ -154,15 +154,6 @@
           </template>
         </el-table-column>
       </el-table>
-      <el-pagination
-        background
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page="currentPage "
-        :page-size="10"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="pageCount"
-      ></el-pagination>
     </model>
   </div>
   
@@ -185,6 +176,8 @@ export default {
   mixins: [tableMixin],
   data() {
     return {
+      pageCount: 0,
+      currentPage: 1,
       bindOrderSn:'',
       bindUid:'',
       enterpriseName:'',
@@ -241,6 +234,10 @@ export default {
      this._getEnterpriseList();
   },
   methods: {
+    handleCurrentChange(val) {
+      this.currentPage = val;
+      this._queryButlerOrderList();
+    },
     _bindUserAccount(e){
       console.log(e)
       this.bindUid = e.uid
@@ -322,7 +319,10 @@ export default {
         if (res) {
           this.orderList = res.data.records;
           console.log("列表", res);
+          this.pageCount = res.data.total;
+          this.currentPage = res.data.current;
         }
+        console.log(this.pageCount)
       });
     },
     _addOrder() {
@@ -335,13 +335,15 @@ export default {
         contactsPeople: "",
         contactsPhone: "",
         enterpriseName: "",
-        pageNo: 1,
+        pageNo: this.currentPage,
         pageSize: 10
       };
       queryButlerOrderList(params).then(res => {
         if (res) {
           this.orderList = res.data.records;
           console.log("列表", res);
+          this.pageCount = res.data.total;
+          this.currentPage = res.data.current;
         }
       });
     },
