@@ -32,7 +32,7 @@
               size="mini"
               plain
               @click="_changePayment()"
-              v-if="data.masterSubStatus<3502"
+              v-if="data.masterSubStatus <3502 && data.masterSubStatus>0 "
             >修改报价</el-button>
             <el-button
               type="primary"
