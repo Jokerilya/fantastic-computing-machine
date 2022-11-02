@@ -27,14 +27,11 @@
         </div>
       </div>
     </div>
+    <div class="next" v-if="activeName=='first'">
+      <el-button type="success" size plain @click="nextThen">下一步</el-button>
+    </div>
 
     <div class="titleOne" v-if="activeName=='second'">设备基本信息</div>
-    <!-- <div class="code" style="margin:20px 120px">
-      设备编码
-      <div class="codeInput" style=" margin-left: 20px;">
-        <el-input v-model="param.no" placeholder="输入设备编码"></el-input>
-      </div>
-    </div>-->
     <div class="midLine" v-if="activeName=='second'">
       <div class="custorName">
         <div class="name">贴牌编码</div>
@@ -144,8 +141,10 @@
           ></el-date-picker>
         </div>
       </div>
+    </div>
+    <div class="bottomLine2" v-if="activeName=='second'">
       <div class="custorCode">
-        <div class="code">铭牌图片</div>
+        <div class="code" style="margin:10px 0">铭牌图片</div>
         <div class="codeInput">
           <el-upload
             action
@@ -158,10 +157,10 @@
             <i class="el-icon-plus"></i>
           </el-upload>
         </div>
-      </div>
-      <div class="btnSmbit" v-if="activeName=='second'">
-        <el-button v-if="!change" type="success" size plain @click="_editButlerOrder">保存基本信息</el-button>
-        <el-button v-if="change" type="success" size plain @click="_changeForm">确认修改</el-button>
+        <div class="btnSmbit" v-if="activeName=='second'" style="margin:50px 0">
+          <el-button v-if="!change" type="success" size plain @click="_editButlerOrder">保存基本信息</el-button>
+          <el-button v-if="change" type="success" size plain @click="_changeForm">确认修改</el-button>
+        </div>
       </div>
     </div>
 
@@ -333,46 +332,48 @@
       :center="true"
     >
       <el-from label-width="1000px">
-        <div class="addPart">
-          <div class="addcontent">
-            <div class="name">项目大类:</div>
-            <el-input
-              v-model="partsList.category"
-              :value="partsList.category"
-              placeholder="请填写项目大类"
-            ></el-input>
-          </div>
-          <div class="addcontent">
-            <div class="name">项目名称:</div>
-            <el-input v-model="partsList.name" :value="partsList.name" placeholder="请填写项目名称"></el-input>
-          </div>
-          <div class="addcontent">
-            <div class="name">品牌:</div>
-            <el-input
-              v-model="partsList.deviceBrand"
-              :value="partsList.deviceBrand"
-              placeholder="请输入品牌"
-            ></el-input>
-          </div>
-          <div class="addcontent">
-            <div class="name">型号:</div>
-            <el-input
-              v-model="partsList.deviceModel"
-              :value="partsList.deviceModel"
-              placeholder="请填写型号"
-            ></el-input>
-          </div>
-          <div class="addcontent">
-            <div class="name">单位:</div>
-            <el-input v-model="partsList.unit" :value="partsList.unit" placeholder="请填写配件单位"></el-input>
-          </div>
-          <div class="addcontent">
-            <div class="name">规格:</div>
-            <el-input
-              v-model="partsList.specification"
-              :value="partsList.specification"
-              placeholder="请填写配件规格"
-            ></el-input>
+        <div class="addBorder">
+          <div class="addPart">
+            <div class="addcontent">
+              <div class="name">项目大类:</div>
+              <el-input
+                v-model="partsList.category"
+                :value="partsList.category"
+                placeholder="请填写项目大类"
+              ></el-input>
+            </div>
+            <div class="addcontent">
+              <div class="name">项目名称:</div>
+              <el-input v-model="partsList.name" :value="partsList.name" placeholder="请填写项目名称"></el-input>
+            </div>
+            <div class="addcontent">
+              <div class="name">品牌:</div>
+              <el-input
+                v-model="partsList.deviceBrand"
+                :value="partsList.deviceBrand"
+                placeholder="请输入品牌"
+              ></el-input>
+            </div>
+            <div class="addcontent">
+              <div class="name">型号:</div>
+              <el-input
+                v-model="partsList.deviceModel"
+                :value="partsList.deviceModel"
+                placeholder="请填写型号"
+              ></el-input>
+            </div>
+            <div class="addcontent">
+              <div class="name">单位:</div>
+              <el-input v-model="partsList.unit" :value="partsList.unit" placeholder="请填写配件单位"></el-input>
+            </div>
+            <div class="addcontent">
+              <div class="name">规格:</div>
+              <el-input
+                v-model="partsList.specification"
+                :value="partsList.specification"
+                placeholder="请填写配件规格"
+              ></el-input>
+            </div>
           </div>
         </div>
       </el-from>
@@ -390,6 +391,7 @@
       :show-close="true"
       :center="true"
     >
+    <div class="addBorder">
       <el-from label-width="1000px">
         <div class="addPart">
           <div class="addcontent">
@@ -430,6 +432,8 @@
           </div>
         </div>
       </el-from>
+    </div>
+      
       <div class="addPartBtn">
         <el-button type="primary" @click="addPayFalse">取消</el-button>
         <el-button type="primary" @click="addPayTrue">添加</el-button>
@@ -444,26 +448,28 @@
       :center="true"
     >
       <el-from label-width="1000px">
-        <div class="addPart">
-          <div class="addcontent">
-            <div class="name">客户名称</div>
-            <el-input :value="partDetail.paymentEnterpriseName"></el-input>
-          </div>
-          <div class="addcontent">
-            <div class="name">支付金额</div>
-            <el-input :value="partDetail.payAmount"></el-input>
-          </div>
-          <div class="addcontent">
-            <div class="name">付款时间</div>
-            <el-input :value="partDetail.payTime"></el-input>
-          </div>
-          <div class="addcontent">
-            <div class="name">备注</div>
-            <el-input :value="partDetail.remarks"></el-input>
-          </div>
-          <div class="addcontent">
-            <div class="name">付款凭证:</div>
-            <img :src="partDetail.enclosure" alt />
+        <div class="addBorder">
+          <div class="addPart">
+            <div class="addcontent">
+              <div class="name">客户名称</div>
+              <el-input :value="partDetail.paymentEnterpriseName"></el-input>
+            </div>
+            <div class="addcontent">
+              <div class="name">支付金额</div>
+              <el-input :value="partDetail.payAmount"></el-input>
+            </div>
+            <div class="addcontent">
+              <div class="name">付款时间</div>
+              <el-input :value="partDetail.payTime"></el-input>
+            </div>
+            <div class="addcontent">
+              <div class="name">备注</div>
+              <el-input :value="partDetail.remarks"></el-input>
+            </div>
+            <div class="addcontent">
+              <div class="name">付款凭证:</div>
+              <img :src="partDetail.enclosure" alt />
+            </div>
           </div>
         </div>
       </el-from>
@@ -587,11 +593,14 @@ export default {
     this._queryDeviceSystemList();
   },
   methods: {
+    nextThen() {
+      this.activeName = "second";
+    },
     keepAdd() {
       this.activeName = "second";
     },
     removePart(scope) {
-      console.log(scope)
+      console.log(scope);
       this.deviceList.partsList.splice(this.partIndex, scope.$index);
     },
     addChange() {
@@ -859,15 +868,26 @@ export default {
       }
     },
     delited(scope) {
-      console.log(scope,"删除设备")
-      this.param.deviceList.splice(this.deviceList,scope.$index+1)
+      console.log(scope, "删除设备");
+      this.param.deviceList.splice(this.deviceList, scope.$index + 1);
     }
   }
 };
 </script>
 
 <style lang="scss" scoped>
+.addBorder {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+.next {
+  // margin-top: 50px;
+  width: 100vw;
+  margin-left: 85%;
+}
 .mainPart {
+  padding-bottom: 150px;
   margin: 20px;
   background: #fff;
   .titleOne {
@@ -930,10 +950,12 @@ export default {
     justify-content: space-between;
     align-items: center;
     .custorName {
+      width: 400px;
       display: flex;
-      justify-content: center;
+      // justify-content: center;
       align-items: center;
       .name {
+        width: 100px;
         font-size: 20px;
         font-family: Microsoft YaHei-Bold, Microsoft YaHei;
         font-weight: bold;
@@ -941,14 +963,16 @@ export default {
       }
       .nameInput {
         margin-left: 20px;
-        width: 300px;
+        width: 260px;
       }
     }
     .custorCode {
+       width: 400px;
       justify-content: center;
       align-items: center;
       display: flex;
       .code {
+        width: 100px;
         display: flex;
         font-size: 20px;
         font-family: Microsoft YaHei-Bold, Microsoft YaHei;
@@ -1002,6 +1026,9 @@ export default {
       }
     }
   }
+  .bottomLine2 {
+    padding: 50px 120px;
+  }
 }
 .must {
   color: red;
@@ -1036,7 +1063,7 @@ export default {
 }
 .addPart {
   .addcontent {
-    margin: 10px;
+    margin: 10px 0;
     display: flex;
     width: 480px;
     justify-content: center;

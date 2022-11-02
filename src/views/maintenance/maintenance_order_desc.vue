@@ -7,8 +7,8 @@
           <span>订单号：{{ data.orderSn }}</span>
           <!-- <span>{{ util.global.getLabel('mainStatus',data.enterpriseMainStatus) }} - {{ util.global.getLabel('enterpriseSubStatus',data.enterpriseSubStatus) }}</span> -->
           <span>订单金额：{{ data.totalAmount }}</span>
-          <span>待收款：{{ data.totalAmount }}</span>
-          <span>待付款：{{ data.totalAmount }}</span>
+          <!-- <span>待收款：{{ data.totalAmount }}</span>
+          <span>待付款：{{ data.totalAmount }}</span> -->
           <!-- <span style="color:red">待定价!</span> -->
           <!-- v-if="data.orderTyper == 2" -->
           <div style="float:right">
@@ -236,7 +236,7 @@
             </div>
           </el-descriptions-item>
         </el-descriptions>
-        <el-descriptions title="订单费用" v-if="data.enterpriseMainStatus > 2" :column="1">
+        <el-descriptions title="订单费用" v-if="data.enterpriseMainStatus > 1" :column="1">
           <!-- <el-descriptions-item v-for="(item,index) in data.programmeList" :key="item.desc+index" :label="'解决方案'+(index+1)"> -->
           <el-descriptions-item label="维保预付" v-if="data.depositAmount">{{ data.depositAmount }}</el-descriptions-item>
           <el-descriptions-item label="维保报价">{{ data.totalAmount }}</el-descriptions-item>
@@ -340,7 +340,7 @@
       <el-from label-width="1000px">
         <div class="addPart">
           <div class="addcontent">
-            <div class="name">上面费用:</div>
+            <div class="name">上门费用:</div>
             <el-input v-model="parts.doorAmount" placeholder="元"></el-input>
           </div>
           <div class="addcontent">

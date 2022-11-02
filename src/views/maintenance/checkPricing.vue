@@ -15,21 +15,7 @@
         <textarea v-model="programmes[0].programme" name id cols="30" rows="10" placeholder="描述具体方案"></textarea>
       </div>
     </div>
-    <!-- <div class="solutionTitle" style="margin-top:34px">解决方案2</div>
-    <div class="solutionPart">
-      <div class="describe">
-        故障描述：
-        <textarea name id cols="30" rows="10" placeholder="描述具体故障信息"></textarea>
-      </div>
-      <div class="describe">
-        故障分析：
-        <textarea name id cols="30" rows="10" placeholder="对故障进行具体分析"></textarea>
-      </div>
-      <div class="describe">
-        维保方案：
-        <textarea name id cols="30" rows="10" placeholder="描述具体方案"></textarea>
-      </div>
-    </div>-->
+
     <div class="onload">
       <div class="onloadTitle">质保周期:</div>
       <div class="onloadPart">
@@ -61,13 +47,45 @@
       <div class="addpeijian" @click="openAdd">添加/编辑配件</div>
     </div>
     <div class="addPart">
-      <div class="addcontents" v-for="item in param.parts" :key="item">
-        <div class="paramName">{{item.name}}</div>
-        <div class="paramPrice">{{item.price}}元</div>
-        <div class="paramNum">{{item.num}}</div>
-        <div class="paramUnit">{{item.unit}}</div>
-        <div class="delete" @click="deleted(item.index)">删除</div>
-      </div>
+      <el-table
+      highlight-current-row
+      v-loading.fullscreen.lock="loading"
+      element-loading-text="拼命加载中"
+      element-loading-spinner="el-icon-loading"
+      :data="param.parts"
+      style="width: 100%;"
+    >
+      <el-table-column prop="name" label="配件名称" show-overflow-tooltip width="200" align="center"></el-table-column>
+      <el-table-column
+        prop="price"
+        label="价格"
+        show-overflow-tooltip
+        width="200"
+        align="center"
+      ></el-table-column>
+      <el-table-column
+        prop="num"
+        label="数量"
+        show-overflow-tooltip
+        width="200"
+        align="center"
+      ></el-table-column>
+      <el-table-column prop="num" label="设备数量" show-overflow-tooltip width="200" align="center"></el-table-column>
+      <el-table-column
+        prop="unit"
+        label="单位"
+        show-overflow-tooltip
+        width="100"
+        align="center"
+      ></el-table-column>
+      <el-table-column label="操作" width="300px" fixed="right">
+        <template slot-scope="{row}">
+          <div class="settings">
+            <el-button type="info" size="mini" plain @click="deleted(row)">删除</el-button>
+          </div>
+        </template>
+      </el-table-column>
+    </el-table>
     </div>
     <div class="pricing">
       <div class="pricingTitle">维保报价:</div>
@@ -130,7 +148,8 @@
       :center="true"
     >
       <el-from label-width="1000px">
-        <div class="addPart">
+        <div class="addBorder">
+          <div class="addPart">
           <div class="addcontent">
             <div class="name">配件名称:</div>
             <el-input v-model="part.name" placeholder="请填写配件名称"></el-input>
@@ -148,6 +167,8 @@
             <el-input v-model="part.unit" placeholder="请填写配件单位,例如：件、个"></el-input>
           </div>
         </div>
+        </div>
+        
       </el-from>
       <div class="addPartBtn">
         <el-button type="primary" @click="addFalse">取消</el-button>
@@ -327,6 +348,11 @@ export default {
 };
 </script>
 <style lang="less" scoped>
+.addBorder{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
 .checkPart {
   height: 100vh;
   background: #fff;
@@ -349,9 +375,10 @@ export default {
       color: #707070;
       textarea {
         background: #f6f8fc;
-        color: #aaaaaa;
+        color: #000;
         font-size: 18px;
         padding: 12px 30px;
+        border: 1rpx solid #e9e9e9;
       }
     }
   }

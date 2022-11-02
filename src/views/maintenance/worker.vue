@@ -390,7 +390,6 @@ export default {
   methods: {
     handleCurrentChange(val) {
       this.currentPage = val;
-      // this.currentPage2 = val;
       this._getMasterList();
     },
     _getMasterList() {
@@ -459,6 +458,7 @@ export default {
         .catch(function(error) {
           console.info(error);
         });
+        this.$refs.editStatusModel.close();
     },
     editInit(row) {
       this.editForm = row;
