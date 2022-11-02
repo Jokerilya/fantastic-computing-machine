@@ -4,15 +4,36 @@
     <div class="solutionPart">
       <div class="describe">
         故障描述：
-        <textarea v-model="programmes[0].desc" name id cols="30" rows="10" placeholder="描述具体故障信息"></textarea>
+        <textarea
+          v-model="programmes[0].desc"
+          name
+          id
+          cols="30"
+          rows="10"
+          placeholder="描述具体故障信息"
+        ></textarea>
       </div>
       <div class="describe">
         故障分析：
-        <textarea v-model="programmes[0].analysis" name id cols="30" rows="10" placeholder="对故障进行具体分析"></textarea>
+        <textarea
+          v-model="programmes[0].analysis"
+          name
+          id
+          cols="30"
+          rows="10"
+          placeholder="对故障进行具体分析"
+        ></textarea>
       </div>
       <div class="describe">
         维保方案：
-        <textarea v-model="programmes[0].programme" name id cols="30" rows="10" placeholder="描述具体方案"></textarea>
+        <textarea
+          v-model="programmes[0].programme"
+          name
+          id
+          cols="30"
+          rows="10"
+          placeholder="描述具体方案"
+        ></textarea>
       </div>
     </div>
 
@@ -40,7 +61,7 @@
     }"
         placeholder="任意时间点"
       ></el-time-picker>
-    </div> -->
+    </div>-->
     <div class="cut"></div>
     <div class="peijian">
       <div class="peijianTitle">配件明细:</div>
@@ -48,44 +69,26 @@
     </div>
     <div class="addPart">
       <el-table
-      highlight-current-row
-      v-loading.fullscreen.lock="loading"
-      element-loading-text="拼命加载中"
-      element-loading-spinner="el-icon-loading"
-      :data="param.parts"
-      style="width: 100%;"
-    >
-      <el-table-column prop="name" label="配件名称" show-overflow-tooltip width="200" align="center"></el-table-column>
-      <el-table-column
-        prop="price"
-        label="价格"
-        show-overflow-tooltip
-        width="200"
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        prop="num"
-        label="数量"
-        show-overflow-tooltip
-        width="200"
-        align="center"
-      ></el-table-column>
-      <el-table-column prop="num" label="设备数量" show-overflow-tooltip width="200" align="center"></el-table-column>
-      <el-table-column
-        prop="unit"
-        label="单位"
-        show-overflow-tooltip
-        width="100"
-        align="center"
-      ></el-table-column>
-      <el-table-column label="操作" width="300px" fixed="right">
-        <template slot-scope="{row}">
-          <div class="settings">
-            <el-button type="info" size="mini" plain @click="deleted(row)">删除</el-button>
-          </div>
-        </template>
-      </el-table-column>
-    </el-table>
+        highlight-current-row
+        v-loading.fullscreen.lock="loading"
+        element-loading-text="拼命加载中"
+        element-loading-spinner="el-icon-loading"
+        :data="param.parts"
+        style="width: 100%;"
+      >
+        <el-table-column prop="name" label="配件名称" show-overflow-tooltip width="200" align="center"></el-table-column>
+        <el-table-column prop="price" label="价格" show-overflow-tooltip width="200" align="center"></el-table-column>
+        <el-table-column prop="num" label="数量" show-overflow-tooltip width="200" align="center"></el-table-column>
+        <el-table-column prop="num" label="设备数量" show-overflow-tooltip width="200" align="center"></el-table-column>
+        <el-table-column prop="unit" label="单位" show-overflow-tooltip width="100" align="center"></el-table-column>
+        <el-table-column label="操作" width="300px" fixed="right">
+          <template slot-scope="{row}">
+            <div class="settings">
+              <el-button type="info" size="mini" plain @click="deleted(row)">删除</el-button>
+            </div>
+          </template>
+        </el-table-column>
+      </el-table>
     </div>
     <div class="pricing">
       <div class="pricingTitle">维保报价:</div>
@@ -134,9 +137,9 @@
           <div class="lineRight" style="color:red;font-weight:bold">{{sum}}</div>
         </div>
       </div>
-    </div>
-    <div class="submitByn">
-      <el-button type="primary" size="mini" plain @click="_handleMasterQuotation()">检查定价</el-button>
+      <div class="submitByn" style="margin-left:50px">
+        <el-button type="primary" size="mini" plain @click="_handleMasterQuotation()">检测定价</el-button>
+      </div>
     </div>
 
     <el-dialog
@@ -150,25 +153,24 @@
       <el-from label-width="1000px">
         <div class="addBorder">
           <div class="addPart">
-          <div class="addcontent">
-            <div class="name">配件名称:</div>
-            <el-input v-model="part.name" placeholder="请填写配件名称"></el-input>
-          </div>
-          <div class="addcontent">
-            <div class="name">配件单价:</div>
-            <el-input v-model="part.price" placeholder="请填写配件单价"></el-input>
-          </div>
-          <div class="addcontent">
-            <div class="name">配件数量:</div>
-            <el-input v-model="part.num" placeholder="请填写配件数量,例如：2"></el-input>
-          </div>
-          <div class="addcontent">
-            <div class="name">配件单位:</div>
-            <el-input v-model="part.unit" placeholder="请填写配件单位,例如：件、个"></el-input>
+            <div class="addcontent">
+              <div class="name">配件名称:</div>
+              <el-input v-model="part.name" placeholder="请填写配件名称"></el-input>
+            </div>
+            <div class="addcontent">
+              <div class="name">配件单价:</div>
+              <el-input v-model="part.price" placeholder="请填写配件单价"></el-input>
+            </div>
+            <div class="addcontent">
+              <div class="name">配件数量:</div>
+              <el-input v-model="part.num" placeholder="请填写配件数量,例如：2"></el-input>
+            </div>
+            <div class="addcontent">
+              <div class="name">配件单位:</div>
+              <el-input v-model="part.unit" placeholder="请填写配件单位,例如：件、个"></el-input>
+            </div>
           </div>
         </div>
-        </div>
-        
       </el-from>
       <div class="addPartBtn">
         <el-button type="primary" @click="addFalse">取消</el-button>
@@ -208,7 +210,6 @@ export default {
   title: "checkPricing",
   data() {
     return {
-
       dialogChosee: false,
       dialogpop: false,
 
@@ -224,14 +225,14 @@ export default {
         unit: ""
       },
       param: {
-        orderSn:'',
+        orderSn: "",
         warrantyTime: "",
         parts: [],
         programme: [],
         partsAmount: "", //配件费
         doorAmount: "", //上门费用
         technologyAmount: "", //技术服务费
-        otherAmount: "", //其他费用
+        otherAmount: "" //其他费用
       },
       programmes: [
         {
@@ -260,8 +261,7 @@ export default {
   },
   methods: {
     addPartTrue() {
-      this.dialogChosee = false,
-      this.dialogpop = false
+      (this.dialogChosee = false), (this.dialogpop = false);
     },
     deleted(item, index) {
       console.log(item, index);
@@ -317,14 +317,14 @@ export default {
     },
     //定价
     _handleMasterQuotation() {
-      this.param.programme = this.programmes
-      console.log(this.programmes)
-      console.log("programme",this.param.programme)
+      this.param.programme = this.programmes;
+      console.log(this.programmes);
+      console.log("programme", this.param.programme);
       let param = {
         ...this.param
-      }
-      param.parts = JSON.stringify(param.parts)
-      param.programme = JSON.stringify(param.programme)
+      };
+      param.parts = JSON.stringify(param.parts);
+      param.programme = JSON.stringify(param.programme);
       handleMasterQuotation(param).then(res => {
         if (res.success) {
           console.log("检测定价", res);
@@ -348,7 +348,7 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-.addBorder{
+.addBorder {
   width: 100%;
   display: flex;
   justify-content: center;
