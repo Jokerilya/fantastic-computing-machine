@@ -17,7 +17,7 @@
               size="mini"
               plain
               @click="jump2check"
-              v-if="data.platformStatus == 0"
+              v-if="0<data.enterpriseMainStatus<3 || data.enterpriseMainStatus == 0"
             >检测定价</el-button>
             <el-button
               type="primary"
@@ -39,7 +39,7 @@
               size="mini"
               plain
               @click="_cancelRepairOrder()"
-              v-if="data.enterpriseMainStatus<3"
+              v-if="0<data.enterpriseMainStatus<3 || data.enterpriseMainStatus == 0"
             >取消订单</el-button>
             <!-- <el-button type="primary" size="mini" plain @click="checkInit()" v-if="['2401','2403'].includes(data.enterpriseSubStatus)">订单验收</el-button> -->
             <el-button
