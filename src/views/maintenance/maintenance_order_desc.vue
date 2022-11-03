@@ -23,7 +23,7 @@
               type="primary"
               size="mini"
               plain
-              @click="srueAccomont()"
+              @click="sumbitQuotation()"
               v-if="['2204'].includes(data.enterpriseSubStatus)"
             >确认报价</el-button>
             <!-- <el-button type="primary" size="mini" plain @click="platformPayInit()">打款至师傅</el-button> -->
@@ -62,7 +62,7 @@
             <el-descriptions-item label="设备数量">{{ data.num }}台</el-descriptions-item>
             <el-descriptions-item label="服务时间">{{ data.serviceTime }}</el-descriptions-item>
             <el-descriptions-item label="故障描述">{{ data.simpleDesc }}</el-descriptions-item>
-            <el-descriptions-item label="故障描述">{{ data.simpleDesc }}</el-descriptions-item>
+            <!-- <el-descriptions-item label="故障描述">{{ data.simpleDesc }}</el-descriptions-item> -->
             <el-descriptions-item label="故障类型">{{ data.type }}</el-descriptions-item>
             <el-descriptions-item label="设备视图">
               <!-- <div style="margin-bottom:10px">上传设备铝牌和故障相关照片和视频</div> -->
@@ -537,11 +537,11 @@ export default {
         }
       });
     },
-    sumbitQuotation(fn) {
+    sumbitQuotation() {
       let data = {
         orderSn: this.orderSn,
-        status: this.status,
-        rejectReason: this.quotationForm.rejectReason
+        status: 2,
+        rejectReason: ''
       };
       examineMasterQuotation(data).then(res => {
         if (res.success) {
