@@ -49,13 +49,6 @@
               @click="_handleMasterPayment()"
               v-if="['3502'].includes(data.masterSubStatus)"
             >打款至师傅</el-button>
-            <!-- <el-button
-              type="primary"
-              size="mini"
-              plain
-              @click="platformPayInit()"
-              v-if="['2502'].includes(data.enterpriseSubStatus)"
-            >确认企业支付尾款</el-button>-->
           </div>
         </div>
         <div>

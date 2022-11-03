@@ -79,7 +79,6 @@
         <el-table-column prop="name" label="配件名称" show-overflow-tooltip width="200" align="center"></el-table-column>
         <el-table-column prop="price" label="价格" show-overflow-tooltip width="200" align="center"></el-table-column>
         <el-table-column prop="num" label="数量" show-overflow-tooltip width="200" align="center"></el-table-column>
-        <el-table-column prop="num" label="设备数量" show-overflow-tooltip width="200" align="center"></el-table-column>
         <el-table-column prop="unit" label="单位" show-overflow-tooltip width="100" align="center"></el-table-column>
         <el-table-column label="操作" width="300px" fixed="right">
           <template slot-scope="{row}">
