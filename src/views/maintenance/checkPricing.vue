@@ -332,6 +332,10 @@ export default {
             message: res.message,
             type: "success"
           });
+          this.$router.push({
+            name: "maintenance_order_desc",
+            query: { orderSn: this.data.orderSn }
+          });
         } else {
           alert(res.message);
         }
