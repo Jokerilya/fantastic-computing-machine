@@ -139,9 +139,6 @@
             :label="'解决方案'+(index+1)"
           >
             <el-row
-              :gutter="20"
-              v-for="(item,index) in data.programmeList"
-              :key="item.desc+index"
               style="font-size:12px !important"
             >
               <el-col :span="24">
@@ -219,15 +216,17 @@
             </div>
           </el-descriptions-item>
         </el-descriptions>
-        <el-descriptions title="交付方案" v-if="data.completePictureList" :column="1">
-          <el-descriptions-item label="完工信息">
-            <div :gutter="20" v-for="(item) in data.completePictureList" :key="item">
-              <img :src="item" style="height:100px" />
-            </div>
-            <div :gutter="20" v-for="(item) in data.completeVideoList" :key="item">
-              <video :src="item" style="height:100px"></video>
-            </div>
-          </el-descriptions-item>
+        <el-descriptions title="完工信息" v-if="data.completePictureList" :column="1">
+          <el-descriptions-item>
+              <el-image
+                v-if="data.completePictureList"
+                style="width: 100px; height: 100px"
+                lazy
+                :src="data.completePictureList[1]"
+                :preview-src-list="data.completePictureList"
+              ></el-image>
+              <video v-for="item in data.videoList" :key="item" :src="item"></video>
+            </el-descriptions-item>
         </el-descriptions>
         <el-descriptions title="订单费用" v-if="data.enterpriseMainStatus > 1" :column="1">
           <!-- <el-descriptions-item v-for="(item,index) in data.programmeList" :key="item.desc+index" :label="'解决方案'+(index+1)"> -->
