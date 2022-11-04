@@ -223,6 +223,7 @@ export default {
         num: "",
         unit: ""
       },
+      
       param: {
         orderSn: "",
         warrantyTime: "",
