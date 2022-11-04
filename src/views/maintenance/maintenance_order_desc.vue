@@ -159,7 +159,7 @@
             </el-row>
           </el-descriptions-item>
         </el-descriptions>
-        <div v-if="data.programmeList">
+        <!-- <div v-if="data.enterpriseMainStatus > 2">
           <div class="inhoudskop">
             故障解决方案
           </div>
@@ -189,19 +189,19 @@
               <span>质保周期：</span>
               {{ data.warrantyTime }}/天
             </el-col>
-            <!-- <el-col :span="4">
+            <el-col :span="4">
               <span>预计完成日期：</span>
               {{ data.estimateServiceTime }}
-            </el-col> -->
+            </el-col>
           </el-row>
-          <div v-if="data.completePictureList">
+          <div>
             完工照片：
             {{ data.completePictureList }}
             {{ data.completeVideoList }}
           </div>
-        </div>
+        </div>-->
         <!-- 配件明细 -->
-        <el-descriptions title="配件明细" v-if="data.programmeList" :column="1">
+        <el-descriptions title="配件明细" v-if="data.partsList !=''" :column="1">
           <el-descriptions-item
             v-for="(item,index) in data.programmeList"
             :key="item.desc+index"
@@ -237,15 +237,7 @@
           <el-descriptions-item label="技术服务费">{{ data.technologyAmount }}</el-descriptions-item>
           <el-descriptions-item label="配件费">{{ data.partsAmount }}</el-descriptions-item>
           <el-descriptions-item label="其他费用">{{ data.otherAmount }}</el-descriptions-item>
-        </el-descriptions>
-        <el-descriptions title="解决方案" v-if="data.enterpriseMainStatus > 1" :column="1">
-          <!-- <el-descriptions-item v-for="(item,index) in data.programmeList" :key="item.desc+index" :label="'解决方案'+(index+1)"> -->
-          <el-descriptions-item label="维保预付" v-if="data.depositAmount">{{ data.depositAmount }}</el-descriptions-item>
-          <el-descriptions-item label="维保报价">{{ data.totalAmount }}</el-descriptions-item>
-          <el-descriptions-item label="上门费用">{{ data.doorAmount }}</el-descriptions-item>
-          <el-descriptions-item label="技术服务费">{{ data.technologyAmount }}</el-descriptions-item>
-          <el-descriptions-item label="配件费">{{ data.partsAmount }}</el-descriptions-item>
-          <el-descriptions-item label="其他费用">{{ data.otherAmount }}</el-descriptions-item>
+          <!-- </el-descriptions-item> -->
         </el-descriptions>
         <!-- <div v-if="data.enterpriseMainStatus > 2">
           <el-row :gutter="20">
