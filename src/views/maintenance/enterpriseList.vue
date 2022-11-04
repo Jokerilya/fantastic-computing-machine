@@ -29,6 +29,7 @@
       element-loading-spinner="el-icon-loading"
       :data="enterpriseList"
       style="width: 100%;"
+      max-height="700"
     >
       <el-table-column
         prop="enterpriseName"

@@ -49,6 +49,7 @@
       element-loading-spinner="el-icon-loading"
       :data="dataList"
       style="width: 100%;"
+      max-height="700"
     >
       <el-table-column prop="orderSn" label="订单编号" show-overflow-tooltip width="200" align="center"></el-table-column>
       <el-table-column

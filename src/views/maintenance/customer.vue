@@ -52,6 +52,7 @@
       element-loading-spinner="el-icon-loading"
       :data="orderList"
       style="width: 100%;"
+      max-height="700"
     >
       <el-table-column prop="orderSn" label="订单号" show-overflow-tooltip width="200" align="center"></el-table-column>
       <el-table-column prop="statusName" label="订单状态" show-overflow-tooltip width="200" align="center"></el-table-column>

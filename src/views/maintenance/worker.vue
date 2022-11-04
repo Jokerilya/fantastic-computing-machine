@@ -26,6 +26,7 @@
       element-loading-spinner="el-icon-loading"
       :data="masterList"
       style="width: 100%;"
+      max-height="700"
     >
       <el-table-column
         prop="realName"
@@ -43,6 +44,7 @@
         </template>
       </el-table-column>
       <el-table-column
+      
         prop="phone"
         label="联系电话"
         show-overflow-tooltip
