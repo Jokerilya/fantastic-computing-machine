@@ -327,14 +327,13 @@ export default {
       handleMasterQuotation(param).then(res => {
         if (res.success) {
           console.log("检测定价", res);
+          this.$router.push(
+        "/maintenance/maintenance_order_desc?orderSn=" + this.param.orderSn
+      );
           this.$message({
             showClose: true,
             message: res.message,
             type: "success"
-          });
-          this.$router.push({
-            name: "maintenance_order_desc",
-            query: { orderSn: this.data.orderSn }
           });
         } else {
           alert(res.message);

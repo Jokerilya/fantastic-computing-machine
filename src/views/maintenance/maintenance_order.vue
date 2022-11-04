@@ -454,9 +454,6 @@ export default {
       });
     },
     queryDesc(row) {
-      this.$router.push(
-        "/maintenance/maintenance_order_desc?enterpriseOrderSn=" + row.orderSn
-      );
       this.$router.push({
         name: "maintenance_order_desc",
         query: { orderSn: row.orderSn }
