@@ -325,7 +325,7 @@ export default {
         if (res) {
           console.log("导出", res);
           const link = document.createElement("a");
-          const blob = new Blob([res], {
+          const blob = new Blob([res.data], {
             type: "application/vnd.ms-excel"
           });
           link.style.display = "none";
