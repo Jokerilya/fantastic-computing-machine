@@ -132,7 +132,7 @@
           </el-descriptions>
         </div>
         <!-- 故障解决方案 -->
-        <el-descriptions title="故障解决方案" v-if="data.enterpriseMainStatus > 2" :column="1">
+        <el-descriptions title="故障解决方案"  :column="1">
           <el-descriptions-item
             v-for="(item,index) in data.programmeList"
             :key="item.desc+index"
@@ -198,7 +198,7 @@
           </div>
         </div>-->
         <!-- 配件明细 -->
-        <el-descriptions title="配件明细" v-if="data.partsList !=''" :column="1">
+        <el-descriptions title="配件明细"  :column="1">
           <el-descriptions-item
             v-for="(item,index) in data.programmeList"
             :key="item.desc+index"
@@ -228,7 +228,7 @@
               <video v-for="item in data.videoList" :key="item" :src="item"></video>
             </el-descriptions-item>
         </el-descriptions>
-        <el-descriptions title="订单费用" v-if="data.enterpriseMainStatus > 1" :column="1">
+        <el-descriptions title="订单费用"  :column="1">
           <!-- <el-descriptions-item v-for="(item,index) in data.programmeList" :key="item.desc+index" :label="'解决方案'+(index+1)"> -->
           <el-descriptions-item label="维保预付" v-if="data.depositAmount">{{ data.depositAmount }}</el-descriptions-item>
           <el-descriptions-item label="维保报价">{{ data.totalAmount }}</el-descriptions-item>
