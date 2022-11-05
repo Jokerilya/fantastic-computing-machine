@@ -59,7 +59,7 @@
         align="center"
       ></el-table-column>
       <el-table-column
-        prop="superiorEnterpriseName"
+        prop="salesmanId"
         label="业务员"
         show-overflow-tooltip
         width="100"
