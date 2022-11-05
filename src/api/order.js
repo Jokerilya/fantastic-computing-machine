@@ -1,6 +1,43 @@
 import request from '@/utils/request';
 import { publicData } from '@/webConfig.js';
 
+//查询师傅成员列表
+export function queryMasterMemberList(data) {
+	return request({
+		url: '/admin/maintenance/queryMasterMemberList',
+		method: 'POST',
+		data,
+		
+	});
+}
+//查询企业成员列表
+export function queryEnterpriseMemberList(data) {
+	return request({
+		url: '/admin/maintenance/queryEnterpriseMemberList',
+		method: 'POST',
+		data
+	});
+}
+//企业列表导出
+export function handleEnterpriseInfoExport(data) {
+	return request({
+		url: '/admin/maintenance/handleEnterpriseInfoExport',
+		method: 'POST',
+		data,
+		responseType: 'blob',
+	});
+}
+
+//师傅列表导出
+export function handleMasterInfoExport(data) {
+	return request({
+		url: '/admin/maintenance/handleMasterInfoExport',
+		method: 'POST',
+		data,
+		responseType: 'blob',
+	});
+}
+
 //平台取消订单
 export function cancelRepairOrder(data) {
 	return request({
@@ -9,7 +46,6 @@ export function cancelRepairOrder(data) {
 		params:data
 	});
 }
-
 
 //平台修改师傅报价
 export function updateMasterPrice(data) {

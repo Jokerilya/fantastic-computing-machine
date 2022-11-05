@@ -209,10 +209,10 @@
               :key="item.name+index"
               style="font-size:12px !important"
             >
-              {{item.name}}
+              {{item.name}}（名称）
               {{item.price}}元
-              {{item.num}}
-              {{item.unit}}
+              {{item.num}}（数量）
+              {{item.unit}}（单位）
             </div>
           </el-descriptions-item>
         </el-descriptions>

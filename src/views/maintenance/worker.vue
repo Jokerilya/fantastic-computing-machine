@@ -15,7 +15,7 @@
         </el-col>-->
         <el-col :span="5">
           <el-button icon="el-icon-zoom-in" plain type="primary" @click="_getMasterList()">查询</el-button>
-          <!-- <el-button icon="el-icon-refresh" plain type="info" @click="_getEnterpriseList()">重置</el-button> -->
+          <el-button icon="el-icon-refresh" plain type="primary" @click="_handleMasterInfoExport()">导出</el-button>
         </el-col>
       </el-row>
     </el-form>
@@ -174,6 +174,7 @@
             <el-button type="danger" size="mini" plain @click="isLock(row)" v-show="!row.isLock">锁定</el-button>
             <el-button type="success" size="mini" plain @click="isLock(row)" v-show="row.isLock">解锁</el-button>
             <el-button type="warning" size="mini" plain @click="editInit(row)">编辑</el-button>
+            <el-button type="warning" size="mini" plain @click="checkTeam(row)">查看成员</el-button>
           </div>
         </template>
       </el-table-column>
@@ -301,6 +302,77 @@
         </el-row>
       </el-form>
     </model>
+    <model
+          ref="enterpriseList"
+          title="企业审核"
+          @ok="handleEnterpriseExamine"
+          @close="resetEditForm"
+        >
+          <el-form
+            :model="editForm"
+            ref="editForm"
+            status-icon
+            label-width="120px"
+            class="demo-ruleForm"
+          >
+            <el-form-item label="审核状态" prop="name" style="width:calc(100% - 120px)">
+              <el-switch v-model="editForm.status"></el-switch>
+            </el-form-item>
+          </el-form>
+        </model>
+        <model
+          ref="masterTeamList"
+          title="师傅团队列表"
+          @ok="handleEnterpriseExamine"
+          @close="resetEditForm"
+          :column="2"
+        >
+          <el-table
+            highlight-current-row
+            v-loading.fullscreen.lock="loading"
+            element-loading-text="拼命加载中"
+            element-loading-spinner="el-icon-loading"
+            :data="masterTeamList"
+            max-height="700"
+            style="width: 1500px;"
+          >
+            <el-table-column
+              prop="realName"
+              label="真实姓名"
+              show-overflow-tooltip
+              width="200"
+              align="center"
+            ></el-table-column>
+            <el-table-column
+              prop="phone"
+              label="联系电话"
+              show-overflow-tooltip
+              width="100"
+              align="center"
+            ></el-table-column>
+            <el-table-column
+              prop="serviceTypes"
+              label="服务范围"
+              show-overflow-tooltip
+              width="100"
+              align="center"
+            ></el-table-column>
+            <el-table-column
+              prop="status"
+              label="状态"
+              show-overflow-tooltip
+              width="100"
+              align="center"
+            ></el-table-column>
+            <el-table-column
+              prop="serviceAreas"
+              label="服务区域"
+              show-overflow-tooltip
+              width="100"
+              align="center"
+            ></el-table-column>
+          </el-table>
+        </model>
   </div>
 </template>
 <style lang="less" scoped>
@@ -308,11 +380,16 @@
 <script>
 import tableMixin from "@/mixin/table";
 import { getMasterList } from "@/api/user.js";
+import {
+ handleMasterInfoExport,
+  queryMasterMemberList
+} from "@/api/order.js";
 export default {
   title: "course",
   mixins: [tableMixin],
   data() {
     return {
+      masterTeamList:[],
       pageCount: 0,
       currentPage: 1,
       masterList: [],
@@ -390,6 +467,48 @@ export default {
     this._getMasterList();
   },
   methods: {
+    _handleMasterInfoExport() {
+      let data = {
+        identityNumber:"",
+        pageNo: 1,
+        pageSize: 20,
+        orderSn: "",
+        realName : ""
+      };
+      handleMasterInfoExport(data).then(res => {
+        if (res) {
+          console.log("导出", res);
+          const link = document.createElement("a");
+          const blob = new Blob([res], {
+            type: "application/vnd.ms-excel"
+          });
+          link.style.display = "none";
+          link.href = URL.createObjectURL(blob);
+
+          link.download = '师傅列表'; //下载的文件名
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }
+      });
+    },
+    checkTeam(row){
+      this.$refs.masterTeamList.open()
+      this._queryMasterMemberList(row)
+    },
+    _queryMasterMemberList(row){
+      let data = {
+        uid :row.uid,
+        pageNo: 1,
+        pageSize: 10,
+      }
+      queryMasterMemberList(data).then(res =>{
+        if(res){
+          this.masterTeamList = res.data.records
+          console.log('师傅团队列表',this.masterTeamList)
+        }
+      })
+    },
     handleCurrentChange(val) {
       this.currentPage = val;
       this._getMasterList();
@@ -460,19 +579,21 @@ export default {
         .catch(function(error) {
           console.info(error);
         });
+        this._getMasterList()
         this.$refs.editStatusModel.close();
+        
     },
     editInit(row) {
       this.editForm = row;
-      this.editForm.serviceAreas = this.editForm.serviceAreas
-        ? this.editForm.serviceAreas.split(",")
-        : [];
-      this.editForm.serviceTypes = this.editForm.serviceTypes
-        ? this.editForm.serviceTypes.split(",").map(item => {
-            return Number(item);
-          })
-        : [];
-      delete this.editForm.createTime;
+      // this.editForm.serviceAreas = this.editForm.serviceAreas
+      //   ? this.editForm.serviceAreas.split(",")
+      //   : [];
+      // this.editForm.serviceTypes = this.editForm.serviceTypes
+      //   ? this.editForm.serviceTypes.split(",").map(item => {
+      //       return Number(item);
+      //     })
+      //   : [];
+      // delete this.editForm.createTime;
       this.$nextTick(() => {
         this.$refs.realPortrait.reset([]);
         this.$refs.industryExperienceImages.reset([]);
