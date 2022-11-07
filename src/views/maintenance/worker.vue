@@ -552,6 +552,7 @@ export default {
         .then(({ code, message }) => {
           this.util.message(this, code, message);
           this.query();
+        
         })
         .catch(err => {
           console.error(err);
@@ -572,13 +573,14 @@ export default {
         })
         .then(data => {
           this.util.message(this, data.status, data.message);
-          this.query();
+          // this.query();
+          this._getMasterList()
           this.resetEditForm(false);
         })
         .catch(function(error) {
           console.info(error);
         });
-        this._getMasterList()
+        
         this.$refs.editStatusModel.close();
         
     },
