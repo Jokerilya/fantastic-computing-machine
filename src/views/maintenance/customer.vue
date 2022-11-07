@@ -100,7 +100,7 @@
     <el-pagination
       background
       @size-change="handleSizeChange"
-      @current-change="updatePageNo"
+      @current-change="handleCurrentChange"
       :current-page="currentPage"
       :page-sizes="[10, 20, 50, 100]"
       :page-size="10"
