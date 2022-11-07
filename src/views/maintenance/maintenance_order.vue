@@ -288,7 +288,7 @@
 <style lang="less" scoped>
 </style>
 <script>
-import { getMasterList, handleAssignMaste,queryAssignableMasterList } from "@/api/user.js";
+import { getMasterList, handleAssignMaster,queryAssignableMasterList } from "@/api/user.js";
 import {
   queryRepairOrderList
 } from "@/api/order.js";
