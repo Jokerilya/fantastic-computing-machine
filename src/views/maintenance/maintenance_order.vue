@@ -276,7 +276,7 @@
         :current-page="currentPage "
         :page-size="10"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="pageCount"
+        :total="pageCountMaster"
       ></el-pagination>
     </model>
     <!-- <div style="margin:20px 0">
@@ -299,7 +299,8 @@ export default {
   data() {
     return {
       dataList:[],
-      pageCount: 0,
+      pageCount: '',
+      pageCountMaster:'',
       currentPage: 1,
       tabelList: [],
       changeData: [],
@@ -360,7 +361,7 @@ export default {
           console.log(res);
           this.masterList = res.data.records;
           console.log("师傅列表", this.masterList);
-          this.pageCount = res.data.total;
+          this.pageCountMaster = res.data.total;
           this.currentPage = res.data.current;
         }
       });
@@ -374,6 +375,7 @@ export default {
       queryRepairOrderList(data).then(res => {
         if (res) {
           this.dataList = res.data.records;
+          this.pageCount = res.data.total;
           console.log("订单列表", this.dataList);
         }
       });
@@ -477,23 +479,23 @@ export default {
         }
       });
     },
-    _getMasterList() {
-      let params = {
-        pageNo: this.currentPage,
-        pageSize: 10,
-        realName: this.Name,
-        phone: this.Phone
-      };
-      getMasterList(params).then(res => {
-        if (res) {
-          console.log(res);
-          this.masterList = res.data.records;
-          console.log("师傅列表", this.masterList);
-          this.pageCount = res.data.total;
-          this.currentPage = res.data.current;
-        }
-      });
-    },
+    // _getMasterList() {
+    //   let params = {
+    //     pageNo: this.currentPage,
+    //     pageSize: 10,
+    //     realName: this.Name,
+    //     phone: this.Phone
+    //   };
+    //   getMasterList(params).then(res => {
+    //     if (res) {
+    //       console.log(res);
+    //       this.masterList = res.data.records;
+    //       console.log("师傅列表", this.masterList);
+    //       this.pageCount = res.data.total;
+    //       this.currentPage = res.data.current;
+    //     }
+    //   });
+    // },
     queryDesc(row) {
       this.$router.push({
         name: "maintenance_order_desc",
