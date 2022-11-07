@@ -27,9 +27,9 @@ export function getMasterList(data) {
 	});
 }
 // 指派师傅
-export function handleAssignMaster(data) {
+export function queryAssignableMasterList(data) {
 	return request({
-		url: '/admin/maintenance/handleAssignMaster',
+		url: '/admin/maintenance/queryAssignableMasterList',
 		method: 'post',
 		data
 	});

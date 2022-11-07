@@ -259,7 +259,7 @@
         <el-table-column label="操作" width="300px" fixed="right">
           <template slot-scope="{row}">
             <!-- <div class="settings">
-              <el-button type="primary" size="mini" plain @click="_handleAssignMaster(row)">指派师傅</el-button>
+              <el-button type="primary" size="mini" plain @click="_queryAssignableMasterList(row)">指派师傅</el-button>
                <el-button style=""></el-button>
             </div>-->
             <el-checkbox v-model="row.isSelect" true-label="row.uid" @change="changeMaster(row)"></el-checkbox>
@@ -288,7 +288,7 @@
 <style lang="less" scoped>
 </style>
 <script>
-import { getMasterList, handleAssignMaster } from "@/api/user.js";
+import { getMasterList, queryAssignableMasterList } from "@/api/user.js";
 import {
   queryRepairOrderList
 } from "@/api/order.js";
@@ -316,7 +316,7 @@ export default {
         query: "/admin/maintenance/queryRepairOrderList",
         queryType: "/admin/maintenance/queryDeviceTypeList",
         querySnatch: "/admin/maintenance/queryMasterGrabOrderList",
-        assign: "/admin/maintenance/handleAssignMaster",
+        assign: "/admin/maintenance/queryAssignableMasterList",
         handleMasterQuotation: "/admin/maintenance/handleMasterQuotation"
       },
       rules: {
@@ -391,7 +391,7 @@ export default {
         enterpriseOrderSn: this.enterpriseOrderSn,
         masterUidList: []
       };
-      handleAssignMaster(params).then(res => {
+      queryAssignableMasterList(params).then(res => {
         console.log("指派师傅", res);
         if (res.success) {
           this.$message({
@@ -417,7 +417,7 @@ export default {
         enterpriseOrderSn: this.enterpriseOrderSn,
         masterUidList: id
       };
-      handleAssignMaster(params).then(res => {
+      queryAssignableMasterList(params).then(res => {
         console.log("指派师傅", res);
         if (res.success) {
           this.$message({
@@ -435,13 +435,13 @@ export default {
         }
       });
     },
-    _handleAssignMaster(row) {
+    _queryAssignableMasterList(row) {
       console.log(row);
       let params = {
         enterpriseOrderSn: this.enterpriseOrderSn,
         masterUid: row.uid
       };
-      handleAssignMaster(params).then(res => {
+      queryAssignableMasterList(params).then(res => {
         console.log("指派师傅", res);
         if (res.success) {
           this.$message({
