@@ -26,10 +26,18 @@ export function getMasterList(data) {
 		params: data,
 	});
 }
-// 指派师傅
+//指派师傅列表
 export function queryAssignableMasterList(data) {
 	return request({
 		url: '/admin/maintenance/queryAssignableMasterList',
+		method: 'post',
+		data,
+	});
+}
+// 指派师傅
+export function handleAssignMaster(data) {
+	return request({
+		url: '/admin/maintenance/handleAssignMaster',
 		method: 'post',
 		data
 	});

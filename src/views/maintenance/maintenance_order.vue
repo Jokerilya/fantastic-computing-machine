@@ -259,7 +259,7 @@
         <el-table-column label="操作" width="300px" fixed="right">
           <template slot-scope="{row}">
             <!-- <div class="settings">
-              <el-button type="primary" size="mini" plain @click="_queryAssignableMasterList(row)">指派师傅</el-button>
+              <el-button type="primary" size="mini" plain @click="_handleAssignMaster(row)">指派师傅</el-button>
                <el-button style=""></el-button>
             </div>-->
             <el-checkbox v-model="row.isSelect" true-label="row.uid" @change="changeMaster(row)"></el-checkbox>
@@ -288,7 +288,7 @@
 <style lang="less" scoped>
 </style>
 <script>
-import { getMasterList, queryAssignableMasterList } from "@/api/user.js";
+import { getMasterList, handleAssignMaste,queryAssignableMasterList } from "@/api/user.js";
 import {
   queryRepairOrderList
 } from "@/api/order.js";
@@ -316,7 +316,7 @@ export default {
         query: "/admin/maintenance/queryRepairOrderList",
         queryType: "/admin/maintenance/queryDeviceTypeList",
         querySnatch: "/admin/maintenance/queryMasterGrabOrderList",
-        assign: "/admin/maintenance/queryAssignableMasterList",
+        assign: "/admin/maintenance/handleAssignMaster",
         handleMasterQuotation: "/admin/maintenance/handleMasterQuotation"
       },
       rules: {
@@ -342,11 +342,29 @@ export default {
       quotationForm: {}
     };
   },
+
   created() {
-    this._getMasterList();
+    // this._getMasterList()
+    this._queryAssignableMasterList();
     this._queryRepairOrderList()
   },
   methods: {
+    _queryAssignableMasterList(){
+        let data = {
+        pageNo: this.currentPage,
+        pageSize: 10,
+        realName: this.Name,
+      };
+      queryAssignableMasterList(data).then(res => {
+        if (res) {
+          console.log(res);
+          this.masterList = res.data.records;
+          console.log("师傅列表", this.masterList);
+          this.pageCount = res.data.total;
+          this.currentPage = res.data.current;
+        }
+      });
+    },
     _queryRepairOrderList(){
       let data = {
         pageNo:this.currentPage,
@@ -391,7 +409,7 @@ export default {
         enterpriseOrderSn: this.enterpriseOrderSn,
         masterUidList: []
       };
-      queryAssignableMasterList(params).then(res => {
+      handleAssignMaster(params).then(res => {
         console.log("指派师傅", res);
         if (res.success) {
           this.$message({
@@ -417,7 +435,7 @@ export default {
         enterpriseOrderSn: this.enterpriseOrderSn,
         masterUidList: id
       };
-      queryAssignableMasterList(params).then(res => {
+      handleAssignMaster(params).then(res => {
         console.log("指派师傅", res);
         if (res.success) {
           this.$message({
@@ -435,13 +453,13 @@ export default {
         }
       });
     },
-    _queryAssignableMasterList(row) {
+    _handleAssignMaster(row) {
       console.log(row);
       let params = {
         enterpriseOrderSn: this.enterpriseOrderSn,
         masterUid: row.uid
       };
-      queryAssignableMasterList(params).then(res => {
+      handleAssignMaster(params).then(res => {
         console.log("指派师傅", res);
         if (res.success) {
           this.$message({
