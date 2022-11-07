@@ -197,11 +197,11 @@
       background
       @size-change="handleSizeChange"
       @current-change="updatePageNo"
-      :current-page="page.pageNo"
+      :current-page="currentPage"
       :page-sizes="[10, 20, 50, 100]"
-      :page-size="page.dataNum"
+      :page-size="10"
       layout="total, sizes, prev, pager, next, jumper"
-      :total="page.dataSumNum"
+      :total="pageCount"
     ></el-pagination>
 
     <model ref="snatch" title="指派列表" :isSubmit="false" :column="2" @close="closeSnatch">
@@ -289,12 +289,16 @@
 </style>
 <script>
 import { getMasterList, handleAssignMaster } from "@/api/user.js";
+import {
+  queryRepairOrderList
+} from "@/api/order.js";
 import tableMixin from "@/mixin/table";
 export default {
   title: "course",
   mixins: [tableMixin],
   data() {
     return {
+      dataList:[],
       pageCount: 0,
       currentPage: 1,
       tabelList: [],
@@ -340,8 +344,26 @@ export default {
   },
   created() {
     this._getMasterList();
+    this._queryRepairOrderList()
   },
   methods: {
+    _queryRepairOrderList(){
+      let data = {
+        pageNo:this.currentPage,
+        pageSize: 10,
+        status: ''
+      };
+      queryRepairOrderList(data).then(res => {
+        if (res) {
+          this.dataList = res.data.records;
+          console.log("订单列表", this.dataList);
+        }
+      });
+    },
+    updatePageNo(val){
+      this.currentPage = val;
+      this._queryRepairOrderList()
+    },
     handleCurrentChange(val) {
       this.currentPage = val;
       // this.currentPage2 = val;

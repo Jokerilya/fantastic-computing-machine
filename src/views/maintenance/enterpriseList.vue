@@ -242,11 +242,11 @@
       background
       @size-change="handleSizeChange"
       @current-change="updatePageNo"
-      :current-page="page.pageNo"
+      :current-page="currentPage"
       :page-sizes="[10, 20, 50, 100]"
       :page-size="page.dataNum"
       layout="total, sizes, prev, pager, next, jumper"
-      :total="page.dataSumNum"
+      :total="pageCount"
     ></el-pagination>
   </div>
 </template>
@@ -265,6 +265,8 @@ export default {
   mixins: [tableMixin],
   data() {
     return {
+      pageCount: 0,
+      currentPage: 1,
       enpTeamList: [],
       dataSumNum: "",
       editForm: [],
@@ -295,6 +297,10 @@ export default {
     this._getEnterpriseList();
   },
   methods: {
+    updatePageNo(val){
+      this.currentPage = val;
+      this._getEnterpriseList();
+    },
     resetTeamList() {
       this.$refs.enterpriseTeamList.close();
     },
@@ -372,7 +378,7 @@ export default {
     },
     _getEnterpriseList() {
       let params = {
-        pageNo: 1,
+        pageNo:this.currentPage,
         pageSize: 20,
         name: this.enterpriseName,
         phone: this.enterprisePhone
@@ -382,6 +388,8 @@ export default {
           //   console.log(res);
           this.enterpriseList = res.data.records;
           console.log("企业列表", this.enterpriseList);
+          this.pageCount = res.data.total;
+          this.currentPage = res.data.current;
         }
         console.log("名称", this.enterpriseName);
         console.log("手机", this.enterprisePhone);
