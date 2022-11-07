@@ -59,14 +59,14 @@
       <!-- <el-table-column prop="statusName" label="付款状态" show-overflow-tooltip width="200" align="center"></el-table-column> -->
       <el-table-column
         prop="enterpriseName"
-        label="客户名称"
+        label="企业名称"
         show-overflow-tooltip
         width="150"
         align="center"
       ></el-table-column>
       <el-table-column
         prop="contactsPeople"
-        label="客户负责人"
+        label="企业联系人"
         show-overflow-tooltip
         width="150"
         align="center"
