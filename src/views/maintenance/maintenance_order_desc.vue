@@ -132,7 +132,7 @@
           </el-descriptions>
         </div>
         <!-- 故障解决方案 -->
-        <el-descriptions title="故障解决方案"  :column="1">
+        <el-descriptions title="故障解决方案"  v-if="data.programmeList" :column="1">
           <el-descriptions-item
             v-for="(item,index) in data.programmeList"
             :key="item.desc+index"
@@ -156,8 +156,8 @@
             </el-row>
           </el-descriptions-item>
         </el-descriptions>
-        <div >
-          <div class="inhoudskop">
+        <div  v-if="data.warrantyTime">
+          <div class="inhoudskop" >
             时间
           </div>
           <!-- <el-row :gutter="20" v-for="(item,index) in data.programmeList" :key="item.desc+index">
@@ -198,7 +198,7 @@
           </div> -->
         </div>
         <!-- 配件明细 -->
-        <el-descriptions title="配件明细"  :column="1">
+        <el-descriptions title="配件明细" v-if="data.programmeList"  :column="1">
           <el-descriptions-item
             v-for="(item,index) in data.programmeList"
             :key="item.desc+index"
@@ -209,10 +209,10 @@
               :key="item.name+index"
               style="font-size:12px !important"
             >
-              {{item.name}}（名称）
-              {{item.price}}元
-              {{item.num}}（数量）
-              {{item.unit}}（单位）
+             （名称） {{item.name}}
+              ￥{{item.price}}
+             （数量） {{item.num}}
+             {{item.unit}}
             </div>
           </el-descriptions-item>
         </el-descriptions>
