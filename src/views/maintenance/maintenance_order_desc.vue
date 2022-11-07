@@ -136,7 +136,7 @@
           <el-descriptions-item
             v-for="(item,index) in data.programmeList"
             :key="item.desc+index"
-            :label="'解决方案'+(index+1)"
+            :label="'解决方案'"
           >
             <el-row
               style="font-size:12px !important"
@@ -146,7 +146,7 @@
                 {{ item.desc }}
               </el-col>
               <el-col :span="24">
-                <span>维保方案：</span>
+                <span>故障分析：</span>
                 {{ item.analysis }}
               </el-col>
               <el-col :span="24">
@@ -156,11 +156,11 @@
             </el-row>
           </el-descriptions-item>
         </el-descriptions>
-        <!-- <div v-if="data.enterpriseMainStatus > 2">
+        <div >
           <div class="inhoudskop">
-            故障解决方案
+            时间
           </div>
-          <el-row :gutter="20" v-for="(item,index) in data.programmeList" :key="item.desc+index">
+          <!-- <el-row :gutter="20" v-for="(item,index) in data.programmeList" :key="item.desc+index">
             <el-col :span="24">
               解决方案{{index+1}}：
             </el-col>
@@ -176,27 +176,27 @@
               <span>维保方案:</span>
               {{ item.programme }}
             </el-col>
-          </el-row>
+          </el-row> -->
           <el-row :gutter="20">
-            <el-col :span="4">
+            <!-- <el-col :span="4">
               <span>维保大小：</span>
               {{ util.global.getLabel('modalityType',data.modalityType) }}
-            </el-col>
+            </el-col> -->
             <el-col :span="4">
               <span>质保周期：</span>
               {{ data.warrantyTime }}/天
             </el-col>
-            <el-col :span="4">
+            <el-col :span="8">
               <span>预计完成日期：</span>
               {{ data.estimateServiceTime }}
             </el-col>
           </el-row>
-          <div>
+          <!-- <div>
             完工照片：
             {{ data.completePictureList }}
             {{ data.completeVideoList }}
-          </div>
-        </div>-->
+          </div> -->
+        </div>
         <!-- 配件明细 -->
         <el-descriptions title="配件明细"  :column="1">
           <el-descriptions-item
