@@ -186,7 +186,7 @@
               <span>质保周期：</span>
               {{ data.warrantyTime }}/天
             </el-col>
-            <el-col :span="8">
+            <el-col :span="8" v-if="data.estimateServiceTime">
               <span>预计完成日期：</span>
               {{ data.estimateServiceTime }}
             </el-col>
