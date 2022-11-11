@@ -80,8 +80,8 @@
         align="center"
       ></el-table-column>
       <el-table-column
-        prop="nickName"
-        label="用户昵称"
+        prop="realName"
+        label="真实姓名"
         show-overflow-tooltip
         width="100"
         align="center"
