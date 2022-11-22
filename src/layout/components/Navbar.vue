@@ -1,6 +1,10 @@
 <template>
   <div class="navbar">
-    <hamburger :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
+    <hamburger
+      :is-active="sidebar.opened"
+      class="hamburger-container"
+      @toggleClick="toggleSideBar"
+    />
 
     <breadcrumb class="breadcrumb-container" />
 
@@ -10,10 +14,10 @@
       </div> -->
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">
-		 <div class="user_info">
-		   <span>{{ name }}</span>
-		 </div>
+          <img :src="avatar + '?imageView2/1/w/80/h/80'" class="user-avatar" />
+          <div class="user_info">
+            <span style="color:#fff;">{{ name }}</span>
+          </div>
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
@@ -32,32 +36,28 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import Breadcrumb from '@/components/Breadcrumb'
-import Hamburger from '@/components/Hamburger'
+import { mapGetters } from "vuex";
+import Breadcrumb from "@/components/Breadcrumb";
+import Hamburger from "@/components/Hamburger";
 
 export default {
   components: {
     Breadcrumb,
-    Hamburger
+    Hamburger,
   },
   computed: {
-    ...mapGetters([
-      'name',
-      'sidebar',
-      'avatar',
-    ])
+    ...mapGetters(["name", "sidebar", "avatar"]),
   },
   methods: {
     toggleSideBar() {
-      this.$store.dispatch('app/toggleSideBar')
+      this.$store.dispatch("app/toggleSideBar");
     },
     async logout() {
-      await this.$store.dispatch('user/logout')
-      this.$router.push(`/login`)
-    }
-  }
-}
+      await this.$store.dispatch("user/logout");
+      this.$router.push(`/login`);
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -65,10 +65,10 @@ export default {
   height: 50px;
   overflow: hidden;
   position: relative;
-  background: #fff;
-  box-shadow: 0 1px 4px rgba(0,21,41,.08);
+  background: #3d3d3d;
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
 
-  .user_info{
+  .user_info {
     float: left;
     margin-right: 15px;
   }
@@ -78,11 +78,11 @@ export default {
     height: 100%;
     float: left;
     cursor: pointer;
-    transition: background .3s;
-    -webkit-tap-highlight-color:transparent;
+    transition: background 0.3s;
+    -webkit-tap-highlight-color: transparent;
 
     &:hover {
-      background: rgba(0, 0, 0, .025)
+      background: rgba(0, 0, 0, 0.025);
     }
   }
 
@@ -109,22 +109,26 @@ export default {
 
       &.hover-effect {
         cursor: pointer;
-        transition: background .3s;
+        transition: background 0.3s;
 
         &:hover {
-          background: rgba(0, 0, 0, .025)
+          background: rgba(0, 0, 0, 0.025);
         }
       }
     }
 
     .avatar-container {
       margin-right: 30px;
-	  cursor: pointer;
+      cursor: pointer;
 
       .avatar-wrapper {
         // margin-top: 5px;
         position: relative;
-		img{float: left;margin-right: 10px;margin-top: 5px;}
+        img {
+          float: left;
+          margin-right: 10px;
+          margin-top: 5px;
+        }
         .user-avatar {
           cursor: pointer;
           width: 40px;

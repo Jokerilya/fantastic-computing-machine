@@ -5,10 +5,11 @@
       <div class="describe">
         故障描述：
         <textarea
+          style="resize:none "
           v-model="programmes[0].desc"
           name
           id
-          cols="30"
+          cols="25"
           rows="10"
           placeholder="描述具体故障信息"
         ></textarea>
@@ -16,6 +17,7 @@
       <div class="describe">
         故障分析：
         <textarea
+          style="resize:none "
           v-model="programmes[0].analysis"
           name
           id
@@ -27,6 +29,7 @@
       <div class="describe">
         维保方案：
         <textarea
+          style="resize:none "
           v-model="programmes[0].programme"
           name
           id
@@ -40,14 +43,17 @@
     <div class="onload">
       <div class="onloadTitle">质保周期:</div>
       <div class="onloadPart">
-        <el-radio-group v-model="param.warrantyTime" style="display:flex">
+        <el-radio-group v-model="param.warrantyTime" style="display:flex;">
           <el-radio label="10">10天</el-radio>
           <el-radio label="15">15天</el-radio>
           <el-radio label="30">30天</el-radio>
           <el-radio label="180">180天</el-radio>
           <el-radio label="orther">其他天数</el-radio>
-          <el-input v-model="param.warrantyTime"></el-input>
         </el-radio-group>
+        <el-input
+          v-model="param.warrantyTime"
+          class="onloadPart_inp"
+        ></el-input>
       </div>
     </div>
     <!-- <div class="fishedTime">
@@ -67,7 +73,8 @@
       <div class="peijianTitle">配件明细:</div>
       <div class="addpeijian" @click="openAdd">添加/编辑配件</div>
     </div>
-    <div class="addPart">
+    <!-- 原本版本 配件明细-->
+    <!-- <div class="addPart">
       <el-table
         highlight-current-row
         v-loading.fullscreen.lock="loading"
@@ -76,18 +83,52 @@
         :data="param.parts"
         style="width: 100%;"
       >
-        <el-table-column prop="name" label="配件名称" show-overflow-tooltip width="200" align="center"></el-table-column>
-        <el-table-column prop="price" label="价格" show-overflow-tooltip width="200" align="center"></el-table-column>
-        <el-table-column prop="num" label="数量" show-overflow-tooltip width="200" align="center"></el-table-column>
-        <el-table-column prop="unit" label="单位" show-overflow-tooltip width="100" align="center"></el-table-column>
+        <el-table-column
+          prop="name"
+          label="配件名称"
+          show-overflow-tooltip
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="price"
+          label="价格"
+          show-overflow-tooltip
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="num"
+          label="数量"
+          show-overflow-tooltip
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="unit"
+          label="单位"
+          show-overflow-tooltip
+          align="center"
+        ></el-table-column>
         <el-table-column label="操作" width="300px" fixed="right">
-          <template slot-scope="{row}">
+          <template slot-scope="{ row }">
             <div class="settings">
-              <el-button type="info" size="mini" plain @click="deleted(row)">删除</el-button>
+              <el-button type="info" size="mini" plain @click="deleted(row)"
+                >删除</el-button
+              >
             </div>
           </template>
         </el-table-column>
       </el-table>
+    </div> -->
+    <div class="addPartcs">
+      <div class="item" v-for="(item, index) in this.param.parts" :key="item">
+        <div class="material" style="color:#878787;">{{ item.name }}</div>
+        <div class="price">{{ item.price }}元</div>
+        <div class="number">{{ item.num }}件</div>
+        <div class="delbtn">
+          <a style="color:#4889fb;" href="#" @click="deleted(item, index)"
+            >删除</a
+          >
+        </div>
+      </div>
     </div>
     <div class="pricing">
       <div class="pricingTitle">维保报价:</div>
@@ -98,7 +139,10 @@
             <div class="left2">建议每公里2元，估算距离费用</div>
           </div>
           <div class="lineRight">
-            <el-input v-model="param.doorAmount"></el-input>
+            <el-input
+              v-model="param.doorAmount"
+              placeholder="￥0.00"
+            ></el-input>
           </div>
         </div>
         <div class="pricingLine">
@@ -107,7 +151,10 @@
             <div class="left2">含检测费用</div>
           </div>
           <div class="lineRight">
-            <el-input v-model="param.technologyAmount"></el-input>
+            <el-input
+              v-model="param.technologyAmount"
+              placeholder="￥0.00"
+            ></el-input>
           </div>
         </div>
         <div class="pricingLine">
@@ -116,7 +163,10 @@
             <div class="left2"></div>
           </div>
           <div class="lineRight">
-            <el-input v-model="param.partsAmount"></el-input>
+            <el-input
+              v-model="param.partsAmount"
+              placeholder="￥0.00"
+            ></el-input>
           </div>
         </div>
         <div class="pricingLine">
@@ -125,7 +175,10 @@
             <div class="left2"></div>
           </div>
           <div class="lineRight">
-            <el-input v-model="param.otherAmount"></el-input>
+            <el-input
+              v-model="param.otherAmount"
+              placeholder="￥0.00"
+            ></el-input>
           </div>
         </div>
         <div class="pricingLine">
@@ -133,47 +186,93 @@
             <div class="left1" style="font-weight:bold">合计</div>
             <div class="left2"></div>
           </div>
-          <div class="lineRight" style="color:red;font-weight:bold">{{sum}}</div>
+          <div
+            class="lineRight"
+            style="color:red;font-weight:bold;margin-right: 125px;"
+          >
+            ￥{{ sum }}
+          </div>
         </div>
       </div>
-      <div class="submitByn" style="margin-left:50px">
-        <el-button type="primary" size="mini" plain @click="_handleMasterQuotation()">检测定价</el-button>
-      </div>
+      <!-- <div class="submitByn" style="margin-left:50px">
+        <el-button
+          type="primary"
+          size="mini"
+          plain
+          
+          >检测定价</el-button
+        >
+      </div> -->
+    </div>
+    <div class="footerBtn">
+      <el-button
+        class="cancelBtn"
+        @click="$router.push('/maintenance/maintenance_order_desc')"
+        >取消</el-button
+      >
+      <el-button class="submitBtn" @click="_handleMasterQuotation()"
+        >提交检测</el-button
+      >
     </div>
 
     <el-dialog
-      title="添加配件"
       :visible.sync="dialogpop"
       :close-on-click-modal="true"
       :modal="true"
       :show-close="true"
       :center="true"
     >
+      <template slot="title">
+        <div
+          style="font-size: 24px
+        ;color: #707070;"
+        >
+          添加配件
+        </div>
+      </template>
       <el-from label-width="1000px">
         <div class="addBorder">
           <div class="addPart">
             <div class="addcontent">
               <div class="name">配件名称:</div>
-              <el-input v-model="part.name" placeholder="请填写配件名称"></el-input>
+              <el-input
+                v-model="part.name"
+                placeholder="请填写配件名称"
+              ></el-input>
             </div>
             <div class="addcontent">
               <div class="name">配件单价:</div>
-              <el-input v-model="part.price" placeholder="请填写配件单价"></el-input>
+              <el-input
+                v-model="part.price"
+                placeholder="请填写配件单价"
+              ></el-input>
             </div>
             <div class="addcontent">
               <div class="name">配件数量:</div>
-              <el-input v-model="part.num" placeholder="请填写配件数量,例如：2"></el-input>
+              <el-input
+                v-model="part.num"
+                placeholder="请填写配件数量,例如：2"
+              ></el-input>
             </div>
             <div class="addcontent">
               <div class="name">配件单位:</div>
-              <el-input v-model="part.unit" placeholder="请填写配件单位,例如：件、个"></el-input>
+              <el-input
+                v-model="part.unit"
+                placeholder="请填写配件单位,例如：件、个"
+              ></el-input>
             </div>
           </div>
         </div>
       </el-from>
       <div class="addPartBtn">
-        <el-button type="primary" @click="addFalse">取消</el-button>
-        <el-button type="primary" @click="addTrue">添加</el-button>
+        <el-button style="color: #2e4c9e;width: 200px" @click="addFalse"
+          >返回</el-button
+        >
+        <el-button
+          style="background-color:#2e4c9e;color: #fff;width: 200px"
+          @click="addTrue"
+          >提交</el-button
+        >
       </div>
     </el-dialog>
     <el-dialog
@@ -187,11 +286,11 @@
       <el-from label-width="1000px">
         <div class="addPart">
           <div class="addcontents" v-for="item in param.parts" :key="item">
-            <div class="paramName">{{item.name}}</div>
-            <div class="paramPrice">{{item.price}}元</div>
-            <div class="paramNum">{{item.num}}</div>
-            <div class="paramUnit">{{item.unit}}</div>
-            <div class="delete" @click="deleted(item,index)">删除</div>
+            <div class="paramName">{{ item.name }}</div>
+            <div class="paramPrice">{{ item.price }}元</div>
+            <div class="paramNum">{{ item.num }}</div>
+            <div class="paramUnit">{{ item.unit }}</div>
+            <div class="delete" @click="deleted(item, index)">删除</div>
           </div>
         </div>
       </el-from>
@@ -221,9 +320,9 @@ export default {
         name: "",
         price: "",
         num: "",
-        unit: ""
+        unit: "",
       },
-      
+
       param: {
         orderSn: "",
         warrantyTime: "",
@@ -232,15 +331,15 @@ export default {
         partsAmount: "", //配件费
         doorAmount: "", //上门费用
         technologyAmount: "", //技术服务费
-        otherAmount: "" //其他费用
+        otherAmount: "", //其他费用
       },
       programmes: [
         {
           desc: "",
           analysis: "",
-          programme: ""
-        }
-      ]
+          programme: "",
+        },
+      ],
     };
   },
   computed: {
@@ -249,7 +348,7 @@ export default {
         doorAmount,
         technologyAmount,
         partsAmount,
-        otherAmount
+        otherAmount,
       } = this.param;
       let sum =
         Number(doorAmount) +
@@ -257,7 +356,7 @@ export default {
         Number(partsAmount) +
         Number(otherAmount);
       return sum ? sum.toFixed(2) : "0.00";
-    }
+    },
   },
   methods: {
     addPartTrue() {
@@ -286,7 +385,7 @@ export default {
           name: "",
           price: "",
           num: "",
-          unit: ""
+          unit: "",
         };
         this.dialogpop = false;
         this.dialogChosee = true;
@@ -301,16 +400,16 @@ export default {
     //订单信息
     _getRepairOrderDetail() {
       let params = {
-        enterpriseOrderSn: this.param.orderSn
+        enterpriseOrderSn: this.param.orderSn,
       };
-      getRepairOrderDetail(params).then(res => {
+      getRepairOrderDetail(params).then((res) => {
         console.log("订单详情", res);
         if (res.success) {
           this.orderDetail = res.data;
           this.$message({
             showClose: true,
             message: res.message,
-            type: "success"
+            type: "success",
           });
         }
       });
@@ -321,45 +420,86 @@ export default {
       console.log(this.programmes);
       console.log("programme", this.param.programme);
       let param = {
-        ...this.param
+        ...this.param,
       };
       param.parts = JSON.stringify(param.parts);
       param.programme = JSON.stringify(param.programme);
-      handleMasterQuotation(param).then(res => {
+      handleMasterQuotation(param).then((res) => {
         if (res.success) {
           console.log("检测定价", res);
           this.$router.push(
-        "/maintenance/maintenance_order_desc?orderSn=" + this.param.orderSn
-      );
+            "/maintenance/maintenance_order_desc?orderSn=" + this.param.orderSn
+          );
           this.$message({
             showClose: true,
             message: res.message,
-            type: "success"
+            type: "success",
           });
         } else {
           alert(res.message);
         }
       });
-    }
+    },
   },
   created() {
     this.param.orderSn = this.$route.query.orderSn;
     console.log("订单号", this.orderSn);
     this._getRepairOrderDetail();
   },
-  mounted() {}
+  mounted() {},
 };
 </script>
 <style lang="less" scoped>
+// 测试开始
+.footerBtn {
+  height: 100px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  background-color: #f6f8fc;
+  padding-right: 50px;
+  .cancelBtn {
+    background-color: #fff;
+    border: 1px solid #2e4c9e;
+    color: #2e4c9e;
+    width: 155px;
+  }
+  .submitBtn {
+    background-color: #2e4c9e;
+    color: #fff;
+    width: 155px;
+  }
+}
+.addBorder {
+  .addPart {
+    .addcontent {
+      .name {
+        font-weight: 700;
+        color: #707070;
+      }
+    }
+  }
+}
+.addPartcs {
+  margin: 20px 0 0 144px;
+
+  .item {
+    display: flex;
+    width: 250px;
+    justify-content: space-between;
+    margin-bottom: 15px;
+  }
+}
+// 测试结束
+
 .addBorder {
   width: 100%;
   display: flex;
   justify-content: center;
 }
 .checkPart {
-  height: 100vh;
   background: #fff;
-  padding: 50px 114px;
+  padding: 50px 20px 0 20px;
   .solutionTitle {
     font-size: 24px;
     font-family: Microsoft YaHei-Bold, Microsoft YaHei;
@@ -380,14 +520,16 @@ export default {
         background: #f6f8fc;
         color: #000;
         font-size: 18px;
-        padding: 12px 30px;
-        border: 1rpx solid #e9e9e9;
+        padding: 12px 5px;
+        border: 1rpx solid #ccc;
+        outline-color: #707070;
       }
     }
   }
   .onload {
     margin-top: 54px;
     display: flex;
+    align-items: center;
     .onloadTitle {
       font-size: 24px;
       font-family: Microsoft YaHei-Bold, Microsoft YaHei;
@@ -399,6 +541,9 @@ export default {
       display: flex;
       justify-content: center;
       align-items: center;
+      .onloadPart_inp {
+        margin-left: 15px;
+      }
     }
   }
   .fishedTime {

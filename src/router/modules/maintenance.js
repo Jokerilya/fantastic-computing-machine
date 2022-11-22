@@ -12,68 +12,69 @@ const router = {
       path: "/maintenance/system",
       name: "System",
       component: () => import("@/views/maintenance/system"),
-      meta: { title: "设备系统" }
+      meta: { title: "设备系统" },
     },
     {
       path: "/maintenance/type",
       name: "Type",
       component: () => import("@/views/maintenance/type"),
-      meta: { title: "设备类型" }
+      meta: { title: "设备类型" },
     },
     {
       path: "/maintenance/programme_order",
       name: "programme_order",
       component: () => import("@/views/maintenance/programme_order"),
-      meta: { title: "编程订单" }
+      meta: { title: "编程订单" },
+      hidden: true,
     },
     {
       path: "/maintenance/maintenance_order",
       name: "maintenance_order",
       component: () => import("@/views/maintenance/maintenance_order"),
-      meta: { title: "维保订单" }
+      meta: { title: "维保订单" },
     },
     {
       path: "/maintenance/maintenance_order_desc",
       name: "maintenance_order_desc",
       component: () => import("@/views/maintenance/maintenance_order_desc"),
-      meta: { title: "维保订单详情", noShow: 'true' }
+      meta: { title: "维保订单详情", noShow: "true" },
     },
     {
       path: "/maintenance/worker",
       name: "worker",
       component: () => import("@/views/maintenance/worker"),
-      meta: { title: "师傅列表" }
+      meta: { title: "师傅列表" },
     },
     {
       path: "/maintenance/enterpriseList",
       name: "enterpriseList",
       component: () => import("@/views/maintenance/enterpriseList"),
-      meta: { title: "企业列表" }
+      meta: { title: "企业列表" },
     },
     {
       path: "/maintenance/checkPricing",
       name: "checkPricing",
       component: () => import("@/views/maintenance/checkPricing"),
-      meta: { title: "检测定价" ,noShow: 'true'}
+      meta: { title: "检测定价", noShow: "true" },
     },
     {
       path: "/maintenance/maintenance",
       name: "maintenance",
       component: () => import("@/views/maintenance/maintenance"),
-      meta: { title: "新增订单" ,noShow: 'true'}
+      meta: { title: "新增订单", noShow: "true" },
     },
     {
       path: "/maintenance/customer",
       name: "customer",
       component: () => import("@/views/maintenance/customer"),
-      meta: { title: "年保订单" ,}
+      meta: { title: "年保订单" },
     },
     {
       path: "/maintenance/customerDetail",
       name: "customerDetail",
       component: () => import("@/views/maintenance/customerDetail"),
-      meta: { title: "年保订单详情" ,noShow: 'true'}
+      meta: { title: "年保订单详情", noShow: "true" },
     },
-  ]
+  ],
 };
 export default router;

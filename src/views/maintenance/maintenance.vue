@@ -6,37 +6,49 @@
       <el-tab-pane label="设备列表" name="third"></el-tab-pane>
       <el-tab-pane label="支付信息" name="fourth"></el-tab-pane>
     </el-tabs>
-    <div class="titleOne" v-if="activeName=='first'">客户基本信息</div>
-    <div class="topLine" v-if="activeName=='first'">
+    <div class="titleOne" v-if="activeName == 'first'">客户基本信息</div>
+    <div class="topLine" v-if="activeName == 'first'">
       <div class="custorName">
         <div class="name">客户名称</div>
         <div class="nameInput">
-          <el-input v-model="param.enterpriseName" placeholder="输入关联认证公司名称"></el-input>
+          <el-input
+            v-model="param.enterpriseName"
+            placeholder="输入关联认证公司名称"
+          ></el-input>
         </div>
       </div>
       <div class="custorCode">
         <div class="code">客户负责人</div>
         <div class="codeInput">
-          <el-input v-model="param.contactsPeople" placeholder="输入负责人"></el-input>
+          <el-input
+            v-model="param.contactsPeople"
+            placeholder="输入负责人"
+          ></el-input>
         </div>
       </div>
       <div class="custorCode">
         <div class="code">客户电话</div>
         <div class="codeInput">
-          <el-input v-model="param.contactsPhone" placeholder="输入联系电话"></el-input>
+          <el-input
+            v-model="param.contactsPhone"
+            placeholder="输入联系电话"
+          ></el-input>
         </div>
       </div>
     </div>
-    <div class="next" v-if="activeName=='first'">
+    <div class="next" v-if="activeName == 'first'">
       <el-button type="success" size plain @click="nextThen">下一步</el-button>
     </div>
 
-    <div class="titleOne" v-if="activeName=='second'">设备基本信息</div>
-    <div class="midLine" v-if="activeName=='second'">
+    <div class="titleOne" v-if="activeName == 'second'">设备基本信息</div>
+    <div class="midLine" v-if="activeName == 'second'">
       <div class="custorName">
         <div class="name">贴牌编码</div>
         <div class="nameInput">
-          <el-input v-model="deviceList.no" placeholder="输入贴牌编码"></el-input>
+          <el-input
+            v-model="deviceList.no"
+            placeholder="输入贴牌编码"
+          ></el-input>
         </div>
       </div>
       <div class="custorCode">
@@ -53,31 +65,41 @@
             type="date"
             value-format="yyyy-MM-dd HH:mm:ss"
             placeholder="选择日期"
+            style="width: 285px;"
           ></el-date-picker>
         </div>
       </div>
     </div>
-    <div class="midLine" v-if="activeName=='second'">
+    <div class="midLine" v-if="activeName == 'second'">
       <div class="custorName">
         <div class="name">设备品牌</div>
         <div class="nameInput">
-          <el-input v-model="deviceList.deviceBrand" placeholder="输入贴牌编码"></el-input>
+          <el-input
+            v-model="deviceList.deviceBrand"
+            placeholder="输入贴牌编码"
+          ></el-input>
         </div>
       </div>
       <div class="custorCode">
         <div class="code">设备型号</div>
         <div class="codeInput">
-          <el-input v-model="deviceList.deviceModel" placeholder="输入设备型号"></el-input>
+          <el-input
+            v-model="deviceList.deviceModel"
+            placeholder="输入设备型号"
+          ></el-input>
         </div>
       </div>
       <div class="custorCode">
         <div class="code">价格</div>
         <div class="codeInput">
-          <el-input v-model="deviceList.price" placeholder="输入价格"></el-input>
+          <el-input
+            v-model="deviceList.price"
+            placeholder="输入价格"
+          ></el-input>
         </div>
       </div>
     </div>
-    <div class="midLine" v-if="activeName=='second'">
+    <div class="midLine" v-if="activeName == 'second'">
       <div class="custorName">
         <div class="name">设备系统</div>
         <div class="nameInput">
@@ -85,10 +107,10 @@
             v-model="value"
             :options="systemList"
             :props="{
-              children:'list',
-              label:'name',
-              value:'id'
-          }"
+              children: 'list',
+              label: 'name',
+              value: 'id',
+            }"
             @change="systemChange"
           ></el-cascader>
         </div>
@@ -108,10 +130,10 @@
             v-model="value3"
             :options="typeList"
             :props="{
-              children:'list',
-              label:'name',
-              value:'id'
-          }"
+              children: 'list',
+              label: 'name',
+              value: 'id',
+            }"
             @change="typeChange"
           ></el-cascader>
         </div>
@@ -119,14 +141,18 @@
       <div class="custorCode">
         <div class="code">设备产地</div>
         <div class="codeInput">
-          <el-select v-model="place" placeholder="选择产地" @change="placeChange">
+          <el-select
+            v-model="place"
+            placeholder="选择产地"
+            @change="placeChange"
+          >
             <el-option label="国产" value="国产"></el-option>
             <el-option label="进口" value="进口"></el-option>
           </el-select>
         </div>
       </div>
     </div>
-    <div class="bottomLine" v-if="activeName=='second'">
+    <div class="bottomLine" v-if="activeName == 'second'">
       <div class="custorName">
         <div class="name">维保时间</div>
         <div class="nameInput">
@@ -142,7 +168,7 @@
         </div>
       </div>
     </div>
-    <div class="bottomLine2" v-if="activeName=='second'">
+    <div class="bottomLine2" v-if="activeName == 'second'">
       <div class="custorCode">
         <div class="code" style="margin:10px 0">铭牌图片</div>
         <div class="codeInput">
@@ -157,9 +183,27 @@
             <i class="el-icon-plus"></i>
           </el-upload>
         </div>
-        <div class="btnSmbit" v-if="activeName=='second'" style="margin:50px 0">
-          <el-button v-if="!change" type="success" size plain @click="_editButlerOrder">保存基本信息</el-button>
-          <el-button v-if="change" type="success" size plain @click="_changeForm">确认修改</el-button>
+        <div
+          class="btnSmbit"
+          v-if="activeName == 'second'"
+          style="margin:50px 0"
+        >
+          <el-button
+            v-if="!change"
+            type="success"
+            size
+            plain
+            @click="_editButlerOrder"
+            >保存基本信息</el-button
+          >
+          <el-button
+            v-if="change"
+            type="success"
+            size
+            plain
+            @click="_changeForm"
+            >确认修改</el-button
+          >
         </div>
       </div>
     </div>
@@ -168,12 +212,18 @@
       <img width="100%" :src="param.nameplateImg" alt />
     </el-dialog>
 
-    <div class="titlePart" v-if="activeName=='second'">
+    <div class="titlePart" v-if="activeName == 'second'">
       <div class="titleOne">设备配置信息</div>
-      <el-button icon="el-icon-refresh" plain type="primary" @click="addPart">新增</el-button>
+      <el-button icon="el-icon-refresh" plain type="primary" @click="addPart"
+        >新增</el-button
+      >
     </div>
-    <div class="listPart" v-if="activeName=='second'">
-      <el-table highlight-current-row :data="deviceList.partsList" style="width: 100%;">
+    <div class="listPart" v-if="activeName == 'second'">
+      <el-table
+        highlight-current-row
+        :data="deviceList.partsList"
+        style="width: 100%;"
+      >
         <el-table-column
           prop="category"
           label="项目大类"
@@ -181,7 +231,13 @@
           width="200"
           align="center"
         ></el-table-column>
-        <el-table-column prop="name" label="项目名称" show-overflow-tooltip width="200" align="center"></el-table-column>
+        <el-table-column
+          prop="name"
+          label="项目名称"
+          show-overflow-tooltip
+          width="200"
+          align="center"
+        ></el-table-column>
         <el-table-column
           prop="deviceBrand"
           label="设备品牌"
@@ -196,7 +252,13 @@
           width="150"
           align="center"
         ></el-table-column>
-        <el-table-column prop="unit" label="单位" show-overflow-tooltip width="150" align="center"></el-table-column>
+        <el-table-column
+          prop="unit"
+          label="单位"
+          show-overflow-tooltip
+          width="150"
+          align="center"
+        ></el-table-column>
         <el-table-column
           prop="specification"
           label="规格"
@@ -207,26 +269,60 @@
         <el-table-column label="操作" width="300px" fixed="right">
           <template slot-scope="scope">
             <div class="settings">
-              <el-button type="info" size="mini" plain @click="changePart(scope.$index,scope)">修改</el-button>
-              <el-button type="info" size="mini" plain @click="removePart(scope)">删除</el-button>
+              <el-button
+                type="info"
+                size="mini"
+                plain
+                @click="changePart(scope.$index, scope)"
+                >修改</el-button
+              >
+              <el-button
+                type="info"
+                size="mini"
+                plain
+                @click="removePart(scope)"
+                >删除</el-button
+              >
             </div>
           </template>
         </el-table-column>
       </el-table>
     </div>
 
-    <div class="titlePart" v-if="activeName=='third'">
-      <div class="titleOne">投保设备列表</div>
-      <el-button icon="el-icon-refresh" plain type="primary" @click="keepAdd">继续新增设备</el-button>
+    <div class="titlePart" v-if="activeName == 'third'">
+      <div class="titleOne" style="margin-top: 25px;">投保设备列表</div>
+      <el-button
+        icon="el-icon-refresh"
+        plain
+        type="primary"
+        @click="keepAdd"
+        style="margin-top: 25px;"
+        >继续新增设备</el-button
+      >
     </div>
-    <div class="listPart" v-if="activeName=='third'">
-      <el-table highlight-current-row :data="param.deviceList" style="width: 100%;">
-        <el-table-column prop="no" label="设备编号" show-overflow-tooltip width="200" align="center"></el-table-column>
-        <el-table-column prop="nameplateImg" label="设备铭牌" show-overflow-tooltip align="center">
-          <template slot-scope="{row}">
+    <div class="listPart" v-if="activeName == 'third'">
+      <el-table
+        highlight-current-row
+        :data="param.deviceList"
+        style="width: 100%;"
+      >
+        <el-table-column
+          prop="no"
+          label="设备编号"
+          show-overflow-tooltip
+          width="200"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="nameplateImg"
+          label="设备铭牌"
+          show-overflow-tooltip
+          align="center"
+        >
+          <template slot-scope="{ row }">
             <y-image
-              :src="row.nameplateImg?row.nameplateImg.split(',')[0]:''"
-              :srcList="row.nameplateImg?row.nameplateImg.split(','):''"
+              :src="row.nameplateImg ? row.nameplateImg.split(',')[0] : ''"
+              :srcList="row.nameplateImg ? row.nameplateImg.split(',') : ''"
             />
           </template>
         </el-table-column>
@@ -258,7 +354,13 @@
           width="150"
           align="center"
         ></el-table-column>
-        <el-table-column prop="price" label="维保价格" show-overflow-tooltip width="150" align="center"></el-table-column>
+        <el-table-column
+          prop="price"
+          label="维保价格"
+          show-overflow-tooltip
+          width="150"
+          align="center"
+        ></el-table-column>
         <el-table-column
           prop="startTime"
           label="投保时间"
@@ -276,19 +378,33 @@
         <el-table-column label="操作" width="300px" fixed="right">
           <template slot-scope="scope">
             <div class="settings">
-              <el-button type="info" size="mini" plain @click="queryDesc(scope)">修改</el-button>
-              <el-button type="info" size="mini" plain @click="delited(scope)">删除</el-button>
+              <el-button type="info" size="mini" plain @click="queryDesc(scope)"
+                >修改</el-button
+              >
+              <el-button type="info" size="mini" plain @click="delited(scope)"
+                >删除</el-button
+              >
             </div>
           </template>
         </el-table-column>
       </el-table>
     </div>
-    <div class="titlePart" v-if="activeName=='fourth'">
-      <div class="titleOne">支付信息列表</div>
+    <div class="titlePart" v-if="activeName == 'fourth'">
+      <div class="titleOne" style="margin-top: 25px;">支付信息列表</div>
     </div>
-    <div class="listPart" v-if="activeName=='fourth'">
-      <el-table highlight-current-row :data="param.payInfoList" style="width: 100%;">
-        <el-table-column prop="payTime" label="时间" show-overflow-tooltip width="340" align="center"></el-table-column>
+    <div class="listPart" v-if="activeName == 'fourth'">
+      <el-table
+        highlight-current-row
+        :data="param.payInfoList"
+        style="width: 100%;"
+      >
+        <el-table-column
+          prop="payTime"
+          label="时间"
+          show-overflow-tooltip
+          width="340"
+          align="center"
+        ></el-table-column>
         <el-table-column
           prop="payAmount"
           label="金额"
@@ -311,17 +427,23 @@
           align="center"
         ></el-table-column>-->
         <el-table-column label="操作" width="300px" fixed="right">
-          <template slot-scope="{row}">
+          <template slot-scope="{ row }">
             <div class="settings">
-              <el-button type="info" size="mini" plain @click="_payDetail(row)">详情</el-button>
+              <el-button type="info" size="mini" plain @click="_payDetail(row)"
+                >详情</el-button
+              >
             </div>
           </template>
         </el-table-column>
       </el-table>
     </div>
-    <div class="btnSmbit" v-if="activeName=='fourth'">
-      <el-button type="success" size plain @click="_addPay">新增支付流水</el-button>
-      <el-button type="success" size plain @click="_editButlerOrderAll">保存表单</el-button>
+    <div class="btnSmbit" v-if="activeName == 'fourth'">
+      <el-button type="success" size plain @click="_addPay"
+        >新增支付流水</el-button
+      >
+      <el-button type="success" size plain @click="_editButlerOrderAll"
+        >保存表单</el-button
+      >
     </div>
     <el-dialog
       title="添加配置"
@@ -344,7 +466,11 @@
             </div>
             <div class="addcontent">
               <div class="name">项目名称:</div>
-              <el-input v-model="partsList.name" :value="partsList.name" placeholder="请填写项目名称"></el-input>
+              <el-input
+                v-model="partsList.name"
+                :value="partsList.name"
+                placeholder="请填写项目名称"
+              ></el-input>
             </div>
             <div class="addcontent">
               <div class="name">品牌:</div>
@@ -364,7 +490,11 @@
             </div>
             <div class="addcontent">
               <div class="name">单位:</div>
-              <el-input v-model="partsList.unit" :value="partsList.unit" placeholder="请填写配件单位"></el-input>
+              <el-input
+                v-model="partsList.unit"
+                :value="partsList.unit"
+                placeholder="请填写配件单位"
+              ></el-input>
             </div>
             <div class="addcontent">
               <div class="name">规格:</div>
@@ -379,8 +509,12 @@
       </el-from>
       <div class="addPartBtn">
         <el-button type="primary" @click="addFalse">取消</el-button>
-        <el-button type="primary" v-if="!PartChange" @click="addTrue">添加</el-button>
-        <el-button type="primary" v-if="PartChange" @click="addChange">修改</el-button>
+        <el-button type="primary" v-if="!PartChange" @click="addTrue"
+          >添加</el-button
+        >
+        <el-button type="primary" v-if="PartChange" @click="addChange"
+          >修改</el-button
+        >
       </div>
     </el-dialog>
     <el-dialog
@@ -391,49 +525,58 @@
       :show-close="true"
       :center="true"
     >
-    <div class="addBorder">
-      <el-from label-width="1000px">
-        <div class="addPart">
-          <div class="addcontent">
-            <div class="name">客户名称:</div>
-            <el-input v-model="payInfoList.paymentEnterpriseName" placeholder="请填写支付方-企业名称"></el-input>
-          </div>
-          <div class="addcontent">
-            <div class="name">支付金额:</div>
-            <el-input v-model="payInfoList.payAmount" placeholder="请输入支付金额"></el-input>
-          </div>
-          <div class="addcontent">
-            <div class="name">付款时间</div>
-            <div class="codeInput">
-              <el-date-picker
-                v-model="payInfoList.payTime"
-                type="date"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                placeholder="选择日期"
-              ></el-date-picker>
+      <div class="addBorder">
+        <el-from label-width="1000px">
+          <div class="addPart">
+            <div class="addcontent">
+              <div class="name">客户名称:</div>
+              <el-input
+                v-model="payInfoList.paymentEnterpriseName"
+                placeholder="请填写支付方-企业名称"
+              ></el-input>
+            </div>
+            <div class="addcontent">
+              <div class="name">支付金额:</div>
+              <el-input
+                v-model="payInfoList.payAmount"
+                placeholder="请输入支付金额"
+              ></el-input>
+            </div>
+            <div class="addcontent">
+              <div class="name">付款时间</div>
+              <div class="codeInput">
+                <el-date-picker
+                  v-model="payInfoList.payTime"
+                  type="date"
+                  value-format="yyyy-MM-dd HH:mm:ss"
+                  placeholder="选择日期"
+                ></el-date-picker>
+              </div>
+            </div>
+            <div class="addcontent">
+              <div class="name">备注:</div>
+              <el-input
+                v-model="payInfoList.remarks"
+                placeholder="备注信息"
+              ></el-input>
+            </div>
+            <div class="addcontent">
+              <div class="name">上传附件</div>
+              <div class="codeInput">
+                <el-upload
+                  action
+                  list-type="picture-card"
+                  :on-remove="handleRemove"
+                  :http-request="httpRequestFnfujian"
+                >
+                  <i class="el-icon-plus"></i>
+                </el-upload>
+              </div>
             </div>
           </div>
-          <div class="addcontent">
-            <div class="name">备注:</div>
-            <el-input v-model="payInfoList.remarks" placeholder="备注信息"></el-input>
-          </div>
-          <div class="addcontent">
-            <div class="name">上传附件</div>
-            <div class="codeInput">
-              <el-upload
-                action
-                list-type="picture-card"
-                :on-remove="handleRemove"
-                :http-request="httpRequestFnfujian"
-              >
-                <i class="el-icon-plus"></i>
-              </el-upload>
-            </div>
-          </div>
-        </div>
-      </el-from>
-    </div>
-      
+        </el-from>
+      </div>
+
       <div class="addPartBtn">
         <el-button type="primary" @click="addPayFalse">取消</el-button>
         <el-button type="primary" @click="addPayTrue">添加</el-button>
@@ -513,7 +656,7 @@ export default {
             text: "今天",
             onClick(picker) {
               picker.$emit("pick", new Date());
-            }
+            },
           },
           {
             text: "昨天",
@@ -521,7 +664,7 @@ export default {
               const date = new Date();
               date.setTime(date.getTime() - 3600 * 1000 * 24);
               picker.$emit("pick", date);
-            }
+            },
           },
           {
             text: "一周前",
@@ -529,9 +672,9 @@ export default {
               const date = new Date();
               date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
               picker.$emit("pick", date);
-            }
-          }
-        ]
+            },
+          },
+        ],
       },
       value1: "",
       value: [],
@@ -542,19 +685,19 @@ export default {
         {
           value: "",
           label: "",
-          children: []
+          children: [],
         },
         {
           value: "",
           label: "",
-          children: []
-        }
+          children: [],
+        },
       ],
       param: {
         contactsPeople: "",
         contactsPhone: "",
         deviceList: [],
-        payInfoList: []
+        payInfoList: [],
       },
       partsList: {
         category: "",
@@ -562,7 +705,7 @@ export default {
         deviceModel: "",
         name: "",
         specification: "",
-        unit: ""
+        unit: "",
       },
       deviceList: {
         factoryTime: "",
@@ -576,16 +719,16 @@ export default {
         price: "",
         startTime: "",
         endTime: "",
-        partsList: []
+        partsList: [],
       },
       payInfoList: {
         enclosure: "",
         payAmount: "",
         payTime: "",
         paymentEnterpriseName: "",
-        remarks: ""
+        remarks: "",
       },
-      partDetail: []
+      partDetail: [],
     };
   },
   created() {
@@ -612,7 +755,7 @@ export default {
         deviceModel: "",
         name: "",
         specification: "",
-        unit: ""
+        unit: "",
       };
       this.PartChange = false;
       this.dialogpop = false;
@@ -648,7 +791,7 @@ export default {
         deviceSystemId: "",
         price: "",
         startTime: "",
-        endTime: ""
+        endTime: "",
       };
       this.partsList = {
         category: "",
@@ -656,7 +799,7 @@ export default {
         deviceModel: "",
         name: "",
         specification: "",
-        unit: ""
+        unit: "",
       };
       this.value = "";
       this.value3 = "";
@@ -702,7 +845,7 @@ export default {
         price: "",
         startTime: "",
         endTime: "",
-        partsList: []
+        partsList: [],
       };
       this.partsList = {
         category: "",
@@ -710,7 +853,7 @@ export default {
         deviceModel: "",
         name: "",
         specification: "",
-        unit: ""
+        unit: "",
       };
       this.value = "";
       this.value3 = "";
@@ -719,12 +862,12 @@ export default {
     },
     _editButlerOrderAll() {
       let param = this.param;
-      editButlerOrder(param).then(res => {
+      editButlerOrder(param).then((res) => {
         if (res) {
           console.log("提交", res);
           alert("添加成功");
           this.$router.push({
-            name: "customer"
+            name: "customer",
           });
         }
       });
@@ -737,12 +880,12 @@ export default {
       const formData = new FormData();
       formData.append("file", data.file);
       UploadImg(formData)
-        .then(res => {
+        .then((res) => {
           this.$emit("uploadSuc", res.data);
           this.$message({
             showClose: true,
             message: "文件上传成功！",
-            type: "success"
+            type: "success",
           });
           loading.close();
           this.deviceList.nameplateImg = res.data;
@@ -752,7 +895,7 @@ export default {
           this.$message({
             showClose: true,
             message: "文件上传失败！",
-            type: "warning"
+            type: "warning",
           });
           loading.close();
         });
@@ -762,12 +905,12 @@ export default {
       const formData = new FormData();
       formData.append("file", data.file);
       UploadImg(formData)
-        .then(res => {
+        .then((res) => {
           this.$emit("uploadSuc", res.data);
           this.$message({
             showClose: true,
             message: "文件上传成功！",
-            type: "success"
+            type: "success",
           });
           loading.close();
           this.payInfoList.enclosure = res.data;
@@ -777,19 +920,19 @@ export default {
           this.$message({
             showClose: true,
             message: "文件上传失败！",
-            type: "warning"
+            type: "warning",
           });
           loading.close();
         });
     },
     _queryDeviceTypeList() {
-      queryDeviceTypeList().then(res => {
+      queryDeviceTypeList().then((res) => {
         console.log("设备类型", res);
         this.typeList = res.data;
       });
     },
     _queryDeviceSystemList() {
-      queryDeviceSystemList().then(res => {
+      queryDeviceSystemList().then((res) => {
         console.log("系统类型", res);
         this.systemList = res.data;
       });
@@ -835,7 +978,7 @@ export default {
         deviceModel: "",
         name: "",
         specification: "",
-        unit: ""
+        unit: "",
       };
       this.PartChange = false;
       this.dialogpop = true;
@@ -862,7 +1005,7 @@ export default {
           deviceModel: "",
           name: "",
           specification: "",
-          unit: ""
+          unit: "",
         };
         this.dialogpop = false;
       }
@@ -870,8 +1013,8 @@ export default {
     delited(scope) {
       console.log(scope, "删除设备");
       this.param.deviceList.splice(this.deviceList, scope.$index + 1);
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -887,22 +1030,23 @@ export default {
   margin-left: 85%;
 }
 .mainPart {
-  padding-bottom: 150px;
   margin: 20px;
+  padding: 0 20px 50px 20px;
   background: #fff;
   .titleOne {
-    padding: 20px;
+    padding: 20px 20px 20px 0;
     font-size: 26px;
     font-family: Microsoft YaHei-Bold, Microsoft YaHei;
     font-weight: bold;
     color: #0b2059;
   }
   .topLine {
-    width: 1800px;
-    padding: 30px 120px;
+    width: 100%;
+    padding: 30px 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
     .custorName {
       display: flex;
       justify-content: center;
@@ -915,13 +1059,14 @@ export default {
       }
       .nameInput {
         margin-left: 20px;
-        width: 400px;
+        width: 300px;
       }
     }
     .custorCode {
       justify-content: center;
       align-items: center;
       display: flex;
+      margin-top: 10px;
       .code {
         display: flex;
         font-size: 24px;
@@ -930,7 +1075,7 @@ export default {
         color: #707070;
       }
       .codeInput {
-        margin-left: 20px;
+        margin: 0 20px;
         width: 300px;
       }
     }
@@ -944,8 +1089,8 @@ export default {
   }
   .midLine {
     height: 40px;
-    width: 1800px;
-    padding: 30px 120px;
+    width: 82vw;
+    padding: 30px 0 40px 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -967,7 +1112,7 @@ export default {
       }
     }
     .custorCode {
-       width: 400px;
+      width: 400px;
       justify-content: center;
       align-items: center;
       display: flex;
@@ -987,7 +1132,7 @@ export default {
   }
   .bottomLine {
     width: 100vw;
-    padding: 50px 120px;
+    padding: 10px 0;
     display: flex;
     justify-content: start;
     align-items: center;
@@ -1002,7 +1147,7 @@ export default {
         color: #707070;
       }
       .nameInput {
-        margin-left: 20px;
+        margin-left: 40px;
         width: 200px;
       }
     }
@@ -1027,7 +1172,7 @@ export default {
     }
   }
   .bottomLine2 {
-    padding: 50px 120px;
+    padding: 10px 0;
   }
 }
 .must {
@@ -1050,8 +1195,7 @@ export default {
   align-items: center;
 }
 .listPart {
-  margin: 45px 100px;
-  width: 1600px;
+  margin: 45px 0;
   height: auto;
   background: #ffffff;
   border-radius: 4px 4px 4px 4px;

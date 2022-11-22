@@ -17,30 +17,36 @@
               size="mini"
               plain
               @click="jump2check"
-              v-if="data.platformStatus == 0 && data.enterpriseMainStatus >= 0 "
-            >检测定价</el-button>
+              v-if="data.platformStatus == 0 && data.enterpriseMainStatus >= 0"
+              >检测定价</el-button
+            >
             <el-button
               type="primary"
               size="mini"
               plain
               @click="sumbitQuotation()"
               v-if="['2204'].includes(data.enterpriseSubStatus)"
-            >确认报价</el-button>
+              >确认报价</el-button
+            >
             <!-- <el-button type="primary" size="mini" plain @click="platformPayInit()">打款至师傅</el-button> -->
             <el-button
               type="primary"
               size="mini"
               plain
               @click="_changePayment()"
-              v-if="data.masterSubStatus <3502 && data.masterSubStatus>0 "
-            >修改报价</el-button>
+              v-if="data.masterSubStatus < 3502 && data.masterSubStatus > 0"
+              >修改报价</el-button
+            >
             <el-button
               type="primary"
               size="mini"
               plain
               @click="_cancelRepairOrder()"
-              v-if="data.enterpriseMainStatus > -1 && data.enterpriseMainStatus <= 3"
-            >取消订单</el-button>
+              v-if="
+                data.enterpriseMainStatus > -1 && data.enterpriseMainStatus <= 3
+              "
+              >取消订单</el-button
+            >
             <!-- <el-button type="primary" size="mini" plain @click="checkInit()" v-if="['2401','2403'].includes(data.enterpriseSubStatus)">订单验收</el-button> -->
             <el-button
               type="primary"
@@ -48,25 +54,151 @@
               plain
               @click="_handleMasterPayment()"
               v-if="['3502'].includes(data.masterSubStatus)"
-            >打款至师傅</el-button>
+              >打款至师傅</el-button
+            >
           </div>
         </div>
         <div>
-          <!-- 需求信息 -->
-          <el-descriptions title="需求信息">
-            <el-descriptions-item label="设备编码">{{ data.no }}</el-descriptions-item>
-            <el-descriptions-item label="设备产地">{{ data.devicePlace }}</el-descriptions-item>
-            <el-descriptions-item label="设备类型">{{ data.deviceTypeName }}</el-descriptions-item>
-            <el-descriptions-item label="设备品牌">{{ data.deviceBrand }}</el-descriptions-item>
-            <el-descriptions-item label="设备系统">{{ data.deviceSystemName }}</el-descriptions-item>
-            <el-descriptions-item label="设备数量">{{ data.num }}台</el-descriptions-item>
-            <el-descriptions-item label="服务时间">{{ data.serviceTime }}</el-descriptions-item>
-            <el-descriptions-item label="故障描述">{{ data.simpleDesc }}</el-descriptions-item>
-            <!-- <el-descriptions-item label="故障描述">{{ data.simpleDesc }}</el-descriptions-item> -->
-            <el-descriptions-item label="故障类型">{{ data.type }}</el-descriptions-item>
+          <!-- 11.22版需求信息开始 -->
+          <div class="information">
+            <!-- 需求信息+企业信息 -->
+            <div class="oneline">
+              <div class="item1">需求信息:</div>
+              <div class="item2">
+                <div v-if="data.no">
+                  设备编码: <span>{{ data.no }}</span>
+                </div>
+                <div>
+                  设备产地: <span>{{ data.devicePlace }}</span>
+                </div>
+                <div>
+                  设备类型: <span>{{ data.deviceTypeName }}</span>
+                </div>
+                <div>
+                  设备品牌: <span>{{ data.deviceBrand }}</span>
+                </div>
+                <div>
+                  设备数量: <span>{{ data.num }}台</span>
+                </div>
+                <div>
+                  设备系统: <span>{{ data.deviceSystemName }}</span>
+                </div>
+                <div>
+                  服务时间: <span>{{ data.serviceTime }}</span>
+                </div>
+              </div>
+              <div class="item3">企业信息:</div>
+              <div class="item4">
+                <div>
+                  企业名称: <span>{{ data.enterpriseName }}</span>
+                </div>
+                <div>
+                  联系人: <span>{{ data.contactsPeople }}</span>
+                </div>
+                <div>
+                  联系电话: <span>{{ data.phone }}</span>
+                </div>
+                <div>
+                  联系地址: <span>{{ data.address }}</span>
+                </div>
+              </div>
+            </div>
+            <!-- 故障描述 -->
+            <div class="twoline">
+              <div class="title">故障描述:</div>
+              <div class="content">{{ data.simpleDesc }}</div>
+            </div>
+            <!-- 故障类型 -->
+            <div class="twoline">
+              <div class="title">故障类型:</div>
+              <div class="content">{{ data.type }}</div>
+            </div>
+            <!-- 设备视图 -->
+            <div class="threeline">
+              <div class="title">设备视图:</div>
+              <div>
+                <video
+                  style="margin-right:40px;"
+                  width="300px"
+                  height="300px"
+                  v-for="item in data.videoList"
+                  :key="item"
+                  :src="item"
+                  controls="true"
+                ></video>
+              </div>
+            </div>
+            <!-- 订单费用 -->
+            <div class="oneline">
+              <div class="item1">订单费用:</div>
+              <div class="item2">
+                <div>
+                  维保预付: <span>￥{{ data.depositAmount }}.00</span>
+                </div>
+                <div>
+                  维保报价: <span>￥{{ data.totalAmount }}.00</span>
+                </div>
+                <div>
+                  上门费用: <span>￥{{ data.doorAmount }}.00</span>
+                </div>
+                <div>
+                  技术服务费: <span>￥{{ data.technologyAmount }}.00</span>
+                </div>
+                <div>
+                  配件费: <span>￥{{ data.partsAmount }}.00</span>
+                </div>
+                <div>
+                  其他费用: <span>￥{{ data.otherAmount }}.00</span>
+                </div>
+                <div>
+                  合计:
+                  <span style="color: red;"
+                    >￥{{
+                      data.depositAmount +
+                        data.totalAmount +
+                        data.doorAmount +
+                        data.technologyAmount +
+                        data.partsAmount +
+                        data.otherAmount
+                    }}.00</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- 11.22版需求信息结束 -->
+
+          <!-- 之前的版本需求信息 -->
+          <!-- <el-descriptions title="需求信息">
+            <el-descriptions-item label="设备编码" v-if="data.no">{{
+              data.no
+            }}</el-descriptions-item>
+            <el-descriptions-item label="设备产地">{{
+              data.devicePlace
+            }}</el-descriptions-item>
+            <el-descriptions-item label="设备类型">{{
+              data.deviceTypeName
+            }}</el-descriptions-item>
+            <el-descriptions-item label="设备品牌">{{
+              data.deviceBrand
+            }}</el-descriptions-item>
+            <el-descriptions-item label="设备系统">{{
+              data.deviceSystemName
+            }}</el-descriptions-item>
+            <el-descriptions-item label="设备数量"
+              >{{ data.num }}台</el-descriptions-item
+            >
+            <el-descriptions-item label="服务时间">{{
+              data.serviceTime
+            }}</el-descriptions-item>
+            <el-descriptions-item label="故障描述">{{
+              data.simpleDesc
+            }}</el-descriptions-item>
+            <el-descriptions-item label="故障类型">{{
+              data.type
+            }}</el-descriptions-item>
+            <el-descriptions-item label=""></el-descriptions-item>
             <el-descriptions-item label="设备视图">
-              <!-- <div style="margin-bottom:10px">上传设备铝牌和故障相关照片和视频</div> -->
-              <!-- <div> -->
               <el-image
                 v-if="data.pictureList"
                 style="width: 100px; height: 100px"
@@ -74,10 +206,13 @@
                 :src="data.pictureList[0]"
                 :preview-src-list="data.pictureList"
               ></el-image>
-              <video v-for="item in data.videoList" :key="item" :src="item"></video>
-              <!-- </div> -->
+              <video
+                v-for="item in data.videoList"
+                :key="item"
+                :src="item"
+              ></video>
             </el-descriptions-item>
-          </el-descriptions>
+          </el-descriptions> -->
           <!-- <div class="inhoudskop ">需求信息</div>
           <el-row :gutter="20">
             <el-col :span="4">
@@ -119,28 +254,47 @@
               </div>
             </el-col>
           </el-row>-->
-          <el-descriptions title="企业联系方式">
-            <el-descriptions-item label="企业名称">{{ data.enterpriseName }}</el-descriptions-item>
-            <el-descriptions-item label="联系人">{{ data.contactsPeople }}</el-descriptions-item>
-            <el-descriptions-item label="联系电话">{{ data.phone }}</el-descriptions-item>
-            <el-descriptions-item label="联系地址">{{ data.address }}</el-descriptions-item>
-            <el-descriptions-item label="距离约">{{ data.distance }}km</el-descriptions-item>
-          </el-descriptions>
-          <el-descriptions title="师傅联系方式" v-if="data.enterpriseMainStatus>1">
-            <el-descriptions-item label="联系人">{{ data.masterRealName }}</el-descriptions-item>
-            <el-descriptions-item label="联系电话">{{ data.masterPhone }}</el-descriptions-item>
-          </el-descriptions>
+          <!-- <el-descriptions title="企业联系方式">
+            <el-descriptions-item label="企业名称">{{
+              data.enterpriseName
+            }}</el-descriptions-item>
+            <el-descriptions-item label="联系人">{{
+              data.contactsPeople
+            }}</el-descriptions-item>
+            <el-descriptions-item label="联系电话">{{
+              data.phone
+            }}</el-descriptions-item>
+            <el-descriptions-item label="联系地址">{{
+              data.address
+            }}</el-descriptions-item>
+            <el-descriptions-item label="距离约"
+              >{{ data.distance }}km</el-descriptions-item
+            >
+          </el-descriptions> -->
+          <!-- <el-descriptions
+            title="师傅联系方式"
+            v-if="data.enterpriseMainStatus > 1"
+          >
+            <el-descriptions-item label="联系人">{{
+              data.masterRealName
+            }}</el-descriptions-item>
+            <el-descriptions-item label="联系电话">{{
+              data.masterPhone
+            }}</el-descriptions-item>
+          </el-descriptions> -->
         </div>
         <!-- 故障解决方案 -->
-        <el-descriptions title="故障解决方案"  v-if="data.programmeList" :column="1">
+        <el-descriptions
+          title="故障解决方案"
+          v-if="data.programmeList"
+          :column="1"
+        >
           <el-descriptions-item
-            v-for="(item,index) in data.programmeList"
-            :key="item.desc+index"
+            v-for="(item, index) in data.programmeList"
+            :key="item.desc + index"
             :label="'解决方案'"
           >
-            <el-row
-              style="font-size:12px !important"
-            >
+            <el-row style="font-size:12px !important">
               <el-col :span="24">
                 <span>故障描述：</span>
                 {{ item.desc }}
@@ -156,8 +310,8 @@
             </el-row>
           </el-descriptions-item>
         </el-descriptions>
-        <div  v-if="data.warrantyTime">
-          <div class="inhoudskop" >
+        <div v-if="data.warrantyTime">
+          <div class="inhoudskop">
             时间
           </div>
           <!-- <el-row :gutter="20" v-for="(item,index) in data.programmeList" :key="item.desc+index">
@@ -198,46 +352,66 @@
           </div> -->
         </div>
         <!-- 配件明细 -->
-        <el-descriptions title="配件明细" v-if="data.programmeList"  :column="1">
+        <el-descriptions title="配件明细" v-if="data.programmeList" :column="1">
           <el-descriptions-item
-            v-for="(item,index) in data.programmeList"
-            :key="item.desc+index"
-            :label="'配件'+(index+1)"
+            v-for="(item, index) in data.programmeList"
+            :key="item.desc + index"
+            :label="'配件' + (index + 1)"
           >
             <div
-              v-for="(item,index) in data.partsList"
-              :key="item.name+index"
+              v-for="(item, index) in data.partsList"
+              :key="item.name + index"
               style="font-size:12px !important"
             >
-             （名称） {{item.name}}
-              ￥{{item.price}}
-             （数量） {{item.num}}
-             {{item.unit}}
+              （名称） {{ item.name }} ￥{{ item.price }} （数量）
+              {{ item.num }}
+              {{ item.unit }}
             </div>
           </el-descriptions-item>
         </el-descriptions>
-        <el-descriptions title="完工信息" v-if="data.completePictureList" :column="1">
+        <el-descriptions
+          title="完工信息"
+          v-if="data.completePictureList"
+          :column="1"
+        >
           <el-descriptions-item>
-              <el-image
-                v-if="data.completePictureList"
-                style="width: 100px; height: 100px"
-                lazy
-                :src="data.completePictureList[1]"
-                :preview-src-list="data.completePictureList"
-              ></el-image>
-              <video v-for="item in data.videoList" :key="item" :src="item"></video>
-            </el-descriptions-item>
+            <el-image
+              v-if="data.completePictureList"
+              style="width: 100px; height: 100px"
+              lazy
+              :src="data.completePictureList[1]"
+              :preview-src-list="data.completePictureList"
+            ></el-image>
+            <video
+              v-for="item in data.videoList"
+              :key="item"
+              :src="item"
+            ></video>
+          </el-descriptions-item>
         </el-descriptions>
-        <el-descriptions title="订单费用"  :column="1">
-          <!-- <el-descriptions-item v-for="(item,index) in data.programmeList" :key="item.desc+index" :label="'解决方案'+(index+1)"> -->
-          <el-descriptions-item label="维保预付" v-if="data.depositAmount">{{ data.depositAmount }}</el-descriptions-item>
-          <el-descriptions-item label="维保报价">{{ data.totalAmount }}</el-descriptions-item>
-          <el-descriptions-item label="上门费用">{{ data.doorAmount }}</el-descriptions-item>
-          <el-descriptions-item label="技术服务费">{{ data.technologyAmount }}</el-descriptions-item>
-          <el-descriptions-item label="配件费">{{ data.partsAmount }}</el-descriptions-item>
-          <el-descriptions-item label="其他费用">{{ data.otherAmount }}</el-descriptions-item>
-          <!-- </el-descriptions-item> -->
-        </el-descriptions>
+
+        <!-- 之前的订单费用 -->
+        <!-- <el-descriptions title="订单费用" :column="1">
+          <el-descriptions-item label="维保预付">{{
+            data.depositAmount
+          }}</el-descriptions-item>
+          <el-descriptions-item label="维保报价">{{
+            data.totalAmount
+          }}</el-descriptions-item>
+          <el-descriptions-item label="上门费用">{{
+            data.doorAmount
+          }}</el-descriptions-item>
+          <el-descriptions-item label="技术服务费">{{
+            data.technologyAmount
+          }}</el-descriptions-item>
+          <el-descriptions-item label="配件费">{{
+            data.partsAmount
+          }}</el-descriptions-item>
+          <el-descriptions-item label="其他费用">{{
+            data.otherAmount
+          }}</el-descriptions-item>
+        </el-descriptions> -->
+
         <!-- <div v-if="data.enterpriseMainStatus > 2">
           <el-row :gutter="20">
             <el-col :span="24">
@@ -288,36 +462,65 @@
       <el-tab-pane label="操作日志" name="log">
         <div class="big_title">
           <span>订单号：{{ data.orderSn }}</span>
-          <span>{{ util.global.getLabel('mainStatus',data.enterpriseMainStatus) }}</span>
+          <span>{{
+            util.global.getLabel("mainStatus", data.enterpriseMainStatus)
+          }}</span>
         </div>
         <el-table :data="data.orderTrackOutList" border style="width: 100%">
           <el-table-column prop="title" label="标题"></el-table-column>
           <el-table-column prop="simpleDesc" label="描述"></el-table-column>
           <el-table-column fixed prop="operator" label="业务触发方">
-            <template slot-scope="{row}">{{ util.global.getLabel('operator',row.operator) }}</template>
+            <template slot-scope="{ row }">{{
+              util.global.getLabel("operator", row.operator)
+            }}</template>
           </el-table-column>
           <el-table-column prop="type" label="状态所属方">
-            <template slot-scope="{row}">{{ util.global.getLabel('operator',row.type) }}</template>
+            <template slot-scope="{ row }">{{
+              util.global.getLabel("operator", row.type)
+            }}</template>
           </el-table-column>
           <el-table-column prop="createTime" label="触发时间"></el-table-column>
         </el-table>
       </el-tab-pane>
     </el-tabs>
 
-    <model ref="quotationForm" title="确认报价" @ok="sumbitQuotation" @close="resetQuotationForm">
-      <el-form :model="quotationForm" status-icon label-width="120px" class="demo-ruleForm">
-        <el-form-item label="状态" prop="status" style="width:calc(100% - 120px)">
+    <model
+      ref="quotationForm"
+      title="确认报价"
+      @ok="sumbitQuotation"
+      @close="resetQuotationForm"
+    >
+      <el-form
+        :model="quotationForm"
+        status-icon
+        label-width="120px"
+        class="demo-ruleForm"
+      >
+        <el-form-item
+          label="状态"
+          prop="status"
+          style="width:calc(100% - 120px)"
+        >
           <el-radio-group v-model="quotationForm.status">
             <el-radio
               v-for="item in util.global.rejectStatus"
               :key="item.label"
               :label="item.value"
               @change="changeStuta(item)"
-            >{{item.label}}</el-radio>
+              >{{ item.label }}</el-radio
+            >
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="驳回原因" prop="rejectReason" style="width:calc(100% - 120px)">
-          <el-input type="text" v-model="quotationForm.rejectReason" autocomplete="off"></el-input>
+        <el-form-item
+          label="驳回原因"
+          prop="rejectReason"
+          style="width:calc(100% - 120px)"
+        >
+          <el-input
+            type="text"
+            v-model="quotationForm.rejectReason"
+            autocomplete="off"
+          ></el-input>
         </el-form-item>
       </el-form>
     </model>
@@ -345,7 +548,10 @@
           </div>
           <div class="addcontent">
             <div class="name">技术服务费:</div>
-            <el-input v-model="parts.technologyAmount" placeholder="元"></el-input>
+            <el-input
+              v-model="parts.technologyAmount"
+              placeholder="元"
+            ></el-input>
           </div>
         </div>
       </el-from>
@@ -355,33 +561,134 @@
       </div>
     </el-dialog>
 
-    <model ref="checkForm" title="确认验收" @ok="sumbitCheck" @close="resetCheckForm">
-      <el-form :model="checkForm" status-icon label-width="120px" class="demo-ruleForm">
-        <el-form-item label="状态" prop="status" style="width:calc(100% - 120px)">
+    <model
+      ref="checkForm"
+      title="确认验收"
+      @ok="sumbitCheck"
+      @close="resetCheckForm"
+    >
+      <el-form
+        :model="checkForm"
+        status-icon
+        label-width="120px"
+        class="demo-ruleForm"
+      >
+        <el-form-item
+          label="状态"
+          prop="status"
+          style="width:calc(100% - 120px)"
+        >
           <el-radio-group v-model="checkForm.status">
             <el-radio
               v-for="item in util.global.rejectStatus"
               :key="item.label"
               :label="item.value"
-            >{{item.label}}</el-radio>
+              >{{ item.label }}</el-radio
+            >
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="驳回原因" prop="rejectReason" style="width:calc(100% - 120px)">
-          <el-input type="text" v-model="checkForm.rejectReason" autocomplete="off"></el-input>
+        <el-form-item
+          label="驳回原因"
+          prop="rejectReason"
+          style="width:calc(100% - 120px)"
+        >
+          <el-input
+            type="text"
+            v-model="checkForm.rejectReason"
+            autocomplete="off"
+          ></el-input>
         </el-form-item>
       </el-form>
     </model>
 
-    <model ref="platform" title="打款信息" @ok="sumbitPlatformPay()" @close="resetPlatformPay">
+    <model
+      ref="platform"
+      title="打款信息"
+      @ok="sumbitPlatformPay()"
+      @close="resetPlatformPay"
+    >
       <el-form status-icon label-width="120px" class="demo-ruleForm">
-        <el-form-item label="师傅卡号" style="width:calc(100% - 120px)">{{data.bankCode}}</el-form-item>
-        <el-form-item label="所属银行" style="width:calc(100% - 120px)">{{data.bankName}}</el-form-item>
+        <el-form-item label="师傅卡号" style="width:calc(100% - 120px)">{{
+          data.bankCode
+        }}</el-form-item>
+        <el-form-item label="所属银行" style="width:calc(100% - 120px)">{{
+          data.bankName
+        }}</el-form-item>
         <!-- 请核实打款信息，再点击确认按钮 -->
       </el-form>
     </model>
   </div>
 </template>
 <style lang="less" scoped>
+// 11.22版需求信息开始
+.information {
+  padding: 30px 100px;
+  .oneline {
+    display: flex;
+    margin-bottom: 30px;
+    .item1,
+    .item3 {
+      margin-right: 30px;
+      color: #707070;
+      font-size: 24px;
+      font-weight: 600;
+    }
+
+    .item2 {
+      margin-right: 20vw;
+      div {
+        color: #707070;
+        font-size: 18px;
+        margin-bottom: 15px;
+        span {
+          margin-left: 10px;
+          color: #0b2059;
+        }
+      }
+    }
+
+    .item4 {
+      div {
+        color: #707070;
+        font-size: 18px;
+        margin-bottom: 20px;
+        span {
+          margin-left: 10px;
+          color: #0b2059;
+        }
+      }
+    }
+  }
+
+  .twoline {
+    display: flex;
+    align-items: center;
+    margin-bottom: 25px;
+    .title {
+      margin-right: 30px;
+      color: #707070;
+      font-size: 24px;
+      font-weight: 600;
+    }
+
+    .content {
+      color: #0b2059;
+    }
+  }
+
+  .threeline {
+    display: flex;
+    margin-bottom: 30px;
+    .title {
+      margin-right: 30px;
+      color: #707070;
+      font-size: 24px;
+      font-weight: 600;
+    }
+  }
+}
+
+// 11.22版需求信息结束
 .box {
   width: 100%;
   height: 100vh;
@@ -438,7 +745,7 @@ import {
   examineMasterQuotation,
   handleMasterPayment,
   updateMasterPrice,
-  cancelRepairOrder
+  cancelRepairOrder,
 } from "@/api/order.js";
 export default {
   title: "maintenance_order_desc",
@@ -456,37 +763,37 @@ export default {
         handleConfirmDepositToMaster:
           "/admin/maintenance/handleConfirmDepositToMaster", // 平台确认企业定金并打款给师傅/平台确认企业支付尾款
         handleConfirmBalanceToMaster:
-          "/admin/maintenance/handleConfirmBalanceToMaster" // 平台打款至师傅(质保期已到)
+          "/admin/maintenance/handleConfirmBalanceToMaster", // 平台打款至师傅(质保期已到)
       },
       quotationForm: {
-        rejectReason: ""
+        rejectReason: "",
       },
       checkForm: {
-        rejectReason: ""
+        rejectReason: "",
       },
       parts: {
         orderSn: "",
         doorAmount: "",
         otherAmount: "",
         partsAmount: "",
-        technologyAmount: ""
-      }
+        technologyAmount: "",
+      },
     };
   },
   methods: {
     _cancelRepairOrder() {
       let params = {
-        orderSn: this.orderSn
+        orderSn: this.orderSn,
       };
-      cancelRepairOrder(params).then(res => {
+      cancelRepairOrder(params).then((res) => {
         if (res) {
           this.$message({
             showClose: true,
             message: res.message,
-            type: "success"
+            type: "success",
           });
           this.$router.push({
-            name: "maintenance_order"
+            name: "maintenance_order",
           });
         }
       });
@@ -496,12 +803,12 @@ export default {
     },
     changeTrue() {
       this.parts.orderSn = this.orderSn;
-      updateMasterPrice(this.parts).then(res => {
+      updateMasterPrice(this.parts).then((res) => {
         if (res) {
           this.$message({
             showClose: true,
             message: res.message,
-            type: "success"
+            type: "success",
           });
         }
         this.changePayment = false;
@@ -524,14 +831,14 @@ export default {
     },
     _handleMasterPayment() {
       let params = {
-        orderSn: this.orderSn
+        orderSn: this.orderSn,
       };
-      handleMasterPayment(params).then(res => {
+      handleMasterPayment(params).then((res) => {
         if (res) {
           this.$message({
             showClose: true,
             message: res.message,
-            type: "success"
+            type: "success",
           });
         }
       });
@@ -540,15 +847,15 @@ export default {
       let data = {
         orderSn: this.orderSn,
         status: 2,
-        rejectReason: ''
+        rejectReason: "",
       };
-      examineMasterQuotation(data).then(res => {
+      examineMasterQuotation(data).then((res) => {
         if (res.success) {
           console.log("审核", res);
           this.$message({
             showClose: true,
             message: res.message,
-            type: "success"
+            type: "success",
           });
         }
       });
@@ -570,7 +877,7 @@ export default {
     quotationInit() {
       this.quotationForm = {
         enterpriseOrderSn: this.data.orderSn,
-        status: "0"
+        status: "0",
       };
       this.$refs.quotationForm.open();
     },
@@ -606,7 +913,7 @@ export default {
     jump2check() {
       this.$router.push({
         name: "checkPricing",
-        query: { orderSn: this.data.orderSn }
+        query: { orderSn: this.data.orderSn },
       });
     },
     pay() {
@@ -614,19 +921,19 @@ export default {
         .post(this.url.handleConfirmDeposit, {
           enterpriseOrderSn: location.hash.split("?enterpriseOrderSn=")[1],
           // type (integer, optional): 类型: 1 定金 2 尾款
-          type: this.data.enterpriseSubStatus == 2305 ? 1 : 2
+          type: this.data.enterpriseSubStatus == 2305 ? 1 : 2,
         })
-        .then(data => {
+        .then((data) => {
           if (data.code == "000") {
             this.$message({
               showClose: true,
               message: data.message,
-              type: "success"
+              type: "success",
             });
             this._getRepairOrderDetail();
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.error(err);
         });
     },
@@ -634,7 +941,7 @@ export default {
     checkInit() {
       this.checkForm = {
         enterpriseOrderSn: this.data.orderSn,
-        status: "0"
+        status: "0",
       };
       this.$refs.checkForm.open();
     },
@@ -645,17 +952,17 @@ export default {
       }
       this.$axios
         .post(this.url.handleEnterpriseCheck, this.checkForm)
-        .then(data => {
+        .then((data) => {
           if (data.code == "000") {
             this.$message({
               showClose: true,
               message: data.message,
-              type: "success"
+              type: "success",
             });
             this.resetCheckForm(fn);
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.error(err);
         });
     },
@@ -667,19 +974,19 @@ export default {
       this.$axios
         .post(this.url.handleConfirmDepositToMaster, {
           enterpriseOrderSn: location.hash.split("?enterpriseOrderSn=")[1],
-          type: this.data.enterpriseSubStatus == "2306" ? 1 : 2
+          type: this.data.enterpriseSubStatus == "2306" ? 1 : 2,
         })
-        .then(data => {
+        .then((data) => {
           if (data.code == "000") {
             this.$message({
               showClose: true,
               message: data.message,
-              type: "success"
+              type: "success",
             });
           }
           this.resetPlatformPay(fn);
         })
-        .catch(err => {
+        .catch((err) => {
           console.error(err);
         });
     },
@@ -703,16 +1010,16 @@ export default {
     },
     _getRepairOrderDetail() {
       let params = {
-        enterpriseOrderSn: this.orderSn
+        enterpriseOrderSn: this.orderSn,
       };
-      getRepairOrderDetail(params).then(res => {
+      getRepairOrderDetail(params).then((res) => {
         console.log("订单详情", res);
         if (res.success) {
           this.data = res.data;
           this.$message({
             showClose: true,
             message: res.message,
-            type: "success"
+            type: "success",
           });
         }
       });
@@ -720,22 +1027,22 @@ export default {
     remit(fn) {
       this.$axios
         .post(this.url.handleConfirmBalanceToMaster, {
-          enterpriseOrderSn: location.hash.split("?enterpriseOrderSn=")[1]
+          enterpriseOrderSn: location.hash.split("?enterpriseOrderSn=")[1],
         })
-        .then(data => {
+        .then((data) => {
           if (data.code == "000") {
             this.$message({
               showClose: true,
               message: data.message,
-              type: "success"
+              type: "success",
             });
           }
           this.resetPlatformPay(fn);
         })
-        .catch(err => {
+        .catch((err) => {
           console.error(err);
         });
-    }
+    },
   },
   mounted() {
     this._getRepairOrderDetail();
@@ -745,6 +1052,6 @@ export default {
     this.orderSn = this.$route.query.orderSn;
     console.log("订单号", this.orderSn);
     this._getRepairOrderDetail();
-  }
+  },
 };
 </script>

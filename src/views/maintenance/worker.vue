@@ -14,8 +14,20 @@
           </el-form-item>
         </el-col>-->
         <el-col :span="5">
-          <el-button icon="el-icon-zoom-in" plain type="primary" @click="_getMasterList()">查询</el-button>
-          <el-button icon="el-icon-refresh" plain type="primary" @click="_handleMasterInfoExport()">导出</el-button>
+          <el-button
+            icon="el-icon-zoom-in"
+            plain
+            type="primary"
+            @click="_getMasterList()"
+            >查询</el-button
+          >
+          <el-button
+            icon="el-icon-refresh"
+            plain
+            type="primary"
+            @click="_handleMasterInfoExport()"
+            >导出</el-button
+          >
         </el-col>
       </el-row>
     </el-form>
@@ -35,11 +47,16 @@
         width="150"
         align="center"
       ></el-table-column>
-      <el-table-column prop="realPortrait" label="真实头像" show-overflow-tooltip align="center">
-        <template slot-scope="{row}">
+      <el-table-column
+        prop="realPortrait"
+        label="真实头像"
+        show-overflow-tooltip
+        align="center"
+      >
+        <template slot-scope="{ row }">
           <y-image
-            :src="row.realPortrait?row.realPortrait.split(',')[0]:''"
-            :srcList="row.realPortrait?row.realPortrait.split(','):''"
+            :src="row.realPortrait ? row.realPortrait.split(',')[0] : ''"
+            :srcList="row.realPortrait ? row.realPortrait.split(',') : ''"
           />
         </template>
       </el-table-column>
@@ -70,18 +87,31 @@
         show-overflow-tooltip
         align="center"
       >
-        <template slot-scope="{row}">
+        <template slot-scope="{ row }">
           <y-image
-            :src="row.identityFrontImage?row.identityFrontImage.split(',')[0]:''"
-            :srcList="row.identityFrontImage?row.identityFrontImage.split(','):''"
+            :src="
+              row.identityFrontImage ? row.identityFrontImage.split(',')[0] : ''
+            "
+            :srcList="
+              row.identityFrontImage ? row.identityFrontImage.split(',') : ''
+            "
           />
         </template>
       </el-table-column>
-      <el-table-column prop="identityBackImage" label="身份证反面照" show-overflow-tooltip align="center">
-        <template slot-scope="{row}">
+      <el-table-column
+        prop="identityBackImage"
+        label="身份证反面照"
+        show-overflow-tooltip
+        align="center"
+      >
+        <template slot-scope="{ row }">
           <y-image
-            :src="row.identityBackImage?row.identityBackImage.split(',')[0]:''"
-            :srcList="row.identityBackImage?row.identityBackImage.split(','):''"
+            :src="
+              row.identityBackImage ? row.identityBackImage.split(',')[0] : ''
+            "
+            :srcList="
+              row.identityBackImage ? row.identityBackImage.split(',') : ''
+            "
           />
         </template>
       </el-table-column>
@@ -98,10 +128,18 @@
         show-overflow-tooltip
         align="center"
       >
-        <template slot-scope="{row}">
+        <template slot-scope="{ row }">
           <y-image
-            :src="row.industryExperienceImages?row.industryExperienceImages.split(',')[0]:''"
-            :srcList="row.industryExperienceImages?row.industryExperienceImages.split(','):''"
+            :src="
+              row.industryExperienceImages
+                ? row.industryExperienceImages.split(',')[0]
+                : ''
+            "
+            :srcList="
+              row.industryExperienceImages
+                ? row.industryExperienceImages.split(',')
+                : ''
+            "
           />
         </template>
       </el-table-column>
@@ -118,10 +156,18 @@
         show-overflow-tooltip
         align="center"
       >
-        <template slot-scope="{row}">
+        <template slot-scope="{ row }">
           <y-image
-            :src="row.skillCertificateImages?row.skillCertificateImages.split(',')[0]:''"
-            :srcList="row.skillCertificateImages?row.skillCertificateImages.split(','):''"
+            :src="
+              row.skillCertificateImages
+                ? row.skillCertificateImages.split(',')[0]
+                : ''
+            "
+            :srcList="
+              row.skillCertificateImages
+                ? row.skillCertificateImages.split(',')
+                : ''
+            "
           />
         </template>
       </el-table-column>
@@ -132,7 +178,13 @@
         width="150"
         align="center"
       ></el-table-column>
-      <el-table-column prop="address" label="详细地址" show-overflow-tooltip width="150" align="center"></el-table-column>
+      <el-table-column
+        prop="address"
+        label="详细地址"
+        show-overflow-tooltip
+        width="150"
+        align="center"
+      ></el-table-column>
       <el-table-column
         prop="createTime"
         label="创建时间 "
@@ -148,7 +200,9 @@
         align="center"
         fixed="right"
       >
-        <template slot-scope="{row}">{{util.global.getLabel('isLock',row.isLock)}}</template>
+        <template slot-scope="{ row }">{{
+          util.global.getLabel("isLock", row.isLock)
+        }}</template>
       </el-table-column>
       <el-table-column
         prop="status"
@@ -158,10 +212,12 @@
         align="center"
         fixed="right"
       >
-        <template slot-scope="{row}">{{util.global.getLabel('checkStatus',row.status)}}</template>
+        <template slot-scope="{ row }">{{
+          util.global.getLabel("checkStatus", row.status)
+        }}</template>
       </el-table-column>
       <el-table-column label="操作" width="300px" fixed="right">
-        <template slot-scope="{row}">
+        <template slot-scope="{ row }">
           <div class="settings">
             <el-button
               type="warning"
@@ -169,11 +225,30 @@
               plain
               @click="open(row)"
               :disabled="row.status == 2"
-            >审核</el-button>
-            <el-button type="danger" size="mini" plain @click="isLock(row)" v-show="!row.isLock">锁定</el-button>
-            <el-button type="success" size="mini" plain @click="isLock(row)" v-show="row.isLock">解锁</el-button>
-            <el-button type="warning" size="mini" plain @click="editInit(row)">编辑</el-button>
-            <el-button type="warning" size="mini" plain @click="checkTeam(row)">查看成员</el-button>
+              >审核</el-button
+            >
+            <el-button
+              type="danger"
+              size="mini"
+              plain
+              @click="isLock(row)"
+              v-show="!row.isLock"
+              >锁定</el-button
+            >
+            <el-button
+              type="success"
+              size="mini"
+              plain
+              @click="isLock(row)"
+              v-show="row.isLock"
+              >解锁</el-button
+            >
+            <el-button type="warning" size="mini" plain @click="editInit(row)"
+              >编辑</el-button
+            >
+            <el-button type="warning" size="mini" plain @click="checkTeam(row)"
+              >查看成员</el-button
+            >
           </div>
         </template>
       </el-table-column>
@@ -182,12 +257,17 @@
       background
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
-      :current-page="currentPage "
+      :current-page="currentPage"
       :page-size="10"
       layout="total, sizes, prev, pager, next, jumper"
       :total="pageCount"
     ></el-pagination>
-    <model ref="editStatusModel" title="师傅审核" @ok="handleEditStatus" @close="resetEditForm">
+    <model
+      ref="editStatusModel"
+      title="师傅审核"
+      @ok="handleEditStatus"
+      @close="resetEditForm"
+    >
       <el-form
         :model="editForm"
         :rules="rules"
@@ -196,13 +276,24 @@
         label-width="120px"
         class="demo-ruleForm"
       >
-        <el-form-item label="审核状态" prop="name" style="width:calc(100% - 120px)">
+        <el-form-item
+          label="审核状态"
+          prop="name"
+          style="width:calc(100% - 120px)"
+        >
           <el-switch v-model="editForm.status"></el-switch>
         </el-form-item>
       </el-form>
     </model>
-    <model :column="2" ref="editModel" title="编辑师傅信息" @ok="handleEdit" @close="resetEditForm">
+    <model
+      :column="2"
+      ref="editModel"
+      title="编辑师傅信息"
+      @ok="handleEdit"
+      @close="resetEditForm"
+    >
       <el-form
+        label-position="left"
         :model="editForm"
         :rules="rules"
         ref="editForm"
@@ -212,17 +303,35 @@
       >
         <el-row>
           <el-col :span="12">
-            <el-form-item label="真实姓名" prop="realName" style="width:calc(100% - 120px)">
-              <el-input v-model="editForm.realName" placeholder="请输入内容"></el-input>
+            <el-form-item
+              label="真实姓名"
+              prop="realName"
+              style="width:calc(100% - 120px)"
+            >
+              <el-input
+                v-model="editForm.realName"
+                placeholder="请输入内容"
+              ></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="身份证号" prop="identityNumber" style="width:calc(100% - 120px)">
-              <el-input v-model="editForm.identityNumber" placeholder="请输入内容"></el-input>
+            <el-form-item
+              label="身份证号"
+              prop="identityNumber"
+              style="width:calc(100% - 120px)"
+            >
+              <el-input
+                v-model="editForm.identityNumber"
+                placeholder="请输入内容"
+              ></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="服务地区" prop="serviceAreas" style="width:calc(100% - 120px)">
+            <el-form-item
+              label="服务地区"
+              prop="serviceAreas"
+              style="width:calc(100% - 120px)"
+            >
               <el-cascader
                 v-model="editForm.serviceAreas"
                 :props="props"
@@ -234,7 +343,11 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="服务类型" prop="serviceTypes" style="width:calc(100% - 120px)">
+            <el-form-item
+              label="服务类型"
+              prop="serviceTypes"
+              style="width:calc(100% - 120px)"
+            >
               <el-select
                 multiple
                 v-model="editForm.serviceTypes"
@@ -251,23 +364,53 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="详细地址" prop="address" style="width:calc(100% - 120px)">
-              <el-input v-model="editForm.address" placeholder="请输入内容"></el-input>
+            <el-form-item
+              label="详细地址"
+              prop="address"
+              style="width:calc(100% - 120px)"
+            >
+              <el-input
+                v-model="editForm.address"
+                placeholder="请输入内容"
+              ></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="行业经验" prop="industryExperience" style="width:calc(100% - 120px)">
-              <el-input v-model="editForm.industryExperience" placeholder="请输入内容"></el-input>
+            <el-form-item
+              label="行业经验"
+              prop="industryExperience"
+              style="width:calc(100% - 120px)"
+            >
+              <el-input
+                v-model="editForm.industryExperience"
+                placeholder="请输入内容"
+              ></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="排序" prop="sort" style="width:calc(100% - 120px)">
-              <el-input v-model.number="editForm.sort" placeholder="请输入内容"></el-input>
+            <el-form-item
+              label="排序"
+              prop="sort"
+              style="width:calc(100% - 120px)"
+            >
+              <el-input
+                v-model.number="editForm.sort"
+                placeholder="请输入内容"
+              ></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="真实头像" prop="realPortrait" style="width:calc(100% - 120px)">
-              <upload ref="realPortrait" type="image/*" limit="1" :size="1024**2*50" />
+            <el-form-item
+              label="真实头像"
+              prop="realPortrait"
+              style="width:calc(100% - 120px)"
+            >
+              <upload
+                ref="realPortrait"
+                type="image/*"
+                limit="1"
+                :size="1024 ** 2 * 50"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -276,7 +419,12 @@
               prop="industryExperienceImages"
               style="width:calc(100% - 120px)"
             >
-              <upload ref="industryExperienceImages" type="image/*" limit="9" :size="1024**2*50" />
+              <upload
+                ref="industryExperienceImages"
+                type="image/*"
+                limit="9"
+                :size="1024 ** 2 * 50"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -285,110 +433,133 @@
               prop="skillCertificateImages"
               style="width:calc(100% - 120px)"
             >
-              <upload ref="skillCertificateImages" type="image/*" limit="9" :size="1024**2*50" />
+              <upload
+                ref="skillCertificateImages"
+                type="image/*"
+                limit="9"
+                :size="1024 ** 2 * 50"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="身份证正面照" prop="identityFrontImage" style="width:calc(100% - 120px)">
-              <upload ref="identityFrontImage" type="image/*" limit="1" :size="1024**2*50" />
+            <el-form-item
+              label="身份证正面照"
+              prop="identityFrontImage"
+              style="width:calc(100% - 120px)"
+            >
+              <upload
+                ref="identityFrontImage"
+                type="image/*"
+                limit="1"
+                :size="1024 ** 2 * 50"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="身份证反面照" prop="identityBackImage" style="width:calc(100% - 120px)">
-              <upload ref="identityBackImage" type="image/*" limit="1" :size="1024**2*50" />
+            <el-form-item
+              label="身份证反面照"
+              prop="identityBackImage"
+              style="width:calc(100% - 120px)"
+            >
+              <upload
+                ref="identityBackImage"
+                type="image/*"
+                limit="1"
+                :size="1024 ** 2 * 50"
+              />
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
     </model>
     <model
-          ref="enterpriseList"
-          title="企业审核"
-          @ok="handleEnterpriseExamine"
-          @close="resetEditForm"
+      ref="enterpriseList"
+      title="企业审核"
+      @ok="handleEnterpriseExamine"
+      @close="resetEditForm"
+    >
+      <el-form
+        :model="editForm"
+        ref="editForm"
+        status-icon
+        label-width="120px"
+        class="demo-ruleForm"
+      >
+        <el-form-item
+          label="审核状态"
+          prop="name"
+          style="width:calc(100% - 120px)"
         >
-          <el-form
-            :model="editForm"
-            ref="editForm"
-            status-icon
-            label-width="120px"
-            class="demo-ruleForm"
-          >
-            <el-form-item label="审核状态" prop="name" style="width:calc(100% - 120px)">
-              <el-switch v-model="editForm.status"></el-switch>
-            </el-form-item>
-          </el-form>
-        </model>
-        <model
-          ref="masterTeamList"
-          title="师傅团队列表"
-          @ok="handleEnterpriseExamine"
-          @close="resetEditForm"
-          :column="2"
-        >
-          <el-table
-            highlight-current-row
-            v-loading.fullscreen.lock="loading"
-            element-loading-text="拼命加载中"
-            element-loading-spinner="el-icon-loading"
-            :data="masterTeamList"
-            max-height="700"
-            style="width: 1500px;"
-          >
-            <el-table-column
-              prop="realName"
-              label="真实姓名"
-              show-overflow-tooltip
-              width="200"
-              align="center"
-            ></el-table-column>
-            <el-table-column
-              prop="phone"
-              label="联系电话"
-              show-overflow-tooltip
-              width="100"
-              align="center"
-            ></el-table-column>
-            <el-table-column
-              prop="serviceTypes"
-              label="服务范围"
-              show-overflow-tooltip
-              width="100"
-              align="center"
-            ></el-table-column>
-            <el-table-column
-              prop="status"
-              label="状态"
-              show-overflow-tooltip
-              width="100"
-              align="center"
-            ></el-table-column>
-            <el-table-column
-              prop="serviceAreas"
-              label="服务区域"
-              show-overflow-tooltip
-              width="100"
-              align="center"
-            ></el-table-column>
-          </el-table>
-        </model>
+          <el-switch v-model="editForm.status"></el-switch>
+        </el-form-item>
+      </el-form>
+    </model>
+    <model
+      ref="masterTeamList"
+      title="师傅团队列表"
+      @ok="handleEnterpriseExamine"
+      @close="resetEditForm"
+      :column="2"
+    >
+      <el-table
+        highlight-current-row
+        v-loading.fullscreen.lock="loading"
+        element-loading-text="拼命加载中"
+        element-loading-spinner="el-icon-loading"
+        :data="masterTeamList"
+        max-height="700"
+        style="width: 1500px;"
+      >
+        <el-table-column
+          prop="realName"
+          label="真实姓名"
+          show-overflow-tooltip
+          width="200"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="phone"
+          label="联系电话"
+          show-overflow-tooltip
+          width="100"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="serviceTypes"
+          label="服务范围"
+          show-overflow-tooltip
+          width="100"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="status"
+          label="状态"
+          show-overflow-tooltip
+          width="100"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="serviceAreas"
+          label="服务区域"
+          show-overflow-tooltip
+          width="100"
+          align="center"
+        ></el-table-column>
+      </el-table>
+    </model>
   </div>
 </template>
-<style lang="less" scoped>
-</style>
+<style lang="less" scoped></style>
 <script>
 import tableMixin from "@/mixin/table";
 import { getMasterList } from "@/api/user.js";
-import {
- handleMasterInfoExport,
-  queryMasterMemberList
-} from "@/api/order.js";
+import { handleMasterInfoExport, queryMasterMemberList } from "@/api/order.js";
 export default {
   title: "course",
   mixins: [tableMixin],
   data() {
     return {
-      masterTeamList:[],
+      masterTeamList: [],
       pageCount: 0,
       currentPage: 1,
       masterList: [],
@@ -406,26 +577,26 @@ export default {
         queryAddress: "/admin/base/address",
         edit: "/admin/maintenance/editMasterInfo",
         lock: "/admin/maintenance/handleMasterLock",
-        updateStatus: "/admin/maintenance/handleMasterExamine"
+        updateStatus: "/admin/maintenance/handleMasterExamine",
       },
       rules: {
         worker: [
           {
             required: true,
             message: "请输入接单人",
-            trigger: "blur"
-          }
+            trigger: "blur",
+          },
         ],
         workerPhone: [
           {
             required: true,
             message: "请输入接单人手机",
-            trigger: "blur"
-          }
-        ]
+            trigger: "blur",
+          },
+        ],
       },
       finishForm: {
-        payAmount: 0
+        payAmount: 0,
       },
       props: {
         value: "id",
@@ -450,16 +621,16 @@ export default {
           );
           if (res.code == "000")
             resolve(
-              res.data.map(item => {
+              res.data.map((item) => {
                 return {
-                  ...item
+                  ...item,
                   // disabled:disabled
                 };
               })
             );
           else resolve([]);
-        }
-      }
+        },
+      },
     };
   },
   created() {
@@ -468,45 +639,45 @@ export default {
   methods: {
     _handleMasterInfoExport() {
       let data = {
-        identityNumber:"",
+        identityNumber: "",
         pageNo: 1,
         pageSize: 20,
         orderSn: "",
-        realName : ""
+        realName: "",
       };
-      handleMasterInfoExport(data).then(res => {
+      handleMasterInfoExport(data).then((res) => {
         if (res) {
           console.log("导出", res);
           const link = document.createElement("a");
           const blob = new Blob([res.data], {
-            type: "application/vnd.ms-excel"
+            type: "application/vnd.ms-excel",
           });
           link.style.display = "none";
           link.href = URL.createObjectURL(blob);
 
-          link.download = '师傅列表'; //下载的文件名
+          link.download = "师傅列表"; //下载的文件名
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
         }
       });
     },
-    checkTeam(row){
-      this.$refs.masterTeamList.open()
-      this._queryMasterMemberList(row)
+    checkTeam(row) {
+      this.$refs.masterTeamList.open();
+      this._queryMasterMemberList(row);
     },
-    _queryMasterMemberList(row){
+    _queryMasterMemberList(row) {
       let data = {
-        uid :row.uid,
+        uid: row.uid,
         pageNo: 1,
         pageSize: 10,
-      }
-      queryMasterMemberList(data).then(res =>{
-        if(res){
-          this.masterTeamList = res.data.records
-          console.log('师傅团队列表',this.masterTeamList)
+      };
+      queryMasterMemberList(data).then((res) => {
+        if (res) {
+          this.masterTeamList = res.data.records;
+          console.log("师傅团队列表", this.masterTeamList);
         }
-      })
+      });
     },
     handleCurrentChange(val) {
       this.currentPage = val;
@@ -517,9 +688,9 @@ export default {
         pageNo: this.currentPage,
         pageSize: 10,
         realName: this.Name,
-        phone: this.Phone
+        phone: this.Phone,
       };
-      getMasterList(params).then(res => {
+      getMasterList(params).then((res) => {
         if (res) {
           console.log(res);
           this.masterList = res.data.records;
@@ -547,14 +718,13 @@ export default {
       this.$axios
         .post(this.url.lock, {
           id: row.id,
-          lock: Number(!row.isLock)
+          lock: Number(!row.isLock),
         })
         .then(({ code, message }) => {
           this.util.message(this, code, message);
           this.query();
-        
         })
-        .catch(err => {
+        .catch((err) => {
           console.error(err);
         });
     },
@@ -562,27 +732,26 @@ export default {
       this.$refs.editStatusModel.open();
       this.editForm = {
         id: row.id,
-        status: false
+        status: false,
       };
     },
     handleEditStatus(fn) {
       this.$axios
         .post(this.url.updateStatus, {
           ...this.editForm,
-          status: this.editForm.status ? 2 : 3
+          status: this.editForm.status ? 2 : 3,
         })
-        .then(data => {
+        .then((data) => {
           this.util.message(this, data.status, data.message);
           // this.query();
-          this._getMasterList()
+          this._getMasterList();
           this.resetEditForm(false);
         })
         .catch(function(error) {
           console.info(error);
         });
-        
-        this.$refs.editStatusModel.close();
-        
+
+      this.$refs.editStatusModel.close();
     },
     editInit(row) {
       this.editForm = row;
@@ -602,37 +771,37 @@ export default {
         this.$refs.identityFrontImage.reset([]);
         this.$refs.identityBackImage.reset([]);
         this.$refs.realPortrait.reset(
-          row.realPortrait.split(",").map(item => {
+          row.realPortrait.split(",").map((item) => {
             return {
-              url: item
+              url: item,
             };
           })
         );
         this.$refs.industryExperienceImages.reset(
-          row.industryExperienceImages.split(",").map(item => {
+          row.industryExperienceImages.split(",").map((item) => {
             return {
-              url: item
+              url: item,
             };
           })
         );
         this.$refs.skillCertificateImages.reset(
-          row.skillCertificateImages.split(",").map(item => {
+          row.skillCertificateImages.split(",").map((item) => {
             return {
-              url: item
+              url: item,
             };
           })
         );
         this.$refs.identityFrontImage.reset(
-          row.identityFrontImage.split(",").map(item => {
+          row.identityFrontImage.split(",").map((item) => {
             return {
-              url: item
+              url: item,
             };
           })
         );
         this.$refs.identityBackImage.reset(
-          row.identityBackImage.split(",").map(item => {
+          row.identityBackImage.split(",").map((item) => {
             return {
-              url: item
+              url: item,
             };
           })
         );
@@ -655,13 +824,13 @@ export default {
         ).join(","),
         identityBackImage: (
           await this.$refs.identityBackImage.uploadFile()
-        ).join(",")
+        ).join(","),
       });
     },
     resetEditForm(fn) {
       fn(false);
       this.query();
-    }
-  }
+    },
+  },
 };
 </script>
