@@ -549,7 +549,9 @@
     </model>
   </div>
 </template>
+
 <style lang="less" scoped></style>
+
 <script>
 import tableMixin from "@/mixin/table";
 import { getMasterList } from "@/api/user.js";

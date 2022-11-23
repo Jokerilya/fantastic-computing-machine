@@ -1,33 +1,57 @@
-<!--维保订单-->
+<!--企业列表-->
 <template>
   <div class="app-container">
+    <!-- 顶部工具栏部分 -->
     <div class="manage-top">
       <el-form label-width="88px" class="rule-form" label-position="right">
         <el-row :gutter="20">
           <el-col :span="5">
             <el-form-item label="公司名称">
-              <el-input placeholder="请输入公司名称" v-model="enterpriseName"></el-input>
+              <el-input
+                placeholder="请输入公司名称"
+                v-model="enterpriseName"
+              ></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="5">
             <el-form-item label="联系电话">
-              <el-input placeholder="请输入联系电话" v-model="enterprisePhone"></el-input>
+              <el-input
+                placeholder="请输入联系电话"
+                v-model="enterprisePhone"
+              ></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="9">
-            <el-button icon="el-icon-zoom-in" plain type="primary" @click="_getEnterpriseList()">查询</el-button>
-            <el-button icon="el-icon-refresh" plain type="info" @click="_getEnterpriseList()">重置</el-button>
+            <el-button
+              icon="el-icon-zoom-in"
+              plain
+              type="primary"
+              @click="_getEnterpriseList()"
+              >查询</el-button
+            >
+            <el-button
+              icon="el-icon-refresh"
+              plain
+              type="info"
+              @click="_getEnterpriseList()"
+              >重置</el-button
+            >
             <el-button
               icon="el-icon-refresh"
               plain
               type="primary"
               @click="_handleEnterpriseInfoExport()"
-            >导出</el-button>
+              >导出</el-button
+            >
           </el-col>
         </el-row>
       </el-form>
     </div>
+
+    <!-- 空行 -->
     <div style="height: 16px;"></div>
+
+    <!-- 企业列表表格部分 -->
     <el-table
       highlight-current-row
       v-loading.fullscreen.lock="loading"
@@ -93,10 +117,18 @@
         width="100"
         align="center"
       ></el-table-column>-->
-      <el-table-column label="营业执照" show-overflow-tooltip width="300" align="center">
+      <el-table-column
+        label="营业执照"
+        show-overflow-tooltip
+        width="300"
+        align="center"
+      >
         <template slot-scope="scope">
           <a :href="scope.row.businessLicense" target="_blank" title="营业执照">
-            <el-image style="width:50px;height:50px" :src="scope.row.businessLicense"></el-image>
+            <el-image
+              style="width:50px;height:50px"
+              :src="scope.row.businessLicense"
+            ></el-image>
           </a>
         </template>
       </el-table-column>
@@ -108,7 +140,13 @@
         align="center"
       ></el-table-column>
 
-      <el-table-column prop="phone" label="联系电话" show-overflow-tooltip width="150" align="center"></el-table-column>
+      <el-table-column
+        prop="phone"
+        label="联系电话"
+        show-overflow-tooltip
+        width="150"
+        align="center"
+      ></el-table-column>
       <el-table-column
         prop="enterpriseFlag"
         label="认证状态"
@@ -133,7 +171,10 @@
       >
         <template slot-scope="scope">
           <a :href="scope.row.portrait" target="_blank" title="微信头像">
-            <el-image style="width:50px;height:50px" :src="scope.row.portrait"></el-image>
+            <el-image
+              style="width:50px;height:50px"
+              :src="scope.row.portrait"
+            ></el-image>
           </a>
         </template>
       </el-table-column>
@@ -144,7 +185,13 @@
         width="100"
         align="center"
       ></el-table-column>
-      <el-table-column prop="frName" label="法人" show-overflow-tooltip width="200" align="center"></el-table-column>
+      <el-table-column
+        prop="frName"
+        label="法人"
+        show-overflow-tooltip
+        width="200"
+        align="center"
+      ></el-table-column>
       <el-table-column
         prop="taxpayerNo"
         label="纳税人识别号"
@@ -153,7 +200,7 @@
         align="center"
       ></el-table-column>
       <el-table-column label="操作" width="300px" fixed="right">
-        <template slot-scope="{row}">
+        <template slot-scope="{ row }">
           <div class="settings">
             <el-button
               type="warning"
@@ -161,8 +208,17 @@
               plain
               @click="open(row)"
               :disabled="row.enterpriseFlag == 2"
-            >{{row.enterpriseFlag == 2? '已通过':row.enterpriseFlag == 3? '已驳回':'审核'}}</el-button>
-            <el-button type="warning" size="mini" plain @click="openTeam(row)">查看团队</el-button>
+              >{{
+                row.enterpriseFlag == 2
+                  ? "已通过"
+                  : row.enterpriseFlag == 3
+                  ? "已驳回"
+                  : "审核"
+              }}</el-button
+            >
+            <el-button type="warning" size="mini" plain @click="openTeam(row)"
+              >查看团队</el-button
+            >
           </div>
         </template>
         <model
@@ -178,7 +234,11 @@
             label-width="120px"
             class="demo-ruleForm"
           >
-            <el-form-item label="审核状态" prop="name" style="width:calc(100% - 120px)">
+            <el-form-item
+              label="审核状态"
+              prop="name"
+              style="width:calc(100% - 120px)"
+            >
               <el-switch v-model="editForm.status"></el-switch>
             </el-form-item>
           </el-form>
@@ -238,6 +298,8 @@
         </model>
       </el-table-column>
     </el-table>
+
+    <!-- 分页部分 -->
     <el-pagination
       background
       @size-change="handleSizeChange"
@@ -250,15 +312,14 @@
     ></el-pagination>
   </div>
 </template>
-<style lang="less" scoped>
-</style>
+<style lang="less" scoped></style>
 <script>
 import tableMixin from "@/mixin/table";
 import { getEnterpriseList } from "@/api/user.js";
 import {
   handleEnterpriseInfoExport,
   queryEnterpriseMemberList,
-  exportMethod
+  exportMethod,
 } from "@/api/order.js";
 export default {
   title: "course",
@@ -284,78 +345,84 @@ export default {
         querySnatch: "/admin/maintenance/queryMasterGrabOrderList",
         assign: "/admin/maintenance/handleAssignMaster",
         handleMasterQuotation: "/admin/maintenance/handleMasterQuotation",
-        handleEnterpriseExamine: "/admin/maintenance/handleEnterpriseExamine"
+        handleEnterpriseExamine: "/admin/maintenance/handleEnterpriseExamine",
       },
 
       finishForm: {
-        payAmount: 0
+        payAmount: 0,
       },
-      param: {}
+      param: {},
     };
   },
   created() {
     this._getEnterpriseList();
   },
   methods: {
-    updatePageNo(val){
+    // 页码发生变化触发的事件
+    updatePageNo(val) {
       this.currentPage = val;
       this._getEnterpriseList();
     },
+    // 关闭查看团队弹窗
     resetTeamList() {
       this.$refs.enterpriseTeamList.close();
     },
+    // 获取企业团队列表
     _queryEnterpriseMemberList(row) {
       let data = {
         name: row.enterpriseName,
         pageNo: 1,
         pageSize: 10,
         query: "",
-        uid: row.uid
+        uid: row.uid,
       };
-      queryEnterpriseMemberList(data).then(res => {
+      queryEnterpriseMemberList(data).then((res) => {
         if (res) {
           this.enpTeamList = res.data.records;
           console.log("企业团队列表", this.enpTeamList);
         }
       });
     },
+    // 点击导出触发的事件
     _handleEnterpriseInfoExport() {
       let data = {
         name: this.enterpriseName,
         pageNo: 1,
         pageSize: 20,
         query: "",
-        phone: this.enterprisePhone
+        phone: this.enterprisePhone,
       };
-      handleEnterpriseInfoExport(data).then(res => {
+      handleEnterpriseInfoExport(data).then((res) => {
         if (res) {
           console.log("导出", res);
           const link = document.createElement("a");
           const blob = new Blob([res.data], {
-            type: "application/vnd.ms-excel"
+            type: "application/vnd.ms-excel",
           });
           link.style.display = "none";
           link.href = URL.createObjectURL(blob);
 
-          link.download = '企业列表'; //下载的文件名
+          link.download = "企业列表"; //下载的文件名
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
         }
       });
     },
+    // 点击查看团队的事件
     openTeam(row) {
       console.log("团队参数", row);
       this._queryEnterpriseMemberList(row);
       this.$refs.enterpriseTeamList.open();
     },
+    // 不清楚!!!!
     handleEnterpriseExamine() {
       this.$axios
         .post(this.url.handleEnterpriseExamine, {
           uid: this.editForm.uid,
-          status: 2
+          status: 2,
         })
-        .then(data => {
+        .then((data) => {
           // this.util.message(this, data.enterpriseFlag, data.message);
           this._getEnterpriseList();
           this.resetEditForm(false);
@@ -364,37 +431,40 @@ export default {
           console.info(error);
         });
     },
+    // 关闭查看团队弹窗
     resetEditForm(fn) {
       fn(false);
       this._getEnterpriseList();
     },
+    // 点击审核触发的事件
     open(row) {
       console.log(row);
       this.$refs.enterpriseList.open();
       this.editForm = {
         uid: row.uid,
-        status: false
+        status: false,
       };
     },
+    //获取企业列表
     _getEnterpriseList() {
       let params = {
-        pageNo:this.currentPage,
+        pageNo: this.currentPage,
         pageSize: 20,
         name: this.enterpriseName,
-        phone: this.enterprisePhone
+        phone: this.enterprisePhone,
       };
-      getEnterpriseList(params).then(res => {
+      getEnterpriseList(params).then((res) => {
         if (res) {
           //   console.log(res);
           this.enterpriseList = res.data.records;
-          console.log("企业列表", this.enterpriseList);
+          console.log(111111, "企业列表", this.enterpriseList);
           this.pageCount = res.data.total;
           this.currentPage = res.data.current;
         }
         console.log("名称", this.enterpriseName);
         console.log("手机", this.enterprisePhone);
       });
-    }
-  }
+    },
+  },
 };
 </script>

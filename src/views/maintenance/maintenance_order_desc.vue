@@ -2,15 +2,15 @@
 <template>
   <div class="box">
     <el-tabs v-model="activeName" type="border-card">
+      <!-- 订单详情页面 -->
       <el-tab-pane label="订单详情" name="desc">
         <div class="big_title">
           <span>订单号：{{ data.orderSn }}</span>
-          <!-- <span>{{ util.global.getLabel('mainStatus',data.enterpriseMainStatus) }} - {{ util.global.getLabel('enterpriseSubStatus',data.enterpriseSubStatus) }}</span> -->
-          <span>订单金额：{{ data.totalAmount }}</span>
-          <!-- <span>待收款：{{ data.totalAmount }}</span>
-          <span>待付款：{{ data.totalAmount }}</span> -->
-          <!-- <span style="color:red">待定价!</span> -->
-          <!-- v-if="data.orderTyper == 2" -->
+          <span
+            >订单金额：<span style="color:red ;">{{
+              data.totalAmount
+            }}</span></span
+          >
           <div style="float:right">
             <el-button
               type="primary"
@@ -47,7 +47,6 @@
               "
               >取消订单</el-button
             >
-            <!-- <el-button type="primary" size="mini" plain @click="checkInit()" v-if="['2401','2403'].includes(data.enterpriseSubStatus)">订单验收</el-button> -->
             <el-button
               type="primary"
               size="mini"
@@ -58,118 +57,81 @@
             >
           </div>
         </div>
-        <div>
-          <!-- 11.22版需求信息开始 -->
-          <div class="information">
-            <!-- 需求信息+企业信息 -->
-            <div class="oneline">
-              <div class="item1">需求信息:</div>
-              <div class="item2">
-                <div v-if="data.no">
-                  设备编码: <span>{{ data.no }}</span>
-                </div>
-                <div>
-                  设备产地: <span>{{ data.devicePlace }}</span>
-                </div>
-                <div>
-                  设备类型: <span>{{ data.deviceTypeName }}</span>
-                </div>
-                <div>
-                  设备品牌: <span>{{ data.deviceBrand }}</span>
-                </div>
-                <div>
-                  设备数量: <span>{{ data.num }}台</span>
-                </div>
-                <div>
-                  设备系统: <span>{{ data.deviceSystemName }}</span>
-                </div>
-                <div>
-                  服务时间: <span>{{ data.serviceTime }}</span>
-                </div>
+
+        <div class="information">
+          <!-- 需求信息+企业信息 -->
+          <div class="oneline">
+            <div class="item1">需求信息:</div>
+            <div class="item2">
+              <div v-if="data.no">
+                设备编码: <span>{{ data.no }}</span>
               </div>
-              <div class="item3">企业信息:</div>
-              <div class="item4">
-                <div>
-                  企业名称: <span>{{ data.enterpriseName }}</span>
-                </div>
-                <div>
-                  联系人: <span>{{ data.contactsPeople }}</span>
-                </div>
-                <div>
-                  联系电话: <span>{{ data.phone }}</span>
-                </div>
-                <div>
-                  联系地址: <span>{{ data.address }}</span>
-                </div>
-              </div>
-            </div>
-            <!-- 故障描述 -->
-            <div class="twoline">
-              <div class="title">故障描述:</div>
-              <div class="content">{{ data.simpleDesc }}</div>
-            </div>
-            <!-- 故障类型 -->
-            <div class="twoline">
-              <div class="title">故障类型:</div>
-              <div class="content">{{ data.type }}</div>
-            </div>
-            <!-- 设备视图 -->
-            <div class="threeline">
-              <div class="title">设备视图:</div>
               <div>
-                <video
-                  style="margin-right:40px;"
-                  width="300px"
-                  height="300px"
-                  v-for="item in data.videoList"
-                  :key="item"
-                  :src="item"
-                  controls="true"
-                ></video>
+                设备产地: <span>{{ data.devicePlace }}</span>
+              </div>
+              <div>
+                设备类型: <span>{{ data.deviceTypeName }}</span>
+              </div>
+              <div>
+                设备品牌: <span>{{ data.deviceBrand }}</span>
+              </div>
+              <div>
+                设备数量: <span>{{ data.num }}台</span>
+              </div>
+              <div>
+                设备系统: <span>{{ data.deviceSystemName }}</span>
+              </div>
+              <div>
+                服务时间: <span>{{ data.serviceTime }}</span>
               </div>
             </div>
-            <!-- 订单费用 -->
-            <div class="oneline">
-              <div class="item1">订单费用:</div>
-              <div class="item2">
-                <div>
-                  维保预付: <span>￥{{ data.depositAmount }}.00</span>
-                </div>
-                <div>
-                  维保报价: <span>￥{{ data.totalAmount }}.00</span>
-                </div>
-                <div>
-                  上门费用: <span>￥{{ data.doorAmount }}.00</span>
-                </div>
-                <div>
-                  技术服务费: <span>￥{{ data.technologyAmount }}.00</span>
-                </div>
-                <div>
-                  配件费: <span>￥{{ data.partsAmount }}.00</span>
-                </div>
-                <div>
-                  其他费用: <span>￥{{ data.otherAmount }}.00</span>
-                </div>
-                <div>
-                  合计:
-                  <span style="color: red;"
-                    >￥{{
-                      data.depositAmount +
-                        data.totalAmount +
-                        data.doorAmount +
-                        data.technologyAmount +
-                        data.partsAmount +
-                        data.otherAmount
-                    }}.00</span
-                  >
-                </div>
+            <div class="item3">企业信息:</div>
+            <div class="item4">
+              <div>
+                企业名称: <span>{{ data.enterpriseName }}</span>
+              </div>
+              <div>
+                联系人: <span>{{ data.contactsPeople }}</span>
+              </div>
+              <div>
+                联系电话: <span>{{ data.phone }}</span>
+              </div>
+              <div>
+                联系地址: <span>{{ data.address }}</span>
               </div>
             </div>
           </div>
-          <!-- 11.22版需求信息结束 -->
+          <!-- 故障描述 -->
+          <div class="twoline">
+            <div class="title">故障描述:</div>
+            <div class="content">{{ data.simpleDesc }}</div>
+          </div>
+          <!-- 故障类型 -->
+          <div class="twoline">
+            <div class="title">故障类型:</div>
+            <div class="content">{{ data.type }}</div>
+          </div>
+          <!-- 设备视图 -->
+          <div class="threeline">
+            <div class="title">设备视图:</div>
+            <div>
+              <video
+                style="margin-right:40px;"
+                width="300px"
+                height="300px"
+                v-for="item in data.videoList"
+                :key="item"
+                :src="item"
+                controls="true"
+              ></video>
+            </div>
+          </div>
+          <!-- 故障解决方案 -->
+          <div class="fourline"></div>
+        </div>
 
-          <!-- 之前的版本需求信息 -->
-          <!-- <el-descriptions title="需求信息">
+        <!-- 之前的版本需求信息 -->
+        <!-- <el-descriptions title="需求信息">
             <el-descriptions-item label="设备编码" v-if="data.no">{{
               data.no
             }}</el-descriptions-item>
@@ -213,7 +175,7 @@
               ></video>
             </el-descriptions-item>
           </el-descriptions> -->
-          <!-- <div class="inhoudskop ">需求信息</div>
+        <!-- <div class="inhoudskop ">需求信息</div>
           <el-row :gutter="20">
             <el-col :span="4">
               <span>设备产地：</span>
@@ -254,7 +216,7 @@
               </div>
             </el-col>
           </el-row>-->
-          <!-- <el-descriptions title="企业联系方式">
+        <!-- <el-descriptions title="企业联系方式">
             <el-descriptions-item label="企业名称">{{
               data.enterpriseName
             }}</el-descriptions-item>
@@ -271,7 +233,7 @@
               >{{ data.distance }}km</el-descriptions-item
             >
           </el-descriptions> -->
-          <!-- <el-descriptions
+        <!-- <el-descriptions
             title="师傅联系方式"
             v-if="data.enterpriseMainStatus > 1"
           >
@@ -282,7 +244,7 @@
               data.masterPhone
             }}</el-descriptions-item>
           </el-descriptions> -->
-        </div>
+
         <!-- 故障解决方案 -->
         <el-descriptions
           title="故障解决方案"
@@ -310,32 +272,13 @@
             </el-row>
           </el-descriptions-item>
         </el-descriptions>
+
+        <!-- 时间 -->
         <div v-if="data.warrantyTime">
           <div class="inhoudskop">
             时间
           </div>
-          <!-- <el-row :gutter="20" v-for="(item,index) in data.programmeList" :key="item.desc+index">
-            <el-col :span="24">
-              解决方案{{index+1}}：
-            </el-col>
-            <el-col :span="8">
-              <span>故障描述：</span>
-              {{ item.desc }}
-            </el-col>
-            <el-col :span="8">
-              <span>维保方案：</span>
-              {{ item.analysis }}
-            </el-col>
-            <el-col :span="8">
-              <span>维保方案:</span>
-              {{ item.programme }}
-            </el-col>
-          </el-row> -->
           <el-row :gutter="20">
-            <!-- <el-col :span="4">
-              <span>维保大小：</span>
-              {{ util.global.getLabel('modalityType',data.modalityType) }}
-            </el-col> -->
             <el-col :span="4">
               <span>质保周期：</span>
               {{ data.warrantyTime }}/天
@@ -345,12 +288,8 @@
               {{ data.estimateServiceTime }}
             </el-col>
           </el-row>
-          <!-- <div>
-            完工照片：
-            {{ data.completePictureList }}
-            {{ data.completeVideoList }}
-          </div> -->
         </div>
+
         <!-- 配件明细 -->
         <el-descriptions title="配件明细" v-if="data.programmeList" :column="1">
           <el-descriptions-item
@@ -369,6 +308,8 @@
             </div>
           </el-descriptions-item>
         </el-descriptions>
+
+        <!-- 完工信息 -->
         <el-descriptions
           title="完工信息"
           v-if="data.completePictureList"
@@ -377,12 +318,14 @@
           <el-descriptions-item>
             <el-image
               v-if="data.completePictureList"
-              style="width: 100px; height: 100px"
+              style="width: 300px; height: 300px"
               lazy
               :src="data.completePictureList[1]"
               :preview-src-list="data.completePictureList"
             ></el-image>
             <video
+              width="300px"
+              height="300px"
               v-for="item in data.videoList"
               :key="item"
               :src="item"
@@ -390,75 +333,48 @@
           </el-descriptions-item>
         </el-descriptions>
 
-        <!-- 之前的订单费用 -->
-        <!-- <el-descriptions title="订单费用" :column="1">
-          <el-descriptions-item label="维保预付">{{
-            data.depositAmount
-          }}</el-descriptions-item>
-          <el-descriptions-item label="维保报价">{{
-            data.totalAmount
-          }}</el-descriptions-item>
-          <el-descriptions-item label="上门费用">{{
-            data.doorAmount
-          }}</el-descriptions-item>
-          <el-descriptions-item label="技术服务费">{{
-            data.technologyAmount
-          }}</el-descriptions-item>
-          <el-descriptions-item label="配件费">{{
-            data.partsAmount
-          }}</el-descriptions-item>
-          <el-descriptions-item label="其他费用">{{
-            data.otherAmount
-          }}</el-descriptions-item>
-        </el-descriptions> -->
-
-        <!-- <div v-if="data.enterpriseMainStatus > 2">
-          <el-row :gutter="20">
-            <el-col :span="24">
-              订单费用
-            </el-col>
-            <el-col :span="24">
-              <span>维保预付</span>
-              <div>¥{{ data.depositAmount }}</div>
-            </el-col>
-            <el-col :span="24">
-              <span>维保报价</span>
+        <!-- 订单费用 -->
+        <div class="information">
+          <div class="oneline">
+            <div class="item1">订单费用:</div>
+            <div class="item2">
               <div>
-                <div>¥{{ data.totalAmount }}</div>
-                <div class="flex">
-                  <div>上门费用</div>
-                  <div>¥{{ data.doorAmount }}</div>
-                </div>
-                <div class="flex">
-                  <div>技术服务费</div>
-                  <div>¥{{ data.technologyAmount }}</div>
-                </div>
-                <div class="flex">
-                  <div>配件费</div>
-                  <div>¥{{ data.partsAmount }}</div>
-                </div>
-                <div class="flex">
-                  <div>其他费用</div>
-                  <div>¥{{ data.otherAmount }}</div>
-                </div>
+                维保预付: <span>￥{{ data.depositAmount }}.00</span>
               </div>
-            </el-col>
-          </el-row>
-        </div>-->
-      </el-tab-pane>
-      <!-- <el-tab-pane label="收付款" name="receiving">
-        <div class="big_title">
-          <span>订单号：{{ data.orderSn }}</span>
-          <span>{{ util.global.getLabel('mainStatus',data.enterpriseMainStatus) }}</span>
-          <span>订单金额：{{ data.totalAmount }}</span>
-          <span>待收款：{{ data.totalAmount }}</span>
-          <span>待付款：{{ data.totalAmount }}</span>{{data.enterpriseSubStatus}}
-          <div style="float:right">
-            <el-button type="primary" size="mini" plain @click="platformPayInit()" v-if="['2306','2502'].includes(data.enterpriseSubStatus)">确认企业支付定价并打款给师傅/尾款</el-button>
-            <el-button type="primary" size="mini" plain @click="platformPayInit()" v-if="data.enterpriseSubStatus=='2601'">打款师傅</el-button>
+              <div>
+                维保报价: <span>￥{{ data.totalAmount }}.00</span>
+              </div>
+              <div>
+                上门费用: <span>￥{{ data.doorAmount }}.00</span>
+              </div>
+              <div>
+                技术服务费: <span>￥{{ data.technologyAmount }}.00</span>
+              </div>
+              <div>
+                配件费: <span>￥{{ data.partsAmount }}.00</span>
+              </div>
+              <div>
+                其他费用: <span>￥{{ data.otherAmount }}.00</span>
+              </div>
+              <div>
+                合计:
+                <span style="color: red;"
+                  >￥{{
+                    data.depositAmount +
+                      data.totalAmount +
+                      data.doorAmount +
+                      data.technologyAmount +
+                      data.partsAmount +
+                      data.otherAmount
+                  }}.00</span
+                >
+              </div>
+            </div>
           </div>
         </div>
-      </el-tab-pane>-->
+      </el-tab-pane>
+
+      <!-- 操作日志页面 -->
       <el-tab-pane label="操作日志" name="log">
         <div class="big_title">
           <span>订单号：{{ data.orderSn }}</span>
@@ -484,6 +400,7 @@
       </el-tab-pane>
     </el-tabs>
 
+    <!-- 确认报价的模态框 -->
     <model
       ref="quotationForm"
       title="确认报价"
@@ -524,6 +441,8 @@
         </el-form-item>
       </el-form>
     </model>
+
+    <!-- 修改报价的弹窗 -->
     <el-dialog
       title="修改报价"
       :visible.sync="changePayment"
@@ -561,6 +480,7 @@
       </div>
     </el-dialog>
 
+    <!-- 确认验收的模态框 -->
     <model
       ref="checkForm"
       title="确认验收"
@@ -601,6 +521,7 @@
       </el-form>
     </model>
 
+    <!-- 打款信息的模态框 -->
     <model
       ref="platform"
       title="打款信息"
@@ -619,10 +540,11 @@
     </model>
   </div>
 </template>
+
 <style lang="less" scoped>
 // 11.22版需求信息开始
 .information {
-  padding: 30px 100px;
+  padding: 30px 60px;
   .oneline {
     display: flex;
     margin-bottom: 30px;
@@ -739,6 +661,7 @@
   height: 88vh;
 }
 </style>
+
 <script>
 import { getRepairOrderDetail } from "@/api/user.js";
 import {
@@ -780,7 +703,16 @@ export default {
       },
     };
   },
+  mounted() {
+    this._getRepairOrderDetail();
+    console.info(this.$store);
+  },
+  created() {
+    this.orderSn = this.$route.query.orderSn;
+    this._getRepairOrderDetail();
+  },
   methods: {
+    // 点击取消订单触发的事件
     _cancelRepairOrder() {
       let params = {
         orderSn: this.orderSn,
@@ -798,9 +730,11 @@ export default {
         }
       });
     },
+    // 点击修改报价的弹窗的取消按钮的事件
     changeFalse() {
       this.changePayment = false;
     },
+    // 点击修改报价的弹窗的确认修改按钮的事件
     changeTrue() {
       this.parts.orderSn = this.orderSn;
       updateMasterPrice(this.parts).then((res) => {
@@ -814,21 +748,23 @@ export default {
         this.changePayment = false;
       });
     },
+    // 点击修改报价的事件
     _changePayment() {
       this.changePayment = true;
     },
+    // 暂时不知道干嘛!!!!!
     changeStuta(e) {
-      console.log(e);
       if (e.value == 1) {
         this.status = 2;
       } else {
         this.status = 3;
       }
-      console.log(this.status);
     },
+    // 没用到
     srueAccomont() {
       this.$refs.quotationForm.open();
     },
+    // 点击打款至师傅触发的事件
     _handleMasterPayment() {
       let params = {
         orderSn: this.orderSn,
@@ -843,6 +779,7 @@ export default {
         }
       });
     },
+    // 点击确定报价触发的事件
     sumbitQuotation() {
       let data = {
         orderSn: this.orderSn,
@@ -851,7 +788,6 @@ export default {
       };
       examineMasterQuotation(data).then((res) => {
         if (res.success) {
-          console.log("审核", res);
           this.$message({
             showClose: true,
             message: res.message,
@@ -874,6 +810,7 @@ export default {
     //     });
     // },
     // 显示企业报价弹框
+    // 没用到
     quotationInit() {
       this.quotationForm = {
         enterpriseOrderSn: this.data.orderSn,
@@ -906,16 +843,19 @@ export default {
     //     });
 
     // },
+    // 关闭确认报价的模态框的事件
     resetQuotationForm(fn) {
       this._getRepairOrderDetail();
       fn(false);
     },
+    // 点击检测定价触发的事件
     jump2check() {
       this.$router.push({
         name: "checkPricing",
         query: { orderSn: this.data.orderSn },
       });
     },
+    // 没用过
     pay() {
       this.$axios
         .post(this.url.handleConfirmDeposit, {
@@ -945,6 +885,7 @@ export default {
       };
       this.$refs.checkForm.open();
     },
+    // 确认验收的模态框确定的事件
     sumbitCheck(fn) {
       if (this.checkForm.status == "0" && !this.checkForm.rejectReason) {
         this.$message.error("请输入驳回原因");
@@ -966,6 +907,7 @@ export default {
           console.error(err);
         });
     },
+    // 确认验收的模态框关闭的事件
     resetCheckForm(fn) {
       this._getRepairOrderDetail();
       fn(false);
@@ -990,6 +932,7 @@ export default {
           console.error(err);
         });
     },
+    // 没用到
     platformPayInit() {
       if (this.data.enterpriseSubStatus != "2502") {
         this.$refs.platform.open();
@@ -997,6 +940,7 @@ export default {
         this.handleConfirmDepositToMaster();
       }
     },
+    // 打款信息的模态框确定的事件
     sumbitPlatformPay(fn) {
       if (this.data.enterpriseSubStatus == "2601") {
         this.remit(fn);
@@ -1004,26 +948,7 @@ export default {
         this.handleConfirmDepositToMaster(fn);
       }
     },
-    resetPlatformPay(fn) {
-      this._getRepairOrderDetail();
-      fn(false);
-    },
-    _getRepairOrderDetail() {
-      let params = {
-        enterpriseOrderSn: this.orderSn,
-      };
-      getRepairOrderDetail(params).then((res) => {
-        console.log("订单详情", res);
-        if (res.success) {
-          this.data = res.data;
-          this.$message({
-            showClose: true,
-            message: res.message,
-            type: "success",
-          });
-        }
-      });
-    },
+    // 打款信息的模态框确定的事件
     remit(fn) {
       this.$axios
         .post(this.url.handleConfirmBalanceToMaster, {
@@ -1043,15 +968,27 @@ export default {
           console.error(err);
         });
     },
-  },
-  mounted() {
-    this._getRepairOrderDetail();
-    console.info(this.$store);
-  },
-  created() {
-    this.orderSn = this.$route.query.orderSn;
-    console.log("订单号", this.orderSn);
-    this._getRepairOrderDetail();
+    // 打款信息的模态框取消的事件
+    resetPlatformPay(fn) {
+      this._getRepairOrderDetail();
+      fn(false);
+    },
+    // 打款信息的模态框取消的事件
+    _getRepairOrderDetail() {
+      let params = {
+        enterpriseOrderSn: this.orderSn,
+      };
+      getRepairOrderDetail(params).then((res) => {
+        if (res.success) {
+          this.data = res.data;
+          this.$message({
+            showClose: true,
+            message: res.message,
+            type: "success",
+          });
+        }
+      });
+    },
   },
 };
 </script>

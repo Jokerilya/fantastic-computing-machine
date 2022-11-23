@@ -75,6 +75,11 @@ const router = {
       component: () => import("@/views/maintenance/customerDetail"),
       meta: { title: "年保订单详情", noShow: "true" },
     },
+    {
+      path: "/maintenance/text",
+      component: () => import("@/views/maintenance/text.vue"),
+      meta: { title: "测试" },
+    },
   ],
 };
 export default router;

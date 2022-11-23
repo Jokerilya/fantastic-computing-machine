@@ -6,6 +6,8 @@
       <el-tab-pane label="设备列表" name="third"></el-tab-pane>
       <el-tab-pane label="支付信息" name="fourth"></el-tab-pane>
     </el-tabs>
+
+    <!-- 客户基本信息部分 -->
     <div class="titleOne" v-if="activeName == 'first'">客户基本信息</div>
     <div class="topLine" v-if="activeName == 'first'">
       <div class="custorName">
@@ -40,6 +42,7 @@
       <el-button type="success" size plain @click="nextThen">下一步</el-button>
     </div>
 
+    <!-- 设备基本信息部分 -->
     <div class="titleOne" v-if="activeName == 'second'">设备基本信息</div>
     <div class="midLine" v-if="activeName == 'second'">
       <div class="custorName">
@@ -289,6 +292,7 @@
       </el-table>
     </div>
 
+    <!-- 设备列表部分 -->
     <div class="titlePart" v-if="activeName == 'third'">
       <div class="titleOne" style="margin-top: 25px;">投保设备列表</div>
       <el-button
@@ -389,6 +393,8 @@
         </el-table-column>
       </el-table>
     </div>
+
+    <!-- 支付信息部分 -->
     <div class="titlePart" v-if="activeName == 'fourth'">
       <div class="titleOne" style="margin-top: 25px;">支付信息列表</div>
     </div>
@@ -445,6 +451,8 @@
         >保存表单</el-button
       >
     </div>
+
+    <!-- 添加配置的弹窗 -->
     <el-dialog
       title="添加配置"
       :visible.sync="dialogpop"
@@ -517,6 +525,8 @@
         >
       </div>
     </el-dialog>
+
+    <!-- 新增支付流水的弹窗 -->
     <el-dialog
       title="新增流水"
       :visible.sync="addPay"
@@ -582,6 +592,8 @@
         <el-button type="primary" @click="addPayTrue">添加</el-button>
       </div>
     </el-dialog>
+
+    <!-- 支付信息列表详情的弹框  -->
     <el-dialog
       title="支付详情"
       :visible.sync="payDetail"
@@ -736,16 +748,20 @@ export default {
     this._queryDeviceSystemList();
   },
   methods: {
+    // 点击下一步的触发事件
     nextThen() {
       this.activeName = "second";
     },
+    // 点击继续添加设备触发的事件
     keepAdd() {
       this.activeName = "second";
     },
+    // 点击设备配置信息操作删除按钮触发的事件
     removePart(scope) {
       console.log(scope);
       this.deviceList.partsList.splice(this.partIndex, scope.$index);
     },
+    // 点击添加配置的弹窗里修改按钮触发的事件
     addChange() {
       this.deviceList.partsList[this.partIndex] = this.partsList;
       console.log(this.deviceList.partsList);
@@ -762,6 +778,7 @@ export default {
       this.partIndex = "";
       console.log("当前索引", this.partIndex);
     },
+    // 点击设备配置信息操作修改按钮触发的事件
     changePart(index, scope) {
       this.dialogpop = true;
       this.partsList = scope.row;

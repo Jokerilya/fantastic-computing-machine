@@ -1,6 +1,7 @@
 <!--维保订单-->
 <template>
   <div class="app-container">
+    <!-- 顶部工具栏部分 -->
     <div class="manage-top">
       <el-form
         :model="searchForm"
@@ -49,7 +50,11 @@
         </el-row>
       </el-form>
     </div>
+
+    <!-- 空行 -->
     <div style="height: 16px;"></div>
+
+    <!-- 维保订单列表表格部分 -->
     <el-table
       highlight-current-row
       v-loading.fullscreen.lock="loading"
@@ -176,13 +181,13 @@
         width="150"
         align="center"
       ></el-table-column> -->
-      <el-table-column
+      <!-- <el-table-column
         prop="rejectReason"
         label="驳回原因"
         show-overflow-tooltip
         width="150"
         align="center"
-      ></el-table-column>
+      ></el-table-column> -->
       <el-table-column
         prop="orderStatusName"
         label="状态"
@@ -222,6 +227,8 @@
         </template>
       </el-table-column>
     </el-table>
+
+    <!-- 分页 -->
     <el-pagination
       background
       @size-change="handleSizeChange"
@@ -233,6 +240,7 @@
       :total="pageCount"
     ></el-pagination>
 
+    <!-- 指派列表模态框 -->
     <model
       ref="snatch"
       title="指派列表"
@@ -348,6 +356,7 @@
         :total="pageCountMaster"
       ></el-pagination>
     </model>
+
     <!-- <div style="margin:20px 0">
       <el-button icon="el-icon-zoom-in" plain type="primary" >新增</el-button>
       <el-button icon="el-icon-zoom-in" plain type="primary" @click="_addOrder">信息录入</el-button>
@@ -413,13 +422,13 @@ export default {
       quotationForm: {},
     };
   },
-
   created() {
     // this._getMasterList()
     this._queryAssignableMasterList();
     this._queryRepairOrderList();
   },
   methods: {
+    // 获取指派列表模态框里的师傅列表
     _queryAssignableMasterList() {
       let data = {
         pageNo: this.currentPage,
@@ -436,6 +445,7 @@ export default {
         }
       });
     },
+    // 获取维保订单列表
     _queryRepairOrderList() {
       let data = {
         pageNo: this.currentPage,
@@ -450,20 +460,18 @@ export default {
         }
       });
     },
+    // 点击页码触发的事件
     updatePageNo(val) {
       this.currentPage = val;
       this._queryRepairOrderList();
     },
+    // 点击指派列表模态框的页码触发的事件
     handleCurrentChange(val) {
       this.currentPage = val;
       // this.currentPage2 = val;
       this._getMasterList();
     },
-    _addOrder() {
-      this.$router.push({
-        name: "maintenance",
-      });
-    },
+    // 点击指派列表模态框操作里多选框的事件
     changeMaster(row) {
       console.log("row", row.uid);
       this.tabelList.push(row.uid);
@@ -476,6 +484,7 @@ export default {
       // });
       console.log("list", this.tabelList);
     },
+    // 点击派列表模态框抛入市场的事件
     seedItout() {
       let params = {
         enterpriseOrderSn: this.enterpriseOrderSn,
@@ -499,6 +508,7 @@ export default {
         }
       });
     },
+    // 点击派列表模态框提交的事件
     seedIt() {
       let id = this.tabelList;
       id.join(",");
@@ -525,6 +535,64 @@ export default {
         }
       });
     },
+    //  点击查看详情触发的事件
+    queryDesc(row) {
+      this.$router.push({
+        name: "maintenance_order_desc",
+        query: { orderSn: row.orderSn },
+      });
+    },
+    // 点击指派列表触发的事件
+    querySnatchList({ orderSn: enterpriseOrderSn }) {
+      this.$refs.snatch.open();
+      this.enterpriseOrderSn = enterpriseOrderSn;
+    },
+    // 指派列表模态框关闭的事件
+    closeSnatch(fn) {
+      fn(false);
+    },
+    // 有用到 不知道干嘛
+    assign(masterOrderSn) {
+      this.$axios
+        .post(this.url.assign, {
+          enterpriseOrderSn: this.param.enterpriseOrderSn,
+          masterOrderSn: masterOrderSn,
+        })
+        .then((data) => {
+          if (data.code == "000") {
+            this.$message({
+              showClose: true,
+              message: data.message,
+              type: "success",
+            });
+            this.$refs.snatch.close();
+            this.query();
+          }
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    },
+    // 没用到开始-----------------------
+    getType(val) {
+      return this.typeData.filter((item) => {
+        if (item.id == val) {
+          return item;
+        }
+      })[0].name;
+    },
+    querySelectData() {
+      this.loading = true;
+      this.$axios
+        .post(this.url.queryType)
+        .then(({ data }) => {
+          this.typeData = data;
+        })
+        .catch(function(error) {
+          console.info(error);
+        });
+      this.loading = false;
+    },
     _handleAssignMaster(row) {
       console.log(row);
       let params = {
@@ -549,6 +617,11 @@ export default {
         }
       });
     },
+    _addOrder() {
+      this.$router.push({
+        name: "maintenance",
+      });
+    },
     // _getMasterList() {
     //   let params = {
     //     pageNo: this.currentPage,
@@ -566,59 +639,6 @@ export default {
     //     }
     //   });
     // },
-    queryDesc(row) {
-      this.$router.push({
-        name: "maintenance_order_desc",
-        query: { orderSn: row.orderSn },
-      });
-    },
-    querySelectData() {
-      this.loading = true;
-      this.$axios
-        .post(this.url.queryType)
-        .then(({ data }) => {
-          this.typeData = data;
-        })
-        .catch(function(error) {
-          console.info(error);
-        });
-      this.loading = false;
-    },
-    querySnatchList({ orderSn: enterpriseOrderSn }) {
-      this.$refs.snatch.open();
-      this.enterpriseOrderSn = enterpriseOrderSn;
-    },
-    closeSnatch(fn) {
-      fn(false);
-    },
-    assign(masterOrderSn) {
-      this.$axios
-        .post(this.url.assign, {
-          enterpriseOrderSn: this.param.enterpriseOrderSn,
-          masterOrderSn: masterOrderSn,
-        })
-        .then((data) => {
-          if (data.code == "000") {
-            this.$message({
-              showClose: true,
-              message: data.message,
-              type: "success",
-            });
-            this.$refs.snatch.close();
-            this.query();
-          }
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-    },
-    getType(val) {
-      return this.typeData.filter((item) => {
-        if (item.id == val) {
-          return item;
-        }
-      })[0].name;
-    },
   },
 };
 </script>

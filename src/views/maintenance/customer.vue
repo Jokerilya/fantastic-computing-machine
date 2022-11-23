@@ -1,4 +1,3 @@
-<!--维保订单-->
 <template>
   <div class="app-container">
     <!-- 头部 -->
@@ -38,7 +37,7 @@
     <!-- 空行 -->
     <div style="height: 16px;"></div>
 
-    <!-- 测试开始 -->
+    <!-- 表格内容 -->
     <div class="text" style="margin-bottom: 20px;">
       <!-- 表格 -->
       <el-table
@@ -146,99 +145,11 @@
         </div>
       </div>
     </div>
-    <!-- 测试结束 -->
-
-    <!-- 11.21之前的 -->
-    <!-- 表格内容 -->
-    <!-- <el-table
-      highlight-current-row
-      v-loading.fullscreen.lock="loading"
-      element-loading-text="拼命加载中"
-      element-loading-spinner="el-icon-loading"
-      :data="orderList"
-      style="width: 100%;"
-      max-height="700"
-    >
-      <el-table-column
-        prop="orderSn"
-        label="订单号"
-        show-overflow-tooltip
-        width="200"
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        prop="statusName"
-        label="订单状态"
-        show-overflow-tooltip
-        width="200"
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        prop="enterpriseName"
-        label="企业名称"
-        show-overflow-tooltip
-        width="150"
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        prop="contactsPeople"
-        label="企业联系人"
-        show-overflow-tooltip
-        width="150"
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        prop="contactsPhone"
-        label="客户电话"
-        show-overflow-tooltip
-        width="150"
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        prop="createTime"
-        label="下单时间"
-        show-overflow-tooltip
-        width="150"
-        align="center"
-      ></el-table-column>
-
-      <el-table-column label="操作" width="300px" fixed="right">
-        <template slot-scope="{ row }">
-          <div class="settings">
-            <el-button type="info" size="mini" plain @click="jump2Detail(row)"
-              >查看详情</el-button
-            >
-            <el-button
-              v-if="!row.uid"
-              type="info"
-              size="mini"
-              plain
-              @click="foremp(row)"
-              >绑定账号</el-button
-            >
-          </div>
-        </template>
-      </el-table-column>
-    </el-table> -->
-    <!-- 分页 -->
-    <!-- <div class="pagingBtn">
-      <el-pagination
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page="currentPage"
-        :page-sizes="[10, 20, 50, 100]"
-        :page-size="10"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="pageCount"
-        align="center"
-      ></el-pagination>
-    </div> -->
-    <!-- 11.21之前的 -->
 
     <!-- 空行 -->
     <div style="margin:20px 0"></div>
 
-    <!-- 未知 -->
+    <!-- 绑定账号弹框-->
     <model
       ref="enterpriseList"
       title="企业列表"
@@ -315,6 +226,7 @@
     </model>
   </div>
 </template>
+
 <style lang="less" scoped>
 // 底部工具栏
 .footTool {
@@ -348,6 +260,7 @@
   margin: 10px 0;
 }
 </style>
+
 <script>
 import { getMasterList, handleAssignMaster } from "@/api/user.js";
 import { queryButlerOrderList, uploadButlerOrder } from "@/api/order.js";
@@ -358,11 +271,11 @@ export default {
   mixins: [tableMixin],
   data() {
     return {
-      pageCount: 0,
+      pageCount: 0, //总条数
       currentPage: 1,
-      bindOrderSn: "",
-      bindUid: "",
-      enterpriseName: "",
+      bindOrderSn: "", //点击绑定账号的编号
+      bindUid: "", //点击绑定企业后的uid
+      enterpriseName: "", //企业名称
       enterpriseList: [],
       orderSn: "",
       People: "",
@@ -416,10 +329,12 @@ export default {
     this._getEnterpriseList();
   },
   methods: {
+    // 点击页数触发的事件
     handleCurrentChange(val) {
       this.currentPage = val;
       this._queryButlerOrderList();
     },
+    // 点击绑定企业的事件
     _bindUserAccount(e) {
       console.log(e);
       this.bindUid = e.uid;
@@ -439,6 +354,7 @@ export default {
         this._queryButlerOrderList();
       });
     },
+    // 点击绑定账号弹框里查询的事件
     _getEnterpriseList() {
       let params = {
         pageNo: 1,
@@ -448,21 +364,19 @@ export default {
       };
       getEnterpriseList(params).then((res) => {
         if (res) {
-          //   console.log(res);
           this.enterpriseList = res.data.records;
           console.log("企业列表", this.enterpriseList);
         }
         console.log("名称", this.enterpriseName);
       });
     },
+    // 点击绑定账号的事件
     foremp(e) {
       this.$refs.enterpriseList.open();
       console.log(e);
       this.bindOrderSn = e.orderSn;
     },
-    handleRemove(file, fileList) {
-      console.log(file, fileList);
-    },
+    // 上传文件的函数
     httpRequestFn(data) {
       const loading = this.$loading({ text: "上传中.." });
       const formData = new FormData();
@@ -489,11 +403,12 @@ export default {
           loading.close();
         });
     },
+    // 查询列表的事件
     _getOrderList() {
       let params = {
         contactsPeople: this.People,
         contactsPhone: this.Phone,
-        enterpriseName: this.Nmae,
+        enterpriseName: this.Name,
         pageNo: 1,
         pageSize: 10,
       };
@@ -507,11 +422,13 @@ export default {
         console.log(this.pageCount);
       });
     },
+    // 点击新增 跳转新增页面
     _addOrder() {
       this.$router.push({
         name: "maintenance",
       });
     },
+    // 查询订单列表的事件
     _queryButlerOrderList() {
       let params = {
         contactsPeople: "",
@@ -529,11 +446,65 @@ export default {
         }
       });
     },
+    // 点击详情 携带参数跳转详情页面
     jump2Detail(row) {
       this.$router.push({
         name: "customerDetail",
         query: { id: row.id },
       });
+    },
+    // 拿到师傅列表 不知道干嘛
+    _getMasterList() {
+      let params = {
+        pageNo: 1,
+        pageSize: 10,
+        realName: this.Name,
+        phone: this.Phone,
+      };
+      getMasterList(params).then((res) => {
+        if (res) {
+          console.log(531, res);
+          this.masterList = res.data.records;
+          console.log("师傅列表", this.masterList);
+        }
+      });
+    },
+    // 绑定账号弹框关闭事件
+    closeSnatch(fn) {
+      fn(false);
+    },
+
+    // 没用到开始--------------------------------------------
+    assign(masterOrderSn) {
+      this.$axios
+        .post(this.url.assign, {
+          enterpriseOrderSn: this.param.enterpriseOrderSn,
+          masterOrderSn: masterOrderSn,
+        })
+        .then((data) => {
+          if (data.code == "000") {
+            this.$message({
+              showClose: true,
+              message: data.message,
+              type: "success",
+            });
+            this.$refs.snatch.close();
+            this.query();
+          }
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    },
+    getType(val) {
+      return this.typeData.filter((item) => {
+        if (item.id == val) {
+          return item;
+        }
+      })[0].name;
+    },
+    handleRemove(file, fileList) {
+      console.log(file, fileList);
     },
     changeMaster(row) {
       console.log("row", row.uid);
@@ -620,21 +591,6 @@ export default {
         }
       });
     },
-    _getMasterList() {
-      let params = {
-        pageNo: 1,
-        pageSize: 10,
-        realName: this.Name,
-        phone: this.Phone,
-      };
-      getMasterList(params).then((res) => {
-        if (res) {
-          console.log(531, res);
-          this.masterList = res.data.records;
-          console.log("师傅列表", this.masterList);
-        }
-      });
-    },
     querySelectData() {
       this.loading = true;
       this.$axios
@@ -651,37 +607,7 @@ export default {
       this.$refs.snatch.open();
       this.enterpriseOrderSn = enterpriseOrderSn;
     },
-    closeSnatch(fn) {
-      fn(false);
-    },
-    assign(masterOrderSn) {
-      this.$axios
-        .post(this.url.assign, {
-          enterpriseOrderSn: this.param.enterpriseOrderSn,
-          masterOrderSn: masterOrderSn,
-        })
-        .then((data) => {
-          if (data.code == "000") {
-            this.$message({
-              showClose: true,
-              message: data.message,
-              type: "success",
-            });
-            this.$refs.snatch.close();
-            this.query();
-          }
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-    },
-    getType(val) {
-      return this.typeData.filter((item) => {
-        if (item.id == val) {
-          return item;
-        }
-      })[0].name;
-    },
+    // 没用结束--------------------------------------------
   },
 };
 </script>

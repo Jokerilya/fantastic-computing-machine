@@ -1,6 +1,9 @@
+<!-- 检测定价 -->
 <template>
   <div class="checkPart">
     <div class="solutionTitle">解决方案</div>
+
+    <!-- 故障原因部分 -->
     <div class="solutionPart">
       <div class="describe">
         故障描述：
@@ -40,6 +43,7 @@
       </div>
     </div>
 
+    <!-- 选择质保周期部分 -->
     <div class="onload">
       <div class="onloadTitle">质保周期:</div>
       <div class="onloadPart">
@@ -48,7 +52,7 @@
           <el-radio label="15">15天</el-radio>
           <el-radio label="30">30天</el-radio>
           <el-radio label="180">180天</el-radio>
-          <el-radio label="orther">其他天数</el-radio>
+          <el-radio label="0">其他天数</el-radio>
         </el-radio-group>
         <el-input
           v-model="param.warrantyTime"
@@ -56,6 +60,7 @@
         ></el-input>
       </div>
     </div>
+
     <!-- <div class="fishedTime">
       <div class="onloadTitle">预计完成时间:</div>
       <el-time-picker
@@ -68,10 +73,16 @@
         placeholder="任意时间点"
       ></el-time-picker>
     </div>-->
-    <div class="cut"></div>
+
+    <!-- 空行横杠部分 -->
+    <br />
+    <hr />
+    <br />
+
+    <!-- 配件明细部分 -->
     <div class="peijian">
       <div class="peijianTitle">配件明细:</div>
-      <div class="addpeijian" @click="openAdd">添加/编辑配件</div>
+      <div class="addpeijian" @click="openAdd">添加配件</div>
     </div>
     <!-- 原本版本 配件明细-->
     <!-- <div class="addPart">
@@ -122,7 +133,7 @@
       <div class="item" v-for="(item, index) in this.param.parts" :key="item">
         <div class="material" style="color:#878787;">{{ item.name }}</div>
         <div class="price">{{ item.price }}元</div>
-        <div class="number">{{ item.num }}件</div>
+        <div class="number">{{ item.num }}{{ item.unit }}</div>
         <div class="delbtn">
           <a style="color:#4889fb;" href="#" @click="deleted(item, index)"
             >删除</a
@@ -130,6 +141,8 @@
         </div>
       </div>
     </div>
+
+    <!-- 维保报价部分 -->
     <div class="pricing">
       <div class="pricingTitle">维保报价:</div>
       <div class="pricingPart">
@@ -204,10 +217,12 @@
         >
       </div> -->
     </div>
+
+    <!-- 底部按钮部分 -->
     <div class="footerBtn">
       <el-button
         class="cancelBtn"
-        @click="$router.push('/maintenance/maintenance_order_desc')"
+        @click="$router.push('/maintenance/maintenance_order')"
         >取消</el-button
       >
       <el-button class="submitBtn" @click="_handleMasterQuotation()"
@@ -215,6 +230,7 @@
       >
     </div>
 
+    <!-- 添加配件的弹窗 -->
     <el-dialog
       :visible.sync="dialogpop"
       :close-on-click-modal="true"
@@ -223,10 +239,7 @@
       :center="true"
     >
       <template slot="title">
-        <div
-          style="font-size: 24px
-        ;color: #707070;"
-        >
+        <div style="color: #707070;font-size: 18px;font-weight: 700;">
           添加配件
         </div>
       </template>
@@ -275,32 +288,9 @@
         >
       </div>
     </el-dialog>
-    <el-dialog
-      title="配件列表"
-      :visible.sync="dialogChosee"
-      :close-on-click-modal="true"
-      :modal="true"
-      :show-close="true"
-      :center="true"
-    >
-      <el-from label-width="1000px">
-        <div class="addPart">
-          <div class="addcontents" v-for="item in param.parts" :key="item">
-            <div class="paramName">{{ item.name }}</div>
-            <div class="paramPrice">{{ item.price }}元</div>
-            <div class="paramNum">{{ item.num }}</div>
-            <div class="paramUnit">{{ item.unit }}</div>
-            <div class="delete" @click="deleted(item, index)">删除</div>
-          </div>
-        </div>
-      </el-from>
-      <div class="addPartBtn">
-        <el-button type="primary" @click="addPartFalse">取消</el-button>
-        <el-button type="primary" @click="addPartTrue">确定</el-button>
-      </div>
-    </el-dialog>
   </div>
 </template>
+
 <script>
 import { handleMasterQuotation } from "@/api/order.js";
 import { getRepairOrderDetail } from "@/api/user.js";
@@ -342,7 +332,14 @@ export default {
       ],
     };
   },
+  created() {
+    this.param.orderSn = this.$route.query.orderSn;
+    console.log("订单号", this.orderSn);
+    this._getRepairOrderDetail();
+  },
+  mounted() {},
   computed: {
+    // 计算维保报价总价
     sum() {
       let {
         doorAmount,
@@ -359,18 +356,12 @@ export default {
     },
   },
   methods: {
-    addPartTrue() {
-      (this.dialogChosee = false), (this.dialogpop = false);
-    },
+    // 点击已选配件的删除事件
     deleted(item, index) {
       console.log(item, index);
       this.param.parts.splice(index, 1);
     },
-    addPartFalse() {
-      this.dialogChosee = false;
-      this.dialogpop = true;
-    },
-
+    // 点击添加配件弹窗里的提交按钮的事件
     addTrue() {
       if (
         !this.part.name ||
@@ -378,7 +369,10 @@ export default {
         !this.part.num ||
         !this.part.unit
       ) {
-        alert("表单未填写完整");
+        this.$message({
+          message: "表单未填写完整",
+          type: "warning",
+        });
       } else {
         this.param.parts.push(this.part);
         this.part = {
@@ -388,12 +382,13 @@ export default {
           unit: "",
         };
         this.dialogpop = false;
-        this.dialogChosee = true;
       }
     },
+    // 点击添加配件的事件
     openAdd() {
       this.dialogpop = true;
     },
+    // 点击添加配件弹窗里的返回按钮的事件
     addFalse() {
       this.dialogpop = false;
     },
@@ -440,15 +435,20 @@ export default {
         }
       });
     },
+
+    // 没用到开始------------------
+    addPartTrue() {
+      (this.dialogChosee = false), (this.dialogpop = false);
+    },
+    addPartFalse() {
+      this.dialogChosee = false;
+      this.dialogpop = true;
+    },
+    // 没用到结束--------------------
   },
-  created() {
-    this.param.orderSn = this.$route.query.orderSn;
-    console.log("订单号", this.orderSn);
-    this._getRepairOrderDetail();
-  },
-  mounted() {},
 };
 </script>
+
 <style lang="less" scoped>
 // 测试开始
 .footerBtn {
@@ -566,7 +566,7 @@ export default {
     width: 1500px;
   }
   .peijian {
-    width: 260px;
+    width: 225px;
     display: flex;
     justify-content: space-between;
     align-items: center;
