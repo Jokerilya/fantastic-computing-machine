@@ -121,7 +121,7 @@
         >
         <!-- 年保记录 -->
         <el-table
-          v-if="activeBtn === 0"
+          v-show="activeBtn === 0"
           :data="butlerList"
           :cell-style="{ 'text-align': 'center' }"
           style="width: 100%"
@@ -144,8 +144,6 @@
           </el-table-column>
           <el-table-column prop="salesman" label="跟单业务员">
           </el-table-column>
-          <el-table-column prop="realName" label="师傅"> </el-table-column>
-          <el-table-column prop="phone" label="师傅联系电话"></el-table-column>
           <el-table-column label="操作">
             <template slot-scope="{ row }">
               <a href="#" style="color:#2e4c9e" @click="goDetailsVip(row)"
@@ -156,7 +154,7 @@
         </el-table>
         <!-- 工单记录 -->
         <el-table
-          v-if="activeBtn === 1"
+          v-show="activeBtn === 1"
           :data="repairList"
           :cell-style="{ 'text-align': 'center' }"
           style="width: 100%"

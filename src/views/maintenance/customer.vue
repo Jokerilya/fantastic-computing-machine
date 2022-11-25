@@ -113,6 +113,9 @@
       <!-- 分页 -->
       <div class="footTool">
         <div class="footTool_left">
+          <el-button @click="contractBtnFn" class="contractBtn"
+            >管家合同模板下载</el-button
+          >
           <el-upload
             class="upload-demo"
             action
@@ -224,6 +227,12 @@
 </template>
 
 <style lang="less" scoped>
+// 下载合同按钮
+.contractBtn {
+  margin-right: 15px;
+  background-color: #767676;
+  color: #fff;
+}
 // 底部工具栏
 .footTool {
   background-color: #fff;
@@ -259,7 +268,11 @@
 
 <script>
 import { getMasterList, handleAssignMaster } from "@/api/user.js";
-import { queryButlerOrderList, uploadButlerOrder } from "@/api/order.js";
+import {
+  queryButlerOrderList,
+  uploadButlerOrder,
+  downloadButlerOrderTemplate,
+} from "@/api/order.js";
 import { getEnterpriseList, bindUserAccount } from "@/api/user.js";
 import tableMixin from "@/mixin/table";
 export default {
@@ -325,6 +338,11 @@ export default {
     this._getEnterpriseList();
   },
   methods: {
+    // 点击管家合同下载
+    async contractBtnFn() {
+      const res = await downloadButlerOrderTemplate();
+      window.location.href = res.data;
+    },
     // 点击页数触发的事件
     handleCurrentChange(val) {
       this.currentPage = val;

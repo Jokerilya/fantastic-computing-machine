@@ -16,3 +16,30 @@ export function getEquipmentDetails(params) {
     params,
   });
 }
+
+// 删除配件
+export function deleteDeviceParts(id) {
+  return request({
+    url: "/admin/maintenance/deleteDeviceParts",
+    method: "get",
+    params: { id },
+  });
+}
+
+// 删除设备
+export function deleteDeviceInfo(id) {
+  return request({
+    url: "/admin/maintenance/deleteDeviceInfo",
+    method: "get",
+    params: { id },
+  });
+}
+
+// 新增 编辑 配件
+export function editDeviceParts(data) {
+  return request({
+    url: "/admin/maintenance/editDeviceParts",
+    method: "post",
+    data,
+  });
+}

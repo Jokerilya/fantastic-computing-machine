@@ -1,9 +1,17 @@
 <template>
   <div>
-    测试平台
+    <addEditDialog></addEditDialog>
   </div>
 </template>
 
-<script></script>
+<script>
+import addEditDialog from "./components/addEditDialog.vue";
+
+export default {
+  components: {
+    addEditDialog: addEditDialog,
+  },
+};
+</script>
 
 <style lang="less" scoped></style>

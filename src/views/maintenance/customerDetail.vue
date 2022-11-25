@@ -60,38 +60,49 @@
       style="width: 100%;"
     >
       <el-table-column type="expand">
-        <template slot-scope="props">
-          <el-form
-            label-position="left"
-            inline
-            class="demo-table-expand"
-            v-for="(item, index) in props.row.partsList"
-            :key="index"
-            label-width="200px"
-            style="margin-left:110px;"
+        <template slot-scope="{ row }">
+          <el-table
+            :data="row.partsList"
+            border
+            :cell-style="{ 'text-align': 'center' }"
+            style="width: 100%"
+            :header-cell-style="{
+              background: '#f6f8fc',
+              color: '#707070',
+              'text-align': 'center',
+            }"
           >
-            <el-form-item label="配件大类">
-              <span style="">{{ item.category }}</span>
-            </el-form-item>
-            <el-form-item label="配件品牌">
-              <span>{{ item.deviceBrand }}</span>
-            </el-form-item>
-            <el-form-item label="配件类型">
-              <span>{{ item.deviceId }}</span>
-            </el-form-item>
-            <el-form-item label="配件型号">
-              <span>{{ item.deviceModel }}</span>
-            </el-form-item>
-            <el-form-item label="配件名称">
-              <span>{{ item.name }}</span>
-            </el-form-item>
-            <el-form-item label="配件规格">
-              <span>{{ item.specification }}</span>
-            </el-form-item>
-          </el-form>
-        </template>
-      </el-table-column>
-      <el-table-column
+            <el-table-column prop="category" label="配件大类">
+            </el-table-column>
+            <el-table-column prop="deviceBrand" label="配件品牌">
+            </el-table-column>
+            <el-table-column prop="deviceId" label="配件id"> </el-table-column>
+            <el-table-column prop="deviceModel" label="配件型号">
+            </el-table-column>
+            <el-table-column prop="name" label="配件名称"> </el-table-column>
+            <el-table-column prop="specification" label="配件规格">
+            </el-table-column>
+            <el-table-column label="操作">
+              <template slot-scope="{ row }">
+                <a
+                  href="#"
+                  style="color:#0b2059;"
+                  @click="editAccessoriesFn(row)"
+                >
+                  编辑
+                </a>
+                <a
+                  href="#"
+                  style="color:#0b2059;"
+                  @click="delAccessoriesFn(row.id)"
+                >
+                  删除</a
+                >
+              </template>
+            </el-table-column>
+          </el-table>
+        </template> </el-table-column
+      ><el-table-column
         prop="no"
         label="设备编号"
         show-overflow-tooltip
@@ -153,7 +164,35 @@
         show-overflow-tooltip
         align="center"
       ></el-table-column>
+      <el-table-column
+        prop="endTime"
+        label="到期时间"
+        show-overflow-tooltip
+        align="center"
+      ></el-table-column>
+      <el-table-column label="操作" align="center" width="120">
+        <template slot-scope="{ row }">
+          <a href="#" style="color:#0b2059;" @click="addAccessoriesFn(row.id)"
+            >添加
+          </a>
+          <a href="#" style="color:#0b2059;">
+            编辑
+          </a>
+          <a href="#" style="color:#0b2059;" @click="deleteDeviceInfo(row.id)">
+            删除</a
+          >
+        </template>
+      </el-table-column>
     </el-table>
+
+    <!-- 新增编辑配件 -->
+    <addEditDialog
+      :title="dislogTitle"
+      ref="addEditDialog"
+      :dialogVisible="dialogState"
+      @closeFn="dialogState = false"
+      @refreshList="_getButlerOrderDetail"
+    ></addEditDialog>
   </div>
 </template>
 <style lang="less" scoped>
@@ -217,14 +256,20 @@
 }
 </style>
 <script>
+import addEditDialog from "./components/addEditDialog.vue";
 import { getMasterList, handleAssignMaster } from "@/api/user.js";
 import { getButlerOrderDetail } from "@/api/order.js";
 import tableMixin from "@/mixin/table";
+import { deleteDeviceParts, deleteDeviceInfo } from "@/api/equipmentManagement";
 export default {
   title: "course",
   mixins: [tableMixin],
   data() {
     return {
+      // 弹窗状态
+      dialogState: false,
+      dislogTitle: "",
+
       orderMsg: [],
       id: "",
       People: "",
@@ -272,11 +317,42 @@ export default {
       quotationForm: {},
     };
   },
+  components: {
+    addEditDialog: addEditDialog,
+  },
   created() {
     this.id = this.$route.query.id;
     this._getButlerOrderDetail();
   },
   methods: {
+    // 点击设备添加按钮 触发的事件 实际是添加配件
+    addAccessoriesFn(id) {
+      this.$refs.addEditDialog.accessoriesForm.deviceId = id;
+      this.dislogTitle = "新增配件";
+      this.dialogState = true;
+    },
+    // 点击配件编辑触发的事件
+    editAccessoriesFn(row) {
+      this.dislogTitle = "编辑配件";
+      this.$refs.addEditDialog.accessoriesForm = row;
+      this.dialogState = true;
+    },
+    // 点击设备删除触发的事件
+    async deleteDeviceInfo(id) {
+      const res = await confirm("您确定要删除该设备吗?");
+      if (res) {
+        await deleteDeviceInfo(id);
+        this._getButlerOrderDetail();
+      }
+    },
+    // 点击配件删除触发的事件
+    async delAccessoriesFn(id) {
+      const res = await confirm("您确定要删除该配件吗?");
+      if (res) {
+        await deleteDeviceParts(id);
+        this._getButlerOrderDetail();
+      }
+    },
     // 获取年保订单的信息
     _getButlerOrderDetail() {
       let data = {
@@ -284,9 +360,9 @@ export default {
       };
       getButlerOrderDetail(data).then((res) => {
         if (res) {
+          console.log(11111, res);
           this.orderDetail = res.data.deviceList;
           this.orderMsg = res.data;
-          console.log("详情", res);
         }
       });
     },
