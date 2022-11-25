@@ -35,7 +35,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="5">
+          <el-col :span="5" style="display: flex;">
             <el-button
               icon="el-icon-zoom-in"
               plain
@@ -43,9 +43,22 @@
               @click="query()"
               >查询</el-button
             >
-            <el-button icon="el-icon-refresh" plain type="info" @click="reset()"
+            <el-button
+              style="margin-right: 10px;"
+              icon="el-icon-refresh"
+              plain
+              type="info"
+              @click="reset()"
               >重置</el-button
             >
+            <!-- <el-upload
+              class="upload-demo"
+              action
+              :http-request="httpRequestFn"
+              multiple
+            >
+              <el-button class="importBtn">年保设备批量导入</el-button>
+            </el-upload> -->
           </el-col>
         </el-row>
       </el-form>

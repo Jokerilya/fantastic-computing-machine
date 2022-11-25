@@ -23,10 +23,7 @@
             <el-button style="color: #2E4C9E; " plain @click="_getOrderList()"
               >查询</el-button
             >
-            <el-button
-              style="color: #2E4C9E; "
-              plain
-              @click="_queryButlerOrderList"
+            <el-button style="color: #2E4C9E; " plain @click="_"
               >重置</el-button
             >
           </el-col>
@@ -116,7 +113,6 @@
       <!-- 分页 -->
       <div class="footTool">
         <div class="footTool_left">
-          <el-button class="addBtn" @click="_addOrder">新增</el-button>
           <el-upload
             class="upload-demo"
             action
@@ -420,12 +416,6 @@ export default {
           this.currentPage = res.data.current;
         }
         console.log(this.pageCount);
-      });
-    },
-    // 点击新增 跳转新增页面
-    _addOrder() {
-      this.$router.push({
-        name: "maintenance",
       });
     },
     // 查询订单列表的事件

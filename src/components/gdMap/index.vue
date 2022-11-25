@@ -88,7 +88,7 @@ export default {
           self.marker.setPosition(e.lnglat);
           let geocoder = new AMap.Geocoder({});
 
-          geocoder.getAddress(e.lnglat, function (status, result) {
+          geocoder.getAddress(e.lnglat, function(status, result) {
             if (status === "complete" && result.regeocode) {
               self.address = result.regeocode.formattedAddress;
               //   console.log(self.address, "999地址");
@@ -159,7 +159,7 @@ export default {
         // 近来补充  根据经纬度查询地址
         let geocoder = new AMap.Geocoder({});
         let that = this;
-        geocoder.getAddress(location, function (status, result) {
+        geocoder.getAddress(location, function(status, result) {
           console.log(status, result);
           if (status === "complete" && result.regeocode) {
             that.address = result.regeocode.formattedAddress;
@@ -177,9 +177,9 @@ export default {
         lat: that.lat,
         lng: that.lng,
       });
-      setTimeout(()=>{
-        that.$emit('close')
-      },200)
+      setTimeout(() => {
+        that.$emit("close");
+      }, 200);
     },
   },
   watch: {

@@ -57,12 +57,7 @@ const router = {
       component: () => import("@/views/maintenance/checkPricing"),
       meta: { title: "检测定价", noShow: "true" },
     },
-    {
-      path: "/maintenance/maintenance",
-      name: "maintenance",
-      component: () => import("@/views/maintenance/maintenance"),
-      meta: { title: "新增订单", noShow: "true" },
-    },
+
     {
       path: "/maintenance/customer",
       name: "customer",
@@ -79,6 +74,35 @@ const router = {
       path: "/maintenance/text",
       component: () => import("@/views/maintenance/text.vue"),
       meta: { title: "测试" },
+    },
+    {
+      path: "/maintenance/equipmentManagement",
+      name: "equipmentManagement",
+      component: () =>
+        import("@/views/maintenance/equipmentManagement/equipmentManagement"),
+      meta: { title: "设备管理" },
+    },
+    {
+      path: "/maintenance/equipmentManagement/equipmentDetails",
+      name: "equipmentDetails",
+      component: () =>
+        import("@/views/maintenance/equipmentManagement/equipmentDetails"),
+      meta: { title: "设备详情", noShow: "true" },
+
+      // 暂时 不用这个功能 后续看情况补上
+      // {
+      //   path: "/maintenance/maintenance",
+      //   name: "maintenance",
+      //   component: () => import("@/views/maintenance/maintenance"),
+      //   meta: { title: "新增订单", noShow: "true" },
+      // },
+      // {
+      //   path: "/maintenance/equipmentManagement/addEquipment",
+      //   name: "addEquipment",
+      //   component: () =>
+      //     import("@/views/maintenance/equipmentManagement/addEquipment.vue"),
+      //   meta: { title: "新增设备管理", noShow: "true" },
+      // },
     },
   ],
 };

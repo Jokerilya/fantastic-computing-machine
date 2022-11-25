@@ -2,22 +2,49 @@
 <template>
   <div class="app-container">
     <!-- 头部信息部分 -->
-    <div class="manage-top">
-      <div class="title">基本信息</div>
-      <div class="detail">
-        <div class="name">
-          客户名称
-          <div class="cont">{{ orderMsg.enterpriseName }}</div>
+    <div class="headInfo">
+      <el-card>
+        <div class="statusTop">
+          <div class="statusTop_statu">
+            <div v-if="orderMsg.status === 0" style="color:red">未支付</div>
+            <div v-if="orderMsg.status === 1" style="color:green">已支付</div>
+          </div>
+          <div class="statusTop_code">
+            <span>订单号: </span>
+            <span> {{ orderMsg.orderSn }}</span>
+          </div>
         </div>
-        <div class="name">
-          客户负责人
-          <div class="cont">{{ orderMsg.contactsPeople }}</div>
+        <hr />
+        <div class="headInfo_content">
+          <h2>基本信息</h2>
+          <div class="content">
+            <div class="itemLine">
+              <div class="item">
+                <span class="itemTitle">客户名称: </span>
+                <span style="font-size: 18px;">{{
+                  orderMsg.enterpriseName
+                }}</span>
+              </div>
+            </div>
+            <div class="itemLine">
+              <div class="item">
+                <span class="itemTitle">客户负责人: </span>
+                <span style="font-size: 18px;">
+                  {{ orderMsg.contactsPeople }}</span
+                >
+              </div>
+            </div>
+            <div class="itemLine">
+              <div class="item">
+                <span class="itemTitle">客户电话: </span>
+                <span style="font-size: 18px;">
+                  {{ orderMsg.contactsPhone }}</span
+                >
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="name">
-          客户电话
-          <div class="cont">{{ orderMsg.contactsPhone }}</div>
-        </div>
-      </div>
+      </el-card>
     </div>
 
     <!-- 空行 -->
@@ -68,15 +95,9 @@
         prop="no"
         label="设备编号"
         show-overflow-tooltip
-        width="200"
         align="center"
       ></el-table-column>
-      <el-table-column
-        label="设备铭牌"
-        show-overflow-tooltip
-        width="200"
-        align="center"
-      >
+      <el-table-column label="设备铭牌" show-overflow-tooltip align="center">
         <template slot-scope="{ row }">
           <y-image
             :src="row.nameplateImg ? row.nameplateImg.split(',')[0] : ''"
@@ -88,74 +109,94 @@
         prop="deviceTypeName"
         label="设备类型"
         show-overflow-tooltip
-        width="200"
         align="center"
       ></el-table-column>
       <el-table-column
         prop="deviceBrand"
         label="设备品牌"
         show-overflow-tooltip
-        width="150"
         align="center"
       ></el-table-column>
       <el-table-column
         prop="deviceModel"
         label="设备型号"
         show-overflow-tooltip
-        width="150"
         align="center"
       ></el-table-column>
       <el-table-column
         prop="deviceSystemName"
         label="设备系统"
         show-overflow-tooltip
-        width="150"
         align="center"
       ></el-table-column>
       <el-table-column
         prop="devicePlace"
         label="设备产地"
         show-overflow-tooltip
-        width="150"
         align="center"
       ></el-table-column>
       <el-table-column
         prop="price"
         label="维保价格"
         show-overflow-tooltip
-        width="150"
         align="center"
       ></el-table-column>
       <el-table-column
         prop="startTime"
         label="投保时间"
         show-overflow-tooltip
-        width="150"
         align="center"
       ></el-table-column>
       <el-table-column
         prop="endTime"
         label="到期时间"
         show-overflow-tooltip
-        width="150"
         align="center"
       ></el-table-column>
     </el-table>
-
-    <!-- 分页 -->
-    <!-- <el-pagination
-      background
-      @size-change="handleSizeChange"
-      @current-change="updatePageNo"
-      :current-page="page.pageNo"
-      :page-sizes="[10, 20, 50, 100]"
-      :page-size="page.dataNum"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="page.dataSumNum"
-    ></el-pagination>-->
   </div>
 </template>
 <style lang="less" scoped>
+// 头部信息部分样式
+.headInfo {
+  .statusTop {
+    padding: 10px 0;
+    display: flex;
+    .statusTop_statu {
+      font-weight: 700;
+      color: red;
+      margin-right: 40px;
+    }
+    .statusTop_code {
+      color: #707070;
+      font-weight: 700;
+    }
+  }
+
+  .headInfo_content {
+    padding: 15px 30px 0 30px;
+    h2 {
+      color: #0b2059;
+      margin-bottom: 20px;
+    }
+    .content {
+      display: flex;
+      justify-content: space-between;
+      padding-right: 30%;
+      .itemLine {
+        display: flex;
+        .item {
+          color: #707070;
+          font-size: 20px;
+          .itemTitle {
+            font-weight: 700;
+            margin-right: 10px;
+          }
+        }
+      }
+    }
+  }
+}
 .cont {
   margin: 0 20px;
   font-size: 18px;
@@ -163,15 +204,7 @@
   font-weight: 400;
   color: #707070;
 }
-.title {
-  font-size: 24px;
-  font-family: Microsoft YaHei-Bold, Microsoft YaHei;
-  font-weight: bold;
-  color: #0b2059;
-}
-.detail {
-  display: flex;
-}
+
 .name {
   margin: 20px 0;
   display: flex;
