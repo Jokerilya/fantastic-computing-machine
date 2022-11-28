@@ -211,9 +211,37 @@ export function updateOrderReceiptInfo(data) {
 }
 
 // 管家合同模板下载
-export function downloadButlerOrderTemplate() {
+export function downloadBatchRepairOrderTemplate(data) {
+  return request({
+    url: "/admin/maintenance/downloadBatchRepairOrderTemplate",
+    method: "post",
+    data,
+  });
+}
+
+// 批量下单模板下载
+export function downloadButlerOrderTemplate(data) {
   return request({
     url: "/admin/maintenance/downloadButlerOrderTemplate",
     method: "post",
+    data,
+  });
+}
+
+//平台代下单
+export function agentCreateOrder(data) {
+  return request({
+    url: "/admin/maintenance/agentCreateOrder",
+    method: "post",
+    data,
+  });
+}
+
+// 批量下单导入
+export function uploadBatchRepairOrder(data) {
+  return request({
+    url: "/admin/maintenance/uploadBatchRepairOrder",
+    method: "post",
+    data,
   });
 }

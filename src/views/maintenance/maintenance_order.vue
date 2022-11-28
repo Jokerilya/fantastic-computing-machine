@@ -51,14 +51,31 @@
               @click="reset()"
               >重置</el-button
             >
-            <!-- <el-upload
+            <el-upload
               class="upload-demo"
               action
-              :http-request="httpRequestFn"
               multiple
+              :http-request="workOrderImport"
+              :show-file-list="false"
             >
-              <el-button class="importBtn">工单批量导入</el-button>
-            </el-upload> -->
+              <el-button class="importBtn">工单批量下单</el-button>
+            </el-upload>
+            <el-button
+              style="margin-left: 10px;"
+              type="warning"
+              plain
+              @click="templateDownload"
+            >
+              批量下单模板下载
+            </el-button>
+            <el-button
+              style="margin-left: 10px;"
+              type="success"
+              plain
+              @click="$router.push('/maintenance/agentOrder')"
+            >
+              代客户下单
+            </el-button>
           </el-col>
         </el-row>
       </el-form>
@@ -263,11 +280,7 @@
     >
       <el-form label-width="88px" class="rule-form" label-position="right">
         <el-row :gutter="20">
-          <el-col
-            :span="5"
-            style="margin-right: 130px
-          ;"
-          >
+          <el-col :span="5" style="margin-right: 130px;">
             <el-form-item label="师傅名称">
               <el-input
                 placeholder="请输入师傅名称"
@@ -383,7 +396,11 @@ import {
   handleAssignMaster,
   queryAssignableMasterList,
 } from "@/api/user.js";
-import { queryRepairOrderList } from "@/api/order.js";
+import {
+  uploadBatchRepairOrder,
+  queryRepairOrderList,
+  downloadButlerOrderTemplate,
+} from "@/api/order.js";
 import tableMixin from "@/mixin/table";
 export default {
   title: "course",
@@ -441,6 +458,19 @@ export default {
     this._queryRepairOrderList();
   },
   methods: {
+    // 批量下单模板下载
+    async templateDownload() {
+      const res = await downloadButlerOrderTemplate();
+      window.location.href = res.data;
+    },
+    // 点击工单导入
+    async workOrderImport(data) {
+      const formData = new FormData();
+      formData.append("file", data.file);
+      const res = await uploadBatchRepairOrder(formData);
+      console.log(res);
+      // this._queryAssignableMasterList()
+    },
     // 获取指派列表模态框里的师傅列表
     _queryAssignableMasterList() {
       let data = {
@@ -635,23 +665,23 @@ export default {
         name: "maintenance",
       });
     },
-    // _getMasterList() {
-    //   let params = {
-    //     pageNo: this.currentPage,
-    //     pageSize: 10,
-    //     realName: this.Name,
-    //     phone: this.Phone
-    //   };
-    //   getMasterList(params).then(res => {
-    //     if (res) {
-    //       console.log(res);
-    //       this.masterList = res.data.records;
-    //       console.log("师傅列表", this.masterList);
-    //       this.pageCount = res.data.total;
-    //       this.currentPage = res.data.current;
-    //     }
-    //   });
-    // },
+    _getMasterList() {
+      let params = {
+        pageNo: this.currentPage,
+        pageSize: 10,
+        realName: this.Name,
+        phone: this.Phone,
+      };
+      getMasterList(params).then((res) => {
+        if (res) {
+          console.log(res);
+          this.masterList = res.data.records;
+          console.log("师傅列表", this.masterList);
+          this.pageCount = res.data.total;
+          this.currentPage = res.data.current;
+        }
+      });
+    },
   },
 };
 </script>

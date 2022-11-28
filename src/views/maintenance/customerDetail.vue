@@ -76,7 +76,6 @@
             </el-table-column>
             <el-table-column prop="deviceBrand" label="配件品牌">
             </el-table-column>
-            <el-table-column prop="deviceId" label="配件id"> </el-table-column>
             <el-table-column prop="deviceModel" label="配件型号">
             </el-table-column>
             <el-table-column prop="name" label="配件名称"> </el-table-column>
@@ -360,7 +359,6 @@ export default {
       };
       getButlerOrderDetail(data).then((res) => {
         if (res) {
-          console.log(11111, res);
           this.orderDetail = res.data.deviceList;
           this.orderMsg = res.data;
         }

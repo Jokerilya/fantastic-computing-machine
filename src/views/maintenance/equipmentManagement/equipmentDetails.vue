@@ -146,7 +146,7 @@
           </el-table-column>
           <el-table-column label="操作">
             <template slot-scope="{ row }">
-              <a href="#" style="color:#2e4c9e" @click="goDetailsVip(row)"
+              <a href="#" style="color:#2e4c9e" @click="goDetailsVip(row.id)"
                 >详情</a
               >
             </template>

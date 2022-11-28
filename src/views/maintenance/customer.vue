@@ -121,6 +121,7 @@
             action
             :http-request="httpRequestFn"
             multiple
+            :show-file-list="false"
           >
             <el-button class="importBtn">年保设备批量导入</el-button
             ><span
