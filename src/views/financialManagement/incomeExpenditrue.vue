@@ -157,6 +157,7 @@ export default {
       const res = await queryPaymentList(this.PaymentListData);
       this.total = res.data.total;
       this.ordersList = res.data.orders;
+      console.log(res);
     },
   },
   created() {

@@ -8,11 +8,6 @@
             <el-input placeholder="请输入师傅名称" v-model="Name"></el-input>
           </el-form-item>
         </el-col>
-        <!-- <el-col :span="5">
-          <el-form-item label="联系电话">
-            <el-input placeholder="请输入联系电话" v-model="Phone"></el-input>
-          </el-form-item>
-        </el-col>-->
         <el-col :span="5">
           <el-button
             icon="el-icon-zoom-in"
@@ -286,192 +281,7 @@
         </el-form-item>
       </el-form>
     </model>
-    <!-- <model
-      :column="2"
-      ref="editModel"
-      title="编辑师傅信息"
-      @ok="handleEdit"
-      @close="resetEditForm"
-    >
-      <el-form
-        label-position="left"
-        :model="editForm"
-        :rules="rules"
-        ref="editForm"
-        status-icon
-        label-width="120px"
-        class="demo-ruleForm"
-      >
-        <el-row>
-          <el-col :span="12">
-            <el-form-item
-              label="真实姓名"
-              prop="realName"
-              style="width:calc(100% - 120px)"
-            >
-              <el-input
-                v-model="editForm.realName"
-                placeholder="请输入内容"
-              ></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item
-              label="身份证号"
-              prop="identityNumber"
-              style="width:calc(100% - 120px)"
-            >
-              <el-input
-                v-model="editForm.identityNumber"
-                placeholder="请输入内容"
-              ></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item
-              label="服务地区"
-              prop="serviceAreas"
-              style="width:calc(100% - 120px)"
-            >
-              <el-cascader
-                v-model="editForm.serviceAreas"
-                :props="props"
-                :show-all-levels="false"
-                :multiple-limit="5"
-                style="width:100%"
-              ></el-cascader>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item
-              label="服务类型"
-              prop="serviceTypes"
-              style="width:calc(100% - 120px)"
-            >
-              <el-select
-                multiple
-                v-model="editForm.serviceTypes"
-                placeholder="请选择"
-                style="width:100%"
-              >
-                <el-option
-                  v-for="item in typeData"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item
-              label="详细地址"
-              prop="address"
-              style="width:calc(100% - 120px)"
-            >
-              <el-input
-                v-model="editForm.address"
-                placeholder="请输入内容"
-              ></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item
-              label="行业经验"
-              prop="industryExperience"
-              style="width:calc(100% - 120px)"
-            >
-              <el-input
-                v-model="editForm.industryExperience"
-                placeholder="请输入内容"
-              ></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item
-              label="排序"
-              prop="sort"
-              style="width:calc(100% - 120px)"
-            >
-              <el-input
-                v-model.number="editForm.sort"
-                placeholder="请输入内容"
-              ></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item
-              label="真实头像"
-              prop="realPortrait"
-              style="width:calc(100% - 120px)"
-            >
-              <upload
-                ref="realPortrait"
-                type="image/*"
-                limit="1"
-                :size="1024 ** 2 * 50"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item
-              label="行业经验照片"
-              prop="industryExperienceImages"
-              style="width:calc(100% - 120px)"
-            >
-              <upload
-                ref="industryExperienceImages"
-                type="image/*"
-                limit="9"
-                :size="1024 ** 2 * 50"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item
-              label="技能证书图书"
-              prop="skillCertificateImages"
-              style="width:calc(100% - 120px)"
-            >
-              <upload
-                ref="skillCertificateImages"
-                type="image/*"
-                limit="9"
-                :size="1024 ** 2 * 50"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item
-              label="身份证正面照"
-              prop="identityFrontImage"
-              style="width:calc(100% - 120px)"
-            >
-              <upload
-                ref="identityFrontImage"
-                type="image/*"
-                limit="1"
-                :size="1024 ** 2 * 50"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item
-              label="身份证反面照"
-              prop="identityBackImage"
-              style="width:calc(100% - 120px)"
-            >
-              <upload
-                ref="identityBackImage"
-                type="image/*"
-                limit="1"
-                :size="1024 ** 2 * 50"
-              />
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
-    </model> -->
+
     <model
       ref="enterpriseList"
       title="企业审核"
@@ -494,6 +304,7 @@
         </el-form-item>
       </el-form>
     </model>
+
     <model
       ref="masterTeamList"
       title="师傅团队列表"

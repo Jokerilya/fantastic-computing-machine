@@ -233,17 +233,17 @@
               >{{ data.distance }}km</el-descriptions-item
             >
           </el-descriptions> -->
-        <!-- <el-descriptions
-            title="师傅联系方式"
-            v-if="data.enterpriseMainStatus > 1"
-          >
-            <el-descriptions-item label="联系人">{{
-              data.masterRealName
-            }}</el-descriptions-item>
-            <el-descriptions-item label="联系电话">{{
-              data.masterPhone
-            }}</el-descriptions-item>
-          </el-descriptions> -->
+        <el-descriptions
+          title="师傅联系方式"
+          v-if="data.enterpriseMainStatus > 1"
+        >
+          <el-descriptions-item label="联系人">{{
+            data.masterRealName
+          }}</el-descriptions-item>
+          <el-descriptions-item label="联系电话">{{
+            data.masterPhone
+          }}</el-descriptions-item>
+        </el-descriptions>
 
         <!-- 故障解决方案 -->
         <el-descriptions title="故障解决方案" v-if="judgeFault()" :column="1">
@@ -305,6 +305,14 @@
           </el-descriptions-item>
         </el-descriptions>
 
+        <!-- 配件明细 -->
+        <!-- <div class="accessoriesDetail">
+          <h3>配件明细:</h3>
+          <div class="item" v-for="(item, index) in data.partsList">
+            配件 {{ index + 1 }}
+          </div>
+        </div> -->
+
         <!-- 完工信息 -->
         <el-descriptions
           title="完工信息"
@@ -319,13 +327,6 @@
               :src="data.completePictureList[1]"
               :preview-src-list="data.completePictureList"
             ></el-image>
-            <video
-              width="300px"
-              height="300px"
-              v-for="item in data.videoList"
-              :key="item"
-              :src="item"
-            ></video>
           </el-descriptions-item>
         </el-descriptions>
 
