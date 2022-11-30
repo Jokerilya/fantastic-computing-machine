@@ -246,11 +246,7 @@
           </el-descriptions> -->
 
         <!-- 故障解决方案 -->
-        <el-descriptions
-          title="故障解决方案"
-          v-if="data.programmeList"
-          :column="1"
-        >
+        <el-descriptions title="故障解决方案" v-if="judgeFault()" :column="1">
           <el-descriptions-item
             v-for="(item, index) in data.programmeList"
             :key="item.desc + index"
@@ -291,9 +287,9 @@
         </div>
 
         <!-- 配件明细 -->
-        <el-descriptions title="配件明细" v-if="data.programmeList" :column="1">
+        <el-descriptions title="配件明细" v-if="judgeParts()" :column="1">
           <el-descriptions-item
-            v-for="(item, index) in data.programmeList"
+            v-for="(item, index) in data.partsList"
             :key="item.desc + index"
             :label="'配件' + (index + 1)"
           >
@@ -334,16 +330,10 @@
         </el-descriptions>
 
         <!-- 订单费用 -->
-        <div class="information">
+        <div class="information" v-if="judgeOrderCost()">
           <div class="oneline">
             <div class="item1">订单费用:</div>
             <div class="item2">
-              <div>
-                维保预付: <span>￥{{ data.depositAmount }}.00</span>
-              </div>
-              <div>
-                维保报价: <span>￥{{ data.totalAmount }}.00</span>
-              </div>
               <div>
                 上门费用: <span>￥{{ data.doorAmount }}.00</span>
               </div>
@@ -360,9 +350,7 @@
                 合计:
                 <span style="color: red;"
                   >￥{{
-                    data.depositAmount +
-                      data.totalAmount +
-                      data.doorAmount +
+                    data.doorAmount +
                       data.technologyAmount +
                       data.partsAmount +
                       data.otherAmount
@@ -712,6 +700,48 @@ export default {
     this._getRepairOrderDetail();
   },
   methods: {
+    // 判断配件明细
+    judgeParts() {
+      if (!this.data.partsList) {
+        return false;
+      } else if (this.data.partsList && this.data.partsList.length === 0) {
+        return false;
+      } else {
+        return true;
+      }
+    },
+    // 判断故障解决方案
+    judgeFault() {
+      if (!this.data.programmeList) {
+        return false;
+      } else if (
+        this.data.programmeList.analysis === undefined &&
+        this.data.programmeList.desc === undefined &&
+        this.data.programmeList.programme === undefined
+      ) {
+        return false;
+      } else {
+        return true;
+      }
+    },
+    // 判断订单费用
+    judgeOrderCost() {
+      const {
+        doorAmount,
+        technologyAmount,
+        partsAmount,
+        otherAmount,
+      } = this.data;
+      if (
+        doorAmount === 0 &&
+        technologyAmount === 0 &&
+        (otherAmount === 0) & (partsAmount === 0)
+      ) {
+        return false;
+      } else {
+        return true;
+      }
+    },
     // 点击取消订单触发的事件
     _cancelRepairOrder() {
       let params = {
@@ -735,18 +765,18 @@ export default {
       this.changePayment = false;
     },
     // 点击修改报价的弹窗的确认修改按钮的事件
-    changeTrue() {
+    async changeTrue() {
       this.parts.orderSn = this.orderSn;
-      updateMasterPrice(this.parts).then((res) => {
-        if (res) {
-          this.$message({
-            showClose: true,
-            message: res.message,
-            type: "success",
-          });
-        }
+      const res = await updateMasterPrice(this.parts);
+      if (res.message === "操作成功") {
+        this.$message({
+          showClose: true,
+          message: res.message,
+          type: "success",
+        });
+        await this._getRepairOrderDetail();
         this.changePayment = false;
-      });
+      }
     },
     // 点击修改报价的事件
     _changePayment() {
@@ -980,6 +1010,7 @@ export default {
       };
       getRepairOrderDetail(params).then((res) => {
         if (res.success) {
+          console.log(res);
           this.data = res.data;
           this.$message({
             showClose: true,

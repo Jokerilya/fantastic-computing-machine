@@ -34,117 +34,119 @@
     <!-- 空行 -->
     <div style="height: 16px;"></div>
 
-    <!-- 表格内容 -->
-    <div class="text" style="margin-bottom: 20px;">
-      <!-- 表格 -->
-      <el-table
-        highlight-current-row
-        v-loading.fullscreen.lock="loading"
-        element-loading-text="拼命加载中"
-        element-loading-spinner="el-icon-loading"
-        :data="orderList"
-        style="width: 100%;"
-        max-height="700"
-        :header-cell-style="{
-          background: '#f6f8fc',
-          color: '#707070',
-        }"
-      >
-        <el-table-column
-          prop="orderSn"
-          label="订单号"
-          show-overflow-tooltip
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="statusName"
-          label="订单状态"
-          show-overflow-tooltip
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="enterpriseName"
-          label="企业名称"
-          show-overflow-tooltip
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="contactsPeople"
-          label="企业联系人"
-          show-overflow-tooltip
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="contactsPhone"
-          label="客户电话"
-          show-overflow-tooltip
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="createTime"
-          label="下单时间"
-          show-overflow-tooltip
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          label="操作"
-          fixed="right"
-          align="center"
-          width="300px"
+    <el-card>
+      <!-- 表格内容 -->
+      <div class="text" style="margin-bottom: 20px;">
+        <!-- 表格 -->
+        <el-table
+          highlight-current-row
+          v-loading.fullscreen.lock="loading"
+          element-loading-text="拼命加载中"
+          element-loading-spinner="el-icon-loading"
+          :data="orderList"
+          style="width: 100%;"
+          max-height="700"
+          :header-cell-style="{
+            background: '#f6f8fc',
+            color: '#707070',
+          }"
         >
-          <template slot-scope="{ row }">
-            <div class="settings">
-              <a href="#" style="color:#2E4C9E" @click="jump2Detail(row)"
-                >详情</a
-              >
-              <a href="#" style="color:#2E4C9E;margin: 0 20px;">编辑</a>
-              <a href="#" style="color:#2E4C9E;">取消</a>
-              <a
-                href="#"
-                style="color:#2E4C9E;margin-left: 20px;"
-                @click="foremp(row)"
-                v-if="!row.uid"
-                >绑定账号</a
-              >
-            </div>
-          </template>
-        </el-table-column>
-      </el-table>
-      <!-- 分页 -->
-      <div class="footTool">
-        <div class="footTool_left">
-          <el-button @click="contractBtnFn" class="contractBtn"
-            >管家合同模板下载</el-button
+          <el-table-column
+            prop="orderSn"
+            label="订单号"
+            show-overflow-tooltip
+            align="center"
+          ></el-table-column>
+          <el-table-column
+            prop="statusName"
+            label="订单状态"
+            show-overflow-tooltip
+            align="center"
+          ></el-table-column>
+          <el-table-column
+            prop="enterpriseName"
+            label="企业名称"
+            show-overflow-tooltip
+            align="center"
+          ></el-table-column>
+          <el-table-column
+            prop="contactsPeople"
+            label="企业联系人"
+            show-overflow-tooltip
+            align="center"
+          ></el-table-column>
+          <el-table-column
+            prop="contactsPhone"
+            label="客户电话"
+            show-overflow-tooltip
+            align="center"
+          ></el-table-column>
+          <el-table-column
+            prop="createTime"
+            label="下单时间"
+            show-overflow-tooltip
+            align="center"
+          ></el-table-column>
+          <el-table-column
+            label="操作"
+            fixed="right"
+            align="center"
+            width="300px"
           >
-          <el-upload
-            class="upload-demo"
-            action
-            :http-request="httpRequestFn"
-            multiple
-            :show-file-list="false"
-          >
-            <el-button class="importBtn">年保设备批量导入</el-button
-            ><span
-              style="font-size: 12px;font-weight: 700;color: #606266;margin-left: 15px;"
-              >注:请上传.XLSX格式文件合同</span
+            <template slot-scope="{ row }">
+              <div class="settings">
+                <a href="#" style="color:#2E4C9E" @click="jump2Detail(row)"
+                  >详情</a
+                >
+                <a href="#" style="color:#2E4C9E;margin: 0 20px;">编辑</a>
+                <a href="#" style="color:#2E4C9E;">取消</a>
+                <a
+                  href="#"
+                  style="color:#2E4C9E;margin-left: 20px;"
+                  @click="foremp(row)"
+                  v-if="!row.uid"
+                  >绑定账号</a
+                >
+              </div>
+            </template>
+          </el-table-column>
+        </el-table>
+        <!-- 分页 -->
+        <div class="footTool">
+          <div class="footTool_left">
+            <el-button @click="contractBtnFn" class="contractBtn"
+              >管家合同模板下载</el-button
             >
-          </el-upload>
-        </div>
-        <div class="footTool_right">
-          <div class="pagingBtn">
-            <el-pagination
-              layout="jumper, prev, pager, next, total"
-              @size-change="handleSizeChange"
-              @current-change="handleCurrentChange"
-              :current-page="currentPage"
-              :page-size="10"
-              :total="pageCount"
-              align="center"
-            ></el-pagination>
+            <el-upload
+              class="upload-demo"
+              action
+              :http-request="httpRequestFn"
+              multiple
+              :show-file-list="false"
+            >
+              <el-button class="importBtn">年保设备批量导入</el-button
+              ><span
+                style="font-size: 12px;font-weight: 700;color: #606266;margin-left: 15px;"
+                >注:请上传.XLSX格式文件合同</span
+              >
+            </el-upload>
+          </div>
+          <div class="footTool_right">
+            <div class="pagingBtn">
+              <el-pagination
+                layout="jumper, prev, pager, next, total"
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+                :current-page="currentPage"
+                :page-size="10"
+                :total="pageCount"
+                align="center"
+              ></el-pagination>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </el-card>
 
     <!-- 空行 -->
     <div style="margin:20px 0"></div>

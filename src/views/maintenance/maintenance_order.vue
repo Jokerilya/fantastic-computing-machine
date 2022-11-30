@@ -245,6 +245,7 @@
               >查看详情</el-button
             >
             <el-button
+              v-if="!(row.orderStatusName === '已取消')"
               type="info"
               size="mini"
               plain
@@ -399,7 +400,7 @@ import {
 import {
   uploadBatchRepairOrder,
   queryRepairOrderList,
-  downloadButlerOrderTemplate,
+  downloadBatchRepairOrderTemplate,
 } from "@/api/order.js";
 import tableMixin from "@/mixin/table";
 export default {
@@ -460,7 +461,7 @@ export default {
   methods: {
     // 批量下单模板下载
     async templateDownload() {
-      const res = await downloadButlerOrderTemplate();
+      const res = await downloadBatchRepairOrderTemplate();
       window.location.href = res.data;
     },
     // 点击工单导入
@@ -468,8 +469,14 @@ export default {
       const formData = new FormData();
       formData.append("file", data.file);
       const res = await uploadBatchRepairOrder(formData);
-      console.log(res);
-      // this._queryAssignableMasterList()
+      if (res.message === "操作成功") {
+        this.$message({
+          message: "已成功批量下单",
+          type: "success",
+        });
+        this._queryAssignableMasterList();
+        this._queryRepairOrderList();
+      }
     },
     // 获取指派列表模态框里的师傅列表
     _queryAssignableMasterList() {

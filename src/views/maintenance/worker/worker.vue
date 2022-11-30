@@ -262,6 +262,7 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="pageCount"
     ></el-pagination>
+
     <model
       ref="editStatusModel"
       title="师傅审核"
@@ -285,7 +286,7 @@
         </el-form-item>
       </el-form>
     </model>
-    <model
+    <!-- <model
       :column="2"
       ref="editModel"
       title="编辑师傅信息"
@@ -336,7 +337,6 @@
                 v-model="editForm.serviceAreas"
                 :props="props"
                 :show-all-levels="false"
-                placeholder="请选择"
                 :multiple-limit="5"
                 style="width:100%"
               ></el-cascader>
@@ -471,7 +471,7 @@
           </el-col>
         </el-row>
       </el-form>
-    </model>
+    </model> -->
     <model
       ref="enterpriseList"
       title="企业审核"
@@ -547,20 +547,33 @@
         ></el-table-column>
       </el-table>
     </model>
+
+    <EditWorker
+      ref="editWorker"
+      :dialogVisible="dialogVisible"
+      @closeFn="closeFn"
+    ></EditWorker>
   </div>
 </template>
 
 <style lang="less" scoped></style>
 
 <script>
+import EditWorker from "./components/editWorker.vue";
 import tableMixin from "@/mixin/table";
 import { getMasterList } from "@/api/user.js";
-import { handleMasterInfoExport, queryMasterMemberList } from "@/api/order.js";
+import {
+  handleMasterInfoExport,
+  queryMasterMemberList,
+  getMasterInfo,
+} from "@/api/order.js";
 export default {
   title: "course",
   mixins: [tableMixin],
   data() {
     return {
+      dialogVisible: false,
+
       masterTeamList: [],
       pageCount: 0,
       currentPage: 1,
@@ -600,45 +613,16 @@ export default {
       finishForm: {
         payAmount: 0,
       },
-      props: {
-        value: "id",
-        label: "name",
-        multiple: true,
-        lazy: true,
-        emitPath: false,
-        lazyLoad: async (node, resolve) => {
-          let pid = 0;
-          // let disabled = true
-          if (node.level != 0) {
-            pid = node.data.id;
-            // disabled = false
-          }
-          if (node.level > 1) {
-            console.info(node.level);
-            resolve([]);
-            return;
-          }
-          let res = await this.$axios.get(
-            this.url.queryAddress + "?pid=" + pid
-          );
-          if (res.code == "000")
-            resolve(
-              res.data.map((item) => {
-                return {
-                  ...item,
-                  // disabled:disabled
-                };
-              })
-            );
-          else resolve([]);
-        },
-      },
     };
+  },
+  components: {
+    EditWorker: EditWorker,
   },
   created() {
     this._getMasterList();
   },
   methods: {
+    handleEnterpriseExamine() {},
     _handleMasterInfoExport() {
       let data = {
         identityNumber: "",
@@ -694,14 +678,10 @@ export default {
       };
       getMasterList(params).then((res) => {
         if (res) {
-          console.log(res);
           this.masterList = res.data.records;
-          console.log("师傅列表", this.masterList);
           this.pageCount = res.data.total;
           this.currentPage = res.data.current;
         }
-        console.log("名称", Name);
-        console.log("手机", Phone);
       });
     },
     querySelectData() {
@@ -722,9 +702,9 @@ export default {
           id: row.id,
           lock: Number(!row.isLock),
         })
-        .then(({ code, message }) => {
-          this.util.message(this, code, message);
-          this.query();
+        .then(async ({ code, message }) => {
+          await this.util.message(this, code, message);
+          this._getMasterList();
         })
         .catch((err) => {
           console.error(err);
@@ -755,8 +735,33 @@ export default {
 
       this.$refs.editStatusModel.close();
     },
-    editInit(row) {
-      this.editForm = row;
+    // 关闭编辑弹窗事件
+    closeFn() {
+      this._getMasterList();
+      this.dialogVisible = false;
+    },
+    // 点击编辑触发的事件
+    async editInit(row) {
+      const loading = this.$loading();
+      const res = await getMasterInfo(row.id);
+      this.$refs.editWorker.dialogForm = res.data;
+      this.$refs.editWorker.servePosition = [res.data.servePosition];
+
+      // 对图片单独处理
+      await this.$refs.editWorker.avatarFileList.push({
+        url: res.data.realPortrait,
+      });
+      await this.$refs.editWorker.idJustFileList.push({
+        url: res.data.identityFrontImage,
+      });
+      await this.$refs.editWorker.idBackFileList.push({
+        url: res.data.identityBackImage,
+      });
+      loading.close();
+      // 弹窗显示
+      this.dialogVisible = true;
+      return;
+
       // this.editForm.serviceAreas = this.editForm.serviceAreas
       //   ? this.editForm.serviceAreas.split(",")
       //   : [];
@@ -808,7 +813,6 @@ export default {
           })
         );
       });
-      this.$refs.editModel.open();
     },
     async handleEdit(fn) {
       this.edit(fn, {

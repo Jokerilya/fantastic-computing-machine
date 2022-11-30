@@ -9,6 +9,15 @@ export function queryMasterMemberList(data) {
     data,
   });
 }
+
+// 查询师傅姓名
+export function queryMasterName(data) {
+  return request({
+    url: "/admin/maintenance/queryMasterName?query=" + data,
+    method: "get",
+  });
+}
+
 //查询企业成员列表
 export function queryEnterpriseMemberList(data) {
   return request({
@@ -34,6 +43,23 @@ export function handleMasterInfoExport(data) {
     method: "POST",
     data,
     responseType: "blob",
+  });
+}
+
+//获取师傅详情
+export function getMasterInfo(id) {
+  return request({
+    url: "/admin/maintenance/getMasterInfo?id=" + id,
+    method: "GET",
+  });
+}
+
+// 编辑师傅信息
+export function editMasterInfo(data) {
+  return request({
+    url: "/admin/maintenance/editMasterInfo",
+    method: "POST",
+    data,
   });
 }
 
@@ -112,6 +138,15 @@ export function queryDeviceSystemList() {
     method: "post",
   });
 }
+
+// 查询设备部位
+export function queryDevicePositionList() {
+  return request({
+    url: "/admin/maintenance/queryDevicePositionList",
+    method: "get",
+  });
+}
+
 //查询设备类型
 export function queryDeviceTypeList() {
   return request({
@@ -210,7 +245,7 @@ export function updateOrderReceiptInfo(data) {
   });
 }
 
-// 管家合同模板下载
+// 批量下单模板下载
 export function downloadBatchRepairOrderTemplate(data) {
   return request({
     url: "/admin/maintenance/downloadBatchRepairOrderTemplate",
@@ -219,7 +254,7 @@ export function downloadBatchRepairOrderTemplate(data) {
   });
 }
 
-// 批量下单模板下载
+// 管家合同模板下载
 export function downloadButlerOrderTemplate(data) {
   return request({
     url: "/admin/maintenance/downloadButlerOrderTemplate",

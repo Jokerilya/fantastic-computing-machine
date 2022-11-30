@@ -120,7 +120,7 @@
       <el-table-column
         label="营业执照"
         show-overflow-tooltip
-        width="300"
+        width="150"
         align="center"
       >
         <template slot-scope="scope">
@@ -136,7 +136,7 @@
         prop="enterpriseAddress"
         label="企业地址"
         show-overflow-tooltip
-        width="300"
+        width="400"
         align="center"
       ></el-table-column>
 
@@ -166,7 +166,7 @@
         prop="portrait"
         label="微信头像"
         show-overflow-tooltip
-        width="200"
+        width="150"
         align="center"
       >
         <template slot-scope="scope">
@@ -217,11 +217,20 @@
               }}</el-button
             >
             <el-button type="warning" size="mini" plain @click="openTeam(row)"
-              >查看团队</el-button
+              >查看企业</el-button
+            >
+            <el-button
+              type="warning"
+              v-if="false"
+              size="mini"
+              plain
+              @click="editTeam(row)"
+              >编辑企业</el-button
             >
           </div>
         </template>
-        <model
+
+        <!-- <model
           ref="enterpriseList"
           title="企业审核"
           @ok="handleEnterpriseExamine"
@@ -242,7 +251,8 @@
               <el-switch v-model="editForm.status"></el-switch>
             </el-form-item>
           </el-form>
-        </model>
+        </model> -->
+
         <model
           ref="enterpriseTeamList"
           title="企业团队列表"
@@ -305,32 +315,124 @@
       @size-change="handleSizeChange"
       @current-change="updatePageNo"
       :current-page="currentPage"
-      :page-sizes="[10, 20, 50, 100]"
-      :page-size="10"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="pageCount"
+      :page-size="20"
+      layout="total,  prev, pager, next, jumper"
+      :total="total"
     ></el-pagination>
+
+    <!-- 编辑企业弹窗 -->
+    <div v-if="editForm">
+      <el-dialog
+        title="编辑企业"
+        width="60%"
+        :visible="editEnterprise"
+        :before-close="closeEditEnterprise"
+      >
+        <div class="content">
+          <div class="oneLine">
+            <div class="item">
+              <div class="title">
+                联系人
+              </div>
+              <el-input class="inp" v-model="editForm.maintenancePeople">
+              </el-input>
+            </div>
+            <div class="item">
+              <div class="title">
+                联系电话
+              </div>
+              <el-input class="inp" v-model="editForm.maintenancePhone">
+              </el-input>
+            </div>
+            <div class="item">
+              <div class="title">
+                法人代表
+              </div>
+              <el-input class="inp" v-model="editForm.frname"> </el-input>
+            </div>
+          </div>
+          <div class="oneLine">
+            <div class="item">
+              <div class="title">
+                企业名称
+              </div>
+              <el-input class="inp" v-model="editForm.enterpriseName">
+              </el-input>
+            </div>
+            <div class="item">
+              <div class="title">
+                企业地址
+              </div>
+              <el-input class="inp" v-model="editForm.enterpriseAddress">
+              </el-input>
+            </div>
+            <div class="item">
+              <div class="title">
+                纳税人识别号
+              </div>
+              <el-input
+                class="inp"
+                v-model="editForm.taxpayerNo"
+                :disabled="true"
+              >
+              </el-input>
+            </div>
+          </div>
+        </div>
+        <div slot="footer" class="dialog-footer" style="text-align: center;">
+          <el-button @click="dialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="confirmFn">确 定</el-button>
+        </div>
+      </el-dialog>
+    </div>
   </div>
 </template>
-<style lang="less" scoped></style>
+
+<style lang="less" scoped>
+.content {
+  .oneLine {
+    display: flex;
+    margin-bottom: 25px;
+    .item {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 5px;
+      .title {
+        color: #1f1f1f;
+        font-size: 15px;
+        font-weight: 700;
+      }
+      .inp {
+        width: 200px;
+      }
+    }
+  }
+}
+</style>
+
 <script>
 import tableMixin from "@/mixin/table";
 import { getEnterpriseList } from "@/api/user.js";
 import {
   handleEnterpriseInfoExport,
   queryEnterpriseMemberList,
-  exportMethod,
 } from "@/api/order.js";
+import { getEnterpriseInfo, editEnterpriseInfo } from "@/api/boss";
 export default {
   title: "course",
   mixins: [tableMixin],
   data() {
     return {
-      pageCount: 0,
+      editEnterprise: false,
+      dialogVisible: false,
+      editForm: null,
+
+      total: 0,
       currentPage: 1,
       enpTeamList: [],
       dataSumNum: "",
-      editForm: [],
       enterpriseList: "",
       enterpriseName: "",
       enterprisePhone: "",
@@ -358,6 +460,20 @@ export default {
     this._getEnterpriseList();
   },
   methods: {
+    // 编辑确定按钮触发的事件
+    async confirmFn() {},
+    // 关闭编辑企业弹窗
+    closeEditEnterprise() {
+      this.editForm = null;
+      this.editEnterprise = false;
+    },
+    // 点击编辑触发的事件
+    async editTeam(row) {
+      console.log(row);
+      const res = await getEnterpriseInfo(row);
+      this.editForm = res.data;
+      this.editEnterprise = true;
+    },
     // 页码发生变化触发的事件
     updatePageNo(val) {
       this.currentPage = val;
@@ -379,7 +495,7 @@ export default {
       queryEnterpriseMemberList(data).then((res) => {
         if (res) {
           this.enpTeamList = res.data.records;
-          console.log("企业团队列表", this.enpTeamList);
+          console.log("企业团队列表", res);
         }
       });
     },
@@ -423,7 +539,7 @@ export default {
           status: 2,
         })
         .then((data) => {
-          // this.util.message(this, data.enterpriseFlag, data.message);
+          this.util.message(this, data.enterpriseFlag, data.message);
           this._getEnterpriseList();
           this.resetEditForm(false);
         })
@@ -455,14 +571,12 @@ export default {
       };
       getEnterpriseList(params).then((res) => {
         if (res) {
-          //   console.log(res);
-          this.enterpriseList = res.data.records;
-          console.log(111111, "企业列表", this.enterpriseList);
-          this.pageCount = res.data.total;
-          this.currentPage = res.data.current;
+          console.log(res);
+          const { records, total, current } = res.data;
+          this.enterpriseList = records;
+          this.total = total;
+          this.currentPage = current;
         }
-        console.log("名称", this.enterpriseName);
-        console.log("手机", this.enterprisePhone);
       });
     },
   },

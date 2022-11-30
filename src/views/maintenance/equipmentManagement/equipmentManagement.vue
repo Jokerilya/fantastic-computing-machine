@@ -213,7 +213,7 @@ export default {
 };
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .equipmentManagement {
   padding: 20px 20px;
   // 顶部工具栏部分

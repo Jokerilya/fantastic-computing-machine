@@ -42,7 +42,7 @@
 
 <script></script>
 
-<style lang="less">
+<style lang="less" scoped>
 // 设备基本信息内容
 .addEquipment {
   padding: 20px;

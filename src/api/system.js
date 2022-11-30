@@ -185,11 +185,13 @@ export function editAgreementFn(data) {
   });
 }
 // 查询地址信息
-export function addressFn(data) {
+export function addressFn(pid) {
   return request({
     url: "/admin/base/address",
     method: "get",
-    params: data,
+    params: {
+      pid,
+    },
   });
 }
 // 运费模板列表

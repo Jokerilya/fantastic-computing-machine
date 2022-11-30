@@ -97,7 +97,7 @@ export default {
 };
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 // 返回取消按钮样式
 .cancelBtn {
   background-color: #fff;

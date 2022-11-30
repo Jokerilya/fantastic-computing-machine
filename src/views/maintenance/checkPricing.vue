@@ -48,15 +48,16 @@
       <div class="onloadTitle">质保周期:</div>
       <div class="onloadPart">
         <el-radio-group v-model="param.warrantyTime" style="display:flex;">
-          <el-radio label="10">10天</el-radio>
-          <el-radio label="15">15天</el-radio>
-          <el-radio label="30">30天</el-radio>
-          <el-radio label="180">180天</el-radio>
-          <el-radio label="0">其他天数</el-radio>
+          <el-radio :label="10">10天</el-radio>
+          <el-radio :label="15">15天</el-radio>
+          <el-radio :label="30">30天</el-radio>
+          <el-radio :label="180">180天</el-radio>
+          <el-radio :label="0">其他天数</el-radio>
         </el-radio-group>
         <el-input
-          v-model="param.warrantyTime"
+          v-model.number="param.warrantyTime"
           class="onloadPart_inp"
+          @blur="judgeInp"
         ></el-input>
       </div>
     </div>
@@ -356,6 +357,19 @@ export default {
     },
   },
   methods: {
+    // 判断输入框是否为数字
+    judgeInp() {
+      if (this.param.warrantyTime === "") {
+        return;
+      } else if (!(typeof this.param.warrantyTime === "number")) {
+        this.param.warrantyTime = 0;
+        this.$message({
+          message: "输入框只能输数字",
+          type: "warning",
+        });
+      }
+    },
+
     // 点击已选配件的删除事件
     deleted(item, index) {
       console.log(item, index);

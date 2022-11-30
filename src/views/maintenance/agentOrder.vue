@@ -7,19 +7,12 @@
         <div class="info_top">
           <div class="item">
             <div class="labelStyle">设备类型</div>
-            <el-select
-              placeholder="请选择"
-              class="inp"
-              v-model="data.deviceTypeId"
-            >
-              <el-option
-                v-for="item in deviceTypeList"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-              >
-              </el-option>
-            </el-select>
+            <el-cascader
+              :show-all-levels="false"
+              v-model="typeValue"
+              :options="typeOptions"
+              :props="{ value: 'id', label: 'name', children: 'list' }"
+            ></el-cascader>
           </div>
           <div class="item">
             <div class="labelStyle">设备品牌</div>
@@ -33,7 +26,13 @@
         <div class="info_top">
           <div class="item">
             <div class="labelStyle">设备系统</div>
-            <el-select
+            <el-cascader
+              :show-all-levels="false"
+              v-model="systemValue"
+              :options="systemOptions"
+              :props="{ value: 'id', label: 'name', children: 'list' }"
+            ></el-cascader>
+            <!-- <el-select
               placeholder="请选择"
               class="inp"
               v-model="data.deviceSystemId"
@@ -45,7 +44,7 @@
                 :value="item.id"
               >
               </el-option>
-            </el-select>
+            </el-select> -->
           </div>
           <div class="item">
             <div class="labelStyle">设备数量</div>
@@ -90,12 +89,12 @@
           </div>
           <div style="flex: 1;">
             <div style="color: #707070;font-weight: 700;margin-bottom: 20px;">
-              上传设备图片、故障部位图片或视频(最多上传6个视频或图片)
+              上传设备图片、故障部位图片或视频(最多上传3张图片)
             </div>
             <el-upload
+              :limit="3"
               action="#"
               list-type="picture-card"
-              :on-remove="handleRemove"
               :http-request="handlePictureCardPreview"
             >
               <i class="el-icon-plus"></i>
@@ -104,30 +103,16 @@
         </div>
         <div class="info_under">
           <div class="item">
-            <div style="margin-right: 20px;">
-              <div class="labelStyle" style="margin-bottom: 5px;">
-                服务期望日期
-              </div>
-              <el-date-picker
-                value-format="yyyy-MM-dd"
-                v-model="expectDate"
-                type="date"
-                placeholder="请选择预计服务日期"
-              >
-              </el-date-picker>
+            <div class="labelStyle" style="margin-right: 20px;">
+              服务期望日期
             </div>
-            <div>
-              <div class="labelStyle" style="margin-bottom: 5px;">
-                服务期望时间
-              </div>
-              <el-time-picker
-                value-format="HH:mm:ss"
-                arrow-control
-                v-model="expectTime"
-                placeholder="请选择预计服务日期"
-              >
-              </el-time-picker>
-            </div>
+            <el-date-picker
+              value-format="yyyy-MM-dd HH:mm:ss"
+              v-model="data.serviceTime"
+              type="datetime"
+              placeholder="请选择预计服务日期"
+            >
+            </el-date-picker>
           </div>
           <div class="item">
             <div class="labelStyle">紧急程度</div>
@@ -192,11 +177,14 @@ import { UploadImg } from "@/api/system";
 export default {
   data() {
     return {
+      typeValue: null,
+      typeOptions: null,
+      systemValue: null,
+      systemOptions: null,
+
       deviceTypeList: [], // 设备类型
       deviceSystemList: [], //设备系统
       checkList: [],
-      expectDate: "",
-      expectTime: "",
       dialogImageUrl: [],
       dialogVisible: false,
 
@@ -238,9 +226,10 @@ export default {
     },
     // 点击提交订单
     async confirmFn() {
+      this.data.deviceTypeId = this.typeValue[1];
+      this.data.deviceSystemId = this.systemValue[1];
       await this.checkType(this.checkList);
       await this.checkType(this.dialogImageUrl);
-      this.data.serviceTime = this.expectDate + " " + this.expectTime;
       const res = await agentCreateOrder(this.data);
       if (res.message === "操作成功") {
         this.$message({
@@ -254,10 +243,6 @@ export default {
       }
     },
     // 处理图片
-    handleRemove(file, fileList) {
-      console.log(file, fileList);
-      console.log(this.dialogImageUrl);
-    },
     async handlePictureCardPreview(data) {
       const formData = new FormData();
       formData.append("file", data.file);
@@ -269,14 +254,14 @@ export default {
     const loading = this.$loading();
     const list = await queryDeviceTypeList();
     const list1 = await queryDeviceSystemList();
-    this.deviceTypeList = list.data;
-    this.deviceSystemList = list1.data;
+    this.typeOptions = list.data;
+    this.systemOptions = list1.data;
     loading.close();
   },
 };
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 // 标题样式
 .labelStyle {
   width: 100px;

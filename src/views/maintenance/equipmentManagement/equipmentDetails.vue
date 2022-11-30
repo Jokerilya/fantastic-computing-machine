@@ -263,7 +263,7 @@ export default {
 };
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 // 设备基本信息内容
 .equipmentDetails {
   padding: 20px;

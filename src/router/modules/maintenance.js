@@ -42,7 +42,7 @@ const router = {
     {
       path: "/maintenance/worker",
       name: "worker",
-      component: () => import("@/views/maintenance/worker"),
+      component: () => import("@/views/maintenance/worker/worker.vue"),
       meta: { title: "师傅列表" },
     },
     {

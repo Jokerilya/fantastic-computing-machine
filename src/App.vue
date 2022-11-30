@@ -12,7 +12,7 @@ export default {
 };
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .width50 {
   width: 50%;
 }
