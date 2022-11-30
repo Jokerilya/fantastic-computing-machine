@@ -1,8 +1,39 @@
 <!-- 检测定价 -->
 <template>
   <div class="checkPart">
-    <div class="solutionTitle">解决方案</div>
+    <!-- 故障解决方案 -->
+    <!-- <h2 style="color: #0b2059;margin-bottom: 20px;">故障解决方案</h2>
+    <div class="faultSolveProgramme">
+      <div class="lineItem">
+        <div class="title">
+          故障类型:
+        </div>
+        <div class="content">
+          <el-checkbox-group v-model="faultTypeCheckbox">
+            <el-checkbox label="1">机械故障</el-checkbox>
+            <el-checkbox label="2">电气故障</el-checkbox>
+            <el-checkbox label="3">系统故障</el-checkbox>
+          </el-checkbox-group>
+        </div>
+      </div>
+      <div class="lineItem">
+        <div class="title">
+          故障部位:
+        </div>
+        <div class="content">
+          <el-checkbox-group v-model="faultTypeCheckbox">
+            <el-checkbox
+              style="margin-bottom: 10px;"
+              v-for="item in equipmentPosition"
+              :label="item.name"
+              >{{ item.name }}</el-checkbox
+            >
+          </el-checkbox-group>
+        </div>
+      </div>
+    </div> -->
 
+    <div class="solutionTitle">解决方案</div>
     <!-- 故障原因部分 -->
     <div class="solutionPart">
       <div class="describe">
@@ -293,12 +324,15 @@
 </template>
 
 <script>
-import { handleMasterQuotation } from "@/api/order.js";
+import { handleMasterQuotation, queryDevicePositionList } from "@/api/order.js";
 import { getRepairOrderDetail } from "@/api/user.js";
 export default {
   title: "checkPricing",
   data() {
     return {
+      faultTypeCheckbox: [], //故障类型多选
+      equipmentPosition: null, //故障部位列表
+
       dialogChosee: false,
       dialogpop: false,
 
@@ -333,7 +367,9 @@ export default {
       ],
     };
   },
-  created() {
+  async created() {
+    const res = await queryDevicePositionList();
+    this.equipmentPosition = res.data;
     this.param.orderSn = this.$route.query.orderSn;
     console.log("订单号", this.orderSn);
     this._getRepairOrderDetail();
@@ -426,8 +462,6 @@ export default {
     //定价
     _handleMasterQuotation() {
       this.param.programme = this.programmes;
-      console.log(this.programmes);
-      console.log("programme", this.param.programme);
       let param = {
         ...this.param,
       };
@@ -435,7 +469,6 @@ export default {
       param.programme = JSON.stringify(param.programme);
       handleMasterQuotation(param).then((res) => {
         if (res.success) {
-          console.log("检测定价", res);
           this.$router.push(
             "/maintenance/maintenance_order_desc?orderSn=" + this.param.orderSn
           );
@@ -464,6 +497,24 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.faultSolveProgramme {
+  .lineItem {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    .title {
+      flex: 1;
+      font-size: 20px;
+      color: #707070;
+      font-weight: 700;
+    }
+
+    .content {
+      flex: 10;
+    }
+  }
+}
+
 // 测试开始
 .footerBtn {
   height: 100px;

@@ -3,7 +3,7 @@
     <el-dialog
       title="编辑师傅"
       :visible="dialogVisible"
-      width="70%"
+      width="1000px"
       :before-close="closeFn"
     >
       <div class="content">
@@ -30,22 +30,45 @@
         <div class="oneLine">
           <div class="item">
             <span class="label">推荐人</span>
-            <el-input
-              @blur="referrerBlurFn"
-              class="inp"
+            <el-select
+              filterable
+              :remote-method="remoteMethod"
+              remote
               v-model="dialogForm.recommendMasterRealName"
-            ></el-input>
+              placeholder="请选择"
+            >
+              <el-option
+                v-for="item in options"
+                :key="item.value"
+                :label="item.realName"
+                :value="item.realName"
+              >
+              </el-option>
+            </el-select>
           </div>
           <div class="item">
-            <span class="label">服务部位</span>
-            <el-input
-              class="inp"
-              v-if="servePositionShow"
-              :disabled="true"
-              :value="servePosition"
+            <span class="label" style="margin-right: 20px;">服务部位</span>
+            <el-tooltip
+              class="item"
+              effect="dark"
+              :content="dialogForm.servePosition"
+              placement="top"
             >
-            </el-input>
-            <div class="location" @click="locationXiuFn(1)">
+              <el-input
+                style="width: 200px;"
+                class="inp"
+                v-if="servePositionShow"
+                :disabled="true"
+                :value="servePosition"
+              >
+              </el-input>
+            </el-tooltip>
+
+            <div
+              class="location"
+              @click="locationXiuFn(1)"
+              v-if="servePositionShow"
+            >
               修
             </div>
             <el-select
@@ -65,15 +88,27 @@
             </el-select>
           </div>
           <div class="item">
-            <span class="label">服务地区</span>
-            <el-input
-              v-if="serviceAreasShow"
-              class="inp"
-              :disabled="true"
-              v-model="dialogForm.serviceAreasName"
+            <span class="label" style="margin-right: 20px;">服务地区</span>
+            <el-tooltip
+              class="item"
+              effect="dark"
+              :content="dialogForm.serviceAreasName"
+              placement="top"
             >
-            </el-input>
-            <div class="location" @click="locationXiuFn(2)">
+              <el-input
+                style="width: 200px;"
+                v-if="serviceAreasShow"
+                class="inp"
+                :disabled="true"
+                v-model="dialogForm.serviceAreasName"
+              >
+              </el-input>
+            </el-tooltip>
+            <div
+              class="location"
+              @click="locationXiuFn(2)"
+              v-if="serviceAreasShow"
+            >
               修
             </div>
             <el-cascader
@@ -89,13 +124,24 @@
         <div class="oneLine">
           <div class="item">
             <div class="label" style="width: 100px;">服务类型</div>
-            <el-input
-              class="inp"
-              :disabled="true"
-              v-model="dialogForm.serviceTypesName"
+            <el-tooltip
+              class="item"
+              effect="dark"
+              :content="dialogForm.serviceTypesName"
+              placement="top"
+            >
+              <el-input
+                style="width: 200px;"
+                :disabled="true"
+                v-model="dialogForm.serviceTypesName"
+                v-if="serviceTypesNameShow"
+              ></el-input>
+            </el-tooltip>
+            <div
+              class="location"
+              @click="locationXiuFn(3)"
               v-if="serviceTypesNameShow"
-            ></el-input>
-            <div class="location" @click="locationXiuFn(3)">
+            >
               修
             </div>
             <el-cascader
@@ -132,6 +178,7 @@
           <div class="imgItem">
             <div class="title">真实头像</div>
             <el-upload
+              style="width: 50%;"
               :file-list="avatarFileList"
               :limit="1"
               action="#"
@@ -144,6 +191,7 @@
           <div class="imgItem">
             <div class="title">身份证正面照</div>
             <el-upload
+              style="width: 50%;"
               :file-list="idJustFileList"
               :limit="1"
               action="#"
@@ -156,6 +204,7 @@
           <div class="imgItem">
             <div class="title">身份证反面照</div>
             <el-upload
+              style="width: 50%;"
               :file-list="idBackFileList"
               :http-request="idBackUploadFn"
               :limit="1"
@@ -193,6 +242,9 @@ export default {
   },
   data() {
     return {
+      options: [],
+      value: "",
+
       serviceAreasShow: true, //默认地区输入框显示
       serviceTypesNameShow: true,
       servePositionShow: true,
@@ -242,16 +294,12 @@ export default {
     this.typeList = res1.data;
   },
   methods: {
-    // 推荐人失焦事件
-    async referrerBlurFn() {
-      const res = await queryMasterName(
-        this.dialogForm.recommendMasterRealName
-      );
-      const uid = res.data && res.data[0] && res.data[0].uid;
-      if (uid) {
-        this.dialogForm.recommendMasterUid = uid;
-      }
+    // 搜索推荐人
+    async remoteMethod(query) {
+      const res = await queryMasterName(query);
+      this.options = res.data;
     },
+
     // 改造数据方案
     repairData(arr) {
       let str = null;
@@ -266,6 +314,7 @@ export default {
       }
       return str;
     },
+
     // 修改服务地区的事件
     locationXiuFn(index) {
       if (index === 2) {
@@ -273,14 +322,22 @@ export default {
       } else if (index === 3) {
         this.serviceTypesNameShow = false;
       } else {
-        index === 1;
-      }
-      {
         this.servePositionShow = false;
       }
     },
+
     // 确定的事件
     async confirmFn() {
+      // 师傅名字找到对于uid
+      if (this.dialogForm.recommendMasterRealName) {
+        const res = await queryMasterName(
+          this.dialogForm.recommendMasterRealName
+        );
+        this.dialogForm.recommendMasterUid = res.data[0].uid;
+      } else {
+        this.dialogForm.recommendMasterUid = "";
+      }
+
       // 服务部位
       if (
         this.dialogForm.servePosition &&
@@ -294,11 +351,6 @@ export default {
         this.dialogForm.servePosition.length === 0
       ) {
         this.dialogForm.servePosition = "";
-      }
-
-      // 判断推荐人输入框为空 就都为空
-      if (!this.dialogForm.recommendMasterRealName) {
-        this.dialogForm.recommendMasterUid = "";
       }
 
       // 改造一下服务地区的数据
@@ -383,7 +435,7 @@ export default {
       .location {
         cursor: pointer;
         position: absolute;
-        right: 25px;
+        right: 13px;
         bottom: 9px;
         background-color: orange;
         color: #fff;
