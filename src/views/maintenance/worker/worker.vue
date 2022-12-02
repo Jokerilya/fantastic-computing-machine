@@ -21,7 +21,7 @@
             plain
             type="primary"
             @click="_handleMasterInfoExport()"
-            >导出</el-button
+            >导出全部师傅</el-button
           >
         </el-col>
       </el-row>
@@ -444,7 +444,6 @@ export default {
       };
       handleMasterInfoExport(data).then((res) => {
         if (res) {
-          console.log("导出", res);
           const link = document.createElement("a");
           const blob = new Blob([res.data], {
             type: "application/vnd.ms-excel",

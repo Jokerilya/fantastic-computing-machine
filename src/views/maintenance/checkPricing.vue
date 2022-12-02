@@ -2,7 +2,7 @@
 <template>
   <div class="checkPart">
     <!-- 故障解决方案 -->
-    <!-- <h2 style="color: #0b2059;margin-bottom: 20px;">故障解决方案</h2>
+    <h2 style="color: #0b2059;margin-bottom: 20px;">故障解决方案</h2>
     <div class="faultSolveProgramme">
       <div class="lineItem">
         <div class="title">
@@ -21,7 +21,7 @@
           故障部位:
         </div>
         <div class="content">
-          <el-checkbox-group v-model="faultTypeCheckbox">
+          <el-checkbox-group v-model="faultPartsCheckbox">
             <el-checkbox
               style="margin-bottom: 10px;"
               v-for="item in equipmentPosition"
@@ -31,7 +31,7 @@
           </el-checkbox-group>
         </div>
       </div>
-    </div> -->
+    </div>
 
     <div class="solutionTitle">解决方案</div>
     <!-- 故障原因部分 -->
@@ -331,6 +331,7 @@ export default {
   data() {
     return {
       faultTypeCheckbox: [], //故障类型多选
+      faultPartsCheckbox: [], //故障部位 多选
       equipmentPosition: null, //故障部位列表
 
       dialogChosee: false,
@@ -393,6 +394,20 @@ export default {
     },
   },
   methods: {
+    // 改造数据方案
+    repairData(arr) {
+      let str = null;
+      if (Array.isArray(arr)) {
+        arr.forEach((el, index) => {
+          if (index === 0) {
+            str = "" + el;
+          } else {
+            str = str + "," + el;
+          }
+        });
+      }
+      return str;
+    },
     // 判断输入框是否为数字
     judgeInp() {
       if (this.param.warrantyTime === "") {
@@ -465,6 +480,8 @@ export default {
       let param = {
         ...this.param,
       };
+      param.servicePositions = this.repairData(this.faultPartsCheckbox);
+      param.type = this.repairData(this.faultTypeCheckbox);
       param.parts = JSON.stringify(param.parts);
       param.programme = JSON.stringify(param.programme);
       handleMasterQuotation(param).then((res) => {

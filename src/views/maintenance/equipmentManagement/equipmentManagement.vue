@@ -95,7 +95,7 @@
                     @click="goEquipmentDetails(row.id)"
                     >详情</a
                   >
-                  <a href="#">修改</a>
+                  <!-- <a href="#">修改</a> -->
                 </div>
               </template>
             </el-table-column>

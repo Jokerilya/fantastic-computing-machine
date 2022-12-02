@@ -1,38 +1,30 @@
 <template>
-  <div>
-    <el-select
-      filterable
-      :remote-method="remoteMethod"
-      remote
-      clearable
-      v-model="value"
-      placeholder="请选择"
-    >
-      <el-option
-        v-for="item in options"
-        :key="item.value"
-        :label="item.realName"
-        :value="item.uid"
+  <el-popover placement="top" width="300" v-model="delOrderPopover">
+    <div>
+      <el-input
+        v-model="delOrderinpValue"
+        placeholder="请输入取消订单的原因"
+      ></el-input>
+    </div>
+    <div style="text-align: right; margin: 0">
+      <el-button size="mini" type="text" @click="delOrderPopover = false"
+        >取消</el-button
       >
-      </el-option>
-    </el-select>
-  </div>
+      <el-button type="primary" size="mini" @click="delOrderPopover = false"
+        >确定</el-button
+      >
+    </div>
+    <el-button slot="reference">删除</el-button>
+  </el-popover>
 </template>
 
 <script>
-import { queryMasterName } from "@/api/order";
 export default {
   data() {
     return {
-      options: [],
-      value: "",
+      delOrderPopover: false,
+      delOrderinpValue: "",
     };
-  },
-  methods: {
-    async remoteMethod(query) {
-      const res = await queryMasterName(query);
-      this.options = res.data;
-    },
   },
 };
 </script>

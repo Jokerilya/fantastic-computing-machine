@@ -23,7 +23,7 @@
             <el-button style="color: #2E4C9E; " plain @click="_getOrderList()"
               >查询</el-button
             >
-            <el-button style="color: #2E4C9E; " plain @click="_"
+            <el-button style="color: #2E4C9E; " plain @click="resetFn"
               >重置</el-button
             >
           </el-col>
@@ -82,6 +82,18 @@
             align="center"
           ></el-table-column>
           <el-table-column
+            prop="salesmanRealName"
+            label="客户经理"
+            show-overflow-tooltip
+            align="center"
+          ></el-table-column>
+          <el-table-column
+            prop="salesmanRealPhone"
+            label="客户经理电话"
+            show-overflow-tooltip
+            align="center"
+          ></el-table-column>
+          <el-table-column
             prop="createTime"
             label="下单时间"
             show-overflow-tooltip
@@ -91,21 +103,28 @@
             label="操作"
             fixed="right"
             align="center"
-            width="300px"
+            width="200"
           >
             <template slot-scope="{ row }">
               <div class="settings">
                 <a href="#" style="color:#2E4C9E" @click="jump2Detail(row)"
                   >详情</a
                 >
-                <a href="#" style="color:#2E4C9E;margin: 0 20px;">编辑</a>
-                <a href="#" style="color:#2E4C9E;">取消</a>
+                <!-- <a href="#" style="color:#2E4C9E;margin: 0 20px;">编辑</a>
+                <a href="#" style="color:#2E4C9E;">取消</a> -->
                 <a
                   href="#"
-                  style="color:#2E4C9E;margin-left: 20px;"
+                  style="color:#2E4C9E;margin-left:6px;"
                   @click="foremp(row)"
                   v-if="!row.uid"
-                  >绑定账号</a
+                  >绑定企业</a
+                >
+                <a
+                  href="#"
+                  style="color:#2E4C9E;margin-left:6px;"
+                  v-if="!row.salesmanRealName"
+                  @click="bindingSalesmanFn(row.orderSn)"
+                  >绑定业务员</a
                 >
               </div>
             </template>
@@ -124,12 +143,12 @@
               multiple
               :show-file-list="false"
             >
-              <el-button class="importBtn">年保设备批量导入</el-button
-              ><span
-                style="font-size: 12px;font-weight: 700;color: #606266;margin-left: 15px;"
-                >注:请上传.XLSX格式文件合同</span
-              >
+              <el-button class="importBtn">年保设备批量导入</el-button>
             </el-upload>
+            <span
+              style="font-size: 12px;font-weight: 700;color: #606266;margin-left: 15px;"
+              >注:请上传.XLSX格式文件合同</span
+            >
           </div>
           <div class="footTool_right">
             <div class="pagingBtn">
@@ -151,7 +170,7 @@
     <!-- 空行 -->
     <div style="margin:20px 0"></div>
 
-    <!-- 绑定账号弹框-->
+    <!-- 绑定企业弹框-->
     <model
       ref="enterpriseList"
       title="企业列表"
@@ -226,10 +245,51 @@
         </el-table-column>
       </el-table>
     </model>
+
+    <!-- 绑定业务员弹框 -->
+    <el-dialog
+      :visible="dialogVisible"
+      width="30%"
+      :before-close="closeSalesmanFn"
+    >
+      <div class="bindingSalesmanTitle">
+        绑定业务员
+      </div>
+      <div style="text-align: center;">
+        <el-select
+          filterable
+          remote
+          v-model="salesmanSelect"
+          :remote-method="salesmanRemoteMethod"
+          placeholder="请选择业务员"
+          style="width: 200px;"
+        >
+          <el-option
+            v-for="item in salesmanOptions"
+            :key="item.id"
+            :label="item.realName"
+            :value="item.id"
+          >
+          </el-option>
+        </el-select>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeSalesmanFn">取 消</el-button>
+        <el-button type="primary" @click="salesmanConfirm">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <style lang="less" scoped>
+// 绑定业务员弹框
+.bindingSalesmanTitle {
+  text-align: center;
+  color: #757275;
+  font-weight: 700;
+  font-size: 22px;
+  margin-bottom: 20px;
+}
 // 下载合同按钮
 .contractBtn {
   margin-right: 15px;
@@ -270,19 +330,30 @@
 </style>
 
 <script>
-import { getMasterList, handleAssignMaster } from "@/api/user.js";
 import {
+  getMasterList,
+  handleAssignMaster,
+  queryUserName,
+  getEnterpriseList,
+  bindUserAccount,
+} from "@/api/user.js";
+import {
+  bindSalesmanAccount,
   queryButlerOrderList,
   uploadButlerOrder,
   downloadButlerOrderTemplate,
 } from "@/api/order.js";
-import { getEnterpriseList, bindUserAccount } from "@/api/user.js";
 import tableMixin from "@/mixin/table";
 export default {
   title: "course",
   mixins: [tableMixin],
   data() {
     return {
+      dialogVisible: false,
+      salesmanSelect: null, //选中的推荐人名字
+      salesmanOptions: null, //选择人的列表
+      salesmanOrderSn: "",
+
       pageCount: 0, //总条数
       currentPage: 1,
       bindOrderSn: "", //点击绑定账号的编号
@@ -291,7 +362,6 @@ export default {
       enterpriseList: [],
       orderSn: "",
       People: "",
-      Name: "",
       Phone: "",
       orderList: [],
       tabelList: [],
@@ -341,6 +411,43 @@ export default {
     this._getEnterpriseList();
   },
   methods: {
+    // 关闭绑定业务员弹窗
+    closeSalesmanFn() {
+      this.salesmanSelect = null;
+      this.dialogVisible = false;
+    },
+    // 确定绑定业务员事件
+    async salesmanConfirm() {
+      const res = await bindSalesmanAccount({
+        id: this.salesmanSelect,
+        orderSn: this.salesmanOrderSn,
+      });
+      if (res.message === "操作成功") {
+        this.$message({
+          message: "绑定成功",
+          type: "success",
+        });
+      }
+      await this._getOrderList();
+      this.closeSalesmanFn();
+    },
+    // 查询业务员 触发的事件
+    async salesmanRemoteMethod(val) {
+      const res = await queryUserName(val);
+      this.salesmanOptions = res.data;
+    },
+    // 点击绑定业务员触发的事件
+    bindingSalesmanFn(orderSn) {
+      this.salesmanOrderSn = orderSn;
+      this.dialogVisible = true;
+    },
+    // 重置功能
+    resetFn() {
+      this.Name = "";
+      this.Phone = "";
+      this.People = "";
+      this._getOrderList();
+    },
     // 点击管家合同下载
     async contractBtnFn() {
       const res = await downloadButlerOrderTemplate();
@@ -382,15 +489,12 @@ export default {
       getEnterpriseList(params).then((res) => {
         if (res) {
           this.enterpriseList = res.data.records;
-          console.log("企业列表", this.enterpriseList);
         }
-        console.log("名称", this.enterpriseName);
       });
     },
     // 点击绑定账号的事件
     foremp(e) {
       this.$refs.enterpriseList.open();
-      console.log(e);
       this.bindOrderSn = e.orderSn;
     },
     // 上传文件的函数
@@ -432,11 +536,9 @@ export default {
       queryButlerOrderList(params).then((res) => {
         if (res) {
           this.orderList = res.data.records;
-          console.log("列表", res);
           this.pageCount = res.data.total;
           this.currentPage = res.data.current;
         }
-        console.log(this.pageCount);
       });
     },
     // 查询订单列表的事件
@@ -451,7 +553,6 @@ export default {
       queryButlerOrderList(params).then((res) => {
         if (res) {
           this.orderList = res.data.records;
-          console.log("425", res);
           this.pageCount = res.data.total;
           this.currentPage = res.data.current;
         }
@@ -474,9 +575,7 @@ export default {
       };
       getMasterList(params).then((res) => {
         if (res) {
-          console.log(531, res);
           this.masterList = res.data.records;
-          console.log("师傅列表", this.masterList);
         }
       });
     },

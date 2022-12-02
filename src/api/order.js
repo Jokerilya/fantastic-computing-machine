@@ -67,8 +67,8 @@ export function editMasterInfo(data) {
 export function cancelRepairOrder(data) {
   return request({
     url: "/admin/maintenance/cancelRepairOrder",
-    method: "GET",
-    params: data,
+    method: "post",
+    data,
   });
 }
 
@@ -276,6 +276,15 @@ export function agentCreateOrder(data) {
 export function uploadBatchRepairOrder(data) {
   return request({
     url: "/admin/maintenance/uploadBatchRepairOrder",
+    method: "post",
+    data,
+  });
+}
+
+//管家订单绑定业务员账号
+export function bindSalesmanAccount(data) {
+  return request({
+    url: "/admin/maintenance/bindSalesmanAccount",
     method: "post",
     data,
   });

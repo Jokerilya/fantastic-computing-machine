@@ -26,6 +26,15 @@ export function queryEnterpriseList(data) {
   });
 }
 
+//
+// 查询企业名称
+export function queryEnterpriseName(data) {
+  return request({
+    url: "/admin/maintenance/queryEnterpriseName?query=" + data,
+    method: "get",
+  });
+}
+
 //编辑企业信息
 export function editEnterpriseInfo(data) {
   return request({

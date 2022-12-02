@@ -4,26 +4,29 @@
     <!-- 顶部工具栏 -->
     <div class="topTool">
       <el-input
-        v-model="toolInput"
-        placeholder="支付流水号/客户名称/订单号/收付账号"
+        v-model="orderSnInp"
+        placeholder="输入订单号"
         class="toolInput"
       ></el-input>
       <el-select
-        placeholder="订单类型"
+        placeholder="业务类型"
         class="toolSelect"
-        v-model="toolSelect1"
+        v-model="serviceTypeSelect"
       >
-        <!-- 订单类型下拉框内容 -->
+        <el-option label="管家合同支付" :value="1"></el-option>
+        <el-option label="维保企业支付" :value="2"></el-option>
+        <el-option label="维保师傅支付" :value="3"></el-option>
       </el-select>
       <el-select
         placeholder="收支状态"
         class="toolSelect"
-        v-model="toolSelect1"
+        v-model="statusSelect"
       >
-        <!-- 收支状态下拉框内容 -->
+        <el-option label="未支付" :value="0"> </el-option>
+        <el-option label="已支付" :value="1"> </el-option>
       </el-select>
-      <el-button class="toolBtn">查询</el-button>
-      <el-button class="toolBtn">重置</el-button>
+      <el-button class="toolBtn" @click="searchBtn">查询</el-button>
+      <el-button class="toolBtn" @click="resetBtn">重置</el-button>
     </div>
 
     <!-- 表格内容部分 -->
@@ -40,29 +43,39 @@
               'text-align': 'center',
             }"
           >
-            <el-table-column prop="orderSn" label="订单号"></el-table-column>
             <el-table-column
+              width="150"
               prop="orderSn"
-              label="支付流水号"
+              label="订单号"
             ></el-table-column>
-            <el-table-column prop="payTime" label="时间"></el-table-column>
-            <el-table-column prop="payMoney" label="金额"></el-table-column>
+            <el-table-column prop="payTime" label="支付时间"></el-table-column>
+            <el-table-column prop="payMoney" label="支付金额"></el-table-column>
             <el-table-column
               prop="targetName"
               label="客户名称"
             ></el-table-column>
             <el-table-column
               prop="transCode"
-              label="收支账号"
+              label="第三方交易账号"
             ></el-table-column>
             <el-table-column
               prop="serviceTypeName"
-              label="订单类型"
+              label="业务类型名"
             ></el-table-column>
-            <el-table-column prop="status" label="收支状态"></el-table-column>
-            <el-table-column prop="orderSn" label="操作">
-              <template>
-                <a href="#" style="color: #0b2059;margin-right: 10px;">支付</a>
+            <el-table-column label="收支状态">
+              <template slot-scope="{ row }">
+                <div v-if="row.status === 0" style="color:red;">未支付</div>
+                <div v-if="row.status === 1" style="color:green;">已支付</div>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作">
+              <template slot-scope="{ row }">
+                <a
+                  href="#"
+                  style="color: #0b2059;margin-right: 10px;"
+                  v-if="row.status === 0"
+                  >支付</a
+                >
                 <a href="#" style="color: #0b2059;">详情</a>
               </template>
             </el-table-column>
@@ -73,7 +86,8 @@
             <!--  @current-change="currentChangeFn" -->
             <!-- :current-page="current" -->
             <el-pagination
-              :page-size="pageSize"
+              @current-change="currentChangeFn"
+              :page-size="PaymentListData.pageSize"
               layout="jumper, prev, pager, next,total "
               :total="total"
             >
@@ -82,6 +96,9 @@
         </div>
       </el-card>
     </div>
+
+    <!-- 支付详情 -->
+    <!-- <PayOrder-Details></PayOrder-Details> -->
   </div>
 </template>
 
@@ -92,7 +109,7 @@
     display: flex;
     margin-bottom: 20px;
     .toolInput {
-      width: 450px;
+      width: 250px;
       margin-right: 10px;
     }
     .toolSelect {
@@ -127,37 +144,65 @@
 
 <script>
 import { queryPaymentList } from "@/api/financialController";
+import payOrderDetails from "./components/payOrderDetails.vue";
 
 export default {
   data() {
     return {
-      toolSelect1: "",
-      toolSelect2: "",
-      toolInput: "",
+      // 查询的数据
+      serviceTypeSelect: "",
+      statusSelect: "",
+      orderSnInp: "",
+
       ordersList: null,
       // 查询列表需要的参数
       PaymentListData: {
-        direction: 0,
-        endTime: "",
-        orderSn: "",
         pageNo: 1,
-        pageSize: 5,
-        serviceType: 0,
-        startTime: "",
-        status: 0,
-        uid: "",
+        pageSize: 10,
       },
       total: 0,
-      pageSize: 5,
     };
   },
+  components: {
+    "PayOrder-Details": payOrderDetails,
+  },
   methods: {
+    // 点击重置触发的事件
+    resetBtn() {
+      this.PaymentListData = {
+        pageNo: 1,
+        pageSize: 10,
+      };
+      this.orderSnInp = "";
+      this.statusSelect = "";
+      this.serviceTypeSelect = "";
+      this.getIncomeExpenditrueList();
+    },
+    // 页码发生变化触发的事件
+    currentChangeFn(page) {
+      this.PaymentListData.pageNo = page;
+      this.getIncomeExpenditrueList();
+    },
+    // 点击查询触发的事件
+    searchBtn() {
+      if (this.orderSnInp) {
+        this.PaymentListData.orderSn = this.orderSnInp;
+      }
+      if (this.statusSelect !== "") {
+        this.PaymentListData.status = this.statusSelect;
+      }
+      if (this.serviceTypeSelect !== "") {
+        this.PaymentListData.serviceType = this.serviceTypeSelect;
+      }
+      this.PaymentListData.pageNo = 1;
+      this.PaymentListData.pageSize = 10;
+      this.getIncomeExpenditrueList();
+    },
     // 获取收支明细列表
     async getIncomeExpenditrueList() {
       const res = await queryPaymentList(this.PaymentListData);
       this.total = res.data.total;
-      this.ordersList = res.data.orders;
-      console.log(res);
+      this.ordersList = res.data.records;
     },
   },
   created() {

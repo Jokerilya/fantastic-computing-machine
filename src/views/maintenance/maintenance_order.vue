@@ -245,11 +245,10 @@
               >查看详情</el-button
             >
             <el-button
-              v-if="!(row.orderStatusName === '已取消')"
+              v-if="row.orderStatusName === '待平台指派'"
               type="info"
               size="mini"
               plain
-              v-show="row.platformStatus == 1"
               @click="querySnatchList(row)"
               >指派列表</el-button
             >
@@ -487,7 +486,6 @@ export default {
       };
       queryAssignableMasterList(data).then((res) => {
         if (res) {
-          console.log(res);
           this.masterList = res.data.records;
           console.log("师傅列表", this.masterList);
           this.pageCountMaster = res.data.total;

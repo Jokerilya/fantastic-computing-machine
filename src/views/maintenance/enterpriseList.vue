@@ -29,11 +29,7 @@
               @click="_getEnterpriseList()"
               >查询</el-button
             >
-            <el-button
-              icon="el-icon-refresh"
-              plain
-              type="info"
-              @click="_getEnterpriseList()"
+            <el-button icon="el-icon-refresh" plain type="info" @click="resetFn"
               >重置</el-button
             >
             <el-button
@@ -65,30 +61,30 @@
         prop="enterpriseName"
         label="企业名称"
         show-overflow-tooltip
-        width="200"
+        width="250"
         align="center"
       ></el-table-column>
       <el-table-column
         prop="maintenancePhone"
         label="联系电话"
         show-overflow-tooltip
-        width="100"
+        width="120"
         align="center"
       ></el-table-column>
       <el-table-column
         prop="maintenancePeople"
         label="联系人"
         show-overflow-tooltip
-        width="100"
+        width="70"
         align="center"
       ></el-table-column>
-      <el-table-column
+      <!-- <el-table-column
         prop="salesmanId"
         label="业务员"
         show-overflow-tooltip
         width="100"
         align="center"
-      ></el-table-column>
+      ></el-table-column> -->
       <el-table-column
         prop="superiorEnterpriseName"
         label="团长"
@@ -124,19 +120,27 @@
         align="center"
       >
         <template slot-scope="scope">
-          <a :href="scope.row.businessLicense" target="_blank" title="营业执照">
+          <a
+            :href="scope.row.businessLicense"
+            target="_blank"
+            title="营业执照"
+            v-if="scope.row.businessLicense"
+          >
             <el-image
               style="width:50px;height:50px"
               :src="scope.row.businessLicense"
             ></el-image>
           </a>
+          <div v-else style="font-size: 25px;">
+            /
+          </div>
         </template>
       </el-table-column>
       <el-table-column
         prop="enterpriseAddress"
         label="企业地址"
         show-overflow-tooltip
-        width="400"
+        width="350"
         align="center"
       ></el-table-column>
 
@@ -144,16 +148,26 @@
         prop="phone"
         label="联系电话"
         show-overflow-tooltip
-        width="150"
+        width="120"
         align="center"
       ></el-table-column>
       <el-table-column
-        prop="enterpriseFlag"
         label="认证状态"
         show-overflow-tooltip
         width="150"
         align="center"
-      ></el-table-column>
+      >
+        <template slot-scope="{ row }">
+          <div v-if="row.enterpriseFlag === 0" style="color: #ccc;">未认证</div>
+          <div v-if="row.enterpriseFlag === 1" style="color: blue;">审核中</div>
+          <div v-if="row.enterpriseFlag === 2" style="color: green;">
+            审核成功
+          </div>
+          <div v-if="row.enterpriseFlag === 3" style="color: red;">
+            审核失败
+          </div>
+        </template>
+      </el-table-column>
 
       <el-table-column
         prop="settledTime"
@@ -179,22 +193,22 @@
         </template>
       </el-table-column>
       <el-table-column
-        prop="regCapital "
-        label="注册资本"
+        prop="deviceScale"
+        label="公司规模"
         show-overflow-tooltip
         width="100"
         align="center"
       ></el-table-column>
       <el-table-column
-        prop="frName"
-        label="法人"
+        prop="enterpriseTypeIdsName"
+        label="公司类型"
         show-overflow-tooltip
         width="200"
         align="center"
       ></el-table-column>
       <el-table-column
-        prop="taxpayerNo"
-        label="纳税人识别号"
+        prop="deviceTypeIdsName"
+        label="设备类型"
         show-overflow-tooltip
         width="200"
         align="center"
@@ -219,12 +233,7 @@
             <el-button type="warning" size="mini" plain @click="openTeam(row)"
               >查看企业</el-button
             >
-            <el-button
-              type="warning"
-              v-if="false"
-              size="mini"
-              plain
-              @click="editTeam(row)"
+            <el-button type="warning" size="mini" plain @click="editTeam(row)"
               >编辑企业</el-button
             >
           </div>
@@ -378,9 +387,103 @@
               </el-input>
             </div>
           </div>
+          <div class="oneLine">
+            <div class="item">
+              <div class="title">
+                成立日期
+              </div>
+              <el-date-picker
+                class="inp"
+                v-model="editForm.opfrom"
+                type="date"
+                placeholder="选择日期"
+                value-format="yyyy-MM-dd"
+              >
+              </el-date-picker>
+            </div>
+            <div class="item">
+              <div class="title">
+                注册资本
+              </div>
+              <el-input class="inp" v-model="editForm.regCapital"> </el-input>
+            </div>
+            <div class="item">
+              <div class="title">
+                直推师傅
+              </div>
+              <el-select
+                filterable
+                :remote-method="remoteMethod"
+                remote
+                v-model="recommendMaster"
+                placeholder="请选择"
+              >
+                <el-option
+                  v-for="item in masterOptions"
+                  :key="item.value"
+                  :label="item.realName"
+                  :value="item.realName"
+                >
+                </el-option>
+              </el-select>
+            </div>
+          </div>
+          <div class="oneLine">
+            <div class="item">
+              <div class="title" style="flex:3">
+                用户状态
+              </div>
+              <div style="flex:6">
+                <el-switch
+                  v-model="editForm.status"
+                  active-color="#13ce66"
+                  inactive-color="#ff4949"
+                  :active-value="0"
+                  :inactive-value="1"
+                >
+                </el-switch>
+              </div>
+            </div>
+            <div class="item">
+              <div class="title" style="flex:3">
+                年保客户
+              </div>
+              <div style="flex:6">
+                <el-switch
+                  v-model="editForm.vipFlag"
+                  active-color="#13ce66"
+                  inactive-color="#ff4949"
+                  :active-value="1"
+                  :inactive-value="0"
+                >
+                </el-switch>
+              </div>
+            </div>
+            <div class="item">
+              <div class="title">
+                设备类型
+              </div>
+              <el-cascader
+                class="inp"
+                :show-all-levels="false"
+                :options="typeList"
+                v-model="editForm.deviceTypeIds"
+                :props="{
+                  checkStrictly: true,
+                  emitPath: false,
+                  value: 'id',
+                  label: 'name',
+                  multiple: true,
+                  children: 'list',
+                }"
+                collapse-tags
+                clearable
+              ></el-cascader>
+            </div>
+          </div>
         </div>
         <div slot="footer" class="dialog-footer" style="text-align: center;">
-          <el-button @click="dialogVisible = false">取 消</el-button>
+          <el-button @click="closeEditEnterprise">取 消</el-button>
           <el-button type="primary" @click="confirmFn">确 定</el-button>
         </div>
       </el-dialog>
@@ -417,14 +520,25 @@ import tableMixin from "@/mixin/table";
 import { getEnterpriseList } from "@/api/user.js";
 import {
   handleEnterpriseInfoExport,
+  queryDeviceTypeList,
   queryEnterpriseMemberList,
+  queryMasterName,
 } from "@/api/order.js";
-import { getEnterpriseInfo, editEnterpriseInfo } from "@/api/boss";
+import {
+  getEnterpriseInfo,
+  editEnterpriseInfo,
+  queryEnterpriseName,
+} from "@/api/boss";
 export default {
   title: "course",
   mixins: [tableMixin],
   data() {
     return {
+      typeList: null,
+      masterOptions: [],
+      VALE: "",
+      recommendMaster: "",
+
       editEnterprise: false,
       dialogVisible: false,
       editForm: null,
@@ -456,12 +570,48 @@ export default {
       param: {},
     };
   },
-  created() {
+  async created() {
     this._getEnterpriseList();
+    const res = await queryDeviceTypeList();
+    this.typeList = res.data;
   },
   methods: {
+    // 重置事件
+    resetFn() {
+      this.enterpriseName = "";
+      this.enterprisePhone = "";
+      this._getEnterpriseList();
+    },
+    // 推荐人搜索
+    async remoteMethod(query) {
+      const res = await queryMasterName(query);
+      this.masterOptions = res.data;
+    },
     // 编辑确定按钮触发的事件
-    async confirmFn() {},
+    async confirmFn() {
+      // 修改设备类型格式
+      let str = "";
+      this.editForm.deviceTypeIds.forEach((el, index) => {
+        if (index === 0) {
+          str = "" + el;
+        } else {
+          str = str + "," + el;
+        }
+      });
+      this.editForm.deviceTypeIds = str;
+      const res = await queryMasterName(this.recommendMaster);
+      const uid = res.data && res.data[0].uid;
+      this.editForm.recommendMasterUid = uid;
+      const res1 = await editEnterpriseInfo(this.editForm);
+      if (res1.message === "操作成功") {
+        this.$message({
+          message: "编辑成功!",
+          type: "success",
+        });
+        await this._getEnterpriseList();
+        this.closeEditEnterprise();
+      }
+    },
     // 关闭编辑企业弹窗
     closeEditEnterprise() {
       this.editForm = null;
@@ -469,9 +619,14 @@ export default {
     },
     // 点击编辑触发的事件
     async editTeam(row) {
-      console.log(row);
       const res = await getEnterpriseInfo(row);
       this.editForm = res.data;
+      this.recommendMaster = res.data.recommendMasterRealName;
+      if (this.editForm.deviceTypeIds.indexOf(",") !== -1) {
+        this.editForm.deviceTypeIds = this.editForm.deviceTypeIds.split(",");
+      }
+      const { data } = await queryEnterpriseName(res.data.enterpriseName);
+      this.editForm.uid = data[0].uid;
       this.editEnterprise = true;
     },
     // 页码发生变化触发的事件
@@ -554,6 +709,7 @@ export default {
     },
     // 点击审核触发的事件
     open(row) {
+      return;
       console.log(row);
       this.$refs.enterpriseList.open();
       this.editForm = {
@@ -571,7 +727,6 @@ export default {
       };
       getEnterpriseList(params).then((res) => {
         if (res) {
-          console.log(res);
           const { records, total, current } = res.data;
           this.enterpriseList = records;
           this.total = total;
