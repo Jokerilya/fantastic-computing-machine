@@ -44,6 +44,15 @@ export function editEnterpriseInfo(data) {
   });
 }
 
+//企业审核
+export function handleEnterpriseExamine(data) {
+  return request({
+    url: "/admin/maintenance/handleEnterpriseExamine",
+    method: "post",
+    data: data,
+  });
+}
+
 // 查询职位类型
 export function queryPositionType(params) {
   return request({

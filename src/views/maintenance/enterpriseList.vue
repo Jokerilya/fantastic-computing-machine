@@ -220,7 +220,7 @@
               type="warning"
               size="mini"
               plain
-              @click="open(row)"
+              @click="auditFn(row)"
               :disabled="row.enterpriseFlag == 2"
               >{{
                 row.enterpriseFlag == 2
@@ -525,6 +525,7 @@ import {
   queryMasterName,
 } from "@/api/order.js";
 import {
+  handleEnterpriseExamine,
   getEnterpriseInfo,
   editEnterpriseInfo,
   queryEnterpriseName,
@@ -576,6 +577,24 @@ export default {
     this.typeList = res.data;
   },
   methods: {
+    // 点击审核触发的事件
+    async auditFn(row) {
+      const { enterpriseFlag, uid } = row;
+      let status;
+      if (enterpriseFlag !== 2) {
+        status = 2;
+      } else {
+        status = 3;
+      }
+      const data = {
+        status,
+        uid,
+      };
+      await handleEnterpriseExamine(data);
+      if (res.message === "操作成功") {
+        this._queryEnterpriseMemberList();
+      }
+    },
     // 重置事件
     resetFn() {
       this.enterpriseName = "";
@@ -626,7 +645,7 @@ export default {
         this.editForm.deviceTypeIds = this.editForm.deviceTypeIds.split(",");
       }
       const { data } = await queryEnterpriseName(res.data.enterpriseName);
-      this.editForm.uid = data[0].uid;
+      this.editForm.uid = data[0] && data[0].uid;
       this.editEnterprise = true;
     },
     // 页码发生变化触发的事件
