@@ -154,6 +154,24 @@ export function queryDeviceTypeList() {
     method: "post",
   });
 }
+
+//新增/编辑设备类型
+export function editDeviceType(data) {
+  return request({
+    url: "/admin/maintenance/editDeviceType",
+    method: "post",
+    data,
+  });
+}
+
+// 删除设备类型
+export function deleteDeviceType(id) {
+  return request({
+    url: "/admin/maintenance/deleteDeviceType?id=" + id,
+    method: "get",
+  });
+}
+
 // 新增/录入管家订单
 export function editButlerOrder(data) {
   return request({

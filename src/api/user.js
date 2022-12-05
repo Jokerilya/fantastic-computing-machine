@@ -62,8 +62,8 @@ export function getRepairOrderDetail(data) {
 export function getEnterpriseList(data) {
   return request({
     url: "/admin/maintenance/queryEnterpriseList",
-    method: "get",
-    params: data,
+    method: "post",
+    data,
   });
 }
 // 启用/禁用

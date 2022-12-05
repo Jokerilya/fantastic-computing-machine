@@ -4,8 +4,8 @@
     <!-- 顶部工具栏部分 -->
     <div class="manage-top">
       <el-form label-width="88px" class="rule-form" label-position="right">
-        <el-row :gutter="20">
-          <el-col :span="5">
+        <el-row :gutter="25">
+          <el-col :span="5" style="padding: 0;">
             <el-form-item label="公司名称">
               <el-input
                 placeholder="请输入公司名称"
@@ -13,7 +13,7 @@
               ></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="5">
+          <el-col :span="5" style="padding: 0;">
             <el-form-item label="联系电话">
               <el-input
                 placeholder="请输入联系电话"
@@ -21,7 +21,26 @@
               ></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="9">
+          <el-col :span="5" style="padding: 0;">
+            <el-form-item label="推荐人">
+              <el-select
+                filterable
+                :remote-method="remoteMethod"
+                remote
+                v-model="referencePerson"
+                placeholder="请输入推荐人"
+              >
+                <el-option
+                  v-for="item in masterOptions"
+                  :key="item.value"
+                  :label="item.realName"
+                  :value="item.realName"
+                >
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
             <el-button
               icon="el-icon-zoom-in"
               plain
@@ -55,7 +74,7 @@
       element-loading-spinner="el-icon-loading"
       :data="enterpriseList"
       style="width: 100%;"
-      max-height="700"
+      :height="enterpriseList.length > 5 ? '500' : ''"
     >
       <el-table-column
         prop="enterpriseName"
@@ -86,8 +105,8 @@
         align="center"
       ></el-table-column> -->
       <el-table-column
-        prop="superiorEnterpriseName"
-        label="团长"
+        prop="frname"
+        label="法人代表"
         show-overflow-tooltip
         width="100"
         align="center"
@@ -488,6 +507,30 @@
         </div>
       </el-dialog>
     </div>
+
+    <!-- 企业审核弹窗 -->
+    <el-dialog
+      title="企业审核"
+      :visible="auditDialog"
+      width="30%"
+      :before-close="auditDialogClose"
+    >
+      <div
+        style="text-align: center;display: flex;justify-content: center;align-items: center;"
+      >
+        <div style="margin-right: 20px;font-size: 18px;font-weight: 700;">
+          审核状态:
+        </div>
+        <el-select v-model="auditSelect" placeholder="请选择审核状态">
+          <el-option label="已通过" :value="2"></el-option>
+          <el-option label="已驳回" :value="3"></el-option>
+        </el-select>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="auditDialogClose">取 消</el-button>
+        <el-button type="primary" @click="auditDialogConfirm">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -535,6 +578,11 @@ export default {
   mixins: [tableMixin],
   data() {
     return {
+      auditDialog: false, //审核弹窗默认
+      auditSelect: "", //审核状态
+      auditUid: "", //审核需要的uid
+      referencePerson: null, //查询推荐人框
+
       typeList: null,
       masterOptions: [],
       VALE: "",
@@ -546,7 +594,7 @@ export default {
 
       total: 0,
       currentPage: 1,
-      enpTeamList: [],
+      enpTeamList: null,
       dataSumNum: "",
       enterpriseList: "",
       enterpriseName: "",
@@ -577,23 +625,36 @@ export default {
     this.typeList = res.data;
   },
   methods: {
+    // 确定审核
+    async auditDialogConfirm() {
+      const data = {
+        status: this.auditSelect,
+        uid: this.auditUid,
+      };
+      const res = await handleEnterpriseExamine(data);
+      console.log(res);
+      if (res.message === "操作成功") {
+        this.$message({
+          message: res.message,
+          type: "success",
+        });
+        this.auditDialogClose();
+        this._getEnterpriseList();
+      }
+    },
+    // 关闭审核弹窗的事件
+    auditDialogClose() {
+      this.auditDialog = false;
+    },
     // 点击审核触发的事件
     async auditFn(row) {
-      const { enterpriseFlag, uid } = row;
-      let status;
-      if (enterpriseFlag !== 2) {
-        status = 2;
-      } else {
-        status = 3;
+      if (row.enterpriseFlag === 1) {
+        this.auditSelect = "";
+      } else if (row.enterpriseFlag === 3) {
+        this.auditSelect = 3;
       }
-      const data = {
-        status,
-        uid,
-      };
-      await handleEnterpriseExamine(data);
-      if (res.message === "操作成功") {
-        this._queryEnterpriseMemberList();
-      }
+      this.auditUid = row.uid;
+      this.auditDialog = true;
     },
     // 重置事件
     resetFn() {
@@ -737,13 +798,17 @@ export default {
       };
     },
     //获取企业列表
-    _getEnterpriseList() {
+    async _getEnterpriseList() {
       let params = {
         pageNo: this.currentPage,
         pageSize: 20,
         name: this.enterpriseName,
         phone: this.enterprisePhone,
       };
+      if (this.referencePerson) {
+        const res = await queryMasterName(this.referencePerson);
+        params.uid = res.data[0] && res.data[0].uid;
+      }
       getEnterpriseList(params).then((res) => {
         if (res) {
           const { records, total, current } = res.data;

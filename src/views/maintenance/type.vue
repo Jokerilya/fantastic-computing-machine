@@ -70,7 +70,11 @@
             <el-button type="warning" size="mini" plain @click="editInit(row)"
               >编辑</el-button
             >
-            <el-button type="danger" size="mini" plain @click="remove([row.id])"
+            <el-button
+              type="danger"
+              size="mini"
+              plain
+              @click="delMessage(row.id)"
               >删除</el-button
             >
           </div>
@@ -112,11 +116,19 @@
           prop="pid"
           style="width:calc(100% - 120px)"
         >
-          <el-input
+          <el-select v-model.number="addForm.pid" placeholder="请选择">
+            <el-option
+              :label="item - 1"
+              :value="item - 1"
+              :key="item - 1"
+              v-for="item in equipmentTypeNum"
+            ></el-option>
+          </el-select>
+          <!-- <el-input
             type="number"
             v-model="addForm.pid"
             autocomplete="off"
-          ></el-input>
+          ></el-input> -->
         </el-form-item>
         <el-form-item label="排序" prop="sort" style="width:calc(100% - 120px)">
           <el-input
@@ -131,7 +143,16 @@
           prop="icon"
           style="width:calc(100% - 120px)"
         >
-          <upload ref="addImg" type="image/*" limit="1" :size="1024 ** 2 * 2" />
+          <div class="typeUpload">
+            <el-upload
+              action="#"
+              list-type="picture-card"
+              :http-request="httpRequest"
+              :limit="1"
+            >
+              <i class="el-icon-plus"></i>
+            </el-upload>
+          </div>
         </el-form-item>
       </el-form>
     </model>
@@ -184,14 +205,23 @@
     </model>
   </div>
 </template>
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+.typeUpload {
+  width: 150px;
+  height: 150px;
+  overflow: hidden;
+}
+</style>
 <script>
+import { deleteDeviceType, editDeviceType } from "@/api/order";
+import { UploadImg } from "@/api/system";
 import tableMixin from "@/mixin/table";
 export default {
   name: "Carousel",
   mixins: [tableMixin],
   data() {
     return {
+      equipmentTypeNum: null,
       loading: false,
       rules: {
         title: [
@@ -212,15 +242,43 @@ export default {
       addForm: {},
       url: {
         query: "/admin/maintenance/queryDeviceTypeList",
-        add: "/admin//maintenance/editDeviceType",
         edit: "/admin//maintenance/editDeviceType",
-        delete: "/admin/maintenance/deleteDeviceType",
         //   updateStatus:'/admin/edit_carousel_info_status',
         //   updateTopStatus:'/admin/edit_carousel_info_top'
       },
     };
   },
   methods: {
+    // 点击删除触发的事件
+    delMessage(id) {
+      this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(async () => {
+          const res = await deleteDeviceType(id);
+          if (res.message === "操作成功") {
+            this.$message({
+              message: "删除成功",
+              type: "success",
+            });
+          }
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除",
+          });
+        });
+    },
+    // 上传图片的函数
+    async httpRequest(data) {
+      const formData = new FormData();
+      formData.append("file", data.file);
+      const res = await UploadImg(formData);
+      this.addForm.imgUrl = res.data;
+    },
     query() {
       this.loading = true;
       this.$axios
@@ -231,6 +289,7 @@ export default {
         })
         .then(({ data }) => {
           this.dataList = data;
+          this.equipmentTypeNum = data.length + 1;
         })
         .catch(function(error) {
           console.info(error);
@@ -270,14 +329,15 @@ export default {
     handleAdd(fn) {
       this.$refs.addForm.validate(async (valid) => {
         if (valid) {
-          if (this.$refs.addImg.isNull()) {
-            this.$message.error("请上传图标文件");
-            return false;
+          const res = await editDeviceType(this.addForm);
+          if (res.message === "操作成功") {
+            this.$message({
+              message: "已添加成功",
+              type: "success",
+            });
+            this.$refs.addModel.close();
+            this.query();
           }
-          let img = (await this.$refs.addImg.uploadFile())[0];
-          this.submitForm(fn, {
-            imgUrl: img,
-          });
         } else {
           return false;
         }
@@ -287,6 +347,7 @@ export default {
       if (fn) fn(false);
     },
     editInit(row) {
+      let form = this.editForm;
       this.editForm = row;
       this.$refs.editModel.open();
       this.$nextTick(() => {

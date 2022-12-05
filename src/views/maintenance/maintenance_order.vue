@@ -92,7 +92,7 @@
       element-loading-spinner="el-icon-loading"
       :data="dataList"
       style="width: 100%;"
-      max-height="700"
+      :height="masterList.length > 5 ? '500' : ''"
     >
       <el-table-column
         prop="orderSn"
@@ -102,10 +102,21 @@
         align="center"
       ></el-table-column>
       <el-table-column
+        label="工单类型"
+        show-overflow-tooltip
+        width="100"
+        align="center"
+      >
+        <template slot-scope="{ row }">
+          <div v-if="row.orderType === 2">年保</div>
+          <div v-if="row.orderType === 1">散单</div>
+        </template>
+      </el-table-column>
+      <el-table-column
         prop="no"
         label="设备编码"
         show-overflow-tooltip
-        width="200"
+        width="150"
         align="center"
       ></el-table-column>
       <el-table-column
@@ -136,13 +147,6 @@
         width="150"
         align="center"
       ></el-table-column>
-      <!-- <el-table-column
-        prop="deviceSystemName"
-        label="设备系统名"
-        show-overflow-tooltip
-        width="150"
-        align="center"
-      ></el-table-column> -->
       <el-table-column
         prop="deviceTypeName"
         label="设备类型名"
@@ -157,18 +161,6 @@
         width="200"
         align="center"
       ></el-table-column>
-      <!-- <el-table-column
-        prop="modalityType"
-        label="维保模式"
-        show-overflow-tooltip
-        width="200"
-        align="center"
-      >
-        <template slot-scope="{row}">{{ util.global.getLabel('modalityType',row.modalityType) }}</template>
-      </el-table-column> -->
-      <!-- <el-table-column prop="type" label="故障类型" show-overflow-tooltip width="200" align="center">
-        <template slot-scope="{row}">{{ util.global.getLabel('malfunctionType',row.type) }}</template>
-      </el-table-column> -->
       <el-table-column
         prop="enterpriseName"
         label="企业名称"
@@ -197,27 +189,20 @@
         width="200"
         align="center"
       ></el-table-column>
-      <!-- <el-table-column
-        prop="depositAmount"
-        label="定金"
+      <el-table-column
+        prop="masterRealName"
+        label="师傅名称"
         show-overflow-tooltip
-        width="100"
+        width="200"
         align="center"
       ></el-table-column>
       <el-table-column
-        prop="balanceAmount"
-        label="尾款"
+        prop="masterPhone"
+        label="师傅联系电话 "
         show-overflow-tooltip
-        width="150"
+        width="200"
         align="center"
-      ></el-table-column> -->
-      <!-- <el-table-column
-        prop="rejectReason"
-        label="驳回原因"
-        show-overflow-tooltip
-        width="150"
-        align="center"
-      ></el-table-column> -->
+      ></el-table-column>
       <el-table-column
         prop="orderStatusName"
         label="状态"
@@ -226,9 +211,6 @@
         align="center"
         fixed="right"
       >
-        <!-- <template
-          slot-scope="{row}"
-        >{{ util.global.getLabel('subStatus',row.subStatus) }}</template> -->
       </el-table-column>
       <el-table-column
         prop="createTime"
@@ -238,7 +220,7 @@
         align="center"
         fixed="right"
       ></el-table-column>
-      <el-table-column label="操作" width="300px" fixed="right">
+      <el-table-column label="操作" width="250px" fixed="right" align="center">
         <template slot-scope="{ row }">
           <div class="settings">
             <el-button type="info" size="mini" plain @click="queryDesc(row)"
@@ -253,7 +235,6 @@
               >指派列表</el-button
             >
           </div>
-          <!-- :disabled="row.mainStatus !=1" -->
         </template>
       </el-table-column>
     </el-table>

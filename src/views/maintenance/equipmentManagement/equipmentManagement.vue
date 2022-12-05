@@ -21,8 +21,8 @@
           v-model="topTool_time"
           type="daterange"
           range-separator="———"
-          start-placeholder="维保开始时间"
-          end-placeholder="维保结束时间"
+          start-placeholder="开始时间"
+          end-placeholder="结束时间"
         >
         </el-date-picker>
       </div>
@@ -79,6 +79,8 @@
             <el-table-column label="维保价格">
               <template slot-scope="{ row }"> {{ row.price }}.00 </template>
             </el-table-column>
+            <el-table-column prop="createTime" label="创建时间" width="140">
+            </el-table-column>
             <el-table-column label="维保时间">
               <template slot-scope="{ row }">
                 {{ row.startTime }}
@@ -95,22 +97,13 @@
                     @click="goEquipmentDetails(row.id)"
                     >详情</a
                   >
-                  <!-- <a href="#">修改</a> -->
                 </div>
               </template>
             </el-table-column>
           </el-table>
         </div>
         <div class="tableContent_footer">
-          <div class="footer_btn">
-            <!--暂时没有这个功能 <el-button
-              class="addBtn"
-              @click="
-                $router.push('/maintenance/equipmentManagement/addEquipment')
-              "
-              >新增</el-button
-            > -->
-          </div>
+          <div class="footer_btn"></div>
           <div class="footer_pagination">
             <el-pagination
               @current-change="currentChangeFn"

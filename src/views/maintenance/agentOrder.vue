@@ -150,9 +150,10 @@
           <div class="item">
             <div class="labelStyle">联系电话</div>
             <el-input
+              @blur="phoneCheck"
               placeholder="请输入联系人电话"
               class="inp"
-              v-model="data.contactsPhone"
+              v-model.number="data.contactsPhone"
             ></el-input>
           </div>
         </div>
@@ -208,6 +209,16 @@ export default {
     };
   },
   methods: {
+    // 判断手机号码格式
+    phoneCheck() {
+      if (!/^1[3456789]\d{9}$/.test(this.data.contactsPhone)) {
+        this.$message({
+          message: "手机号码格式不对",
+          type: "warning",
+        });
+        this.data.contactsPhone = "";
+      }
+    },
     // 修改一下 data.type 数据类型
     checkType(arr) {
       let str = "";

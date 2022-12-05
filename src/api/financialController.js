@@ -9,3 +9,19 @@ export function queryPaymentList(data) {
     data: data,
   });
 }
+
+// 管家业务-收款信息
+export function getButlerOrderCollectionInfo(orderSn) {
+  return request({
+    url: "/admin/financial/getButlerOrderCollectionInfo?orderSn=" + orderSn,
+    method: "get",
+  });
+}
+
+// 维保订单-收款信息
+export function getRepairOrderCollectionInfo(orderSn) {
+  return request({
+    url: "/admin/financial/getRepairOrderCollectionInfo?orderSn=" + orderSn,
+    method: "GET",
+  });
+}

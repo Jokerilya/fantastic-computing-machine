@@ -3,12 +3,47 @@
   <div class="app-container">
     <el-form label-width="88px" class="rule-form" label-position="right">
       <el-row :gutter="20">
-        <el-col :span="5">
+        <el-col :span="17" style="display: flex;">
           <el-form-item label="师傅名称">
             <el-input placeholder="请输入师傅名称" v-model="Name"></el-input>
           </el-form-item>
+          <el-form-item label="团长名称">
+            <el-select
+              filterable
+              :remote-method="remoteMethod"
+              remote
+              v-model="colonelName"
+              placeholder="请选择"
+            >
+              <el-option
+                v-for="item in referrerOptions"
+                :key="item.value"
+                :label="item.realName"
+                :value="item.realName"
+              >
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="推荐人名称">
+            <el-select
+              filterable
+              :remote-method="remoteMethod"
+              remote
+              v-model="referrerName"
+              placeholder="请选择"
+            >
+              <el-option
+                v-for="item in referrerOptions"
+                :key="item.value"
+                :label="item.realName"
+                :value="item.realName"
+              >
+              </el-option>
+            </el-select>
+          </el-form-item>
         </el-col>
-        <el-col :span="5">
+        <el-col :span="7">
+          <el-button plain type="primary" @click="resetFn">重置</el-button>
           <el-button
             icon="el-icon-zoom-in"
             plain
@@ -33,7 +68,7 @@
       element-loading-spinner="el-icon-loading"
       :data="masterList"
       style="width: 100%;"
-      max-height="700"
+      :height="masterList.length > 5 ? '500' : ''"
     >
       <el-table-column
         prop="realName"
@@ -377,13 +412,17 @@ import {
   handleMasterInfoExport,
   queryMasterMemberList,
   getMasterInfo,
+  queryMasterName,
 } from "@/api/order.js";
 export default {
   title: "course",
   mixins: [tableMixin],
   data() {
     return {
+      colonelName: null,
       dialogVisible: false,
+      referrerName: null, //推荐人名字
+      referrerOptions: [],
 
       masterTeamList: [],
       pageCount: 0,
@@ -433,6 +472,18 @@ export default {
     this._getMasterList();
   },
   methods: {
+    // 重置按钮
+    resetFn() {
+      this.referrerName = null;
+      this.colonelName = null;
+      this.Name = null;
+      this._getMasterList();
+    },
+    // 搜索推荐人/团长
+    async remoteMethod(query) {
+      const res = await queryMasterName(query);
+      this.referrerOptions = res.data;
+    },
     handleEnterpriseExamine() {},
     _handleMasterInfoExport() {
       let data = {
@@ -479,13 +530,22 @@ export default {
       this.currentPage = val;
       this._getMasterList();
     },
-    _getMasterList() {
+    async _getMasterList() {
       let params = {
         pageNo: this.currentPage,
         pageSize: 10,
         realName: this.Name,
         phone: this.Phone,
       };
+      if (this.referrerName) {
+        const res = await queryMasterName(this.referrerName);
+        params.recommendMasterUid = res.data[0] && res.data[0].uid;
+      }
+      if (this.colonelName) {
+        const res = await queryMasterName(this.colonelName);
+        params.superiorMasterUid = res.data[0] && res.data[0].uid;
+      }
+      console.log(params);
       getMasterList(params).then((res) => {
         if (res) {
           this.masterList = res.data.records;

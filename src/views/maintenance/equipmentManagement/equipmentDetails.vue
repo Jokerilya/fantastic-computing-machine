@@ -164,17 +164,26 @@
             'text-align': 'center',
           }"
         >
-          <el-table-column prop="orderSn" label="订单号"> </el-table-column>
-          <el-table-column prop="orderStatusName " label="订单状态">
+          <el-table-column prop="orderSn" label="订单号" width="150">
+          </el-table-column>
+          <el-table-column prop="orderStatusName " label="订单状态" width="150">
             <template slot-scope="{ row }">
               {{ row.orderStatusName }}
             </template>
           </el-table-column>
-          <el-table-column prop="contactsPeople" label="客户负责人">
+          <el-table-column prop="contactsPeople" label="客户负责人" width="150">
           </el-table-column>
-          <el-table-column prop="contactsPhone" label="客户电话">
+          <el-table-column prop="contactsPhone" label="客户电话" width="150">
           </el-table-column>
-          <el-table-column prop="type" label="故障类型">
+          <el-table-column prop="masterPhone" label="师傅名称" width="150">
+          </el-table-column>
+          <el-table-column
+            prop="masterRealName"
+            label="师傅联系电话"
+            width="150"
+          >
+          </el-table-column>
+          <el-table-column prop="type" label="故障类型" width="150">
             <template slot-scope="{ row }">
               <div v-if="row.type">
                 <div v-if="row.type.includes(1)">电气故障</div>
@@ -184,16 +193,16 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="simpleDesc" label="故障描述">
+          <el-table-column prop="simpleDesc" label="故障描述" width="150">
           </el-table-column>
-          <el-table-column prop="createTime" label="下单时间">
+          <el-table-column prop="createTime" label="下单时间" width="150">
           </el-table-column>
-          <el-table-column prop="totalAmount" label="总费用">
+          <el-table-column prop="totalAmount" label="总费用" width="150">
             <template slot-scope="{ row }">
               {{ row.totalAmount }}
             </template>
           </el-table-column>
-          <el-table-column label="操作">
+          <el-table-column label="操作" width="150" fixed="right">
             <template slot-scope="{ row }">
               <a
                 href="#"

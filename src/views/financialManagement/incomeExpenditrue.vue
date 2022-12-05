@@ -74,9 +74,15 @@
                   href="#"
                   style="color: #0b2059;margin-right: 10px;"
                   v-if="row.status === 0"
+                  @click="detailsOpen(row, true)"
                   >支付</a
                 >
-                <a href="#" style="color: #0b2059;">详情</a>
+                <a
+                  href="#"
+                  style="color: #0b2059;"
+                  @click="detailsOpen(row, false)"
+                  >详情</a
+                >
               </template>
             </el-table-column>
           </el-table>
@@ -97,8 +103,12 @@
       </el-card>
     </div>
 
-    <!-- 支付详情 -->
-    <!-- <PayOrder-Details></PayOrder-Details> -->
+    <!-- 详情 -->
+    <PayOrder-Details
+      :payBtnShow="payBtnShow"
+      @handleClose="detailsClose"
+      :dialogVisible="detailsShow"
+    ></PayOrder-Details>
   </div>
 </template>
 
@@ -143,17 +153,22 @@
 </style>
 
 <script>
-import { queryPaymentList } from "@/api/financialController";
+import {
+  queryPaymentList,
+  getButlerOrderCollectionInfo,
+  getRepairOrderCollectionInfo,
+} from "@/api/financialController";
 import payOrderDetails from "./components/payOrderDetails.vue";
 
 export default {
   data() {
     return {
+      detailsShow: false, //详情
+      payBtnShow: false, //支付按钮显示
       // 查询的数据
       serviceTypeSelect: "",
       statusSelect: "",
       orderSnInp: "",
-
       ordersList: null,
       // 查询列表需要的参数
       PaymentListData: {
@@ -167,6 +182,23 @@ export default {
     "PayOrder-Details": payOrderDetails,
   },
   methods: {
+    // 关闭详情弹窗的事件
+    detailsClose() {
+      this.detailsShow = false;
+    },
+    // 显示弹窗
+    async detailsOpen(row, Boolean) {
+      this.payBtnShow = Boolean;
+      this.detailsShow = true;
+      return;
+      if (row.serviceTypeName === "管家合同支付") {
+        const res = await getButlerOrderCollectionInfo(row.orderSn);
+        console.log(res);
+      } else {
+        const res = getRepairOrderCollectionInfo(row.orderSn);
+        console.log(res);
+      }
+    },
     // 点击重置触发的事件
     resetBtn() {
       this.PaymentListData = {

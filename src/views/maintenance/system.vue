@@ -37,11 +37,19 @@
             prop="pid"
             style="width:calc(100% - 120px)"
           >
-            <el-input
+            <el-select v-model.number="addForm.pid" placeholder="请选择">
+              <el-option
+                :label="item - 1"
+                :value="item - 1"
+                :key="item - 1"
+                v-for="item in equipmentSystemNum"
+              ></el-option>
+            </el-select>
+            <!-- <el-input
               type="number"
               v-model="addForm.pid"
               autocomplete="off"
-            ></el-input>
+            ></el-input> -->
           </el-form-item>
           <el-form-item
             label="排序"
@@ -208,6 +216,7 @@ export default {
   mixins: [tableMixin],
   data() {
     return {
+      equipmentSystemNum: null,
       loading: false,
       rules: {
         title: [
@@ -243,8 +252,8 @@ export default {
           pageSize: this.page.dataNum,
         })
         .then(({ data }) => {
-          console.log(data);
           this.dataList = data;
+          this.equipmentSystemNum = data.length + 1;
         })
         .catch(function(error) {
           console.info(error);

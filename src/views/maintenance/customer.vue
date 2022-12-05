@@ -50,6 +50,7 @@
             background: '#f6f8fc',
             color: '#707070',
           }"
+          :height="masterList.length > 8 ? '400' : ''"
         >
           <el-table-column
             prop="orderSn"
