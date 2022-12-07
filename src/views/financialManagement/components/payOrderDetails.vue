@@ -34,13 +34,17 @@
       </div>
       <div style="display: flex;justify-content: flex-end;">
         <el-button @click="handleClose" class="closeBtn">关闭</el-button>
-        <el-button class="comfirmBtn" v-if="payBtnShow">确定付款</el-button>
+        <el-button class="comfirmBtn" v-if="payBtnShow" @click="comfirmFn"
+          >确定付款</el-button
+        >
       </div>
     </div>
   </el-dialog>
 </template>
 
 <script>
+import { handleMasterPayment } from "@/api/order";
+
 export default {
   props: {
     dialogVisible: {
@@ -52,7 +56,18 @@ export default {
       default: false,
     },
   },
+  data() {
+    return {
+      orderSn: "",
+    };
+  },
   methods: {
+    // 确定按钮
+    async comfirmFn() {
+      const res = await handleMasterPayment(this.orderSn);
+      console.log(res);
+    },
+    // 关闭弹窗
     handleClose() {
       this.$emit("handleClose");
     },

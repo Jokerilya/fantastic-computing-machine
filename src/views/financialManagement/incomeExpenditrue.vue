@@ -105,6 +105,7 @@
 
     <!-- 详情 -->
     <PayOrder-Details
+      ref="payOrderDetails"
       :payBtnShow="payBtnShow"
       @handleClose="detailsClose"
       :dialogVisible="detailsShow"
@@ -189,7 +190,9 @@ export default {
     // 显示弹窗
     async detailsOpen(row, Boolean) {
       this.payBtnShow = Boolean;
+      this.$refs.payOrderDetails.orderSn = row.orderSn;
       this.detailsShow = true;
+
       return;
       if (row.serviceTypeName === "管家合同支付") {
         const res = await getButlerOrderCollectionInfo(row.orderSn);

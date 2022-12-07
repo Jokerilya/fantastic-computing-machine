@@ -95,6 +95,12 @@ const router = {
       component: () => import("@/views/maintenance/agentOrder"),
       meta: { title: "设备详情", noShow: "true" },
     },
+    {
+      path: "/maintenance/worker/workerDetails",
+      name: "workerDetails",
+      component: () => import("@/views/maintenance/worker/workerDetails"),
+      meta: { title: "师傅详情", noShow: "true" },
+    },
 
     // 暂时 不用这个功能 后续看情况补上
     // {

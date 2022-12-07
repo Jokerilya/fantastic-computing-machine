@@ -107,6 +107,15 @@ export function queryRepairOrderList(data) {
   });
 }
 
+// 维保订单列表导出
+export function handleRepairOrderExport(data) {
+  return request({
+    url: "/admin/maintenance/handleRepairOrderExport",
+    method: "POST",
+    data,
+  });
+}
+
 //平台审核报价
 export function examineMasterQuotation(data) {
   return request({
@@ -131,6 +140,16 @@ export function queryButlerOrderList(data) {
     data,
   });
 }
+
+// 管家订单列表导出
+export function handleButlerOrderExport(data) {
+  return request({
+    url: "/admin/maintenance/handleButlerOrderExport",
+    method: "post",
+    data,
+  });
+}
+
 //查询系统类型
 export function queryDeviceSystemList() {
   return request({

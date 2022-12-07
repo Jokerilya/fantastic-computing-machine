@@ -66,199 +66,204 @@
     <!-- 空行 -->
     <div style="height: 16px;"></div>
 
-    <!-- 企业列表表格部分 -->
-    <el-table
-      highlight-current-row
-      v-loading.fullscreen.lock="loading"
-      element-loading-text="拼命加载中"
-      element-loading-spinner="el-icon-loading"
-      :data="enterpriseList"
-      style="width: 100%;"
-      :height="enterpriseList.length > 5 ? '500' : ''"
-    >
-      <el-table-column
-        prop="enterpriseName"
-        label="企业名称"
-        show-overflow-tooltip
-        width="250"
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        prop="maintenancePhone"
-        label="联系电话"
-        show-overflow-tooltip
-        width="120"
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        prop="maintenancePeople"
-        label="联系人"
-        show-overflow-tooltip
-        width="70"
-        align="center"
-      ></el-table-column>
-      <!-- <el-table-column
+    <el-card>
+      <!-- 企业列表表格部分 -->
+      <el-table
+        highlight-current-row
+        v-loading.fullscreen.lock="loading"
+        element-loading-text="拼命加载中"
+        element-loading-spinner="el-icon-loading"
+        :data="enterpriseList"
+        style="width: 100%;"
+        :height="enterpriseList.length > 5 ? '500' : ''"
+      >
+        <el-table-column
+          prop="enterpriseName"
+          label="企业名称"
+          show-overflow-tooltip
+          width="250"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="maintenancePhone"
+          label="联系电话"
+          show-overflow-tooltip
+          width="120"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="maintenancePeople"
+          label="联系人"
+          show-overflow-tooltip
+          width="70"
+          align="center"
+        ></el-table-column>
+        <!-- <el-table-column
         prop="salesmanId"
         label="业务员"
         show-overflow-tooltip
         width="100"
         align="center"
       ></el-table-column> -->
-      <el-table-column
-        prop="frname"
-        label="法人代表"
-        show-overflow-tooltip
-        width="100"
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        prop="recommendMasterName"
-        label="直推师傅"
-        show-overflow-tooltip
-        width="100"
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        prop="realName"
-        label="真实姓名"
-        show-overflow-tooltip
-        width="100"
-        align="center"
-      ></el-table-column>
-      <!-- <el-table-column
+        <el-table-column
+          prop="frname"
+          label="法人代表"
+          show-overflow-tooltip
+          width="100"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="recommendMasterName"
+          label="直推师傅"
+          show-overflow-tooltip
+          width="100"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="realName"
+          label="真实姓名"
+          show-overflow-tooltip
+          width="100"
+          align="center"
+        ></el-table-column>
+        <!-- <el-table-column
         prop="enterpriseTypeId"
         label="企业类型"
         show-overflow-tooltip
         width="100"
         align="center"
       ></el-table-column>-->
-      <el-table-column
-        label="营业执照"
-        show-overflow-tooltip
-        width="150"
-        align="center"
-      >
-        <template slot-scope="scope">
-          <a
-            :href="scope.row.businessLicense"
-            target="_blank"
-            title="营业执照"
-            v-if="scope.row.businessLicense"
-          >
-            <el-image
-              style="width:50px;height:50px"
-              :src="scope.row.businessLicense"
-            ></el-image>
-          </a>
-          <div v-else style="font-size: 25px;">
-            /
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column
-        prop="enterpriseAddress"
-        label="企业地址"
-        show-overflow-tooltip
-        width="350"
-        align="center"
-      ></el-table-column>
-
-      <el-table-column
-        prop="phone"
-        label="联系电话"
-        show-overflow-tooltip
-        width="120"
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        label="认证状态"
-        show-overflow-tooltip
-        width="150"
-        align="center"
-      >
-        <template slot-scope="{ row }">
-          <div v-if="row.enterpriseFlag === 0" style="color: #ccc;">未认证</div>
-          <div v-if="row.enterpriseFlag === 1" style="color: blue;">审核中</div>
-          <div v-if="row.enterpriseFlag === 2" style="color: green;">
-            审核成功
-          </div>
-          <div v-if="row.enterpriseFlag === 3" style="color: red;">
-            审核失败
-          </div>
-        </template>
-      </el-table-column>
-
-      <el-table-column
-        prop="settledTime"
-        label="入驻时间"
-        show-overflow-tooltip
-        width="200"
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        prop="portrait"
-        label="微信头像"
-        show-overflow-tooltip
-        width="150"
-        align="center"
-      >
-        <template slot-scope="scope">
-          <a :href="scope.row.portrait" target="_blank" title="微信头像">
-            <el-image
-              style="width:50px;height:50px"
-              :src="scope.row.portrait"
-            ></el-image>
-          </a>
-        </template>
-      </el-table-column>
-      <el-table-column
-        prop="deviceScale"
-        label="公司规模"
-        show-overflow-tooltip
-        width="100"
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        prop="enterpriseTypeIdsName"
-        label="公司类型"
-        show-overflow-tooltip
-        width="200"
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        prop="deviceTypeIdsName"
-        label="设备类型"
-        show-overflow-tooltip
-        width="200"
-        align="center"
-      ></el-table-column>
-      <el-table-column label="操作" width="300px" fixed="right">
-        <template slot-scope="{ row }">
-          <div class="settings">
-            <el-button
-              type="warning"
-              size="mini"
-              plain
-              @click="auditFn(row)"
-              :disabled="row.enterpriseFlag == 2"
-              >{{
-                row.enterpriseFlag == 2
-                  ? "已通过"
-                  : row.enterpriseFlag == 3
-                  ? "已驳回"
-                  : "审核"
-              }}</el-button
+        <el-table-column
+          label="营业执照"
+          show-overflow-tooltip
+          width="150"
+          align="center"
+        >
+          <template slot-scope="scope">
+            <a
+              :href="scope.row.businessLicense"
+              target="_blank"
+              title="营业执照"
+              v-if="scope.row.businessLicense"
             >
-            <el-button type="warning" size="mini" plain @click="openTeam(row)"
-              >查看企业</el-button
-            >
-            <el-button type="warning" size="mini" plain @click="editTeam(row)"
-              >编辑企业</el-button
-            >
-          </div>
-        </template>
+              <el-image
+                style="width:50px;height:50px"
+                :src="scope.row.businessLicense"
+              ></el-image>
+            </a>
+            <div v-else style="font-size: 25px;">
+              /
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="enterpriseAddress"
+          label="企业地址"
+          show-overflow-tooltip
+          width="350"
+          align="center"
+        ></el-table-column>
 
-        <!-- <model
+        <el-table-column
+          prop="phone"
+          label="联系电话"
+          show-overflow-tooltip
+          width="120"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          label="认证状态"
+          show-overflow-tooltip
+          width="150"
+          align="center"
+        >
+          <template slot-scope="{ row }">
+            <div v-if="row.enterpriseFlag === 0" style="color: #ccc;">
+              未认证
+            </div>
+            <div v-if="row.enterpriseFlag === 1" style="color: blue;">
+              审核中
+            </div>
+            <div v-if="row.enterpriseFlag === 2" style="color: green;">
+              审核成功
+            </div>
+            <div v-if="row.enterpriseFlag === 3" style="color: red;">
+              审核失败
+            </div>
+          </template>
+        </el-table-column>
+
+        <el-table-column
+          prop="settledTime"
+          label="入驻时间"
+          show-overflow-tooltip
+          width="200"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="portrait"
+          label="微信头像"
+          show-overflow-tooltip
+          width="150"
+          align="center"
+        >
+          <template slot-scope="scope">
+            <a :href="scope.row.portrait" target="_blank" title="微信头像">
+              <el-image
+                style="width:50px;height:50px"
+                :src="scope.row.portrait"
+              ></el-image>
+            </a>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="deviceScale"
+          label="公司规模"
+          show-overflow-tooltip
+          width="100"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="enterpriseTypeIdsName"
+          label="公司类型"
+          show-overflow-tooltip
+          width="200"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="deviceTypeIdsName"
+          label="设备类型"
+          show-overflow-tooltip
+          width="200"
+          align="center"
+        ></el-table-column>
+        <el-table-column label="操作" width="300px" fixed="right">
+          <template slot-scope="{ row }">
+            <div class="settings">
+              <el-button
+                type="warning"
+                size="mini"
+                plain
+                @click="auditFn(row)"
+                :disabled="row.enterpriseFlag == 2 || row.enterpriseFlag == 3"
+                >{{
+                  row.enterpriseFlag == 2
+                    ? "已通过"
+                    : row.enterpriseFlag == 3
+                    ? "已驳回"
+                    : "审核"
+                }}</el-button
+              >
+              <el-button type="warning" size="mini" plain @click="openTeam(row)"
+                >查看企业</el-button
+              >
+              <el-button type="warning" size="mini" plain @click="editTeam(row)"
+                >编辑企业</el-button
+              >
+            </div>
+          </template>
+
+          <!-- <model
           ref="enterpriseList"
           title="企业审核"
           @ok="handleEnterpriseExamine"
@@ -281,72 +286,75 @@
           </el-form>
         </model> -->
 
-        <model
-          ref="enterpriseTeamList"
-          title="企业团队列表"
-          @ok="handleEnterpriseExamine"
-          @close="resetTeamList"
-          :column="2"
-        >
-          <el-table
-            highlight-current-row
-            v-loading.fullscreen.lock="loading"
-            element-loading-text="拼命加载中"
-            element-loading-spinner="el-icon-loading"
-            :data="enpTeamList"
-            max-height="700"
-            style="width: 1500px;"
+          <model
+            ref="enterpriseTeamList"
+            title="企业团队列表"
+            @ok="handleEnterpriseExamine"
+            @close="resetTeamList"
+            :column="2"
           >
-            <el-table-column
-              prop="realName"
-              label="真实姓名"
-              show-overflow-tooltip
-              width="200"
-              align="center"
-            ></el-table-column>
-            <el-table-column
-              prop="phone"
-              label="联系电话"
-              show-overflow-tooltip
-              width="100"
-              align="center"
-            ></el-table-column>
-            <el-table-column
-              prop="postName"
-              label="岗位"
-              show-overflow-tooltip
-              width="100"
-              align="center"
-            ></el-table-column>
-            <el-table-column
-              prop="workStatus"
-              label="状态"
-              show-overflow-tooltip
-              width="100"
-              align="center"
-            ></el-table-column>
-            <el-table-column
-              prop="enterpriseRoleId"
-              label="权限"
-              show-overflow-tooltip
-              width="100"
-              align="center"
-            ></el-table-column>
-          </el-table>
-        </model>
-      </el-table-column>
-    </el-table>
+            <el-table
+              highlight-current-row
+              v-loading.fullscreen.lock="loading"
+              element-loading-text="拼命加载中"
+              element-loading-spinner="el-icon-loading"
+              :data="enpTeamList"
+              max-height="700"
+              style="width: 1500px;"
+            >
+              <el-table-column
+                prop="realName"
+                label="真实姓名"
+                show-overflow-tooltip
+                width="200"
+                align="center"
+              ></el-table-column>
+              <el-table-column
+                prop="phone"
+                label="联系电话"
+                show-overflow-tooltip
+                width="100"
+                align="center"
+              ></el-table-column>
+              <el-table-column
+                prop="postName"
+                label="岗位"
+                show-overflow-tooltip
+                width="100"
+                align="center"
+              ></el-table-column>
+              <el-table-column
+                prop="workStatus"
+                label="状态"
+                show-overflow-tooltip
+                width="100"
+                align="center"
+              ></el-table-column>
+              <el-table-column
+                prop="enterpriseRoleId"
+                label="权限"
+                show-overflow-tooltip
+                width="100"
+                align="center"
+              ></el-table-column>
+            </el-table>
+          </model>
+        </el-table-column>
+      </el-table>
 
-    <!-- 分页部分 -->
-    <el-pagination
-      background
-      @size-change="handleSizeChange"
-      @current-change="updatePageNo"
-      :current-page="currentPage"
-      :page-size="20"
-      layout="total,  prev, pager, next, jumper"
-      :total="total"
-    ></el-pagination>
+      <!-- 分页部分 -->
+      <div style="margin-top: 20px;display: flex;justify-content: center;">
+        <el-pagination
+          background
+          @size-change="handleSizeChange"
+          @current-change="updatePageNo"
+          :current-page="currentPage"
+          :page-size="20"
+          layout="total,  prev, pager, next, jumper"
+          :total="total"
+        ></el-pagination>
+      </div>
+    </el-card>
 
     <!-- 编辑企业弹窗 -->
     <div v-if="editForm">
@@ -679,9 +687,11 @@ export default {
         }
       });
       this.editForm.deviceTypeIds = str;
-      const res = await queryMasterName(this.recommendMaster);
-      const uid = res.data && res.data[0].uid;
-      this.editForm.recommendMasterUid = uid;
+      if (this.recommendMaster) {
+        const res = await queryMasterName(this.recommendMaster);
+        const uid = res.data && res.data[0].uid;
+        this.editForm.recommendMasterUid = uid;
+      }
       const res1 = await editEnterpriseInfo(this.editForm);
       if (res1.message === "操作成功") {
         this.$message({

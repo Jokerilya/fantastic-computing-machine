@@ -88,7 +88,7 @@
         <el-input
           v-model.number="param.warrantyTime"
           class="onloadPart_inp"
-          @blur="judgeInp"
+          @blur="judgeInp('warrantyTime', 'param')"
         ></el-input>
       </div>
     </div>
@@ -185,7 +185,8 @@
           </div>
           <div class="lineRight">
             <el-input
-              v-model="param.doorAmount"
+              @input="judgeInp('doorAmount', 'param')"
+              v-model.number="param.doorAmount"
               placeholder="￥0.00"
             ></el-input>
           </div>
@@ -197,7 +198,8 @@
           </div>
           <div class="lineRight">
             <el-input
-              v-model="param.technologyAmount"
+              @input="judgeInp('technologyAmount', 'param')"
+              v-model.number="param.technologyAmount"
               placeholder="￥0.00"
             ></el-input>
           </div>
@@ -209,7 +211,8 @@
           </div>
           <div class="lineRight">
             <el-input
-              v-model="param.partsAmount"
+              @input="judgeInp('partsAmount', 'param')"
+              v-model.number="param.partsAmount"
               placeholder="￥0.00"
             ></el-input>
           </div>
@@ -221,7 +224,8 @@
           </div>
           <div class="lineRight">
             <el-input
-              v-model="param.otherAmount"
+              @input="judgeInp('otherAmount', 'param')"
+              v-model.number="param.otherAmount"
               placeholder="￥0.00"
             ></el-input>
           </div>
@@ -281,28 +285,30 @@
             <div class="addcontent">
               <div class="name">配件名称:</div>
               <el-input
-                v-model="part.name"
+                v-model.trim="part.name"
                 placeholder="请填写配件名称"
               ></el-input>
             </div>
             <div class="addcontent">
               <div class="name">配件单价:</div>
               <el-input
-                v-model="part.price"
+                @input="judgeInp('price', 'part')"
+                v-model.number="part.price"
                 placeholder="请填写配件单价"
               ></el-input>
             </div>
             <div class="addcontent">
               <div class="name">配件数量:</div>
               <el-input
-                v-model="part.num"
+                @input="judgeInp('num', 'part')"
+                v-model.number="part.num"
                 placeholder="请填写配件数量,例如：2"
               ></el-input>
             </div>
             <div class="addcontent">
               <div class="name">配件单位:</div>
               <el-input
-                v-model="part.unit"
+                v-model.trim="part.unit"
                 placeholder="请填写配件单位,例如：件、个"
               ></el-input>
             </div>
@@ -344,8 +350,8 @@ export default {
 
       part: {
         name: "",
-        price: "",
-        num: "",
+        price: null,
+        num: null,
         unit: "",
       },
 
@@ -354,10 +360,10 @@ export default {
         warrantyTime: "",
         parts: [],
         programme: [],
-        partsAmount: "", //配件费
-        doorAmount: "", //上门费用
-        technologyAmount: "", //技术服务费
-        otherAmount: "", //其他费用
+        partsAmount: null, //配件费
+        doorAmount: null, //上门费用
+        technologyAmount: null, //技术服务费
+        otherAmount: null, //其他费用
       },
       programmes: [
         {
@@ -409,11 +415,11 @@ export default {
       return str;
     },
     // 判断输入框是否为数字
-    judgeInp() {
-      if (this.param.warrantyTime === "") {
+    judgeInp(attribute, form) {
+      if (this[form][attribute] === "" || this[form][attribute] === null) {
         return;
-      } else if (!(typeof this.param.warrantyTime === "number")) {
-        this.param.warrantyTime = 0;
+      } else if (!(typeof this[form][attribute] === "number")) {
+        this[form][attribute] = null;
         this.$message({
           message: "输入框只能输数字",
           type: "warning",

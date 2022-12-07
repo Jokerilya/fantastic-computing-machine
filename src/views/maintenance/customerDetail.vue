@@ -174,9 +174,9 @@
           <a href="#" style="color:#0b2059;" @click="addAccessoriesFn(row.id)"
             >添加
           </a>
-          <a href="#" style="color:#0b2059;">
+          <!-- <a href="#" style="color:#0b2059;">
             编辑
-          </a>
+          </a> -->
           <a href="#" style="color:#0b2059;" @click="deleteDeviceInfo(row.id)">
             删除</a
           >
@@ -331,9 +331,9 @@ export default {
       this.dialogState = true;
     },
     // 点击配件编辑触发的事件
-    editAccessoriesFn(row) {
-      this.dislogTitle = "编辑配件";
+    async editAccessoriesFn(row) {
       this.$refs.addEditDialog.accessoriesForm = row;
+      this.dislogTitle = "编辑配件";
       this.dialogState = true;
     },
     // 点击设备删除触发的事件

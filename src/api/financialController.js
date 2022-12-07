@@ -25,3 +25,11 @@ export function getRepairOrderCollectionInfo(orderSn) {
     method: "GET",
   });
 }
+
+//确认支付
+export function handleMasterPayment(orderSn) {
+  return request({
+    url: "/admin/financial/handleMasterPayment?orderSn=" + orderSn,
+    method: "GET",
+  });
+}

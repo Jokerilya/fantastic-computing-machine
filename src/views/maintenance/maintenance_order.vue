@@ -4,7 +4,7 @@
     <!-- 顶部工具栏部分 -->
     <div class="manage-top">
       <el-form
-        :model="searchForm"
+        v-model="searchForm"
         ref="ruleForm"
         label-width="88px"
         class="rule-form"
@@ -40,7 +40,7 @@
               icon="el-icon-zoom-in"
               plain
               type="primary"
-              @click="query()"
+              @click="_queryRepairOrderList"
               >查询</el-button
             >
             <el-button
@@ -48,7 +48,7 @@
               icon="el-icon-refresh"
               plain
               type="info"
-              @click="reset()"
+              @click="resetFn"
               >重置</el-button
             >
             <el-upload
@@ -76,6 +76,9 @@
             >
               代客户下单
             </el-button>
+            <el-button type="success" plain @click="exportList">
+              导出
+            </el-button>
           </el-col>
         </el-row>
       </el-form>
@@ -84,172 +87,180 @@
     <!-- 空行 -->
     <div style="height: 16px;"></div>
 
-    <!-- 维保订单列表表格部分 -->
-    <el-table
-      highlight-current-row
-      v-loading.fullscreen.lock="loading"
-      element-loading-text="拼命加载中"
-      element-loading-spinner="el-icon-loading"
-      :data="dataList"
-      style="width: 100%;"
-      :height="masterList.length > 5 ? '500' : ''"
-    >
-      <el-table-column
-        prop="orderSn"
-        label="订单编号"
-        show-overflow-tooltip
-        width="200"
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        label="工单类型"
-        show-overflow-tooltip
-        width="100"
-        align="center"
+    <el-card>
+      <!-- 维保订单列表表格部分 -->
+      <el-table
+        highlight-current-row
+        v-loading.fullscreen.lock="loading"
+        element-loading-text="拼命加载中"
+        element-loading-spinner="el-icon-loading"
+        :data="dataList"
       >
-        <template slot-scope="{ row }">
-          <div v-if="row.orderType === 2">年保</div>
-          <div v-if="row.orderType === 1">散单</div>
-        </template>
-      </el-table-column>
-      <el-table-column
-        prop="no"
-        label="设备编码"
-        show-overflow-tooltip
-        width="150"
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        prop="type"
-        label="故障类型"
-        show-overflow-tooltip
-        width="200"
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        prop="simpleDesc"
-        label="故障描述"
-        show-overflow-tooltip
-        width="200"
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        prop="deviceBrand"
-        label="设备品牌"
-        show-overflow-tooltip
-        width="200"
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        prop="devicePlace"
-        label="设备产地"
-        show-overflow-tooltip
-        width="150"
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        prop="deviceTypeName"
-        label="设备类型名"
-        show-overflow-tooltip
-        width="150"
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        prop="num"
-        label="设备数量"
-        show-overflow-tooltip
-        width="200"
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        prop="enterpriseName"
-        label="企业名称"
-        show-overflow-tooltip
-        width="100"
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        prop="address"
-        label="详细地址"
-        show-overflow-tooltip
-        width="200"
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        prop="contactsPeople"
-        label="联系人"
-        show-overflow-tooltip
-        width="150"
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        prop="contactsPhone"
-        label="联系电话"
-        show-overflow-tooltip
-        width="200"
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        prop="masterRealName"
-        label="师傅名称"
-        show-overflow-tooltip
-        width="200"
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        prop="masterPhone"
-        label="师傅联系电话 "
-        show-overflow-tooltip
-        width="200"
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        prop="orderStatusName"
-        label="状态"
-        show-overflow-tooltip
-        width="150"
-        align="center"
-        fixed="right"
-      >
-      </el-table-column>
-      <el-table-column
-        prop="createTime"
-        label="下单时间"
-        show-overflow-tooltip
-        width="150"
-        align="center"
-        fixed="right"
-      ></el-table-column>
-      <el-table-column label="操作" width="250px" fixed="right" align="center">
-        <template slot-scope="{ row }">
-          <div class="settings">
-            <el-button type="info" size="mini" plain @click="queryDesc(row)"
-              >查看详情</el-button
-            >
-            <el-button
-              v-if="row.orderStatusName === '待平台指派'"
-              type="info"
-              size="mini"
-              plain
-              @click="querySnatchList(row)"
-              >指派列表</el-button
-            >
-          </div>
-        </template>
-      </el-table-column>
-    </el-table>
+        <el-table-column
+          prop="orderSn"
+          label="订单编号"
+          show-overflow-tooltip
+          width="200"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          label="工单类型"
+          show-overflow-tooltip
+          width="100"
+          align="center"
+        >
+          <template slot-scope="{ row }">
+            <div v-if="row.orderType === 2">年保</div>
+            <div v-if="row.orderType === 1">散单</div>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="no"
+          label="设备编码"
+          show-overflow-tooltip
+          width="150"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="type"
+          label="故障类型"
+          show-overflow-tooltip
+          width="200"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="simpleDesc"
+          label="故障描述"
+          show-overflow-tooltip
+          width="200"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="deviceBrand"
+          label="设备品牌"
+          show-overflow-tooltip
+          width="200"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="devicePlace"
+          label="设备产地"
+          show-overflow-tooltip
+          width="150"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="deviceTypeName"
+          label="设备类型名"
+          show-overflow-tooltip
+          width="150"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="num"
+          label="设备数量"
+          show-overflow-tooltip
+          width="200"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="enterpriseName"
+          label="企业名称"
+          show-overflow-tooltip
+          width="230"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="address"
+          label="详细地址"
+          show-overflow-tooltip
+          width="350"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="contactsPeople"
+          label="联系人"
+          show-overflow-tooltip
+          width="150"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="contactsPhone"
+          label="联系电话"
+          show-overflow-tooltip
+          width="200"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="masterRealName"
+          label="师傅名称"
+          show-overflow-tooltip
+          width="200"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="masterPhone"
+          label="师傅联系电话 "
+          show-overflow-tooltip
+          width="200"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="orderStatusName"
+          label="状态"
+          show-overflow-tooltip
+          width="150"
+          fixed="right"
+          align="center"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="createTime"
+          label="下单时间"
+          show-overflow-tooltip
+          width="150"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          label="操作"
+          width="200px"
+          fixed="right"
+          align="center"
+        >
+          <template slot-scope="{ row }">
+            <div class="settings">
+              <el-button type="info" size="mini" plain @click="queryDesc(row)"
+                >查看详情</el-button
+              >
+              <el-button
+                v-if="
+                  row.orderStatusName === '待平台指派' ||
+                    row.orderStatusName === '待师傅接单'
+                "
+                type="info"
+                size="mini"
+                plain
+                @click="querySnatchList(row)"
+                >指派列表</el-button
+              >
+            </div>
+          </template>
+        </el-table-column>
+      </el-table>
 
-    <!-- 分页 -->
-    <el-pagination
-      background
-      @size-change="handleSizeChange"
-      @current-change="updatePageNo"
-      :current-page="currentPage"
-      :page-sizes="[10, 20, 50, 100]"
-      :page-size="10"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="pageCount"
-    ></el-pagination>
+      <!-- 分页 -->
+      <div style="text-align: center;margin-top:20px ;">
+        <el-pagination
+          background
+          @size-change="handleSizeChange"
+          @current-change="updatePageNo"
+          :current-page="currentPage"
+          :page-size="10"
+          layout="total, prev, pager, next, jumper"
+          :total="pageCount"
+        ></el-pagination>
+      </div>
+    </el-card>
 
     <!-- 指派列表模态框 -->
     <model
@@ -363,14 +374,11 @@
         :total="pageCountMaster"
       ></el-pagination>
     </model>
-
-    <!-- <div style="margin:20px 0">
-      <el-button icon="el-icon-zoom-in" plain type="primary" >新增</el-button>
-      <el-button icon="el-icon-zoom-in" plain type="primary" @click="_addOrder">信息录入</el-button>
-    </div>-->
   </div>
 </template>
+
 <style lang="less" scoped></style>
+
 <script>
 import {
   getMasterList,
@@ -381,6 +389,7 @@ import {
   uploadBatchRepairOrder,
   queryRepairOrderList,
   downloadBatchRepairOrderTemplate,
+  handleRepairOrderExport,
 } from "@/api/order.js";
 import tableMixin from "@/mixin/table";
 export default {
@@ -388,8 +397,12 @@ export default {
   mixins: [tableMixin],
   data() {
     return {
+      searchForm: {
+        deviceTypeId: "",
+        status: "",
+      },
       dataList: [],
-      pageCount: "",
+      pageCount: null,
       pageCountMaster: "",
       currentPage: 1,
       tabelList: [],
@@ -439,6 +452,24 @@ export default {
     this._queryRepairOrderList();
   },
   methods: {
+    // 导出
+    async exportList() {
+      const data = {
+        pageNo: 1,
+        pageSize: 20,
+        status: null,
+      };
+      const res = await handleRepairOrderExport(data);
+      console.log(res);
+    },
+    // 重置
+    resetFn() {
+      this.searchForm = {
+        deviceTypeId: "",
+        status: "",
+      };
+      this._queryRepairOrderList();
+    },
     // 批量下单模板下载
     async templateDownload() {
       const res = await downloadBatchRepairOrderTemplate();
@@ -476,17 +507,20 @@ export default {
     },
     // 获取维保订单列表
     _queryRepairOrderList() {
+      const loading = this.$loading({ text: "加载中.." });
       let data = {
         pageNo: this.currentPage,
         pageSize: 10,
-        status: "",
       };
+      if (this.searchForm.status) {
+        data.status = this.searchForm.status;
+      }
       queryRepairOrderList(data).then((res) => {
         if (res) {
           this.dataList = res.data.records;
           this.pageCount = res.data.total;
-          console.log("订单列表", this.dataList);
         }
+        loading.close();
       });
     },
     // 点击页码触发的事件
@@ -602,7 +636,6 @@ export default {
           console.error(err);
         });
     },
-    // 没用到开始-----------------------
     getType(val) {
       return this.typeData.filter((item) => {
         if (item.id == val) {
@@ -660,7 +693,6 @@ export default {
       };
       getMasterList(params).then((res) => {
         if (res) {
-          console.log(res);
           this.masterList = res.data.records;
           console.log("师傅列表", this.masterList);
           this.pageCount = res.data.total;

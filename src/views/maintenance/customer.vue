@@ -20,11 +20,14 @@
             </el-form-item>
           </el-col>
           <el-col :span="9">
-            <el-button style="color: #2E4C9E; " plain @click="_getOrderList()"
+            <el-button style="color: #2E4C9E;" plain @click="_getOrderList()"
               >查询</el-button
             >
-            <el-button style="color: #2E4C9E; " plain @click="resetFn"
+            <el-button style="color: #2E4C9E;" plain @click="resetFn"
               >重置</el-button
+            >
+            <el-button style="color: #2E4C9E;" plain @click="exportVip"
+              >导出</el-button
             >
           </el-col>
         </el-row>
@@ -32,7 +35,7 @@
     </div>
 
     <!-- 空行 -->
-    <div style="height: 16px;"></div>
+    <br /><br />
 
     <el-card>
       <!-- 表格内容 -->
@@ -45,7 +48,6 @@
           element-loading-spinner="el-icon-loading"
           :data="orderList"
           style="width: 100%;"
-          max-height="700"
           :header-cell-style="{
             background: '#f6f8fc',
             color: '#707070',
@@ -108,7 +110,7 @@
           >
             <template slot-scope="{ row }">
               <div class="settings">
-                <a href="#" style="color:#2E4C9E" @click="jump2Detail(row)"
+                <a href="#" style="color:#2E4C9E" @click="jump2Detail(row.id)"
                   >详情</a
                 >
                 <!-- <a href="#" style="color:#2E4C9E;margin: 0 20px;">编辑</a>
@@ -343,6 +345,7 @@ import {
   queryButlerOrderList,
   uploadButlerOrder,
   downloadButlerOrderTemplate,
+  handleButlerOrderExport,
 } from "@/api/order.js";
 import tableMixin from "@/mixin/table";
 export default {
@@ -412,6 +415,18 @@ export default {
     this._getEnterpriseList();
   },
   methods: {
+    // 导出功能
+    async exportVip() {
+      const data = {
+        pageNo: 1,
+        pageSize: 1000,
+        enterpriseName: this.Name,
+        contactsPeople: this.People,
+        contactsPhone: this.Phone,
+      };
+      const res = await handleButlerOrderExport(data);
+      console.log(res);
+    },
     // 关闭绑定业务员弹窗
     closeSalesmanFn() {
       this.salesmanSelect = null;
@@ -560,11 +575,8 @@ export default {
       });
     },
     // 点击详情 携带参数跳转详情页面
-    jump2Detail(row) {
-      this.$router.push({
-        name: "customerDetail",
-        query: { id: row.id },
-      });
+    jump2Detail(id) {
+      this.$router.push("/maintenance/customerDetail?id=" + id);
     },
     // 拿到师傅列表 不知道干嘛
     _getMasterList() {

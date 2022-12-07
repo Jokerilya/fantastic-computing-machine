@@ -116,11 +116,11 @@
           </div>
           <!-- 创建人 操作人 -->
           <div class="people">
-            <div class="createPeople">
+            <div class="createPeople" v-if="data.createPeople">
               <div class="title">创建人:</div>
               <div class="content">{{ data.createPeople }}</div>
             </div>
-            <div class="handlePeople">
+            <div class="handlePeople" v-if="data.operationPeople">
               <div class="title">负责人:</div>
               <div class="content">{{ data.operationPeople }}</div>
             </div>
@@ -276,12 +276,12 @@
           <!-- 完工信息 -->
           <div class="finishWork" v-if="data.completePictureList">
             <div class="title">完工信息:</div>
-            <div class="pic">
+            <div class="pic" v-for="item in data.completePictureList">
               <el-image
-                v-if="data.completePictureList"
-                style="width: 300px; height: 300px"
+                v-if="item"
+                style="width: 150px; height: 150px;margin-right: 10px;"
                 lazy
-                :src="data.completePictureList[1]"
+                :src="item"
                 :preview-src-list="data.completePictureList"
               ></el-image>
             </div>
@@ -945,16 +945,13 @@ export default {
         cancelReason: this.delOrderinpValue,
       };
       cancelRepairOrder(params).then((res) => {
-        console.log(res);
         if (res) {
           this.$message({
             showClose: true,
             message: res.message,
             type: "success",
           });
-          this.$router.push({
-            name: "maintenance_order",
-          });
+          this.$router.push("/maintenance/maintenance_order");
         }
       });
     },
@@ -1021,6 +1018,7 @@ export default {
             message: res.message,
             type: "success",
           });
+          this.$router.push("/maintenance/maintenance_order");
         }
       });
     },

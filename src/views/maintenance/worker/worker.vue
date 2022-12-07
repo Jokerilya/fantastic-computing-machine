@@ -61,237 +61,259 @@
         </el-col>
       </el-row>
     </el-form>
-    <el-table
-      highlight-current-row
-      v-loading.fullscreen.isLock="loading"
-      element-loading-text="拼命加载中"
-      element-loading-spinner="el-icon-loading"
-      :data="masterList"
-      style="width: 100%;"
-      :height="masterList.length > 5 ? '500' : ''"
-    >
-      <el-table-column
-        prop="realName"
-        label="真实姓名"
-        show-overflow-tooltip
-        width="150"
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        prop="realPortrait"
-        label="真实头像"
-        show-overflow-tooltip
-        align="center"
+
+    <el-card>
+      <el-table
+        highlight-current-row
+        v-loading.fullscreen.isLock="loading"
+        element-loading-text="拼命加载中"
+        element-loading-spinner="el-icon-loading"
+        :data="masterList"
+        style="width: 100%;height: 100%;"
       >
-        <template slot-scope="{ row }">
-          <y-image
-            :src="row.realPortrait ? row.realPortrait.split(',')[0] : ''"
-            :srcList="row.realPortrait ? row.realPortrait.split(',') : ''"
-          />
-        </template>
-      </el-table-column>
-      <el-table-column
-        prop="phone"
-        label="联系电话"
-        show-overflow-tooltip
-        width="150"
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        prop="superiorMasterName"
-        label="团长"
-        show-overflow-tooltip
-        width="150"
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        prop="recommendMasterName"
-        label="推荐人"
-        show-overflow-tooltip
-        width="150"
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        prop="identityFrontImage"
-        label="身份证正面照"
-        show-overflow-tooltip
-        align="center"
-      >
-        <template slot-scope="{ row }">
-          <y-image
-            :src="
-              row.identityFrontImage ? row.identityFrontImage.split(',')[0] : ''
-            "
-            :srcList="
-              row.identityFrontImage ? row.identityFrontImage.split(',') : ''
-            "
-          />
-        </template>
-      </el-table-column>
-      <el-table-column
-        prop="identityBackImage"
-        label="身份证反面照"
-        show-overflow-tooltip
-        align="center"
-      >
-        <template slot-scope="{ row }">
-          <y-image
-            :src="
-              row.identityBackImage ? row.identityBackImage.split(',')[0] : ''
-            "
-            :srcList="
-              row.identityBackImage ? row.identityBackImage.split(',') : ''
-            "
-          />
-        </template>
-      </el-table-column>
-      <el-table-column
-        prop="industryExperience"
-        label="行业经验"
-        show-overflow-tooltip
-        width="150"
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        prop="industryExperienceImages"
-        label="行业经验照片"
-        show-overflow-tooltip
-        align="center"
-      >
-        <template slot-scope="{ row }">
-          <y-image
-            :src="
-              row.industryExperienceImages
-                ? row.industryExperienceImages.split(',')[0]
-                : ''
-            "
-            :srcList="
-              row.industryExperienceImages
-                ? row.industryExperienceImages.split(',')
-                : ''
-            "
-          />
-        </template>
-      </el-table-column>
-      <el-table-column
-        prop="serviceAreas"
-        label="服务地区"
-        show-overflow-tooltip
-        width="150"
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        prop="skillCertificateImages"
-        label="技能证书图书"
-        show-overflow-tooltip
-        align="center"
-      >
-        <template slot-scope="{ row }">
-          <y-image
-            :src="
-              row.skillCertificateImages
-                ? row.skillCertificateImages.split(',')[0]
-                : ''
-            "
-            :srcList="
-              row.skillCertificateImages
-                ? row.skillCertificateImages.split(',')
-                : ''
-            "
-          />
-        </template>
-      </el-table-column>
-      <el-table-column
-        prop="serviceTypes"
-        label="服务类型"
-        show-overflow-tooltip
-        width="150"
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        prop="address"
-        label="详细地址"
-        show-overflow-tooltip
-        width="150"
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        prop="createTime"
-        label="创建时间 "
-        show-overflow-tooltip
-        width="150"
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        prop="isLock"
-        label="是否锁定"
-        show-overflow-tooltip
-        width="150"
-        align="center"
-        fixed="right"
-      >
-        <template slot-scope="{ row }">{{
-          util.global.getLabel("isLock", row.isLock)
-        }}</template>
-      </el-table-column>
-      <el-table-column
-        prop="status"
-        label="审核状态"
-        show-overflow-tooltip
-        width="150"
-        align="center"
-        fixed="right"
-      >
-        <template slot-scope="{ row }">{{
-          util.global.getLabel("checkStatus", row.status)
-        }}</template>
-      </el-table-column>
-      <el-table-column label="操作" width="300px" fixed="right">
-        <template slot-scope="{ row }">
-          <div class="settings">
-            <el-button
-              type="warning"
-              size="mini"
-              plain
-              @click="open(row)"
-              :disabled="row.status == 2"
-              >审核</el-button
-            >
-            <el-button
-              type="danger"
-              size="mini"
-              plain
-              @click="isLock(row)"
-              v-show="!row.isLock"
-              >锁定</el-button
-            >
-            <el-button
-              type="success"
-              size="mini"
-              plain
-              @click="isLock(row)"
-              v-show="row.isLock"
-              >解锁</el-button
-            >
-            <el-button type="warning" size="mini" plain @click="editInit(row)"
-              >编辑</el-button
-            >
-            <el-button type="warning" size="mini" plain @click="checkTeam(row)"
-              >查看成员</el-button
-            >
-          </div>
-        </template>
-      </el-table-column>
-    </el-table>
-    <el-pagination
-      background
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-      :current-page="currentPage"
-      :page-size="10"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="pageCount"
-    ></el-pagination>
+        <el-table-column
+          prop="realName"
+          label="真实姓名"
+          show-overflow-tooltip
+          width="150"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="realPortrait"
+          label="真实头像"
+          show-overflow-tooltip
+          align="center"
+        >
+          <template slot-scope="{ row }">
+            <y-image
+              :src="row.realPortrait ? row.realPortrait.split(',')[0] : ''"
+              :srcList="row.realPortrait ? row.realPortrait.split(',') : ''"
+            />
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="phone"
+          label="联系电话"
+          show-overflow-tooltip
+          width="150"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="superiorMasterName"
+          label="团长"
+          show-overflow-tooltip
+          width="150"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="recommendMasterName"
+          label="推荐人"
+          show-overflow-tooltip
+          width="150"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="identityFrontImage"
+          label="身份证正面照"
+          show-overflow-tooltip
+          align="center"
+        >
+          <template slot-scope="{ row }">
+            <y-image
+              :src="
+                row.identityFrontImage
+                  ? row.identityFrontImage.split(',')[0]
+                  : ''
+              "
+              :srcList="
+                row.identityFrontImage ? row.identityFrontImage.split(',') : ''
+              "
+            />
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="identityBackImage"
+          label="身份证反面照"
+          show-overflow-tooltip
+          align="center"
+        >
+          <template slot-scope="{ row }">
+            <y-image
+              :src="
+                row.identityBackImage ? row.identityBackImage.split(',')[0] : ''
+              "
+              :srcList="
+                row.identityBackImage ? row.identityBackImage.split(',') : ''
+              "
+            />
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="industryExperience"
+          label="行业经验"
+          show-overflow-tooltip
+          width="150"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="industryExperienceImages"
+          label="行业经验照片"
+          show-overflow-tooltip
+          align="center"
+        >
+          <template slot-scope="{ row }">
+            <y-image
+              :src="
+                row.industryExperienceImages
+                  ? row.industryExperienceImages.split(',')[0]
+                  : ''
+              "
+              :srcList="
+                row.industryExperienceImages
+                  ? row.industryExperienceImages.split(',')
+                  : ''
+              "
+            />
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="serviceAreas"
+          label="服务地区"
+          show-overflow-tooltip
+          width="150"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="skillCertificateImages"
+          label="技能证书图书"
+          show-overflow-tooltip
+          align="center"
+        >
+          <template slot-scope="{ row }">
+            <y-image
+              :src="
+                row.skillCertificateImages
+                  ? row.skillCertificateImages.split(',')[0]
+                  : ''
+              "
+              :srcList="
+                row.skillCertificateImages
+                  ? row.skillCertificateImages.split(',')
+                  : ''
+              "
+            />
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="serviceTypes"
+          label="服务类型"
+          show-overflow-tooltip
+          width="150"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="address"
+          label="详细地址"
+          show-overflow-tooltip
+          width="150"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="createTime"
+          label="创建时间 "
+          show-overflow-tooltip
+          width="150"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="isLock"
+          label="是否锁定"
+          show-overflow-tooltip
+          width="100"
+          align="center"
+          fixed="right"
+        >
+          <template slot-scope="{ row }">{{
+            util.global.getLabel("isLock", row.isLock)
+          }}</template>
+        </el-table-column>
+        <el-table-column
+          prop="status"
+          label="审核状态"
+          show-overflow-tooltip
+          width="100"
+          align="center"
+          fixed="right"
+        >
+          <template slot-scope="{ row }">{{
+            util.global.getLabel("checkStatus", row.status)
+          }}</template>
+        </el-table-column>
+        <el-table-column label="操作" width="300" fixed="right" align="center">
+          <template slot-scope="{ row }">
+            <div class="settings">
+              <el-button
+                plain
+                type="primary"
+                href="#"
+                size="mini"
+                @click="
+                  $router.push('/maintenance/worker/workerDetails?id=' + row.id)
+                "
+                >详情</el-button
+              >
+              <el-button
+                type="warning"
+                size="mini"
+                plain
+                @click="open(row)"
+                v-if="!(row.status == 2)"
+                >审核</el-button
+              >
+              <el-button
+                type="danger"
+                size="mini"
+                plain
+                @click="isLock(row)"
+                v-show="!row.isLock"
+                >锁定</el-button
+              >
+              <el-button
+                type="success"
+                size="mini"
+                plain
+                @click="isLock(row)"
+                v-show="row.isLock"
+                >解锁</el-button
+              >
+              <el-button type="warning" size="mini" plain @click="editInit(row)"
+                >编辑</el-button
+              >
+              <el-button
+                type="warning"
+                size="mini"
+                plain
+                @click="checkTeam(row)"
+                >查看成员</el-button
+              >
+            </div>
+          </template>
+        </el-table-column>
+      </el-table>
+
+      <!-- 分页部分 -->
+      <div style="margin-top: 20px;display: flex;justify-content: center ;">
+        <el-pagination
+          background
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="currentPage"
+          :page-size="10"
+          layout="total, prev, pager, next, jumper"
+          :total="pageCount"
+        ></el-pagination>
+      </div>
+    </el-card>
 
     <model
       ref="editStatusModel"

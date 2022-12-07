@@ -55,16 +55,6 @@
               v-model="accessoriesForm.deviceModel"
             ></el-input>
           </el-form-item>
-          <!-- <el-form-item>
-            <template slot="label">
-              <span class="titleStyle">配件id</span>
-            </template>
-            <el-input
-              prop="deviceId"
-              class="inpstyle"
-              v-model="accessoriesForm.deviceId"
-            ></el-input>
-          </el-form-item> -->
           <el-form-item>
             <template slot="label">
               <span class="titleStyle">配件规格</span>
@@ -107,6 +97,7 @@ export default {
       accessoriesForm: {
         category: "",
         deviceBrand: "",
+        deviceId: "",
         deviceModel: "",
         name: "",
         specification: "",
@@ -123,7 +114,7 @@ export default {
       }
       await editDeviceParts(this.accessoriesForm);
       this.$emit("refreshList");
-      this.handleClose();
+      this.handleClose("comfirm");
     },
     // 关闭按钮事件
     async handleClose() {
@@ -135,7 +126,6 @@ export default {
         name: "",
         specification: "",
       };
-      await this.$emit("refreshList");
       this.$emit("closeFn");
     },
   },

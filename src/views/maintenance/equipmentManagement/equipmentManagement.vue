@@ -139,10 +139,6 @@ export default {
       equipmentStatus: [
         // 设备状态数组
         {
-          value: "",
-          label: "设备状态",
-        },
-        {
           value: "0",
           label: "进行中",
         },
@@ -182,6 +178,8 @@ export default {
         delete this.data["startTime"];
         delete this.data["endTime"];
       }
+      this.data.pageNo = 1;
+      this.data.pageSize = 5;
       this.data.no = this.topTool_code;
       this.getEquipmentList(this.data);
     },

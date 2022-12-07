@@ -89,13 +89,14 @@
           </div>
           <div style="flex: 1;">
             <div style="color: #707070;font-weight: 700;margin-bottom: 20px;">
-              上传设备图片、故障部位图片或视频(最多上传3张图片)
+              上传设备图片视频、故障部位图片视频(最多上传6张图片或视频)
             </div>
             <el-upload
-              :limit="3"
+              :limit="6"
               action="#"
-              list-type="picture-card"
+              list-type="text"
               :http-request="handlePictureCardPreview"
+              :on-remove="onRemovePictureCardPreview"
             >
               <i class="el-icon-plus"></i>
             </el-upload>
@@ -182,6 +183,7 @@ export default {
       typeOptions: null,
       systemValue: null,
       systemOptions: null,
+      originallyImgList: [],
 
       deviceTypeList: [], // 设备类型
       deviceSystemList: [], //设备系统
@@ -209,6 +211,12 @@ export default {
     };
   },
   methods: {
+    // 移除图片的事件
+    onRemovePictureCardPreview(file) {
+      const index = this.originallyImgList.findIndex((el) => el === file.name);
+      this.originallyImgList.splice(index, 1);
+      this.dialogImageUrl.splice(index, 1);
+    },
     // 判断手机号码格式
     phoneCheck() {
       if (!/^1[3456789]\d{9}$/.test(this.data.contactsPhone)) {
@@ -255,6 +263,7 @@ export default {
     },
     // 处理图片
     async handlePictureCardPreview(data) {
+      this.originallyImgList.push(data.file.name);
       const formData = new FormData();
       formData.append("file", data.file);
       const res = await UploadImg(formData);
