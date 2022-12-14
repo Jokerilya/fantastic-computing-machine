@@ -5,7 +5,9 @@
       <div class="big_title">
         <div class="bigTitleLeft">
           <div class="item" style="color: red;font-size: 18px;">
-            {{ data.orderStatusName }}
+            <i style="font-style: normal;" v-if="data.platformStatus === -1">
+              师傅</i
+            >{{ data.orderStatusName }}
           </div>
           <div class="item">
             <div>订单号:</div>
@@ -38,10 +40,9 @@
               $router.push('/maintenance/amendPricing?orderSn=' + data.orderSn)
             "
             v-if="
-              (data.platformStatus === -1 ||
+              data.platformStatus === -1 ||
                 data.platformStatus === 1 ||
-                data.platformStatus === 2) &&
-                data.orderStatusName !== '已取消'
+                data.platformStatus === 2
             "
             >修改报价</el-button
           >
@@ -60,8 +61,8 @@
             type="primary"
             plain
             v-if="
-              (data.platformStatus === -1 || data.platformStatus === 1) &&
-                data.orderStatusName !== '已取消'
+              data.enterpriseMainStatus === -1 ||
+                data.enterpriseMainStatus === 1
             "
             @click="
               $router.push(
@@ -73,7 +74,7 @@
           </el-button>
           <el-button
             v-if="
-              data.enterpriseMainStatus > -1 && data.enterpriseMainStatus <= 3
+              data.enterpriseMainStatus >= -1 && data.enterpriseMainStatus <= 3
             "
             type="primary"
             size="mini"

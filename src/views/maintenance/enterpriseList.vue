@@ -111,13 +111,13 @@
           width="100"
           align="center"
         ></el-table-column>
-        <el-table-column
+        <!-- <el-table-column
           prop="superiorEnterpriseName"
           label="团队长"
           show-overflow-tooltip
           width="100"
           align="center"
-        ></el-table-column>
+        ></el-table-column> -->
         <el-table-column
           prop="realName"
           label="真实姓名"

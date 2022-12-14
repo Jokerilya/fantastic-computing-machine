@@ -5,7 +5,11 @@
       <el-row :gutter="20">
         <el-col :span="17" style="display: flex;">
           <el-form-item label="师傅名称">
-            <el-input placeholder="请输入师傅名称" v-model="Name"></el-input>
+            <el-input
+              placeholder="请输入师傅名称"
+              clearable
+              v-model="Name"
+            ></el-input>
           </el-form-item>
           <el-form-item label="团长名称">
             <el-select
@@ -14,6 +18,7 @@
               remote
               v-model="colonelName"
               placeholder="请选择"
+              clearable
             >
               <el-option
                 v-for="item in referrerOptions"
@@ -26,6 +31,7 @@
           </el-form-item>
           <el-form-item label="推荐人名称">
             <el-select
+              clearable
               filterable
               :remote-method="remoteMethod"
               remote
@@ -148,6 +154,15 @@
             />
           </template>
         </el-table-column>
+
+        <el-table-column
+          prop="identityNumber"
+          label="身份证号码"
+          show-overflow-tooltip
+          width="170"
+          align="center"
+        ></el-table-column>
+
         <el-table-column
           prop="industryExperience"
           label="行业经验"

@@ -34,9 +34,6 @@
       </el-form>
     </div>
 
-    <!-- 空行 -->
-    <br /><br />
-
     <el-card>
       <!-- 表格内容 -->
       <div class="text" style="margin-bottom: 20px;">
@@ -64,6 +61,13 @@
           <el-table-column
             prop="statusName"
             label="订单状态"
+            width="100"
+            show-overflow-tooltip
+            align="center"
+          ></el-table-column>
+          <el-table-column
+            prop="payAmount"
+            label="支付金额"
             width="100"
             show-overflow-tooltip
             align="center"
