@@ -227,6 +227,20 @@
           align="center"
         ></el-table-column>
         <el-table-column
+          prop="servePosition"
+          label="服务部位"
+          show-overflow-tooltip
+          width="150"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="serveSystem"
+          label="服务系统"
+          show-overflow-tooltip
+          width="150"
+          align="center"
+        ></el-table-column>
+        <el-table-column
           prop="address"
           label="详细地址"
           show-overflow-tooltip
