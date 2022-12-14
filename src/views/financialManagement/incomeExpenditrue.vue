@@ -48,6 +48,11 @@
               prop="orderSn"
               label="订单号"
             ></el-table-column>
+            <el-table-column
+              width="150"
+              prop="payCode"
+              label="支付流水号"
+            ></el-table-column>
             <el-table-column prop="payTime" label="支付时间"></el-table-column>
             <el-table-column prop="payMoney" label="支付金额"></el-table-column>
             <el-table-column
@@ -58,10 +63,15 @@
               prop="transCode"
               label="第三方交易账号"
             ></el-table-column>
-            <el-table-column
-              prop="serviceTypeName"
-              label="业务类型名"
-            ></el-table-column>
+            <el-table-column label="业务类型名">
+              <template slot-scope="{ row }">
+                {{
+                  row.serviceTypeName === "维保师傅支付"
+                    ? "支付至维保师傅"
+                    : row.serviceTypeName
+                }}
+              </template>
+            </el-table-column>
             <el-table-column label="收支状态">
               <template slot-scope="{ row }">
                 <div v-if="row.status === 0" style="color:red;">未支付</div>
@@ -154,11 +164,7 @@
 </style>
 
 <script>
-import {
-  queryPaymentList,
-  getButlerOrderCollectionInfo,
-  getRepairOrderCollectionInfo,
-} from "@/api/financialController";
+import { queryPaymentList } from "@/api/financialController";
 import payOrderDetails from "./components/payOrderDetails.vue";
 
 export default {
@@ -190,17 +196,8 @@ export default {
     // 显示弹窗
     async detailsOpen(row, Boolean) {
       this.payBtnShow = Boolean;
-      this.$refs.payOrderDetails.orderSn = row.orderSn;
+      this.$refs.payOrderDetails.rowList = row;
       this.detailsShow = true;
-
-      return;
-      if (row.serviceTypeName === "管家合同支付") {
-        const res = await getButlerOrderCollectionInfo(row.orderSn);
-        console.log(res);
-      } else {
-        const res = getRepairOrderCollectionInfo(row.orderSn);
-        console.log(res);
-      }
     },
     // 点击重置触发的事件
     resetBtn() {

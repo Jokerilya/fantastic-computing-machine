@@ -34,20 +34,43 @@
             type="primary"
             size="mini"
             plain
+            @click="
+              $router.push('/maintenance/amendPricing?orderSn=' + data.orderSn)
+            "
+            v-if="
+              (data.platformStatus === -1 ||
+                data.platformStatus === 1 ||
+                data.platformStatus === 2) &&
+                data.orderStatusName !== '已取消'
+            "
+            >修改报价</el-button
+          >
+          <el-button
+            type="primary"
+            size="mini"
+            plain
             @click="sumbitQuotation()"
             v-if="['2204'].includes(data.enterpriseSubStatus)"
             >确认报价</el-button
           >
           <!-- <el-button type="primary" size="mini" plain @click="platformPayInit()">打款至师傅</el-button> -->
-          <el-button
-            type="primary"
-            size="mini"
-            plain
-            @click="_changePayment()"
-            v-if="data.masterSubStatus < 3502 && data.masterSubStatus > 0"
-            >修改报价</el-button
-          >
 
+          <el-button
+            size="mini"
+            type="primary"
+            plain
+            v-if="
+              (data.platformStatus === -1 || data.platformStatus === 1) &&
+                data.orderStatusName !== '已取消'
+            "
+            @click="
+              $router.push(
+                '/maintenance/assignedWorker?orderSn=' + data.orderSn
+              )
+            "
+          >
+            指派师傅
+          </el-button>
           <el-button
             v-if="
               data.enterpriseMainStatus > -1 && data.enterpriseMainStatus <= 3
@@ -58,14 +81,15 @@
             @click="clickCancelOrderDialog"
             >取消订单</el-button
           >
-          <el-button
+
+          <!-- <el-button
             type="primary"
             size="mini"
             plain
             @click="_handleMasterPayment()"
             v-if="['3502'].includes(data.masterSubStatus)"
             >打款至师傅</el-button
-          >
+          > -->
         </div>
       </div>
 
@@ -264,11 +288,65 @@
           <div class="accessoriesDetail" v-if="judgeParts()">
             <div class="title">配件明细</div>
             <div>
-              <div class="item" v-for="(item, index) in data.partsList">
+              <div
+                class="item"
+                style="position: relative;"
+                v-for="(item, index) in data.partsList"
+              >
                 <div style="font-size: 18px;">配件{{ index + 1 }}:</div>
                 <div class="name">{{ item.name }}</div>
                 <div class="price">{{ item.price }}元</div>
                 <div class="num">{{ item.num }}{{ item.unit }}</div>
+                <div style="position: absolute;left: -35px;top: -3px;">
+                  <img
+                    src="@/assets/logo/masterPurchase.png"
+                    width="28px"
+                    v-if="item.type !== 2"
+                  />
+                  <img
+                    src="@/assets/logo/platformPurchase.png"
+                    width="28px"
+                    v-if="item.type === 2"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 服务进度 -->
+          <div class="servicePlan" v-if="data.enterpriseMainStatus === 3">
+            <div class="topLine">
+              <div class="title">服务进度</div>
+              <div class="annotation">
+                （不必填，维修时间长，需要配合客户填写进度）
+              </div>
+            </div>
+            <div class="content">
+              <div
+                class="item"
+                v-for="(item, index) in data.serviceProgressList"
+              >
+                <div class="title">进度描述{{ index + 1 }}</div>
+                <div>
+                  <div class="time">{{ item.time }}</div>
+                  <div class="decs">{{ item.content }}</div>
+                </div>
+              </div>
+            </div>
+            <div class="releaseDesc">
+              <div class="title">进度描述</div>
+              <div class="inp">
+                <el-input
+                  v-model="content"
+                  type="textarea"
+                  resize="none"
+                  :rows="6"
+                  placeholder="输入当前维修进度信息"
+                >
+                </el-input>
+                <div class="confirmBtn">
+                  <el-button class="btn" @click="descConfirm">确定</el-button>
+                </div>
               </div>
             </div>
           </div>
@@ -395,44 +473,6 @@
       </el-form>
     </model>
 
-    <!-- 修改报价的弹窗 -->
-    <el-dialog
-      title="修改报价"
-      :visible.sync="changePayment"
-      :close-on-click-modal="true"
-      :modal="true"
-      :show-close="true"
-      :center="true"
-    >
-      <el-from label-width="1000px">
-        <div class="addPart">
-          <div class="addcontent">
-            <div class="name">上门费用:</div>
-            <el-input v-model="parts.doorAmount" placeholder="元"></el-input>
-          </div>
-          <div class="addcontent">
-            <div class="name">其他费用:</div>
-            <el-input v-model="parts.otherAmount" placeholder="元"></el-input>
-          </div>
-          <div class="addcontent">
-            <div class="name">配件费用:</div>
-            <el-input v-model="parts.partsAmount" placeholder="元"></el-input>
-          </div>
-          <div class="addcontent">
-            <div class="name">技术服务费:</div>
-            <el-input
-              v-model="parts.technologyAmount"
-              placeholder="元"
-            ></el-input>
-          </div>
-        </div>
-      </el-from>
-      <div class="addPartBtn">
-        <el-button type="primary" @click="changeFalse">取消</el-button>
-        <el-button type="primary" @click="changeTrue">确认修改</el-button>
-      </div>
-    </el-dialog>
-
     <!-- 确认验收的模态框 -->
     <model
       ref="checkForm"
@@ -529,6 +569,69 @@
 </template>
 
 <style lang="less" scoped>
+// 服务进度
+.servicePlan {
+  .topLine {
+    display: flex;
+    align-items: center;
+    .title {
+      width: 150px;
+      color: #707070;
+      font-size: 24px;
+      font-weight: 600;
+    }
+    .annotation {
+      color: #999999;
+      font-size: 18px;
+    }
+  }
+  .releaseDesc {
+    margin: 20px 0;
+    display: flex;
+    .title {
+      width: 150px;
+      color: #999999;
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .inp {
+      width: 70%;
+      position: relative;
+
+      .confirmBtn {
+        position: absolute;
+        right: 15px;
+        bottom: 10px;
+        .btn {
+          width: 85px;
+          background-color: #2e4c9e;
+          height: 35px;
+          color: #fff;
+        }
+      }
+    }
+  }
+  .content {
+    .item {
+      display: flex;
+      margin-top: 20px;
+      .title {
+        width: 150px;
+        color: #999999;
+        font-size: 18px;
+        font-weight: 700;
+      }
+      .time {
+        color: #999999;
+        margin-bottom: 10px;
+      }
+      .decs {
+        color: #0b2059;
+      }
+    }
+  }
+}
+
 // 创建人  操作人
 .people {
   display: flex;
@@ -652,10 +755,10 @@
     }
     .item {
       display: flex;
-      width: 250px;
+      width: 350px;
       margin-bottom: 20px;
       .name {
-        flex: 3;
+        padding-right: 30px;
         margin-left: 20px;
         color: #707070;
       }
@@ -835,20 +938,20 @@
 <script>
 import { getRepairOrderDetail } from "@/api/user.js";
 import {
+  editOrderServiceProgress,
   examineMasterQuotation,
   handleMasterPayment,
-  updateMasterPrice,
   cancelRepairOrder,
 } from "@/api/order.js";
 export default {
   title: "maintenance_order_desc",
   data() {
     return {
+      content: "",
       // 取消订单
       delOrderinpValue: "",
       cancelOrderDialog: false,
 
-      changePayment: false,
       orderSn: "",
       data: {},
       activeName: "desc",
@@ -886,6 +989,17 @@ export default {
     this._getRepairOrderDetail();
   },
   methods: {
+    // 点击确定添加描述
+    async descConfirm() {
+      const data = {
+        content: this.content,
+        orderSn: this.data.orderSn,
+      };
+      const res = await editOrderServiceProgress(data);
+      if (res.message === "操作成功") {
+        location.reload();
+      }
+    },
     // 点击取消订单触发的时间
     clickCancelOrderDialog() {
       this.cancelOrderDialog = true;
@@ -955,28 +1069,7 @@ export default {
         }
       });
     },
-    // 点击修改报价的弹窗的取消按钮的事件
-    changeFalse() {
-      this.changePayment = false;
-    },
-    // 点击修改报价的弹窗的确认修改按钮的事件
-    async changeTrue() {
-      this.parts.orderSn = this.orderSn;
-      const res = await updateMasterPrice(this.parts);
-      if (res.message === "操作成功") {
-        this.$message({
-          showClose: true,
-          message: res.message,
-          type: "success",
-        });
-        await this._getRepairOrderDetail();
-        this.changePayment = false;
-      }
-    },
-    // 点击修改报价的事件
-    _changePayment() {
-      this.changePayment = true;
-    },
+
     // 暂时不知道干嘛!!!!!
     changeStuta(e) {
       if (e.value == 1) {
@@ -1078,7 +1171,7 @@ export default {
     jump2check() {
       this.$router.push({
         name: "checkPricing",
-        query: { orderSn: this.data.orderSn },
+        query: { orderSn: this.data.orderSn, edit: true },
       });
     },
     // 没用过

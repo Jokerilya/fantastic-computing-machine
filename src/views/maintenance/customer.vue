@@ -52,53 +52,75 @@
             background: '#f6f8fc',
             color: '#707070',
           }"
-          :height="masterList.length > 8 ? '400' : ''"
+          height="60vh"
         >
           <el-table-column
             prop="orderSn"
             label="订单号"
+            width="100"
             show-overflow-tooltip
             align="center"
           ></el-table-column>
           <el-table-column
             prop="statusName"
             label="订单状态"
+            width="100"
             show-overflow-tooltip
             align="center"
           ></el-table-column>
           <el-table-column
             prop="enterpriseName"
             label="企业名称"
+            width="200"
             show-overflow-tooltip
             align="center"
           ></el-table-column>
           <el-table-column
             prop="contactsPeople"
             label="企业联系人"
+            width="140"
             show-overflow-tooltip
             align="center"
           ></el-table-column>
           <el-table-column
             prop="contactsPhone"
             label="客户电话"
+            width="150"
             show-overflow-tooltip
             align="center"
           ></el-table-column>
           <el-table-column
             prop="salesmanRealName"
             label="客户经理"
+            width="100"
             show-overflow-tooltip
             align="center"
           ></el-table-column>
           <el-table-column
             prop="salesmanRealPhone"
             label="客户经理电话"
+            width="150"
             show-overflow-tooltip
+            align="center"
+          ></el-table-column>
+          <el-table-column
+            prop="recommendPeople"
+            label="订单推荐人"
+            width="100"
+            show-overflow-tooltip
+            align="center"
+          ></el-table-column>
+          <el-table-column
+            prop="recommendPhone"
+            label="订单推荐人电话"
+            show-overflow-tooltip
+            width="150"
             align="center"
           ></el-table-column>
           <el-table-column
             prop="createTime"
             label="下单时间"
+            width="140"
             show-overflow-tooltip
             align="center"
           ></el-table-column>
@@ -106,7 +128,7 @@
             label="操作"
             fixed="right"
             align="center"
-            width="200"
+            width="250"
           >
             <template slot-scope="{ row }">
               <div class="settings">
@@ -120,14 +142,21 @@
                   style="color:#2E4C9E;margin-left:6px;"
                   @click="foremp(row)"
                   v-if="!row.uid"
-                  >绑定企业</a
+                  >绑企业</a
                 >
                 <a
                   href="#"
                   style="color:#2E4C9E;margin-left:6px;"
                   v-if="!row.salesmanRealName"
                   @click="bindingSalesmanFn(row.orderSn)"
-                  >绑定业务员</a
+                  >绑业务员</a
+                >
+                <a
+                  href="#"
+                  style="color:#2E4C9E;margin-left:6px;"
+                  v-if="!row.recommendPhone"
+                  @click="bindingReferrerFn(row.orderSn)"
+                  >绑推荐人</a
                 >
               </div>
             </template>
@@ -281,10 +310,59 @@
         <el-button type="primary" @click="salesmanConfirm">确 定</el-button>
       </span>
     </el-dialog>
+
+    <!-- 绑定推荐人弹框 -->
+    <el-dialog
+      :visible="referrerDialog"
+      width="30%"
+      :before-close="closeReferrerFn"
+    >
+      <div class="bindingSalesmanTitle">
+        绑定推荐人
+      </div>
+      <div>
+        <div style="margin-bottom: 10px;" class="referrerItem">
+          <div class="title">
+            推荐人姓名:
+          </div>
+          <el-input
+            placeholder="输入推荐人姓名"
+            style="width: 200px;"
+            v-model="referrerForm.recommendPeople"
+          ></el-input>
+        </div>
+        <div class="referrerItem">
+          <div class="title">
+            推荐人电话:
+          </div>
+          <el-input
+            placeholder="输入推荐人电话"
+            style="width: 200px;"
+            v-model="referrerForm.recommendPhone"
+          ></el-input>
+        </div>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeReferrerFn">取 消</el-button>
+        <el-button type="primary" @click="referrerConfirm">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <style lang="less" scoped>
+// 绑定推荐人
+.referrerItem {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .title {
+    margin-right: 15px;
+    color: #757275;
+    font-weight: 700;
+  }
+}
+
 // 绑定业务员弹框
 .bindingSalesmanTitle {
   text-align: center;
@@ -346,6 +424,7 @@ import {
   uploadButlerOrder,
   downloadButlerOrderTemplate,
   handleButlerOrderExport,
+  bindRecommendInfo,
 } from "@/api/order.js";
 import tableMixin from "@/mixin/table";
 export default {
@@ -353,6 +432,14 @@ export default {
   mixins: [tableMixin],
   data() {
     return {
+      // 推荐人弹窗绑定的电话名字
+      referrerForm: {
+        recommendPeople: "",
+        recommendPhone: "",
+        orderSn: "",
+      },
+
+      referrerDialog: false,
       dialogVisible: false,
       salesmanSelect: null, //选中的推荐人名字
       salesmanOptions: null, //选择人的列表
@@ -407,6 +494,7 @@ export default {
       },
       param: {},
       quotationForm: {},
+      exportParams: null,
     };
   },
   created() {
@@ -415,17 +503,53 @@ export default {
     this._getEnterpriseList();
   },
   methods: {
+    // 绑定推荐人弹框的确定事件
+    async referrerConfirm() {
+      if (!this.referrerForm.recommendPeople) {
+        this.$message({
+          message: "推荐人姓名不能为空",
+          type: "warning",
+        });
+        return;
+      } else {
+        const res = await bindRecommendInfo(this.referrerForm);
+        if (res.message === "操作成功") {
+          console.log(res);
+          await this._getOrderList();
+          this.closeReferrerFn();
+        }
+      }
+    },
+    // 弹出推荐人弹窗
+    bindingReferrerFn(orderSn) {
+      this.referrerForm.orderSn = orderSn;
+      this.referrerDialog = true;
+    },
+    // 关闭推荐人弹窗
+    closeReferrerFn() {
+      this.referrerForm = {
+        recommendPeople: "",
+        recommendPhone: "",
+        orderSn: "",
+      };
+      this.referrerDialog = false;
+    },
     // 导出功能
     async exportVip() {
-      const data = {
-        pageNo: 1,
-        pageSize: 1000,
-        enterpriseName: this.Name,
-        contactsPeople: this.People,
-        contactsPhone: this.Phone,
-      };
-      const res = await handleButlerOrderExport(data);
-      console.log(res);
+      this.exportParams.pageSize = 10000;
+      const res = await handleButlerOrderExport(this.exportParams);
+      if (res) {
+        const link = document.createElement("a");
+        const blob = new Blob([res.data], {
+          type: "application/vnd.ms-excel",
+        });
+        link.style.display = "none";
+        link.href = URL.createObjectURL(blob);
+        link.download = "年保列表"; //下载的文件名
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
     },
     // 关闭绑定业务员弹窗
     closeSalesmanFn() {
@@ -434,18 +558,26 @@ export default {
     },
     // 确定绑定业务员事件
     async salesmanConfirm() {
-      const res = await bindSalesmanAccount({
-        id: this.salesmanSelect,
-        orderSn: this.salesmanOrderSn,
-      });
-      if (res.message === "操作成功") {
+      if (!this.salesmanSelect) {
         this.$message({
-          message: "绑定成功",
-          type: "success",
+          message: "业务员名字不能为空",
+          type: "warning",
         });
+        return;
+      } else {
+        const res = await bindSalesmanAccount({
+          id: this.salesmanSelect,
+          orderSn: this.salesmanOrderSn,
+        });
+        if (res.message === "操作成功") {
+          this.$message({
+            message: "绑定成功",
+            type: "success",
+          });
+        }
+        await this._getOrderList();
+        this.closeSalesmanFn();
       }
-      await this._getOrderList();
-      this.closeSalesmanFn();
     },
     // 查询业务员 触发的事件
     async salesmanRemoteMethod(val) {
@@ -549,6 +681,7 @@ export default {
         pageNo: 1,
         pageSize: 10,
       };
+      this.exportParams = params;
       queryButlerOrderList(params).then((res) => {
         if (res) {
           this.orderList = res.data.records;
@@ -566,6 +699,7 @@ export default {
         pageNo: this.currentPage,
         pageSize: 10,
       };
+      this.exportParams = params;
       queryButlerOrderList(params).then((res) => {
         if (res) {
           this.orderList = res.data.records;

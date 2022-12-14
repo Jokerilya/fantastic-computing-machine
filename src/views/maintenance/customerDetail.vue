@@ -51,138 +51,145 @@
     <div style="height: 16px;"></div>
 
     <!-- 列表表格部分 -->
-    <el-table
-      highlight-current-row
-      v-loading.fullscreen.lock="loading"
-      element-loading-text="拼命加载中"
-      element-loading-spinner="el-icon-loading"
-      :data="orderDetail"
-      style="width: 100%;"
-    >
-      <el-table-column type="expand">
-        <template slot-scope="{ row }">
-          <el-table
-            :data="row.partsList"
-            border
-            :cell-style="{ 'text-align': 'center' }"
-            style="width: 100%"
-            :header-cell-style="{
-              background: '#f6f8fc',
-              color: '#707070',
-              'text-align': 'center',
-            }"
-          >
-            <el-table-column prop="category" label="配件大类">
-            </el-table-column>
-            <el-table-column prop="deviceBrand" label="配件品牌">
-            </el-table-column>
-            <el-table-column prop="deviceModel" label="配件型号">
-            </el-table-column>
-            <el-table-column prop="name" label="配件名称"> </el-table-column>
-            <el-table-column prop="specification" label="配件规格">
-            </el-table-column>
-            <el-table-column label="操作">
-              <template slot-scope="{ row }">
-                <a
-                  href="#"
-                  style="color:#0b2059;"
-                  @click="editAccessoriesFn(row)"
-                >
-                  编辑
-                </a>
-                <a
-                  href="#"
-                  style="color:#0b2059;"
-                  @click="delAccessoriesFn(row.id)"
-                >
-                  删除</a
-                >
-              </template>
-            </el-table-column>
-          </el-table>
-        </template> </el-table-column
-      ><el-table-column
-        prop="no"
-        label="设备编号"
-        show-overflow-tooltip
-        align="center"
-      ></el-table-column>
-      <el-table-column label="设备铭牌" show-overflow-tooltip align="center">
-        <template slot-scope="{ row }">
-          <y-image
-            :src="row.nameplateImg ? row.nameplateImg.split(',')[0] : ''"
-            :srcList="row.nameplateImg ? row.nameplateImg.split(',') : ''"
-          />
-        </template>
-      </el-table-column>
-      <el-table-column
-        prop="deviceTypeName"
-        label="设备类型"
-        show-overflow-tooltip
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        prop="deviceBrand"
-        label="设备品牌"
-        show-overflow-tooltip
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        prop="deviceModel"
-        label="设备型号"
-        show-overflow-tooltip
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        prop="deviceSystemName"
-        label="设备系统"
-        show-overflow-tooltip
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        prop="devicePlace"
-        label="设备产地"
-        show-overflow-tooltip
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        prop="price"
-        label="维保价格"
-        show-overflow-tooltip
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        prop="startTime"
-        label="投保时间"
-        show-overflow-tooltip
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        prop="endTime"
-        label="到期时间"
-        show-overflow-tooltip
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        prop="endTime"
-        label="到期时间"
-        show-overflow-tooltip
-        align="center"
-      ></el-table-column>
-      <el-table-column label="操作" align="center" width="120">
-        <template slot-scope="{ row }">
-          <a href="#" style="color:#0b2059;" @click="addAccessoriesFn(row.id)"
-            >添加
-          </a>
-          <!-- <a href="#" style="color:#0b2059;">
+    <el-card>
+      <el-table
+        highlight-current-row
+        v-loading.fullscreen.lock="loading"
+        element-loading-text="拼命加载中"
+        element-loading-spinner="el-icon-loading"
+        :data="orderDetail"
+        style="width: 100%;"
+        height="80vh"
+      >
+        <el-table-column type="expand">
+          <template slot-scope="{ row }">
+            <el-table
+              :data="row.partsList"
+              border
+              :cell-style="{ 'text-align': 'center' }"
+              style="width: 100%"
+              :header-cell-style="{
+                background: '#f6f8fc',
+                color: '#707070',
+                'text-align': 'center',
+              }"
+            >
+              <el-table-column prop="category" label="配件大类">
+              </el-table-column>
+              <el-table-column prop="deviceBrand" label="配件品牌">
+              </el-table-column>
+              <el-table-column prop="deviceModel" label="配件型号">
+              </el-table-column>
+              <el-table-column prop="name" label="配件名称"> </el-table-column>
+              <el-table-column prop="specification" label="配件规格">
+              </el-table-column>
+              <el-table-column label="操作">
+                <template slot-scope="{ row }">
+                  <a
+                    href="#"
+                    style="color:#0b2059;"
+                    @click="editAccessoriesFn(row)"
+                  >
+                    编辑
+                  </a>
+                  <a
+                    href="#"
+                    style="color:#0b2059;"
+                    @click="delAccessoriesFn(row.id)"
+                  >
+                    删除</a
+                  >
+                </template>
+              </el-table-column>
+            </el-table>
+          </template> </el-table-column
+        ><el-table-column
+          prop="no"
+          label="设备编号"
+          show-overflow-tooltip
+          align="center"
+        ></el-table-column>
+        <el-table-column label="设备铭牌" show-overflow-tooltip align="center">
+          <template slot-scope="{ row }">
+            <y-image
+              :src="row.nameplateImg ? row.nameplateImg.split(',')[0] : ''"
+              :srcList="row.nameplateImg ? row.nameplateImg.split(',') : ''"
+            />
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="deviceTypeName"
+          label="设备类型"
+          show-overflow-tooltip
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="deviceBrand"
+          label="设备品牌"
+          show-overflow-tooltip
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="deviceModel"
+          label="设备型号"
+          show-overflow-tooltip
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="deviceSystemName"
+          label="设备系统"
+          show-overflow-tooltip
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="devicePlace"
+          label="设备产地"
+          show-overflow-tooltip
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="price"
+          label="维保价格"
+          show-overflow-tooltip
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="startTime"
+          label="投保时间"
+          show-overflow-tooltip
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="endTime"
+          label="到期时间"
+          show-overflow-tooltip
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="endTime"
+          label="到期时间"
+          show-overflow-tooltip
+          align="center"
+        ></el-table-column>
+        <el-table-column label="操作" align="center" width="120">
+          <template slot-scope="{ row }">
+            <a href="#" style="color:#0b2059;" @click="addAccessoriesFn(row.id)"
+              >添加
+            </a>
+            <!-- <a href="#" style="color:#0b2059;">
             编辑
           </a> -->
-          <a href="#" style="color:#0b2059;" @click="deleteDeviceInfo(row.id)">
-            删除</a
-          >
-        </template>
-      </el-table-column>
-    </el-table>
+            <a
+              href="#"
+              style="color:#0b2059;"
+              @click="deleteDeviceInfo(row.id)"
+            >
+              删除</a
+            >
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-card>
 
     <!-- 新增编辑配件 -->
     <addEditDialog
@@ -332,7 +339,7 @@ export default {
     },
     // 点击配件编辑触发的事件
     async editAccessoriesFn(row) {
-      this.$refs.addEditDialog.accessoriesForm = row;
+      this.$refs.addEditDialog.accessoriesForm = { ...row };
       this.dislogTitle = "编辑配件";
       this.dialogState = true;
     },

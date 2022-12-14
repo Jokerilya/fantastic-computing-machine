@@ -74,8 +74,7 @@
         element-loading-text="拼命加载中"
         element-loading-spinner="el-icon-loading"
         :data="enterpriseList"
-        style="width: 100%;"
-        :height="enterpriseList.length > 5 ? '500' : ''"
+        height="65vh"
       >
         <el-table-column
           prop="enterpriseName"
@@ -113,8 +112,8 @@
           align="center"
         ></el-table-column>
         <el-table-column
-          prop="recommendMasterName"
-          label="直推师傅"
+          prop="superiorEnterpriseName"
+          label="团队长"
           show-overflow-tooltip
           width="100"
           align="center"
@@ -543,6 +542,9 @@
 </template>
 
 <style lang="less" scoped>
+.table-wrapper {
+  height: calc(100%-200px);
+}
 .content {
   .oneLine {
     display: flex;

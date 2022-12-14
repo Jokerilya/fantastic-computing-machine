@@ -31,7 +31,7 @@ const router = {
       path: "/maintenance/maintenance_order",
       name: "maintenance_order",
       component: () => import("@/views/maintenance/maintenance_order"),
-      meta: { title: "维保订单" },
+      meta: { title: "维保工单" },
     },
     {
       path: "/maintenance/maintenance_order_desc",
@@ -56,6 +56,12 @@ const router = {
       name: "checkPricing",
       component: () => import("@/views/maintenance/checkPricing"),
       meta: { title: "检测定价", noShow: "true" },
+    },
+    {
+      path: "/maintenance/amendPricing",
+      name: "amendPricing",
+      component: () => import("@/views/maintenance/amendPricing"),
+      meta: { title: "修改定价", noShow: "true" },
     },
 
     {
@@ -100,6 +106,18 @@ const router = {
       name: "workerDetails",
       component: () => import("@/views/maintenance/worker/workerDetails"),
       meta: { title: "师傅详情", noShow: "true" },
+    },
+    {
+      path: "/maintenance/assignedWorker",
+      name: "assignedWorker",
+      component: () => import("@/views/maintenance/assignedWorker"),
+      meta: { title: "指派师傅", noShow: "true" },
+    },
+    {
+      path: "/financialManagement/incomeExpenditrue",
+      name: "workerDetails",
+      component: () => import("@/views/financialManagement/incomeExpenditrue"),
+      meta: { title: "收支明细" },
     },
 
     // 暂时 不用这个功能 后续看情况补上

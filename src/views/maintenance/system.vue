@@ -288,7 +288,7 @@ export default {
       if (fn) fn(false);
     },
     editInit(row) {
-      this.editForm = row;
+      this.editForm = { ...row };
       delete this.editForm.list;
       this.$refs.editModel.open();
       console.info(row.imgUrl);

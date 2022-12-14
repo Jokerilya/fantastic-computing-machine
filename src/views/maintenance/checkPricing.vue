@@ -10,9 +10,9 @@
         </div>
         <div class="content">
           <el-checkbox-group v-model="faultTypeCheckbox">
-            <el-checkbox label="1">机械故障</el-checkbox>
-            <el-checkbox label="2">电气故障</el-checkbox>
-            <el-checkbox label="3">系统故障</el-checkbox>
+            <el-checkbox :label="1">机械故障</el-checkbox>
+            <el-checkbox :label="2">电气故障</el-checkbox>
+            <el-checkbox :label="3">系统故障</el-checkbox>
           </el-checkbox-group>
         </div>
       </div>
@@ -25,6 +25,7 @@
             <el-checkbox
               style="margin-bottom: 10px;"
               v-for="item in equipmentPosition"
+              :key="item.name"
               :label="item.name"
               >{{ item.name }}</el-checkbox
             >
@@ -78,7 +79,11 @@
     <div class="onload">
       <div class="onloadTitle">质保周期:</div>
       <div class="onloadPart">
-        <el-radio-group v-model="param.warrantyTime" style="display:flex;">
+        <el-radio-group
+          v-model="param.warrantyTime"
+          style="display:flex;"
+          @input="checkqualityWeekDataInp"
+        >
           <el-radio :label="10">10天</el-radio>
           <el-radio :label="15">15天</el-radio>
           <el-radio :label="30">30天</el-radio>
@@ -86,6 +91,7 @@
           <el-radio :label="0">其他天数</el-radio>
         </el-radio-group>
         <el-input
+          v-if="qualityWeekDataInp"
           v-model.number="param.warrantyTime"
           class="onloadPart_inp"
           @blur="judgeInp('warrantyTime', 'param')"
@@ -170,6 +176,18 @@
           <a style="color:#4889fb;" href="#" @click="deleted(item, index)"
             >删除</a
           >
+        </div>
+        <div class="procurementLogo">
+          <img
+            src="@/assets/logo/masterPurchase.png"
+            width="28px"
+            v-if="item.type !== 2"
+          />
+          <img
+            src="@/assets/logo/platformPurchase.png"
+            width="28px"
+            v-if="item.type === 2"
+          />
         </div>
       </div>
     </div>
@@ -268,6 +286,7 @@
 
     <!-- 添加配件的弹窗 -->
     <el-dialog
+      width="35%"
       :visible.sync="dialogpop"
       :close-on-click-modal="true"
       :modal="true"
@@ -285,6 +304,7 @@
             <div class="addcontent">
               <div class="name">配件名称:</div>
               <el-input
+                style="width: 230px;"
                 v-model.trim="part.name"
                 placeholder="请填写配件名称"
               ></el-input>
@@ -292,6 +312,7 @@
             <div class="addcontent">
               <div class="name">配件单价:</div>
               <el-input
+                style="width: 230px;"
                 @input="judgeInp('price', 'part')"
                 v-model.number="part.price"
                 placeholder="请填写配件单价"
@@ -300,6 +321,7 @@
             <div class="addcontent">
               <div class="name">配件数量:</div>
               <el-input
+                style="width: 230px;"
                 @input="judgeInp('num', 'part')"
                 v-model.number="part.num"
                 placeholder="请填写配件数量,例如：2"
@@ -308,9 +330,17 @@
             <div class="addcontent">
               <div class="name">配件单位:</div>
               <el-input
+                style="width: 230px;"
                 v-model.trim="part.unit"
                 placeholder="请填写配件单位,例如：件、个"
               ></el-input>
+            </div>
+            <div class="addcontent">
+              <div class="name">配件采购:</div>
+              <div style="width: 230px;">
+                <el-radio v-model="part.type" :label="2">平台采购</el-radio>
+                <el-radio v-model="part.type" :label="1">师傅采购</el-radio>
+              </div>
             </div>
           </div>
         </div>
@@ -339,6 +369,8 @@ export default {
       faultTypeCheckbox: [], //故障类型多选
       faultPartsCheckbox: [], //故障部位 多选
       equipmentPosition: null, //故障部位列表
+      qualityWeekDataInp: false,
+      edit: null,
 
       dialogChosee: false,
       dialogpop: false,
@@ -353,6 +385,7 @@ export default {
         price: null,
         num: null,
         unit: "",
+        type: null,
       },
 
       param: {
@@ -378,7 +411,13 @@ export default {
     const res = await queryDevicePositionList();
     this.equipmentPosition = res.data;
     this.param.orderSn = this.$route.query.orderSn;
-    console.log("订单号", this.orderSn);
+    const info = await getRepairOrderDetail({
+      enterpriseOrderSn: this.param.orderSn,
+    });
+    this.faultTypeCheckbox = info.data.originType;
+    this.programmes[0].desc = info.data.simpleDesc;
+    this.faultTypeCheckbox = [1, 3];
+    this.edit = this.$route.query.edit;
     this._getRepairOrderDetail();
   },
   mounted() {},
@@ -400,6 +439,14 @@ export default {
     },
   },
   methods: {
+    // 改变其他天数
+    checkqualityWeekDataInp() {
+      if (this.param.warrantyTime === 0) {
+        this.qualityWeekDataInp = true;
+      } else {
+        this.qualityWeekDataInp = false;
+      }
+    },
     // 改造数据方案
     repairData(arr) {
       let str = null;
@@ -438,7 +485,8 @@ export default {
         !this.part.name ||
         !this.part.price ||
         !this.part.num ||
-        !this.part.unit
+        !this.part.unit ||
+        !this.part.type
       ) {
         this.$message({
           message: "表单未填写完整",
@@ -451,7 +499,9 @@ export default {
           price: "",
           num: "",
           unit: "",
+          state: null,
         };
+        console.log(this.param.parts);
         this.dialogpop = false;
       }
     },
@@ -469,7 +519,6 @@ export default {
         enterpriseOrderSn: this.param.orderSn,
       };
       getRepairOrderDetail(params).then((res) => {
-        console.log("订单详情", res);
         if (res.success) {
           this.orderDetail = res.data;
           this.$message({
@@ -561,6 +610,8 @@ export default {
 .addBorder {
   .addPart {
     .addcontent {
+      height: 40px;
+      line-height: 40px;
       .name {
         font-weight: 700;
         color: #707070;
@@ -569,13 +620,21 @@ export default {
   }
 }
 .addPartcs {
-  margin: 20px 0 0 144px;
-
+  margin-left: 10vw;
   .item {
+    height: 50px;
+    line-height: 50px;
     display: flex;
     width: 250px;
     justify-content: space-between;
-    margin-bottom: 15px;
+    font-size: 18px;
+    position: relative;
+
+    .procurementLogo {
+      position: absolute;
+      left: -48px;
+      top: 8px;
+    }
   }
 }
 // 测试结束
@@ -644,8 +703,6 @@ export default {
       font-weight: bold;
       color: #707070;
     }
-    el-time-picker {
-    }
   }
   .cut {
     margin: 50px 0;
@@ -672,9 +729,9 @@ export default {
     }
   }
   .pricing {
+    margin-top: 20px;
     width: 900px;
     display: flex;
-    margin: 53px 0;
     //   justify-content: space-between;
     .pricingTitle {
       font-size: 24px;
@@ -759,6 +816,6 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 50px;
+  margin-top: 15px;
 }
 </style>

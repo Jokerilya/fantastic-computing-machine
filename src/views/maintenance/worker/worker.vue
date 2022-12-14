@@ -56,7 +56,7 @@
             plain
             type="primary"
             @click="_handleMasterInfoExport()"
-            >导出全部师傅</el-button
+            >导出师傅</el-button
           >
         </el-col>
       </el-row>
@@ -69,7 +69,7 @@
         element-loading-text="拼命加载中"
         element-loading-spinner="el-icon-loading"
         :data="masterList"
-        style="width: 100%;height: 100%;"
+        height="65vh"
       >
         <el-table-column
           prop="realName"
@@ -382,35 +382,30 @@
           prop="realName"
           label="真实姓名"
           show-overflow-tooltip
-          width="200"
           align="center"
         ></el-table-column>
         <el-table-column
           prop="phone"
           label="联系电话"
           show-overflow-tooltip
-          width="100"
           align="center"
         ></el-table-column>
         <el-table-column
           prop="serviceTypes"
           label="服务范围"
           show-overflow-tooltip
-          width="100"
           align="center"
         ></el-table-column>
         <el-table-column
           prop="status"
           label="状态"
           show-overflow-tooltip
-          width="100"
           align="center"
         ></el-table-column>
         <el-table-column
           prop="serviceAreas"
           label="服务区域"
           show-overflow-tooltip
-          width="100"
           align="center"
         ></el-table-column>
       </el-table>
@@ -441,6 +436,8 @@ export default {
   mixins: [tableMixin],
   data() {
     return {
+      params: null,
+
       colonelName: null,
       dialogVisible: false,
       referrerName: null, //推荐人名字
@@ -507,14 +504,11 @@ export default {
       this.referrerOptions = res.data;
     },
     handleEnterpriseExamine() {},
-    _handleMasterInfoExport() {
-      let data = {
-        identityNumber: "",
-        pageNo: 1,
-        pageSize: 20,
-        orderSn: "",
-        realName: "",
-      };
+
+    // 导出师傅
+    async _handleMasterInfoExport() {
+      const data = this.params;
+      data.pageSize = 1000;
       handleMasterInfoExport(data).then((res) => {
         if (res) {
           const link = document.createElement("a");
@@ -523,7 +517,6 @@ export default {
           });
           link.style.display = "none";
           link.href = URL.createObjectURL(blob);
-
           link.download = "师傅列表"; //下载的文件名
           document.body.appendChild(link);
           link.click();
@@ -531,9 +524,11 @@ export default {
         }
       });
     },
-    checkTeam(row) {
+
+    // 点击查看成员触发的事件
+    async checkTeam(row) {
+      await this._queryMasterMemberList(row);
       this.$refs.masterTeamList.open();
-      this._queryMasterMemberList(row);
     },
     _queryMasterMemberList(row) {
       let data = {
@@ -544,37 +539,38 @@ export default {
       queryMasterMemberList(data).then((res) => {
         if (res) {
           this.masterTeamList = res.data.records;
-          console.log("师傅团队列表", this.masterTeamList);
         }
       });
     },
-    handleCurrentChange(val) {
-      this.currentPage = val;
+
+    // 切换页码触发的事件
+    handleCurrentChange(page) {
+      this.currentPage = page;
       this._getMasterList();
     },
+    // 查询师傅列表
     async _getMasterList() {
-      let params = {
+      this.params = {
         pageNo: this.currentPage,
         pageSize: 10,
         realName: this.Name,
         phone: this.Phone,
       };
+      // 将团长推荐人名字 转化成 uid
       if (this.referrerName) {
         const res = await queryMasterName(this.referrerName);
-        params.recommendMasterUid = res.data[0] && res.data[0].uid;
+        this.params.recommendMasterUid = res.data[0] && res.data[0].uid;
       }
       if (this.colonelName) {
         const res = await queryMasterName(this.colonelName);
-        params.superiorMasterUid = res.data[0] && res.data[0].uid;
+        this.params.superiorMasterUid = res.data[0] && res.data[0].uid;
       }
-      console.log(params);
-      getMasterList(params).then((res) => {
-        if (res) {
-          this.masterList = res.data.records;
-          this.pageCount = res.data.total;
-          this.currentPage = res.data.current;
-        }
-      });
+      const res = await getMasterList(this.params);
+      if (res.message === "操作成功") {
+        this.masterList = res.data.records;
+        this.pageCount = res.data.total;
+        this.currentPage = res.data.current;
+      }
     },
     querySelectData() {
       this.loading = true;
@@ -726,6 +722,7 @@ export default {
       });
     },
     resetEditForm(fn) {
+      this.masterTeamList = null;
       fn(false);
       this.query();
     },

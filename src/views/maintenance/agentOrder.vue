@@ -263,11 +263,15 @@ export default {
     },
     // 处理图片
     async handlePictureCardPreview(data) {
+      let loading = this.$loading({
+        text: "文件正在上传中,请耐心等待...",
+      });
       this.originallyImgList.push(data.file.name);
       const formData = new FormData();
       formData.append("file", data.file);
       const res = await UploadImg(formData);
       this.dialogImageUrl.push(res.data);
+      loading.close();
     },
   },
   async created() {

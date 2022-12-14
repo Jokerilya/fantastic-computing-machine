@@ -81,11 +81,10 @@ export function updateMasterPrice(data) {
   });
 }
 //打款至师傅
-export function handleMasterPayment(data) {
+export function handleMasterPayment(orderSn) {
   return request({
-    url: "/admin/maintenance/handleMasterPayment",
+    url: "/admin/maintenance/handleMasterPayment?orderSn=" + orderSn,
     method: "get",
-    params: data,
   });
 }
 
@@ -108,11 +107,21 @@ export function queryRepairOrderList(data) {
 }
 
 // 维保订单列表导出
+export function editOrderServiceProgress(data) {
+  return request({
+    url: "/admin/maintenance/editOrderServiceProgress",
+    method: "POST",
+    data,
+  });
+}
+
+// 编辑订单维修进度记录
 export function handleRepairOrderExport(data) {
   return request({
     url: "/admin/maintenance/handleRepairOrderExport",
     method: "POST",
     data,
+    responseType: "blob",
   });
 }
 
@@ -147,6 +156,7 @@ export function handleButlerOrderExport(data) {
     url: "/admin/maintenance/handleButlerOrderExport",
     method: "post",
     data,
+    responseType: "blob",
   });
 }
 
@@ -223,6 +233,16 @@ export function handleMasterQuotation(data) {
     data: data,
   });
 }
+
+//修改订单
+export function editRepairOrder(data) {
+  return request({
+    url: "/admin/maintenance/editRepairOrder",
+    method: "post",
+    data,
+  });
+}
+
 // 订单发货
 export function handleOrderSendFn(data) {
   return request({
@@ -322,6 +342,15 @@ export function uploadBatchRepairOrder(data) {
 export function bindSalesmanAccount(data) {
   return request({
     url: "/admin/maintenance/bindSalesmanAccount",
+    method: "post",
+    data,
+  });
+}
+
+// 管家订单绑定推荐人信息
+export function bindRecommendInfo(data) {
+  return request({
+    url: "/admin/maintenance/bindRecommendInfo",
     method: "post",
     data,
   });

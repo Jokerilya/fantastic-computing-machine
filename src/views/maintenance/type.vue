@@ -347,8 +347,7 @@ export default {
       if (fn) fn(false);
     },
     editInit(row) {
-      let form = this.editForm;
-      this.editForm = row;
+      this.editForm = { ...row };
       this.$refs.editModel.open();
       this.$nextTick(() => {
         this.$refs.editImg.reset(

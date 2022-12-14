@@ -17,7 +17,6 @@ import newsRouter from "./modules/news.js";
 import talentRouter from "./modules/talent.js";
 import bossRouter from "./modules/boss.js";
 import maintenanceRouter from "./modules/maintenance.js";
-import financialControllerRouter from "./modules/financialController";
 
 export const constantRoutes = [
   {
@@ -82,7 +81,6 @@ export const constantRoutes = [
   newsRouter,
   talentRouter,
   bossRouter,
-  financialControllerRouter,
   // contentRouter,
   // schoolRouter,
   // userRouter,

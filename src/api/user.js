@@ -27,11 +27,11 @@ export function queryUserName(data) {
 }
 
 //师傅列表
-export function getMasterList(data) {
+export function getMasterList(params) {
   return request({
     url: "/admin/maintenance/queryMasterList",
     method: "get",
-    params: data,
+    params,
   });
 }
 //指派师傅列表
