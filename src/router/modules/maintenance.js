@@ -113,12 +113,12 @@ const router = {
       component: () => import("@/views/maintenance/assignedWorker"),
       meta: { title: "指派师傅", noShow: "true" },
     },
-    // {
-    //   path: "/financialManagement/incomeExpenditrue",
-    //   name: "workerDetails",
-    //   component: () => import("@/views/financialManagement/incomeExpenditrue"),
-    //   meta: { title: "收支明细" },
-    // },
+    {
+      path: "/financialManagement/incomeExpenditrue",
+      name: "workerDetails",
+      component: () => import("@/views/financialManagement/incomeExpenditrue"),
+      meta: { title: "收支明细" },
+    },
 
     // 暂时 不用这个功能 后续看情况补上
     // {

@@ -223,7 +223,7 @@
 
       <!-- 检测结果tab -->
       <el-tab-pane
-        label="检测结果"
+        label="维保服务"
         name="meg"
         v-if="!(data.platformStatus == 0 && data.enterpriseMainStatus >= 0)"
       >
