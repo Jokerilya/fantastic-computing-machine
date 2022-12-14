@@ -61,8 +61,10 @@
             type="primary"
             plain
             v-if="
-              data.enterpriseMainStatus === -1 ||
-                data.enterpriseMainStatus === 1
+              data.platformStatus === -1 ||
+                data.platformStatus === 1 ||
+                data.platformStatus === 2 ||
+                data.platformStatus === 3
             "
             @click="
               $router.push(
