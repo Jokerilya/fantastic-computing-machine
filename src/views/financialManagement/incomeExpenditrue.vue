@@ -83,7 +83,9 @@
                 <a
                   href="#"
                   style="color: #0b2059;margin-right: 10px;"
-                  v-if="row.status === 0"
+                  v-if="
+                    row.status === 0 && row.serviceTypeName !== '维保企业支付'
+                  "
                   @click="detailsOpen(row, true)"
                   >支付</a
                 >

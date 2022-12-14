@@ -40,9 +40,7 @@
               $router.push('/maintenance/amendPricing?orderSn=' + data.orderSn)
             "
             v-if="
-              data.platformStatus === -1 ||
-                data.platformStatus === 1 ||
-                data.platformStatus === 2
+              data.enterpriseMainStatus >= 0 && data.enterpriseMainStatus <= 5
             "
             >修改报价</el-button
           >
@@ -61,10 +59,9 @@
             type="primary"
             plain
             v-if="
-              data.platformStatus === -1 ||
-                data.platformStatus === 1 ||
-                data.platformStatus === 2 ||
-                data.platformStatus === 3
+              data.enterpriseMainStatus >= 0 &&
+                data.enterpriseMainStatus <= 4 &&
+                (data.platformStatus === -1 || data.platformStatus === 1)
             "
             @click="
               $router.push(
@@ -368,22 +365,35 @@
             </div>
           </div>
 
+          <!-- 客户评价 -->
+          <div class="customerEvaluate">
+            <div class="title">客户评价:</div>
+            <div class="descPic">
+              <div style="margin-bottom: 10px;">
+                <span style="color: #707070;font-size: 18px;">评价描述:</span>
+              </div>
+              <div>
+                <span style="color: #707070;font-size: 18px;">评价图片:</span>
+              </div>
+            </div>
+          </div>
+
           <!-- 订单费用 -->
           <div class="information" v-if="judgeOrderCost()">
             <div class="oneline">
               <div class="item1">订单费用:</div>
               <div class="item2">
                 <div>
-                  上门费用: <span>￥{{ data.doorAmount }}.00</span>
+                  上门费用: <span>￥{{ data.doorAmount }}元</span>
                 </div>
                 <div>
-                  技术服务费: <span>￥{{ data.technologyAmount }}.00</span>
+                  技术服务费: <span>￥{{ data.technologyAmount }}元</span>
                 </div>
                 <div>
-                  配件费: <span>￥{{ data.partsAmount }}.00</span>
+                  配件费: <span>￥{{ data.partsAmount }}元</span>
                 </div>
                 <div>
-                  其他费用: <span>￥{{ data.otherAmount }}.00</span>
+                  其他费用: <span>￥{{ data.otherAmount }}元</span>
                 </div>
                 <div>
                   合计:
@@ -393,7 +403,7 @@
                         data.technologyAmount +
                         data.partsAmount +
                         data.otherAmount
-                    }}.00</span
+                    }}元</span
                   >
                 </div>
               </div>
@@ -572,6 +582,16 @@
 </template>
 
 <style lang="less" scoped>
+.customerEvaluate {
+  margin: 20px 0;
+  .title {
+    width: 150px;
+    color: #707070;
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+}
 // 服务进度
 .servicePlan {
   .topLine {

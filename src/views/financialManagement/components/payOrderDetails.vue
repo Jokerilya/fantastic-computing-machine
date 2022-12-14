@@ -3,7 +3,7 @@
     @close="closeFn"
     @open="openFn"
     :visible="dialogVisible"
-    width="40%"
+    width="50%"
     :before-close="handleClose"
     :showClose="false"
   >
