@@ -40,7 +40,9 @@
               $router.push('/maintenance/amendPricing?orderSn=' + data.orderSn)
             "
             v-if="
-              data.enterpriseMainStatus >= 0 && data.enterpriseMainStatus <= 5
+              (data.enterpriseMainStatus >= 0 &&
+                data.enterpriseMainStatus <= 5) ||
+                (data.enterpriseMainStatus === -1 && data.platformStatus === -1)
             "
             >修改报价</el-button
           >
@@ -58,11 +60,7 @@
             size="mini"
             type="primary"
             plain
-            v-if="
-              data.enterpriseMainStatus >= 0 &&
-                data.enterpriseMainStatus <= 4 &&
-                (data.platformStatus === -1 || data.platformStatus === 1)
-            "
+            v-if="judgeAssignedBtnShow()"
             @click="
               $router.push(
                 '/maintenance/assignedWorker?orderSn=' + data.orderSn
@@ -366,14 +364,68 @@
           </div>
 
           <!-- 客户评价 -->
-          <div class="customerEvaluate">
+          <div class="customerEvaluate" v-if="data.repairComment">
             <div class="title">客户评价:</div>
             <div class="descPic">
-              <div style="margin-bottom: 10px;">
-                <span style="color: #707070;font-size: 18px;">评价描述:</span>
+              <div class="item">
+                <div class="label">评价描述:</div>
+                <div class="desc">
+                  {{ data.repairComment.content }}
+                </div>
               </div>
-              <div>
-                <span style="color: #707070;font-size: 18px;">评价图片:</span>
+              <div class="item">
+                <div class="label">评价图片:</div>
+                <el-image
+                  lazy
+                  :preview-src-list="[data.repairComment.images]"
+                  :src="data.repairComment.images"
+                  style="width: 150px; height: 150px;"
+                ></el-image>
+              </div>
+              <!-- 星星评价 -->
+              <div class="item">
+                <div class="label1">沟通能力评分:</div>
+                <el-rate
+                  disabled
+                  show-text
+                  :colors="['#fe5004', '#fe5004', '#fe5004']"
+                  text-color="#fe5004"
+                  :texts="['非常差', '差', '一般', '好', '非常好']"
+                  v-model="data.repairComment.communicateScore"
+                ></el-rate>
+              </div>
+              <div class="item">
+                <div class="label1">规范态度评分:</div>
+                <el-rate
+                  disabled
+                  show-text
+                  :colors="['#fe5004', '#fe5004', '#fe5004']"
+                  text-color="#fe5004"
+                  :texts="['非常差', '差', '一般', '好', '非常好']"
+                  v-model="data.repairComment.operationScore"
+                ></el-rate>
+              </div>
+              <div class="item">
+                <div class="label1">服务态度评分:</div>
+                <el-rate
+                  disabled
+                  :colors="['#fe5004', '#fe5004', '#fe5004']"
+                  show-text
+                  text-color="#fe5004"
+                  :texts="['非常差', '差', '一般', '好', '非常好']"
+                  v-model="data.repairComment.serviceScore"
+                ></el-rate>
+              </div>
+              <div class="item">
+                <div class="label1">技术水平评分:</div>
+                <el-rate
+                  disabled
+                  show-text
+                  :colors="['#fe5004', '#fe5004', '#fe5004']"
+                  text-color="#fe5004"
+                  :texts="['非常差', '差', '一般', '好', '非常好']"
+                  v-model="data.repairComment.technologyScore"
+                ></el-rate>
               </div>
             </div>
           </div>
@@ -587,9 +639,26 @@
   .title {
     width: 150px;
     color: #707070;
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 600;
     margin-bottom: 10px;
+  }
+
+  .descPic {
+    .item {
+      display: flex;
+      color: #0b2059;
+      font-size: 18px;
+      margin-bottom: 15px;
+      .label {
+        margin-right: 90px;
+        color: #707070;
+      }
+      .label1 {
+        margin-right: 50px;
+        color: #707070;
+      }
+    }
   }
 }
 // 服务进度
@@ -600,7 +669,7 @@
     .title {
       width: 150px;
       color: #707070;
-      font-size: 24px;
+      font-size: 20px;
       font-weight: 600;
     }
     .annotation {
@@ -666,7 +735,7 @@
     align-items: center;
     .title {
       color: #707070;
-      font-size: 24px;
+      font-size: 20px;
       font-weight: 700;
       margin-right: 30px;
     }
@@ -685,7 +754,7 @@
   .title {
     width: 200px;
     color: #707070;
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 600;
   }
 
@@ -703,7 +772,7 @@
   .title {
     width: 150px;
     color: #707070;
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 600;
   }
 
@@ -717,7 +786,7 @@
   .title {
     width: 200px;
     color: #707070;
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 600;
     margin-bottom: 20px;
   }
@@ -757,7 +826,7 @@
     align-items: center;
     .title {
       color: #707070;
-      font-size: 24px;
+      font-size: 20px;
       font-weight: 600;
     }
     .time {
@@ -773,7 +842,7 @@
     .title {
       width: 150px;
       color: #707070;
-      font-size: 24px;
+      font-size: 20px;
       font-weight: 600;
     }
     .item {
@@ -804,7 +873,7 @@
   .title {
     width: 200px;
     color: #707070;
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 600;
   }
   .item {
@@ -825,7 +894,7 @@
   .title {
     width: 150px;
     color: #707070;
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 600;
   }
 }
@@ -838,7 +907,7 @@
     .item3 {
       width: 150px;
       color: #707070;
-      font-size: 24px;
+      font-size: 20px;
       font-weight: 600;
     }
 
@@ -876,7 +945,7 @@
     .title {
       width: 150px;
       color: #707070;
-      font-size: 24px;
+      font-size: 20px;
       font-weight: 600;
     }
 
@@ -891,7 +960,7 @@
     .title {
       margin-right: 30px;
       color: #707070;
-      font-size: 24px;
+      font-size: 20px;
       font-weight: 600;
     }
   }
@@ -1012,6 +1081,24 @@ export default {
     this._getRepairOrderDetail();
   },
   methods: {
+    // 判断指派按钮是否显示
+    judgeAssignedBtnShow() {
+      if (this.data.enterpriseMainStatus === 1) {
+        return true;
+      }
+      if (this.data.enterpriseMainStatus === 0) {
+        if (this.data.platformStatus !== 0) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+      if (this.data.enterpriseMainStatus === -1) {
+        if (this.data.platformStatus === -1) {
+          return true;
+        }
+      }
+    },
     // 点击确定添加描述
     async descConfirm() {
       const data = {

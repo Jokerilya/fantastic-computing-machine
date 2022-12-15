@@ -88,14 +88,14 @@
                   <a
                     href="#"
                     style="color:#0b2059;"
-                    @click="editAccessoriesFn(row)"
+                    @click.prevent="editAccessoriesFn(row)"
                   >
                     编辑
                   </a>
                   <a
                     href="#"
                     style="color:#0b2059;"
-                    @click="delAccessoriesFn(row.id)"
+                    @click.prevent="delAccessoriesFn(row.id)"
                   >
                     删除</a
                   >
@@ -173,17 +173,13 @@
         ></el-table-column>
         <el-table-column label="操作" align="center" width="120">
           <template slot-scope="{ row }">
-            <a href="#" style="color:#0b2059;" @click="addAccessoriesFn(row.id)"
+            <a style="color:#0b2059;" @click.prevent="addAccessoriesFn(row.id)"
               >添加
             </a>
             <!-- <a href="#" style="color:#0b2059;">
             编辑
           </a> -->
-            <a
-              href="#"
-              style="color:#0b2059;"
-              @click="deleteDeviceInfo(row.id)"
-            >
+            <a style="color:#0b2059;" @click.prevent="deleteDeviceInfo(row.id)">
               删除</a
             >
           </template>

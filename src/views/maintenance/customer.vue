@@ -136,7 +136,10 @@
           >
             <template slot-scope="{ row }">
               <div class="settings">
-                <a href="#" style="color:#2E4C9E" @click="jump2Detail(row.id)"
+                <a
+                  href="#"
+                  style="color:#2E4C9E"
+                  @click.prevent="jump2Detail(row.id)"
                   >详情</a
                 >
                 <!-- <a href="#" style="color:#2E4C9E;margin: 0 20px;">编辑</a>
@@ -144,7 +147,7 @@
                 <a
                   href="#"
                   style="color:#2E4C9E;margin-left:6px;"
-                  @click="foremp(row)"
+                  @click.prevent="foremp(row)"
                   v-if="!row.uid"
                   >绑企业</a
                 >
@@ -152,14 +155,14 @@
                   href="#"
                   style="color:#2E4C9E;margin-left:6px;"
                   v-if="!row.salesmanRealName"
-                  @click="bindingSalesmanFn(row.orderSn)"
+                  @click.prevent="bindingSalesmanFn(row.orderSn)"
                   >绑业务员</a
                 >
                 <a
                   href="#"
                   style="color:#2E4C9E;margin-left:6px;"
                   v-if="!row.recommendPhone"
-                  @click="bindingReferrerFn(row.orderSn)"
+                  @click.prevent="bindingReferrerFn(row.orderSn)"
                   >绑推荐人</a
                 >
               </div>

@@ -54,7 +54,9 @@
               label="支付流水号"
             ></el-table-column>
             <el-table-column prop="payTime" label="支付时间"></el-table-column>
-            <el-table-column prop="payMoney" label="支付金额"></el-table-column>
+            <el-table-column label="支付金额">
+              <template slot-scope="{ row }"> ￥{{ row.payMoney }} </template>
+            </el-table-column>
             <el-table-column
               prop="targetName"
               label="客户名称"
@@ -86,13 +88,13 @@
                   v-if="
                     row.status === 0 && row.serviceTypeName !== '维保企业支付'
                   "
-                  @click="detailsOpen(row, true)"
+                  @click.prevent="detailsOpen(row, true)"
                   >支付</a
                 >
                 <a
                   href="#"
                   style="color: #0b2059;"
-                  @click="detailsOpen(row, false)"
+                  @click.prevent="detailsOpen(row, false)"
                   >详情</a
                 >
               </template>
@@ -117,6 +119,7 @@
 
     <!-- 详情 -->
     <PayOrder-Details
+      @refreshpage="getIncomeExpenditrueList"
       ref="payOrderDetails"
       :payBtnShow="payBtnShow"
       @handleClose="detailsClose"

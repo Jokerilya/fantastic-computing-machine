@@ -144,23 +144,26 @@ export default {
       this.rowList = null;
       this.orderDetails = null;
       this.partsDetailsShow = false;
+      this.$emit("handleClose");
     },
     // 弹窗open触发的事件
     async openFn() {
       const loading = this.$loading();
       const res = await getRepairOrderCollectionInfo(this.rowList.orderSn);
-      console.log(res.data);
       this.orderDetails = res.data;
       loading.close();
     },
     // 确定按钮
     async comfirmFn() {
       const res = await handleMasterPayment(this.rowList.orderSn);
-      console.log(res);
-    },
-    // 关闭弹窗
-    handleClose() {
-      this.$emit("handleClose");
+      if (res.message === "操作成功") {
+        this.$message({
+          message: "支付成功",
+          type: "success",
+        });
+        await this.$emit("refreshpage");
+        await this.closeFn();
+      }
     },
   },
 };

@@ -94,7 +94,7 @@
                   <a
                     href="#"
                     style="margin-right: 10px;"
-                    @click="goEquipmentDetails(row.id)"
+                    @click.prevent="goEquipmentDetails(row.id)"
                     >详情</a
                   >
                 </div>
