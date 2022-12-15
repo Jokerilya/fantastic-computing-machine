@@ -270,7 +270,7 @@
           prop="status"
           label="审核状态"
           show-overflow-tooltip
-          width="100"
+          width="80"
           align="center"
           fixed="right"
         >
@@ -278,53 +278,63 @@
             util.global.getLabel("checkStatus", row.status)
           }}</template>
         </el-table-column>
-        <el-table-column label="操作" width="300" fixed="right" align="center">
+        <el-table-column label="操作" width="220" fixed="right" align="center">
           <template slot-scope="{ row }">
-            <div class="settings">
-              <el-button
-                plain
-                type="primary"
-                href="#"
-                size="mini"
-                @click="
-                  $router.push('/maintenance/worker/workerDetails?id=' + row.id)
-                "
-                >详情</el-button
-              >
-              <el-button
-                type="warning"
-                size="mini"
-                plain
-                @click="open(row)"
-                v-if="!(row.status == 2)"
-                >审核</el-button
-              >
-              <el-button
-                type="danger"
-                size="mini"
-                plain
-                @click="isLock(row)"
-                v-show="!row.isLock"
-                >锁定</el-button
-              >
-              <el-button
-                type="success"
-                size="mini"
-                plain
-                @click="isLock(row)"
-                v-show="row.isLock"
-                >解锁</el-button
-              >
-              <el-button type="warning" size="mini" plain @click="editInit(row)"
-                >编辑</el-button
-              >
-              <el-button
-                type="warning"
-                size="mini"
-                plain
-                @click="checkTeam(row)"
-                >查看成员</el-button
-              >
+            <div>
+              <div style="margin-bottom: 10px;" class="row_button_item">
+                <el-button
+                  plain
+                  type="primary"
+                  href="#"
+                  size="mini"
+                  @click="
+                    $router.push(
+                      '/maintenance/worker/workerDetails?id=' + row.id
+                    )
+                  "
+                  >详情</el-button
+                >
+                <el-button
+                  type="danger"
+                  size="mini"
+                  plain
+                  @click="isLock(row)"
+                  v-show="!row.isLock"
+                  >锁定</el-button
+                >
+                <el-button
+                  type="success"
+                  size="mini"
+                  plain
+                  @click="isLock(row)"
+                  v-show="row.isLock"
+                  >解锁</el-button
+                >
+              </div>
+              <div class="row_button_item">
+                <el-button
+                  type="warning"
+                  size="mini"
+                  plain
+                  @click="open(row)"
+                  v-if="!(row.status == 2)"
+                  >审核</el-button
+                >
+                <el-button
+                  type="warning"
+                  size="mini"
+                  plain
+                  @click="editInit(row)"
+                  >编辑</el-button
+                >
+                <el-button
+                  type="warning"
+                  size="mini"
+                  plain
+                  @click="checkTeam(row)"
+                  >成员</el-button
+                >
+              </div>
             </div>
           </template>
         </el-table-column>
@@ -448,7 +458,12 @@
   </div>
 </template>
 
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+.row_button_item {
+  display: flex;
+  justify-content: center;
+}
+</style>
 
 <script>
 import EditWorker from "./components/editWorker.vue";

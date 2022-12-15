@@ -142,7 +142,7 @@
             <el-input
               @input="judgeInp('doorAmount')"
               class="inp"
-              v-model.number="doorAmount"
+              v-model="doorAmount"
               placeholder="0.00"
             ></el-input>
           </div>
@@ -150,26 +150,26 @@
             <span class="title">技术服务费<i>含检测和服务费</i></span>
             <el-input
               @input="judgeInp('technologyAmount')"
-              v-model.number="technologyAmount"
+              v-model="technologyAmount"
               class="inp"
               placeholder="0.00"
             ></el-input>
           </div>
           <div class="item">
-            <span>配件费</span
-            ><el-input
+            <span>配件费</span>
+            <el-input
               @input="judgeInp('partsAmount')"
-              v-model.number="partsAmount"
+              v-model="partsAmount"
               class="inp"
               placeholder="0.00"
             ></el-input>
           </div>
           <div class="item">
-            <span>其他费用</span
-            ><el-input
+            <span>其他费用</span>
+            <el-input
               @input="judgeInp('otherAmount')"
               class="inp"
-              v-model.number="otherAmount"
+              v-model="otherAmount"
               placeholder="0.00"
             ></el-input>
           </div>
@@ -282,7 +282,7 @@
         <el-form-item label="配件单价" prop="price">
           <div class="accessoriesItem">
             <el-input
-              v-model.number="accessoriesForm.price"
+              v-model="accessoriesForm.price"
               placeholder="请填写配件单价"
             ></el-input>
           </div>
@@ -379,7 +379,11 @@ export default {
         ],
         price: [
           { required: true, message: "配件单价不能为空", trigger: "blur" },
-          { type: "number", message: "配件单价必须为数字值" },
+          {
+            pattern: /^[1-9][0-9]*(\.[0-9]{1,2})?$/,
+            message: "配件单价必须为数字",
+            trigger: "blur",
+          },
         ],
         num: [
           { required: true, message: "配件数量不能为空", trigger: "blur" },
@@ -397,11 +401,8 @@ export default {
   methods: {
     // 判断输入框是否为数字
     judgeInp(attribute) {
-      if (this[attribute] === "" || this[attribute] === null) {
-        this[attribute] = 0;
-        return;
-      } else if (!(typeof this[attribute] === "number")) {
-        this[attribute] = 0;
+      if (Number.isNaN(+this[attribute])) {
+        this[attribute] = null;
         this.$message({
           message: "输入框只能输数字",
           type: "warning",
@@ -429,10 +430,10 @@ export default {
         warrantyTime: this.qualityEnsureCycleValue,
         parts: [],
         programme: [],
-        partsAmount: this.partsAmount,
-        doorAmount: this.doorAmount,
-        technologyAmount: this.technologyAmount,
-        otherAmount: this.otherAmount,
+        partsAmount: +this.partsAmount,
+        doorAmount: +this.doorAmount,
+        technologyAmount: +this.technologyAmount,
+        otherAmount: +this.otherAmount,
       };
       data.servicePositions = this.repairData(this.siteOfFailureValue);
       data.type = this.repairData(this.faultTypeValue);
@@ -578,12 +579,12 @@ export default {
   },
   computed: {
     priceSum() {
-      return (
-        this.doorAmount +
-        this.technologyAmount +
-        this.otherAmount +
-        this.partsAmount
-      );
+      const num =
+        +this.doorAmount +
+        +this.technologyAmount +
+        +this.otherAmount +
+        +this.partsAmount;
+      return num ? num.toFixed(2) : "0.00";
     },
   },
 };

@@ -46,7 +46,7 @@
         </div>
       </div>
       <div class="moneyDetails">
-        <h2 style="text-align:center;">金额明细</h2>
+        <h2 style="padding-left: 20px;">金额明细</h2>
         <div class="content">
           <div class="line">
             <span class="title">上门费用</span>
@@ -158,7 +158,7 @@ export default {
       const res = await handleMasterPayment(this.rowList.orderSn);
       if (res.message === "操作成功") {
         this.$message({
-          message: "支付成功",
+          message: "支付成功!",
           type: "success",
         });
         await this.$emit("refreshpage");
@@ -216,7 +216,7 @@ export default {
   color: #707070;
 
   .content {
-    padding: 20px 20px;
+    padding: 20px 20px 20px 60px;
     .partsLine {
       width: 70%;
       .item {

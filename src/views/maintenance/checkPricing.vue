@@ -204,7 +204,7 @@
           <div class="lineRight">
             <el-input
               @input="judgeInp('doorAmount', 'param')"
-              v-model.number="param.doorAmount"
+              v-model="param.doorAmount"
               placeholder="￥0.00"
             ></el-input>
           </div>
@@ -217,7 +217,7 @@
           <div class="lineRight">
             <el-input
               @input="judgeInp('technologyAmount', 'param')"
-              v-model.number="param.technologyAmount"
+              v-model="param.technologyAmount"
               placeholder="￥0.00"
             ></el-input>
           </div>
@@ -230,7 +230,7 @@
           <div class="lineRight">
             <el-input
               @input="judgeInp('partsAmount', 'param')"
-              v-model.number="param.partsAmount"
+              v-model="param.partsAmount"
               placeholder="￥0.00"
             ></el-input>
           </div>
@@ -243,7 +243,7 @@
           <div class="lineRight">
             <el-input
               @input="judgeInp('otherAmount', 'param')"
-              v-model.number="param.otherAmount"
+              v-model="param.otherAmount"
               placeholder="￥0.00"
             ></el-input>
           </div>
@@ -314,7 +314,7 @@
               <el-input
                 style="width: 230px;"
                 @input="judgeInp('price', 'part')"
-                v-model.number="part.price"
+                v-model="part.price"
                 placeholder="请填写配件单价"
               ></el-input>
             </div>
@@ -463,14 +463,34 @@ export default {
     },
     // 判断输入框是否为数字
     judgeInp(attribute, form) {
-      if (this[form][attribute] === "" || this[form][attribute] === null) {
-        return;
-      } else if (!(typeof this[form][attribute] === "number")) {
-        this[form][attribute] = null;
-        this.$message({
-          message: "输入框只能输数字",
-          type: "warning",
-        });
+      if (form === "part") {
+        if (attribute === "price") {
+          if (Number.isNaN(+this[form][attribute])) {
+            this[form][attribute] = null;
+            this.$message({
+              message: "输入框只能输数字",
+              type: "warning",
+            });
+          }
+        } else {
+          if (this[form][attribute] === "" || this[form][attribute] === null) {
+            return;
+          } else if (!(typeof this[form][attribute] === "number")) {
+            this[form][attribute] = null;
+            this.$message({
+              message: "输入框只能输数字",
+              type: "warning",
+            });
+          }
+        }
+      } else {
+        if (Number.isNaN(+this[form][attribute])) {
+          this[form][attribute] = null;
+          this.$message({
+            message: "输入框只能输数字",
+            type: "warning",
+          });
+        }
       }
     },
 

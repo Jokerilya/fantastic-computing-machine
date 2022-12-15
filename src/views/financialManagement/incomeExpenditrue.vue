@@ -15,7 +15,7 @@
       >
         <el-option label="管家合同支付" :value="1"></el-option>
         <el-option label="维保企业支付" :value="2"></el-option>
-        <el-option label="维保师傅支付" :value="3"></el-option>
+        <el-option label="支付至维保师傅" :value="3"></el-option>
       </el-select>
       <el-select
         placeholder="收支状态"

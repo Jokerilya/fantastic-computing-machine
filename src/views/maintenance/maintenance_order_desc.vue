@@ -40,9 +40,11 @@
               $router.push('/maintenance/amendPricing?orderSn=' + data.orderSn)
             "
             v-if="
-              (data.enterpriseMainStatus >= 0 &&
+              (data.enterpriseMainStatus >= 1 &&
                 data.enterpriseMainStatus <= 5) ||
-                (data.enterpriseMainStatus === -1 && data.platformStatus === -1)
+                (data.enterpriseMainStatus === 0 &&
+                  (data.platformStatus === -1 || data.platformStatus === 1)) ||
+                data.orderStatusName === '等待平台打款'
             "
             >修改报价</el-button
           >
@@ -71,7 +73,7 @@
           </el-button>
           <el-button
             v-if="
-              data.enterpriseMainStatus >= -1 && data.enterpriseMainStatus <= 3
+              data.enterpriseMainStatus > -1 && data.enterpriseMainStatus <= 4
             "
             type="primary"
             size="mini"
