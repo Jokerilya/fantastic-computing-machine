@@ -245,20 +245,42 @@ export default {
     },
     // 点击提交订单
     async confirmFn() {
-      this.data.deviceTypeId = this.typeValue[1];
-      this.data.deviceSystemId = this.systemValue[1];
-      await this.checkType(this.checkList);
-      await this.checkType(this.dialogImageUrl);
-      const res = await agentCreateOrder(this.data);
-      if (res.message === "操作成功") {
-        this.$message({
-          showClose: true,
-          message: "操作成功",
-          type: "success",
-        });
-        setTimeout(() => {
+      if (
+        this.typeValue &&
+        this.data.deviceBrand &&
+        this.systemValue &&
+        this.data.num &&
+        this.data.devicePlace &&
+        this.checkList === [] &&
+        this.data.simpleDesc &&
+        this.originallyImgList === [] &&
+        this.data.serviceTime &&
+        this.data.degree &&
+        this.data.enterpriseName &&
+        this.data.contactsPeople &&
+        this.data.address &&
+        this.data.contactsPhone
+      ) {
+        const loading = this.$loading();
+        this.data.deviceTypeId = this.typeValue[1];
+        this.data.deviceSystemId = this.systemValue[1];
+        await this.checkType(this.checkList);
+        await this.checkType(this.dialogImageUrl);
+        const res = await agentCreateOrder(this.data);
+        if (res.message === "操作成功") {
+          this.$message({
+            showClose: true,
+            message: "操作成功",
+            type: "success",
+          });
           this.$router.push("/maintenance/maintenance_order");
-        }, 1000);
+          loading.close();
+        }
+      } else {
+        this.$message({
+          message: "信息全是必填,请完善!!",
+          type: "warning",
+        });
       }
     },
     // 处理图片

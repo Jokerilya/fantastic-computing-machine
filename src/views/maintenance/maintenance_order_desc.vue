@@ -63,11 +63,7 @@
             type="primary"
             plain
             v-if="judgeAssignedBtnShow()"
-            @click="
-              $router.push(
-                '/maintenance/assignedWorker?orderSn=' + data.orderSn
-              )
-            "
+            @click="goAssignedMasterPage"
           >
             指派师傅
           </el-button>
@@ -188,9 +184,6 @@
               ></video>
             </div>
           </div>
-
-          <!-- 故障解决方案 -->
-          <div class="fourline"></div>
         </div>
 
         <!-- 故障解决方案 -->
@@ -1083,6 +1076,18 @@ export default {
     this._getRepairOrderDetail();
   },
   methods: {
+    // 跳转指派师傅页面
+    goAssignedMasterPage() {
+      const { orderSn, masterUidList, masterNameList } = this.data;
+      this.$router.push({
+        path: "/maintenance/assignedWorker",
+        query: {
+          orderSn,
+          masterUidList,
+          masterNameList,
+        },
+      });
+    },
     // 判断指派按钮是否显示
     judgeAssignedBtnShow() {
       if (this.data.enterpriseMainStatus === 1) {

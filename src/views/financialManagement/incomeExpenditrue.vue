@@ -3,11 +3,8 @@
   <div class="incomeExpenditrue">
     <!-- 顶部工具栏 -->
     <div class="topTool">
-      <el-input
-        v-model="orderSnInp"
-        placeholder="输入订单号"
-        class="toolInput"
-      ></el-input>
+      <el-input v-model="orderSnInp" placeholder="输入订单号" class="toolInput">
+      </el-input>
       <el-select
         placeholder="业务类型"
         class="toolSelect"
@@ -43,11 +40,20 @@
               'text-align': 'center',
             }"
           >
-            <el-table-column
-              width="150"
-              prop="orderSn"
-              label="订单号"
-            ></el-table-column>
+            <el-table-column width="150" label="订单号">
+              <template slot-scope="{ row }">
+                <a
+                  @click.prevent="
+                    $router.push(
+                      '/maintenance/maintenance_order_desc?orderSn=' +
+                        row.orderSn
+                    )
+                  "
+                  style="color: #61afef;"
+                  >{{ row.orderSn }}
+                </a>
+              </template>
+            </el-table-column>
             <el-table-column
               width="150"
               prop="payCode"

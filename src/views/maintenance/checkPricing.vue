@@ -292,6 +292,7 @@
       :modal="true"
       :show-close="true"
       :center="true"
+      @close="closeAddAccessories"
     >
       <template slot="title">
         <div style="color: #707070;font-size: 18px;font-weight: 700;">
@@ -332,6 +333,14 @@
               <el-input
                 style="width: 230px;"
                 v-model.trim="part.unit"
+                placeholder="请填写配件单位,例如：件、个"
+              ></el-input>
+            </div>
+            <div class="addcontent">
+              <div class="name">配件金额:</div>
+              <el-input
+                style="width: 230px;"
+                v-model.trim="part.money"
                 placeholder="请填写配件单位,例如：件、个"
               ></el-input>
             </div>
@@ -386,6 +395,7 @@ export default {
         num: null,
         unit: "",
         type: null,
+        money: null,
       },
 
       param: {
@@ -421,6 +431,20 @@ export default {
     this._getRepairOrderDetail();
   },
   mounted() {},
+  watch: {
+    "part.price": {
+      handler(newValue) {
+        this.part.money = (this.part.num * newValue).toFixed(2);
+      },
+      immediate: true,
+    },
+    "part.num": {
+      handler(newValue) {
+        this.part.money = (this.part.price * newValue).toFixed(2);
+      },
+      immediate: true,
+    },
+  },
   computed: {
     // 计算维保报价总价
     sum() {
@@ -439,6 +463,18 @@ export default {
     },
   },
   methods: {
+    // 关闭添加配件弹窗
+    closeAddAccessories() {
+      this.dialogpop = false;
+      this.part = {
+        name: "",
+        price: null,
+        num: null,
+        unit: "",
+        type: null,
+        money: null,
+      };
+    },
     // 改变其他天数
     checkqualityWeekDataInp() {
       if (this.param.warrantyTime === 0) {

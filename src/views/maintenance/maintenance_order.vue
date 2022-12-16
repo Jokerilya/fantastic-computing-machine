@@ -132,10 +132,18 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="订单价格"
+          show-overflow-tooltip
+          width="100"
+          align="center"
+        >
+          <template slot-scope="{ row }"> ￥{{ row.totalAmount }} </template>
+        </el-table-column>
+        <el-table-column
           prop="enterpriseName"
           label="企业名称"
           show-overflow-tooltip
-          width="200"
+          width="230"
           align="center"
         ></el-table-column>
         <el-table-column
@@ -527,7 +535,6 @@ export default {
       queryAssignableMasterList(data).then((res) => {
         if (res) {
           this.masterList = res.data.records;
-          console.log("师傅列表", this.masterList);
           this.pageCountMaster = res.data.total;
           this.currentPage = res.data.current;
         }
@@ -541,7 +548,6 @@ export default {
         pageSize: 10,
         ...this.searchForm,
       };
-
       this.exportParams = data;
       queryRepairOrderList(data).then((res) => {
         if (res) {

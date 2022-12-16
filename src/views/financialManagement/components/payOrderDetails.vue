@@ -4,7 +4,7 @@
     @open="openFn"
     :visible="dialogVisible"
     width="50%"
-    :before-close="handleClose"
+    :before-close="closeFn"
     :showClose="false"
   >
     <div v-if="orderDetails">
@@ -98,15 +98,20 @@
             <span class="desc">{{ orderDetails.otherAmount }}元</span>
           </div>
           <div class="line">
+            <span class="title">总金额</span>
+            <span class="desc">{{ orderDetails.totalAmount }}元</span>
+          </div>
+          <div class="line">
             <span class="title" style="color: red;">支付金额</span>
             <span class="desc" style="color: red;"
-              >{{ rowList.payMoney }}元</span
+              >{{ orderDetails.payAmount ? orderDetails.payAmount : 0 }}元</span
             >
+            <span style="margin-left: 20px;">(不包含平台采购配件费)</span>
           </div>
         </div>
       </div>
       <div style="display: flex;justify-content: flex-end;">
-        <el-button @click="handleClose" class="closeBtn">关闭</el-button>
+        <el-button @click="closeFn" class="closeBtn">关闭</el-button>
         <el-button class="comfirmBtn" v-if="payBtnShow" @click="comfirmFn"
           >确定付款</el-button
         >
@@ -134,7 +139,7 @@ export default {
     return {
       rowList: null,
       orderDetails: null,
-      partsDetailsShow: false,
+      partsDetailsShow: true,
     };
   },
   created() {},
@@ -143,7 +148,7 @@ export default {
     closeFn() {
       this.rowList = null;
       this.orderDetails = null;
-      this.partsDetailsShow = false;
+      this.partsDetailsShow = true;
       this.$emit("handleClose");
     },
     // 弹窗open触发的事件

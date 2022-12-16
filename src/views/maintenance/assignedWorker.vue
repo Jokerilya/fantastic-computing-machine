@@ -12,6 +12,28 @@
             @input="realNameBlurFn"
           ></el-input>
         </div>
+        <h4 style="color: #999;width: 90px;;margin-left: 20px;">
+          指派的师傅:
+        </h4>
+        <div class="assignedWorkerList">
+          <span v-for="item in masterNameList" :key="item" class="item">
+            {{ item }}
+          </span>
+        </div>
+      </div>
+      <div class="operationBtnList">
+        <el-button
+          class="thrownIntoMarketBtn"
+          type="warning"
+          @click="assignedBtn('market')"
+          >抛入市场</el-button
+        >
+        <el-button
+          class="thrownIntoMarketBtn"
+          type="success"
+          @click="assignedBtn('worker')"
+          >指派师傅</el-button
+        >
       </div>
     </div>
 
@@ -19,6 +41,7 @@
     <div class="workerTable">
       <el-card>
         <el-table
+          v-show="tableShow"
           height="70vh"
           :header-cell-style="{
             background: '#f6f8fc',
@@ -27,7 +50,17 @@
           :data="masterList"
           style="width: 100%"
         >
-          <el-table-column label="师傅头像" align="center">
+          <el-table-column label="多选" align="center" width="100px">
+            <template slot-scope="{ row }">
+              <input
+                type="checkbox"
+                style="zoom:120%"
+                @click="manyPeopleAssigned(row.show, row.uid, row.realName)"
+                v-model="row.show"
+              />
+            </template>
+          </el-table-column>
+          <el-table-column label="师傅头像" align="center" width="100px">
             <template slot-scope="{ row }">
               <img :src="row.realPortrait" width="75px" height="75px" />
             </template>
@@ -50,9 +83,6 @@
           </el-table-column>
           <el-table-column label="操作" align="center">
             <template slot-scope="{ row }">
-              <a href="#" class="operationBtn" @click="assignedBtn(row.uid)"
-                >指派</a
-              >
               <a
                 href="#"
                 class="operationBtn"
@@ -94,19 +124,49 @@ export default {
       },
       masterList: null, //师傅列表
       total: null, //师傅总条数
+
+      masterUidList: [], //要指派师傅pdi的列表
+      masterNameList: [], //要指派师傅姓名的列表
+      tableShow: true,
     };
   },
   methods: {
+    // 勾选指派多选框
+    manyPeopleAssigned(show, uid, name) {
+      if (!show) {
+        if (this.masterUidList.indexOf(uid) === -1) {
+          this.masterUidList.push(uid);
+        }
+        if (this.masterNameList.indexOf(name) === -1) {
+          this.masterNameList.push(name);
+        }
+      } else {
+        const uidIndex = this.masterUidList.indexOf(uid);
+        this.masterUidList.splice(uidIndex, 1);
+        const nameIndex = this.masterNameList.indexOf(name);
+        this.masterNameList.splice(nameIndex, 1);
+        console.log(this.masterUidList);
+      }
+    },
     // 指派按钮
-    async assignedBtn(uid) {
-      const res = await handleAssignMaster({
+    async assignedBtn(judge) {
+      let params = {
         enterpriseOrderSn: this.enterpriseOrderSn,
-        masterUidList: [uid],
-      });
+      };
+      if (judge === "worker") {
+        params.masterUidList = this.masterUidList;
+      } else {
+        params.masterUidList = [];
+      }
+      const res = await handleAssignMaster(params);
       if (res.message === "操作成功") {
         this.$message({
           message: "指派成功",
           type: "success",
+        });
+        this.$router.push({
+          name: "maintenance_order_desc",
+          query: { orderSn: this.enterpriseOrderSn },
         });
       }
     },
@@ -122,13 +182,32 @@ export default {
     },
     // 获取可指派师傅列表
     async getMasterList() {
+      const loading = this.$loading();
+      this.tableShow = false;
       const res = await queryAssignableMasterList(this.params);
       this.masterList = res.data.records;
+      this.masterList.forEach((item) => {
+        item.show = false;
+      });
       this.total = res.data.total;
+      this.tableShow = true;
+      loading.close();
     },
   },
   created() {
-    this.enterpriseOrderSn = this.$route.query.orderSn; //指派需要的企业工单订单编号
+    const { masterNameList, masterUidList, orderSn } = this.$route.query;
+    if (masterNameList) {
+      masterNameList.forEach((item) => {
+        this.masterNameList.push(item);
+      });
+    }
+    if (masterUidList) {
+      masterUidList.forEach((item) => {
+        this.masterUidList.push(item);
+      });
+    }
+
+    this.enterpriseOrderSn = orderSn; //指派需要的企业工单订单编号
     this.getMasterList();
   },
 };
@@ -142,6 +221,8 @@ export default {
 .assignedWorker {
   padding: 20px;
   .searchTool {
+    display: flex;
+    justify-content: space-between;
     .workerName {
       display: flex;
       align-items: center;
@@ -150,6 +231,9 @@ export default {
       }
       .inp {
         width: 250px;
+      }
+      .assignedWorkerList {
+        color: #1186f4;
       }
     }
   }
