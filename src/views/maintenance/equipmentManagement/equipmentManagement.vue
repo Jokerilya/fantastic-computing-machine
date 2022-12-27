@@ -30,6 +30,9 @@
         <el-input v-model="topTool_code" placeholder="设备编码"></el-input>
       </div>
       <div class="topTool_btn">
+        <el-button style="color:#2E4C9E" @click="addEquipmentPage" disabled
+          >新增</el-button
+        >
         <el-button style="color:#2E4C9E" @click="findFn">查询</el-button>
         <el-button style="color:#2E4C9E" @click="resetFn">重置</el-button>
       </div>
@@ -70,10 +73,13 @@
             </el-table-column>
             <el-table-column prop="deviceTypeName" label="设备类型">
             </el-table-column>
-            <el-table-column prop="deviceBrand " label="设备品牌">
+            <el-table-column prop="deviceBrand" label="设备品牌">
             </el-table-column>
-            <el-table-column prop="deviceSystemName " label="设备系统">
+            <el-table-column prop="deviceSystemName" label="设备系统">
             </el-table-column>
+            <el-table-column prop="axesNumber" label="设备轴数">
+            </el-table-column>
+            <el-table-column prop="cycle" label="保养周期"> </el-table-column>
             <el-table-column prop="devicePlace" label="设备产地">
             </el-table-column>
             <el-table-column label="维保价格">
@@ -92,11 +98,13 @@
               <template slot-scope="{ row }">
                 <div style="color:#0b2059">
                   <a
-                    href="#"
                     style="margin-right: 10px;"
                     @click.prevent="goEquipmentDetails(row.id)"
                     >详情</a
                   >
+                  <!-- <a @click.prevent="editEquipmentPage(row.id)" 
+                    >编辑</a
+                  > -->
                 </div>
               </template>
             </el-table-column>
@@ -150,6 +158,19 @@ export default {
     };
   },
   methods: {
+    // 跳转新增
+    addEquipmentPage() {
+      this.$router.push(
+        "/maintenance/equipmentManagement/addEquipment?titleName=新增设备信息"
+      );
+    },
+    // 跳转编辑
+    editEquipmentPage(id) {
+      this.$router.push(
+        "/maintenance/equipmentManagement/addEquipment?titleName=编辑设备信息&id=" +
+          id
+      );
+    },
     // 跳转详情页
     goEquipmentDetails(id) {
       this.$router.push({

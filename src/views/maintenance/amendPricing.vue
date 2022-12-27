@@ -105,30 +105,51 @@
           配件明细 <a href="#" @click.prevent="addAccessories">添加配件</a>
         </h3>
         <div class="content">
-          <div
-            class="item"
-            v-for="(item, index) in accessoriesList"
-            :key="index"
+          <el-table
+            :data="accessoriesList"
+            style="width: 80%"
+            :key="againTableRefresh"
           >
-            <div class="name">{{ item.name }}</div>
-            <div class="money">{{ item.price }}元</div>
-            <div class="num">{{ item.num }}件</div>
-            <div class="tool">
-              <a @click.prevent="delAccessoriesFn(index)">删除</a>
-            </div>
-            <div class="procurementLogo">
-              <img
-                src="@/assets/logo/masterPurchase.png"
-                width="24px"
-                v-if="item.type !== 2"
-              />
-              <img
-                src="@/assets/logo/platformPurchase.png"
-                width="24px"
-                v-if="item.type === 2"
-              />
-            </div>
-          </div>
+            <el-table-column label="采购方式" align="center">
+              <template slot-scope="{ row }">
+                <img
+                  src="@/assets/logo/masterPurchase.png"
+                  width="28px"
+                  v-if="row.type !== 2"
+                />
+                <img
+                  src="@/assets/logo/platformPurchase.png"
+                  width="28px"
+                  v-if="row.type === 2"
+                />
+              </template>
+            </el-table-column>
+            <el-table-column align="center" prop="name" label="配件名称">
+            </el-table-column>
+            <el-table-column align="center" prop="num" label="配件数量">
+            </el-table-column>
+            <el-table-column align="center" prop="price" label="配件单价">
+            </el-table-column>
+            <el-table-column align="center" label="配件总金额">
+              <template slot-scope="{ row }">
+                <div style="color: red;">￥{{ row.num * row.price }}</div>
+              </template>
+            </el-table-column>
+            <el-table-column align="center" label="操作">
+              <template slot-scope="{ row, $index }">
+                <a
+                  style="color:#4889fb;margin-right: 10px;"
+                  @click.prevent="delAccessoriesFn(row, $index)"
+                  >删除</a
+                >
+                <a
+                  style="color:#4889fb;"
+                  @click.prevent="editAccessories(row, $index)"
+                  >编辑</a
+                >
+              </template>
+            </el-table-column>
+          </el-table>
         </div>
       </div>
       <!-- 维保报价 -->
@@ -158,7 +179,7 @@
           <div class="item">
             <span>配件费</span>
             <el-input
-              @input="judgeInp('partsAmount')"
+              :disabled="true"
               v-model="partsAmount"
               class="inp"
               placeholder="0.00"
@@ -264,7 +285,7 @@
       :before-close="closeAddAccessoriesDialog"
     >
       <div slot="title" style="font-weight:700 ;color: #707070;">
-        添加配件
+        {{ accessoriesTitle }}
       </div>
       <el-form
         :model="accessoriesForm"
@@ -319,7 +340,7 @@
           >
           <el-button
             style="width: 120px;background-color: #2d4da0;color: #ffffff;"
-            @click="addAccessoriesComfirm"
+            @click="addAccessoriesComfirm(accessoriesForm.index)"
             >确 定</el-button
           >
         </div>
@@ -337,6 +358,8 @@ export default {
     return {
       orderSn: null,
       editIndex: null,
+      accessoriesTitle: "添加配件",
+      againTableRefresh: true,
 
       equipmentPosition: null, //故障部位列表
       faultTypeValue: [], //故障类型
@@ -399,6 +422,19 @@ export default {
     };
   },
   methods: {
+    // 点击编辑配件
+    editAccessories(item, index) {
+      this.accessoriesTitle = "编辑配件";
+      this.accessoriesForm = { ...item, index };
+      this.addAccessoriesDialog = true;
+    },
+    // 算配件总价
+    getAccessoriesSum() {
+      this.partsAmount = 0;
+      this.accessoriesList.forEach((item) => {
+        this.partsAmount += item.num * item.price;
+      });
+    },
     // 判断输入框是否为数字
     judgeInp(attribute) {
       if (Number.isNaN(+this[attribute])) {
@@ -453,11 +489,16 @@ export default {
       }
     },
     // 删除配件
-    async delAccessoriesFn(index) {
-      await this.accessoriesList.splice(index, 1);
-      this.$message({
-        type: "success",
-        message: "删除成功",
+    async delAccessoriesFn(item, index) {
+      this.$confirm("您确定删除" + item.name + "吗?", "提示", {
+        type: "warning",
+      }).then(() => {
+        this.accessoriesList.splice(index, 1);
+        this.getAccessoriesSum();
+        this.$message({
+          type: "success",
+          message: "删除成功!",
+        });
       });
     },
     // 关闭新增配件弹窗
@@ -473,13 +514,28 @@ export default {
       this.addAccessoriesDialog = false;
     },
     // 新增配件确定
-    async addAccessoriesComfirm() {
+    async addAccessoriesComfirm(index) {
       await this.$refs.accessoriesForm.validate();
-      this.accessoriesList.push({ ...this.accessoriesForm });
+      if (this.accessoriesTitle === "新增配件") {
+        console.log({ ...this.accessoriesForm });
+        this.accessoriesList.push({ ...this.accessoriesForm });
+      } else {
+        const { price, num, type, name, unit } = this.accessoriesForm;
+        this.accessoriesList[index] = {
+          price,
+          num,
+          type,
+          name,
+          unit,
+        };
+        this.againTableRefresh = !this.againTableRefresh;
+      }
+      this.getAccessoriesSum();
       this.closeAddAccessoriesDialog();
     },
     // 新增配件
     addAccessories() {
+      this.accessoriesTitle = "新增配件";
       this.addAccessoriesDialog = true;
     },
     // 编辑方案

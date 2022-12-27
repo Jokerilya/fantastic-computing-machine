@@ -12,7 +12,7 @@
             </div>
             <div class="item">
               <span class="item_title">保养周期</span>
-              <span>{{ equipmentDetails.cycle ? "" : "保密" }}</span>
+              <span>{{ equipmentDetails.cycle }}</span>
             </div>
             <div class="item">
               <span class="item_title">出厂时间</span>
@@ -35,7 +35,8 @@
           </div>
           <div class="itemLine">
             <div class="item">
-              <span class="item_title">设备轴数</span><span>保密</span>
+              <span class="item_title">设备轴数</span
+              ><span>{{ equipmentDetails.axesNumber }}</span>
             </div>
             <div class="item">
               <span class="item_title">设备系统</span
@@ -103,7 +104,7 @@
           <el-table-column prop="deviceBrand" label="品牌"> </el-table-column>
           <el-table-column prop="deviceModel" label="型号"> </el-table-column>
           <el-table-column label="单位">mm</el-table-column>
-          <el-table-column porp="specification" label="规格"> </el-table-column>
+          <el-table-column prop="specification" label="规格"> </el-table-column>
         </el-table>
       </el-card>
     </div>
@@ -198,9 +199,7 @@
           <el-table-column prop="createTime" label="下单时间" width="150">
           </el-table-column>
           <el-table-column prop="totalAmount" label="总费用" width="150">
-            <template slot-scope="{ row }">
-              {{ row.totalAmount }}
-            </template>
+            <template slot-scope="{ row }"> ￥{{ row.totalAmount }} </template>
           </el-table-column>
           <el-table-column label="操作" width="150" fixed="right">
             <template slot-scope="{ row }">
@@ -263,7 +262,6 @@ export default {
   async created() {
     this.id = this.$route.query.id;
     const res = await getEquipmentDetails({ id: this.id });
-    console.log(res.data);
     this.equipmentDetails = res.data;
     this.partsList = res.data.partsList;
     this.butlerList = res.data.butlerList;

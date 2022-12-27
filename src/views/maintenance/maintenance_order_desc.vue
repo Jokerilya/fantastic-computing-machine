@@ -41,7 +41,7 @@
             "
             v-if="
               (data.enterpriseMainStatus >= 1 &&
-                data.enterpriseMainStatus <= 5) ||
+                data.enterpriseMainStatus <= 4) ||
                 (data.enterpriseMainStatus === 0 &&
                   (data.platformStatus === -1 || data.platformStatus === 1)) ||
                 data.orderStatusName === '等待平台打款'
@@ -155,9 +155,9 @@
           <div class="twoline" v-if="data.originType">
             <div class="title">故障类型:</div>
             <div class="content">
-              <span v-if="data.originType.includes(1)">电气故障，</span>
-              <span v-if="data.originType.includes(2)">机械故障，</span>
-              <span v-if="data.originType.includes(3)">系统故障</span>
+              <span v-if="data.originType.includes(1)">电气故障 </span>
+              <span v-if="data.originType.includes(2)"> 机械故障 </span>
+              <span v-if="data.originType.includes(3)"> 系统故障</span>
             </div>
           </div>
           <!-- 设备视图 -->

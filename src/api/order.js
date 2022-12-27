@@ -72,14 +72,6 @@ export function cancelRepairOrder(data) {
   });
 }
 
-//平台修改师傅报价
-export function updateMasterPrice(data) {
-  return request({
-    url: "/admin/maintenance/updateMasterPrice",
-    method: "POST",
-    data,
-  });
-}
 //打款至师傅
 export function handleMasterPayment(orderSn) {
   return request({

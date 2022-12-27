@@ -109,14 +109,14 @@
           ></el-table-column>
           <el-table-column
             prop="recommendPeople"
-            label="订单推荐人"
+            label="订单销售员"
             width="100"
             show-overflow-tooltip
             align="center"
           ></el-table-column>
           <el-table-column
             prop="recommendPhone"
-            label="订单推荐人电话"
+            label="订单销售员电话"
             show-overflow-tooltip
             width="150"
             align="center"
@@ -156,14 +156,14 @@
                   style="color:#2E4C9E;margin-left:6px;"
                   v-if="!row.salesmanRealName"
                   @click.prevent="bindingSalesmanFn(row.orderSn)"
-                  >绑业务员</a
+                  >绑客户经理</a
                 >
                 <a
                   href="#"
                   style="color:#2E4C9E;margin-left:6px;"
                   v-if="!row.recommendPhone"
                   @click.prevent="bindingReferrerFn(row.orderSn)"
-                  >绑推荐人</a
+                  >绑销售员</a
                 >
               </div>
             </template>

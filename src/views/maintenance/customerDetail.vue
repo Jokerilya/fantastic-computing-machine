@@ -160,8 +160,8 @@
           align="center"
         ></el-table-column>
         <el-table-column
-          prop="endTime"
-          label="到期时间"
+          prop="factoryTime"
+          label="出厂时间"
           show-overflow-tooltip
           align="center"
         ></el-table-column>
@@ -334,7 +334,7 @@ export default {
       this.dialogState = true;
     },
     // 点击配件编辑触发的事件
-    async editAccessoriesFn(row) {
+    editAccessoriesFn(row) {
       this.$refs.addEditDialog.accessoriesForm = { ...row };
       this.dislogTitle = "编辑配件";
       this.dialogState = true;
@@ -362,6 +362,7 @@ export default {
       };
       getButlerOrderDetail(data).then((res) => {
         if (res) {
+          console.log(res.data.deviceList);
           this.orderDetail = res.data.deviceList;
           this.orderMsg = res.data;
         }

@@ -251,9 +251,9 @@ export default {
         this.systemValue &&
         this.data.num &&
         this.data.devicePlace &&
-        this.checkList === [] &&
+        this.checkList.length !== 0 &&
         this.data.simpleDesc &&
-        this.originallyImgList === [] &&
+        this.originallyImgList.length !== 0 &&
         this.data.serviceTime &&
         this.data.degree &&
         this.data.enterpriseName &&

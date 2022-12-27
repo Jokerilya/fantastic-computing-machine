@@ -16,9 +16,17 @@
           指派的师傅:
         </h4>
         <div class="assignedWorkerList">
-          <span v-for="item in masterNameList" :key="item" class="item">
+          <span
+            v-for="(item, index) in masterNameList"
+            :key="item"
+            class="item"
+            @click="delAssignedWorker(index)"
+          >
             {{ item }}
           </span>
+          <div class="notiveText">
+            ( 注:点击姓名即可删除！)
+          </div>
         </div>
       </div>
       <div class="operationBtnList">
@@ -131,6 +139,23 @@ export default {
     };
   },
   methods: {
+    // 删除指派师傅
+    delAssignedWorker(index) {
+      this.$confirm(
+        "您确定取消指派" + this.masterNameList[index] + "?",
+        "取消指派",
+        {
+          type: "warning",
+        }
+      ).then(() => {
+        this.masterUidList.splice(index, 1);
+        this.masterNameList.splice(index, 1);
+        this.$message({
+          type: "success",
+          message: "删除成功!",
+        });
+      });
+    },
     // 勾选指派多选框
     manyPeopleAssigned(show, uid, name) {
       if (!show) {
@@ -223,6 +248,8 @@ export default {
   .searchTool {
     display: flex;
     justify-content: space-between;
+    position: relative;
+
     .workerName {
       display: flex;
       align-items: center;
@@ -234,6 +261,15 @@ export default {
       }
       .assignedWorkerList {
         color: #1186f4;
+
+        .notiveText {
+          font-size: 14px;
+          color: red;
+          position: absolute;
+          bottom: -8px;
+          left: 24.3%;
+          width: 160px;
+        }
       }
     }
   }

@@ -168,28 +168,47 @@
       </el-table>
     </div> -->
     <div class="addPartcs">
-      <div class="item" v-for="(item, index) in this.param.parts" :key="item">
-        <div class="material" style="color:#878787;">{{ item.name }}</div>
-        <div class="price">{{ item.price }}元</div>
-        <div class="number">{{ item.num }}{{ item.unit }}</div>
-        <div class="delbtn">
-          <a style="color:#4889fb;" href="#" @click="deleted(item, index)"
-            >删除</a
-          >
-        </div>
-        <div class="procurementLogo">
-          <img
-            src="@/assets/logo/masterPurchase.png"
-            width="28px"
-            v-if="item.type !== 2"
-          />
-          <img
-            src="@/assets/logo/platformPurchase.png"
-            width="28px"
-            v-if="item.type === 2"
-          />
-        </div>
-      </div>
+      <el-table :data="param.parts" style="width: 50%" :key="againTableRefresh">
+        <el-table-column label="采购方式" align="center">
+          <template slot-scope="{ row }">
+            <img
+              src="@/assets/logo/masterPurchase.png"
+              width="28px"
+              v-if="row.type !== 2"
+            />
+            <img
+              src="@/assets/logo/platformPurchase.png"
+              width="28px"
+              v-if="row.type === 2"
+            />
+          </template>
+        </el-table-column>
+        <el-table-column align="center" prop="name" label="配件名称">
+        </el-table-column>
+        <el-table-column align="center" prop="num" label="配件数量">
+        </el-table-column>
+        <el-table-column align="center" prop="price" label="配件单价">
+        </el-table-column>
+        <el-table-column align="center" label="配件总金额">
+          <template slot-scope="{ row }">
+            <div style="color: red;">￥{{ row.num * row.price }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" label="操作">
+          <template slot-scope="{ row, $index }">
+            <a
+              style="color:#4889fb;margin-right: 10px;"
+              @click.prevent="deleted(row, $index)"
+              >删除</a
+            >
+            <a
+              style="color:#4889fb;"
+              @click.prevent="editAccessories(row, $index)"
+              >编辑</a
+            >
+          </template>
+        </el-table-column>
+      </el-table>
     </div>
 
     <!-- 维保报价部分 -->
@@ -229,7 +248,7 @@
           </div>
           <div class="lineRight">
             <el-input
-              @input="judgeInp('partsAmount', 'param')"
+              :disabled="true"
               v-model="param.partsAmount"
               placeholder="￥0.00"
             ></el-input>
@@ -296,7 +315,7 @@
     >
       <template slot="title">
         <div style="color: #707070;font-size: 18px;font-weight: 700;">
-          添加配件
+          {{ accessoriesTitle }}
         </div>
       </template>
       <el-from label-width="1000px">
@@ -336,14 +355,14 @@
                 placeholder="请填写配件单位,例如：件、个"
               ></el-input>
             </div>
-            <div class="addcontent">
+            <!-- <div class="addcontent">
               <div class="name">配件金额:</div>
               <el-input
                 style="width: 230px;"
                 v-model.trim="part.money"
                 placeholder="请填写配件单位,例如：件、个"
               ></el-input>
-            </div>
+            </div> -->
             <div class="addcontent">
               <div class="name">配件采购:</div>
               <div style="width: 230px;">
@@ -360,7 +379,7 @@
         >
         <el-button
           style="background-color:#2e4c9e;color: #fff;width: 200px"
-          @click="addTrue"
+          @click="addTrue(part.index)"
           >提交</el-button
         >
       </div>
@@ -373,6 +392,7 @@ import { handleMasterQuotation, queryDevicePositionList } from "@/api/order.js";
 import { getRepairOrderDetail } from "@/api/user.js";
 export default {
   title: "checkPricing",
+
   data() {
     return {
       faultTypeCheckbox: [], //故障类型多选
@@ -380,6 +400,8 @@ export default {
       equipmentPosition: null, //故障部位列表
       qualityWeekDataInp: false,
       edit: null,
+      accessoriesTitle: "添加配件",
+      againTableRefresh: true,
 
       dialogChosee: false,
       dialogpop: false,
@@ -395,7 +417,6 @@ export default {
         num: null,
         unit: "",
         type: null,
-        money: null,
       },
 
       param: {
@@ -417,6 +438,7 @@ export default {
       ],
     };
   },
+
   async created() {
     const res = await queryDevicePositionList();
     this.equipmentPosition = res.data;
@@ -424,27 +446,21 @@ export default {
     const info = await getRepairOrderDetail({
       enterpriseOrderSn: this.param.orderSn,
     });
-    this.faultTypeCheckbox = info.data.originType;
+    this.faultTypeCheckbox = [];
+    if (info.data.type.indexOf("机械故障") !== -1) {
+      this.faultTypeCheckbox.push(1);
+    }
+    if (info.data.type.indexOf("电气故障") !== -1) {
+      this.faultTypeCheckbox.push(2);
+    }
+    if (info.data.type.indexOf("系统故障") !== -1) {
+      this.faultTypeCheckbox.push(3);
+    }
     this.programmes[0].desc = info.data.simpleDesc;
-    this.faultTypeCheckbox = [1, 3];
     this.edit = this.$route.query.edit;
     this._getRepairOrderDetail();
   },
   mounted() {},
-  watch: {
-    "part.price": {
-      handler(newValue) {
-        this.part.money = (this.part.num * newValue).toFixed(2);
-      },
-      immediate: true,
-    },
-    "part.num": {
-      handler(newValue) {
-        this.part.money = (this.part.price * newValue).toFixed(2);
-      },
-      immediate: true,
-    },
-  },
   computed: {
     // 计算维保报价总价
     sum() {
@@ -463,6 +479,19 @@ export default {
     },
   },
   methods: {
+    // 算配件总价
+    getAccessoriesSum() {
+      this.param.partsAmount = 0;
+      this.param.parts.forEach((item) => {
+        this.param.partsAmount += item.num * item.price;
+      });
+    },
+    // 编辑配件弹窗
+    editAccessories(item, index) {
+      this.accessoriesTitle = "编辑配件";
+      this.dialogpop = true;
+      this.part = { ...item, index };
+    },
     // 关闭添加配件弹窗
     closeAddAccessories() {
       this.dialogpop = false;
@@ -472,7 +501,6 @@ export default {
         num: null,
         unit: "",
         type: null,
-        money: null,
       };
     },
     // 改变其他天数
@@ -532,11 +560,19 @@ export default {
 
     // 点击已选配件的删除事件
     deleted(item, index) {
-      console.log(item, index);
-      this.param.parts.splice(index, 1);
+      this.$confirm("您确定删除" + item.name + "吗?", "提示", {
+        type: "warning",
+      }).then(() => {
+        this.param.parts.splice(index, 1);
+        this.getAccessoriesSum();
+        this.$message({
+          type: "success",
+          message: "删除成功!",
+        });
+      });
     },
     // 点击添加配件弹窗里的提交按钮的事件
-    addTrue() {
+    addTrue(index) {
       if (
         !this.part.name ||
         !this.part.price ||
@@ -549,7 +585,13 @@ export default {
           type: "warning",
         });
       } else {
-        this.param.parts.push(this.part);
+        if (this.accessoriesTitle === "添加配件") {
+          this.param.parts.push(this.part);
+        } else {
+          this.param.parts[index] = this.part;
+          this.againTableRefresh = !this.againTableRefresh;
+        }
+        this.getAccessoriesSum();
         this.part = {
           name: "",
           price: "",
@@ -557,12 +599,12 @@ export default {
           unit: "",
           state: null,
         };
-        console.log(this.param.parts);
         this.dialogpop = false;
       }
     },
     // 点击添加配件的事件
     openAdd() {
+      this.accessoriesTitle = "添加配件";
       this.dialogpop = true;
     },
     // 点击添加配件弹窗里的返回按钮的事件
@@ -610,16 +652,6 @@ export default {
         }
       });
     },
-
-    // 没用到开始------------------
-    addPartTrue() {
-      (this.dialogChosee = false), (this.dialogpop = false);
-    },
-    addPartFalse() {
-      this.dialogChosee = false;
-      this.dialogpop = true;
-    },
-    // 没用到结束--------------------
   },
 };
 </script>
@@ -676,7 +708,7 @@ export default {
   }
 }
 .addPartcs {
-  margin-left: 10vw;
+  margin-left: 7vw;
   .item {
     height: 50px;
     line-height: 50px;

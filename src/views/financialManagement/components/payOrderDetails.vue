@@ -9,7 +9,11 @@
   >
     <div v-if="orderDetails">
       <div class="orderDetails">
-        <h2 style="text-align:center;">收款详情</h2>
+        <h2 style="text-align:center;">
+          {{
+            rowList.serviceTypeName === "维保师傅支付" ? "支付详情" : "收款详情"
+          }}
+        </h2>
         <div class="content">
           <div class="line">
             <div class="item">
@@ -67,6 +71,9 @@
                 @click="partsDetailsShow = true"
               ></i
               ><i
+                v-if="
+                  orderDetails.partsList && orderDetails.partsList.length !== 0
+                "
                 v-show="partsDetailsShow"
                 class="el-icon-caret-top"
                 @click="partsDetailsShow = false"

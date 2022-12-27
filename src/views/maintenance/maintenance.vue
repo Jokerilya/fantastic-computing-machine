@@ -784,7 +784,12 @@ export default {
       this.partsList = scope.row;
       this.PartChange = true;
       this.partIndex = index;
-      console.log("当前索引", this.partIndex, this.deviceList.partsList);
+      console.log(
+        "当前索引",
+        this.partIndex,
+        this.deviceList.partsList,
+        scope.row
+      );
     },
     queryDesc(scope) {
       this.pageIndex = scope.$index;

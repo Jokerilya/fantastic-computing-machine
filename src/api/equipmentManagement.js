@@ -43,3 +43,12 @@ export function editDeviceParts(data) {
     data,
   });
 }
+
+//新增/编辑设备
+export function editDeviceInfo(data) {
+  return request({
+    url: "/admin/maintenance/editDeviceInfo",
+    method: "post",
+    data,
+  });
+}

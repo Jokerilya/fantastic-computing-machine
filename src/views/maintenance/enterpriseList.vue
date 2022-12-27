@@ -207,12 +207,20 @@
           align="center"
         >
           <template slot-scope="scope">
-            <a :href="scope.row.portrait" target="_blank" title="微信头像">
+            <a
+              v-if="scope.row.portrait"
+              :href="scope.row.portrait"
+              target="_blank"
+              title="微信头像"
+            >
               <el-image
                 style="width:50px;height:50px"
                 :src="scope.row.portrait"
               ></el-image>
             </a>
+            <div v-else style="font-size: 25px;">
+              /
+            </div>
           </template>
         </el-table-column>
         <el-table-column

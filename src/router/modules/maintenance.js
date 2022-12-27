@@ -121,19 +121,19 @@ const router = {
     },
 
     // 暂时 不用这个功能 后续看情况补上
-    // {
-    //   path: "/maintenance/maintenance",
-    //   name: "maintenance",
-    //   component: () => import("@/views/maintenance/maintenance"),
-    //   meta: { title: "新增订单", noShow: "true" },
-    // },
-    // {
-    //   path: "/maintenance/equipmentManagement/addEquipment",
-    //   name: "addEquipment",
-    //   component: () =>
-    //     import("@/views/maintenance/equipmentManagement/addEquipment.vue"),
-    //   meta: { title: "新增设备管理", noShow: "true" },
-    // },
+    {
+      path: "/maintenance/maintenance",
+      name: "maintenance",
+      component: () => import("@/views/maintenance/maintenance"),
+      meta: { title: "新增订单", noShow: "true" },
+    },
+    {
+      path: "/maintenance/equipmentManagement/addEquipment",
+      name: "addEquipment",
+      component: () =>
+        import("@/views/maintenance/equipmentManagement/addEquipment.vue"),
+      meta: { title: "新增设备管理", noShow: "true" },
+    },
   ],
 };
 export default router;
