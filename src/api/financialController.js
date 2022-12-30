@@ -19,9 +19,13 @@ export function getButlerOrderCollectionInfo(orderSn) {
 }
 
 // 维保订单-收款信息
-export function getRepairOrderCollectionInfo(orderSn) {
+export function getRepairOrderCollectionInfo(orderSn, serviceType) {
   return request({
-    url: "/admin/financial/getRepairOrderCollectionInfo?orderSn=" + orderSn,
+    url:
+      "/admin/financial/getRepairOrderCollectionInfo?orderSn=" +
+      orderSn +
+      "&serviceType=" +
+      serviceType,
     method: "GET",
   });
 }

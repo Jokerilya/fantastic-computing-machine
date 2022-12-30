@@ -231,20 +231,18 @@
           align="center"
         ></el-table-column>
         <el-table-column
-          prop="enterpriseTypeIdsName"
-          label="公司类型"
-          show-overflow-tooltip
-          width="200"
-          align="center"
-        ></el-table-column>
-        <el-table-column
           prop="deviceTypeIdsName"
           label="设备类型"
           show-overflow-tooltip
           width="200"
           align="center"
         ></el-table-column>
-        <el-table-column label="操作" width="300px" fixed="right">
+        <el-table-column
+          label="操作"
+          width="220px"
+          fixed="right"
+          align="center"
+        >
           <template slot-scope="{ row }">
             <div class="settings">
               <el-button
@@ -262,10 +260,10 @@
                 }}</el-button
               >
               <el-button type="warning" size="mini" plain @click="openTeam(row)"
-                >查看企业</el-button
+                >查看</el-button
               >
               <el-button type="warning" size="mini" plain @click="editTeam(row)"
-                >编辑企业</el-button
+                >编辑</el-button
               >
             </div>
           </template>
@@ -448,6 +446,7 @@
               <el-select
                 filterable
                 :remote-method="remoteMethod"
+                disabled
                 remote
                 v-model="recommendMaster"
                 placeholder="请选择"
@@ -463,9 +462,9 @@
             </div>
           </div>
           <div class="oneLine">
-            <div class="item">
+            <div class="item" style="position: relative;">
               <div class="title" style="flex:3">
-                用户状态
+                是否禁用
               </div>
               <div style="flex:6">
                 <el-switch
@@ -477,6 +476,11 @@
                 >
                 </el-switch>
               </div>
+              <div
+                style="position: absolute;bottom: 9px;right: 23px;color: red;"
+              >
+                (注意:绿色状态是禁用)
+              </div>
             </div>
             <div class="item">
               <div class="title" style="flex:3">
@@ -484,6 +488,7 @@
               </div>
               <div style="flex:6">
                 <el-switch
+                  disabled
                   v-model="editForm.vipFlag"
                   active-color="#13ce66"
                   inactive-color="#ff4949"

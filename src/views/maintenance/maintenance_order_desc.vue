@@ -43,8 +43,7 @@
               (data.enterpriseMainStatus >= 1 &&
                 data.enterpriseMainStatus <= 4) ||
                 (data.enterpriseMainStatus === 0 &&
-                  (data.platformStatus === -1 || data.platformStatus === 1)) ||
-                data.orderStatusName === '等待平台打款'
+                  (data.platformStatus === -1 || data.platformStatus === 1))
             "
             >修改报价</el-button
           >

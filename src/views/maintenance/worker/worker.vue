@@ -200,7 +200,7 @@
         ></el-table-column>
         <el-table-column
           prop="skillCertificateImages"
-          label="技能证书图书"
+          label="技能证书"
           show-overflow-tooltip
           align="center"
         >
@@ -280,60 +280,43 @@
         </el-table-column>
         <el-table-column label="操作" width="220" fixed="right" align="center">
           <template slot-scope="{ row }">
-            <div>
-              <div style="margin-bottom: 10px;" class="row_button_item">
-                <el-button
-                  plain
-                  type="primary"
-                  href="#"
+            <div style="display: flex;">
+              <el-button
+                type="primary"
+                size="mini"
+                @click="
+                  $router.push('/maintenance/worker/workerDetails?id=' + row.id)
+                "
+                >详情</el-button
+              >
+              <el-button size="mini" @click="editInit(row)" type="warning"
+                >编辑</el-button
+              >
+              <div>
+                <el-select
+                  placeholder="更多"
+                  style="width: 71px;margin-left: 10px;"
                   size="mini"
-                  @click="
-                    $router.push(
-                      '/maintenance/worker/workerDetails?id=' + row.id
-                    )
-                  "
-                  >详情</el-button
                 >
-                <el-button
-                  type="danger"
-                  size="mini"
-                  plain
-                  @click="isLock(row)"
-                  v-show="!row.isLock"
-                  >锁定</el-button
-                >
-                <el-button
-                  type="success"
-                  size="mini"
-                  plain
-                  @click="isLock(row)"
-                  v-show="row.isLock"
-                  >解锁</el-button
-                >
-              </div>
-              <div class="row_button_item">
-                <el-button
-                  type="warning"
-                  size="mini"
-                  plain
-                  @click="open(row)"
-                  v-if="!(row.status == 2)"
-                  >审核</el-button
-                >
-                <el-button
-                  type="warning"
-                  size="mini"
-                  plain
-                  @click="editInit(row)"
-                  >编辑</el-button
-                >
-                <el-button
-                  type="warning"
-                  size="mini"
-                  plain
-                  @click="checkTeam(row)"
-                  >成员</el-button
-                >
+                  <el-option v-show="!row.isLock">
+                    <el-button @click="isLock(row)" size="mini" type="danger"
+                      >锁定</el-button
+                    >
+                  </el-option>
+                  <el-option v-show="row.isLock">
+                    <el-button size="mini" @click="isLock(row)" type="success"
+                      >解锁</el-button
+                    >
+                  </el-option>
+                  <el-option v-if="!(row.status == 2)">
+                    <el-button size="mini" @click="open(row)">审核</el-button>
+                  </el-option>
+                  <el-option>
+                    <el-button type="info" size="mini" @click="checkTeam(row)"
+                      >成员</el-button
+                    >
+                  </el-option>
+                </el-select>
               </div>
             </div>
           </template>

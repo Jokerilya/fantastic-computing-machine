@@ -15,6 +15,19 @@
           </el-option>
         </el-select>
       </div>
+      <!-- <div class="topTool_Status">
+        <el-cascader
+          clearable
+          :options="equipmentTypeList"
+          :show-all-levels="false"
+          :props="{
+            children: 'list',
+            label: 'name',
+            value: 'id',
+            emitPath: false,
+          }"
+        ></el-cascader>
+      </div> -->
       <div class="topTool_time">
         <el-date-picker
           value-format="yyyy-MM-dd"
@@ -29,6 +42,9 @@
       <div class="topTool_name">
         <el-input v-model="topTool_code" placeholder="设备编码"></el-input>
       </div>
+      <!-- <div class="topTool_name">
+        <el-input placeholder="客户名称"></el-input>
+      </div> -->
       <div class="topTool_btn">
         <el-button style="color:#2E4C9E" @click="addEquipmentPage" disabled
           >新增</el-button
@@ -130,9 +146,11 @@
 
 <script>
 import { getEquipmentList } from "@/api/equipmentManagement";
+import { queryDeviceTypeList } from "@/api/order";
 export default {
   data() {
     return {
+      equipmentTypeList: "", //设备类型
       equipmentStatusValue: "", //设备状态值
       topTool_time: "", //日期选择值
       topTool_code: "", //设备编码值
@@ -219,8 +237,10 @@ export default {
       this.current = current;
     },
   },
-  created() {
+  async created() {
     this.getEquipmentList(this.data);
+    const res = await queryDeviceTypeList();
+    this.equipmentTypeList = res.data;
   },
 };
 </script>

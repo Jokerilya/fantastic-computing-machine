@@ -96,6 +96,7 @@
 
 <script>
 import { getMasterInfo } from "@/api/order";
+import { UploadImg } from "@/api/system";
 
 export default {
   data() {

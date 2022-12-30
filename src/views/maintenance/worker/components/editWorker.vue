@@ -183,6 +183,7 @@
               :limit="1"
               action="#"
               :http-request="avatarUploadFn"
+              accept=".jpg,.png"
               list-type="picture-card"
             >
               <i class="el-icon-plus"></i>
@@ -195,6 +196,7 @@
               :file-list="idJustFileList"
               :limit="1"
               action="#"
+              accept=".jpg,.png"
               :http-request="idJustUploadFn"
               list-type="picture-card"
             >
@@ -207,6 +209,7 @@
               style="width: 50%;"
               :file-list="idBackFileList"
               :http-request="idBackUploadFn"
+              accept=".jpg,.png"
               :limit="1"
               action="#"
               list-type="picture-card"
@@ -378,24 +381,36 @@ export default {
     },
     // 上传触发的事件
     async idBackUploadFn(data) {
+      const loading = this.$loading({
+        text: "上传图片中,请耐心等待...",
+      });
       const formData = new FormData();
       formData.append("file", data.file);
       const res = await UploadImg(formData);
       this.dialogForm.identityBackImage = res.data;
+      loading.close();
     },
     // 上传触发的事件
     async idJustUploadFn(data) {
+      const loading = this.$loading({
+        text: "上传图片中,请耐心等待...",
+      });
       const formData = new FormData();
       formData.append("file", data.file);
       const res = await UploadImg(formData);
       this.dialogForm.identityFrontImage = res.data;
+      loading.close();
     },
     // 上传触发的事件
     async avatarUploadFn(data) {
+      const loading = this.$loading({
+        text: "上传图片中,请耐心等待...",
+      });
       const formData = new FormData();
       formData.append("file", data.file);
       const res = await UploadImg(formData);
       this.dialogForm.realPortrait = res.data;
+      loading.close();
     },
     // 关闭事件
     closeFn() {

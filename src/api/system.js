@@ -243,6 +243,7 @@ function getQiniuToken(data) {
   });
 }
 
+// 上传图片
 export function UploadImg(data) {
   return request({
     url: "/admin/base/uploadImg",

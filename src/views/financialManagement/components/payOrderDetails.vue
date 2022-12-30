@@ -113,7 +113,11 @@
             <span class="desc" style="color: red;"
               >{{ orderDetails.payAmount ? orderDetails.payAmount : 0 }}元</span
             >
-            <span style="margin-left: 20px;">(不包含平台采购配件费)</span>
+            <span
+              style="margin-left: 20px;"
+              v-if="rowList.serviceTypeName !== '维保企业支付'"
+              >(不包含平台采购配件费)</span
+            >
           </div>
         </div>
       </div>
@@ -161,8 +165,13 @@ export default {
     // 弹窗open触发的事件
     async openFn() {
       const loading = this.$loading();
-      const res = await getRepairOrderCollectionInfo(this.rowList.orderSn);
-      this.orderDetails = res.data;
+      if (this.rowList.serviceTypeName === "维保师傅支付") {
+        const res = await getRepairOrderCollectionInfo(this.rowList.orderSn, 3);
+        this.orderDetails = res.data;
+      } else {
+        const res = await getRepairOrderCollectionInfo(this.rowList.orderSn, 2);
+        this.orderDetails = res.data;
+      }
       loading.close();
     },
     // 确定按钮
