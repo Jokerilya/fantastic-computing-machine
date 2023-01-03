@@ -67,8 +67,10 @@
           <div class="item">{{ workerDetailList.industryExperience }}</div>
           <div class="item">
             <el-image
-              :src="workerDetailList.industryExperienceImages"
-              :preview-src-list="[workerDetailList.industryExperienceImages]"
+              v-for="item in industryExperienceImages"
+              :key="item"
+              :src="item"
+              :preview-src-list="industryExperienceImages"
             >
             </el-image>
           </div>
@@ -82,8 +84,10 @@
         <div class="content">
           <div class="item">
             <el-image
-              :src="workerDetailList.skillCertificateImages"
-              :preview-src-list="[workerDetailList.skillCertificateImages]"
+              v-for="item in skillCertificateImages"
+              :key="item"
+              :src="item"
+              :preview-src-list="skillCertificateImages"
             >
             </el-image>
           </div>
@@ -96,17 +100,29 @@
 
 <script>
 import { getMasterInfo } from "@/api/order";
-import { UploadImg } from "@/api/system";
 
 export default {
   data() {
     return {
       workerDetailList: null,
+      industryExperienceImages: [],
+      skillCertificateImages: [],
     };
   },
   async created() {
     const res = await getMasterInfo(this.$route.query.id);
     this.workerDetailList = res.data;
+    // 修改格式 后台的行业经验和技能证书
+    if (this.workerDetailList.industryExperienceImages) {
+      let arr = this.workerDetailList.industryExperienceImages.split(",");
+      arr.pop();
+      this.industryExperienceImages = arr;
+    }
+    if (this.workerDetailList.skillCertificateImages) {
+      let arr = this.workerDetailList.skillCertificateImages.split(",");
+      arr.pop();
+      this.skillCertificateImages = arr;
+    }
   },
 };
 </script>
