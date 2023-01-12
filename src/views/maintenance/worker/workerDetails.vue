@@ -115,12 +115,16 @@ export default {
     // 修改格式 后台的行业经验和技能证书
     if (this.workerDetailList.industryExperienceImages) {
       let arr = this.workerDetailList.industryExperienceImages.split(",");
-      arr.pop();
+      if (arr.length !== 1) {
+        arr.pop();
+      }
       this.industryExperienceImages = arr;
     }
     if (this.workerDetailList.skillCertificateImages) {
       let arr = this.workerDetailList.skillCertificateImages.split(",");
-      arr.pop();
+      if (arr.length !== 1) {
+        arr.pop();
+      }
       this.skillCertificateImages = arr;
     }
   },

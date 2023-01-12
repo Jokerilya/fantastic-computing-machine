@@ -306,10 +306,10 @@
           </div>
 
           <!-- 服务进度 -->
-          <div class="servicePlan" v-if="data.enterpriseMainStatus === 3">
+          <div class="servicePlan" v-if="data.enterpriseMainStatus >= 3">
             <div class="topLine">
               <div class="title">服务进度</div>
-              <div class="annotation">
+              <div class="annotation" v-if="data.enterpriseMainStatus === 3">
                 （不必填，维修时间长，需要配合客户填写进度）
               </div>
             </div>
@@ -325,7 +325,7 @@
                 </div>
               </div>
             </div>
-            <div class="releaseDesc">
+            <div class="releaseDesc" v-if="data.enterpriseMainStatus === 3">
               <div class="title">进度描述</div>
               <div class="inp">
                 <el-input
@@ -884,7 +884,7 @@
 // 完工信息
 .finishWork {
   display: flex;
-  margin-bottom: 20px;
+  margin: 20px 0;
   .title {
     width: 150px;
     color: #707070;

@@ -118,13 +118,13 @@
           width="100"
           align="center"
         ></el-table-column> -->
-        <el-table-column
+        <!-- <el-table-column
           prop="realName"
           label="真实姓名"
           show-overflow-tooltip
           width="100"
           align="center"
-        ></el-table-column>
+        ></el-table-column> -->
         <!-- <el-table-column
         prop="enterpriseTypeId"
         label="企业类型"
@@ -163,13 +163,13 @@
           align="center"
         ></el-table-column>
 
-        <el-table-column
+        <!-- <el-table-column
           prop="phone"
           label="联系电话"
           show-overflow-tooltip
           width="120"
           align="center"
-        ></el-table-column>
+        ></el-table-column> -->
         <el-table-column
           label="认证状态"
           show-overflow-tooltip
@@ -192,14 +192,14 @@
           </template>
         </el-table-column>
 
-        <el-table-column
+        <!-- <el-table-column
           prop="settledTime"
           label="入驻时间"
           show-overflow-tooltip
           width="200"
           align="center"
-        ></el-table-column>
-        <el-table-column
+        ></el-table-column> -->
+        <!-- <el-table-column
           prop="portrait"
           label="微信头像"
           show-overflow-tooltip
@@ -222,7 +222,7 @@
               /
             </div>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column
           prop="deviceScale"
           label="公司规模"
@@ -601,6 +601,7 @@ export default {
   mixins: [tableMixin],
   data() {
     return {
+      editId: "",
       auditDialog: false, //审核弹窗默认
       auditSelect: "", //审核状态
       auditUid: "", //审核需要的uid
@@ -652,10 +653,9 @@ export default {
     async auditDialogConfirm() {
       const data = {
         status: this.auditSelect,
-        uid: this.auditUid,
+        id: this.auditUid,
       };
       const res = await handleEnterpriseExamine(data);
-      console.log(res);
       if (res.message === "操作成功") {
         this.$message({
           message: res.message,
@@ -676,7 +676,7 @@ export default {
       } else if (row.enterpriseFlag === 3) {
         this.auditSelect = 3;
       }
-      this.auditUid = row.uid;
+      this.auditUid = row.id;
       this.auditDialog = true;
     },
     // 重置事件
@@ -694,19 +694,22 @@ export default {
     async confirmFn() {
       // 修改设备类型格式
       let str = "";
-      this.editForm.deviceTypeIds.forEach((el, index) => {
-        if (index === 0) {
-          str = "" + el;
-        } else {
-          str = str + "," + el;
-        }
-      });
-      this.editForm.deviceTypeIds = str;
+      if (this.editForm.deviceTypeIds) {
+        this.editForm.deviceTypeIds.forEach((el, index) => {
+          if (index === 0) {
+            str = "" + el;
+          } else {
+            str = str + "," + el;
+          }
+        });
+        this.editForm.deviceTypeIds = str;
+      }
       if (this.recommendMaster) {
         const res = await queryMasterName(this.recommendMaster);
         const uid = res.data && res.data[0].uid;
         this.editForm.recommendMasterUid = uid;
       }
+      this.editForm.id = this.editId;
       const res1 = await editEnterpriseInfo(this.editForm);
       if (res1.message === "操作成功") {
         this.$message({
@@ -724,10 +727,15 @@ export default {
     },
     // 点击编辑触发的事件
     async editTeam(row) {
+      this.editId = row.id;
       const res = await getEnterpriseInfo(row);
       this.editForm = res.data;
       this.recommendMaster = res.data.recommendMasterRealName;
-      if (this.editForm.deviceTypeIds.indexOf(",") !== -1) {
+      console.log(this.editForm);
+      if (
+        this.editForm.deviceTypeIds &&
+        this.editForm.deviceTypeIds.indexOf(",") !== -1
+      ) {
         this.editForm.deviceTypeIds = this.editForm.deviceTypeIds.split(",");
       }
       const { data } = await queryEnterpriseName(res.data.enterpriseName);
@@ -750,7 +758,7 @@ export default {
         pageNo: 1,
         pageSize: 10,
         query: "",
-        uid: row.uid,
+        id: row.id,
       };
       queryEnterpriseMemberList(data).then((res) => {
         if (res) {
@@ -836,6 +844,7 @@ export default {
       }
       getEnterpriseList(params).then((res) => {
         if (res) {
+          console.log(res);
           const { records, total, current } = res.data;
           this.enterpriseList = records;
           this.total = total;

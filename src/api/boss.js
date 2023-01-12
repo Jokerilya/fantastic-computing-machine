@@ -139,7 +139,7 @@ export function deleteWelfare(params) {
 //获取企业详情
 export function getEnterpriseInfo(params) {
   return request({
-    url: `/admin/maintenance/getEnterpriseInfo?uid=${params.uid}`,
+    url: `/admin/maintenance/getEnterpriseInfo?id=${params.id}`,
     method: "get",
   });
 }
