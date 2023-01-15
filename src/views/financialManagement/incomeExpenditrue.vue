@@ -54,6 +54,11 @@
                 </a>
               </template>
             </el-table-column>
+            <el-table-column label="订单类型">
+              <template slot-scope="{ row }">
+                {{ row.orderType === 1 ? "散单" : "年保" }}
+              </template>
+            </el-table-column>
             <el-table-column
               width="150"
               prop="payCode"

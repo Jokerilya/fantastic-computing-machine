@@ -46,9 +46,9 @@
         <el-input placeholder="客户名称"></el-input>
       </div> -->
       <div class="topTool_btn">
-        <el-button style="color:#2E4C9E" @click="addEquipmentPage" disabled
+        <!-- <el-button style="color:#2E4C9E" @click="addEquipmentPage" disabled
           >新增</el-button
-        >
+        > -->
         <el-button style="color:#2E4C9E" @click="findFn">查询</el-button>
         <el-button style="color:#2E4C9E" @click="resetFn">重置</el-button>
       </div>

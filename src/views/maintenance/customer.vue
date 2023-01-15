@@ -144,13 +144,13 @@
                 >
                 <!-- <a href="#" style="color:#2E4C9E;margin: 0 20px;">编辑</a>
                 <a href="#" style="color:#2E4C9E;">取消</a> -->
-                <a
+                <!-- <a
                   href="#"
                   style="color:#2E4C9E;margin-left:6px;"
                   @click.prevent="foremp(row)"
                   v-if="!row.uid"
                   >绑企业</a
-                >
+                > -->
                 <a
                   href="#"
                   style="color:#2E4C9E;margin-left:6px;"
@@ -162,7 +162,7 @@
                   href="#"
                   style="color:#2E4C9E;margin-left:6px;"
                   v-if="!row.recommendPhone"
-                  @click.prevent="bindingReferrerFn(row.orderSn)"
+                  @click.prevent="bindingReferrerFn(row)"
                   >绑销售员</a
                 >
               </div>
@@ -528,8 +528,9 @@ export default {
       }
     },
     // 弹出推荐人弹窗
-    bindingReferrerFn(orderSn) {
-      this.referrerForm.orderSn = orderSn;
+    bindingReferrerFn(row) {
+      this.referrerForm.recommendPeople = row.recommendPeople;
+      this.referrerForm.orderSn = row.orderSn;
       this.referrerDialog = true;
     },
     // 关闭推荐人弹窗

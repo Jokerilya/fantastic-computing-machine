@@ -143,3 +143,11 @@ export function getEnterpriseInfo(params) {
     method: "get",
   });
 }
+
+// 查询企业团队邀请码
+export function getEnterpriseInvitationCode(id) {
+  return request({
+    url: `/admin/maintenance/getEnterpriseInvitationCode?id=${id}`,
+    method: "get",
+  });
+}

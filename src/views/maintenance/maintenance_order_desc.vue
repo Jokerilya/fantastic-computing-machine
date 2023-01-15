@@ -361,13 +361,13 @@
           <div class="customerEvaluate" v-if="data.repairComment">
             <div class="title">客户评价:</div>
             <div class="descPic">
-              <div class="item">
+              <div class="item" v-if="data.repairComment.content">
                 <div class="label">评价描述:</div>
                 <div class="desc">
                   {{ data.repairComment.content }}
                 </div>
               </div>
-              <div class="item">
+              <div class="item" v-if="data.repairComment.images">
                 <div class="label">评价图片:</div>
                 <el-image
                   lazy

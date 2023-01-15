@@ -164,7 +164,11 @@
           </div>
           <div class="item">
             <div class="label" style="width: 100px;">师傅编号</div>
-            <el-input class="inp" v-model="dialogForm.number"></el-input>
+            <el-input
+              class="inp"
+              v-model="dialogForm.number"
+              @input="blurWorkerNum"
+            ></el-input>
           </div>
           <div class="item">
             <div class="label" style="width: 100px;">虚拟服务数量</div>
@@ -297,6 +301,10 @@ export default {
     this.typeList = res1.data;
   },
   methods: {
+    // 判断师傅编号是否为数字或字母
+    blurWorkerNum() {
+      this.dialogForm.number = this.dialogForm.number.replace(/[^\w\/]/gi, "");
+    },
     // 搜索推荐人
     async remoteMethod(query) {
       const res = await queryMasterName(query);

@@ -250,17 +250,18 @@
                 size="mini"
                 plain
                 @click="auditFn(row)"
-                :disabled="row.enterpriseFlag == 2 || row.enterpriseFlag == 3"
-                >{{
-                  row.enterpriseFlag == 2
-                    ? "已通过"
-                    : row.enterpriseFlag == 3
-                    ? "已驳回"
-                    : "审核"
-                }}</el-button
+                v-if="row.enterpriseFlag !== 2 && row.enterpriseFlag !== 3"
+                >审核</el-button
+              >
+              <el-button
+                type="warning"
+                size="mini"
+                plain
+                @click="openInvitationCode(row.id)"
+                >邀请码</el-button
               >
               <el-button type="warning" size="mini" plain @click="openTeam(row)"
-                >查看</el-button
+                >成员</el-button
               >
               <el-button type="warning" size="mini" plain @click="editTeam(row)"
                 >编辑</el-button
@@ -292,11 +293,14 @@
         </model> -->
 
           <model
+            :isSubmit="false"
             ref="enterpriseTeamList"
             title="企业团队列表"
             @ok="handleEnterpriseExamine"
             @close="resetTeamList"
             :column="2"
+            width="45%"
+            center
           >
             <el-table
               highlight-current-row
@@ -334,15 +338,35 @@
                 show-overflow-tooltip
                 width="100"
                 align="center"
-              ></el-table-column>
+              >
+                <template slot-scope="{ row }">
+                  {{
+                    row.workStatus === 1
+                      ? "工作中"
+                      : row.workStatus === 2
+                      ? "外出中"
+                      : "休息中"
+                  }}
+                </template>
+              </el-table-column>
               <el-table-column
-                prop="enterpriseRoleId"
                 label="权限"
                 show-overflow-tooltip
                 width="100"
                 align="center"
-              ></el-table-column>
+              >
+                <template slot-scope="{ row }">
+                  {{
+                    row.enterpriseRoleId === 1
+                      ? "超管"
+                      : row.enterpriseRoleId === 2
+                      ? "管理"
+                      : "成员"
+                  }}
+                </template>
+              </el-table-column>
             </el-table>
+            <div style="height: 40px;"></div>
           </model>
         </el-table-column>
       </el-table>
@@ -360,6 +384,17 @@
         ></el-pagination>
       </div>
     </el-card>
+
+    <!-- 放大邀请码图片 -->
+    <div class="demo-image__preview">
+      <el-image
+        style="width: 0px; height: 0px"
+        :src="enlargeInvitationCodeUrl"
+        :preview-src-list="enlargeInvitationCodeUrlList"
+        ref="enlargeInvitationCode"
+      >
+      </el-image>
+    </div>
 
     <!-- 编辑企业弹窗 -->
     <div v-if="editForm">
@@ -422,6 +457,27 @@
           <div class="oneLine">
             <div class="item">
               <div class="title">
+                设备类型
+              </div>
+              <el-cascader
+                class="inp"
+                :show-all-levels="false"
+                :options="typeList"
+                v-model="editForm.deviceTypeIds"
+                :props="{
+                  checkStrictly: true,
+                  emitPath: false,
+                  value: 'id',
+                  label: 'name',
+                  multiple: true,
+                  children: 'list',
+                }"
+                collapse-tags
+                clearable
+              ></el-cascader>
+            </div>
+            <!-- <div class="item">
+              <div class="title">
                 成立日期
               </div>
               <el-date-picker
@@ -432,13 +488,13 @@
                 value-format="yyyy-MM-dd"
               >
               </el-date-picker>
-            </div>
-            <div class="item">
+            </div> -->
+            <!-- <div class="item">
               <div class="title">
                 注册资本
               </div>
               <el-input class="inp" v-model="editForm.regCapital"> </el-input>
-            </div>
+            </div> -->
             <div class="item">
               <div class="title">
                 直推师傅
@@ -460,10 +516,9 @@
                 </el-option>
               </el-select>
             </div>
-          </div>
-          <div class="oneLine">
+
             <div class="item" style="position: relative;">
-              <div class="title" style="flex:3">
+              <!-- <div class="title" style="flex:3">
                 是否禁用
               </div>
               <div style="flex:6">
@@ -475,13 +530,15 @@
                   :inactive-value="1"
                 >
                 </el-switch>
-              </div>
-              <div
+              </div> -->
+              <!-- <div
                 style="position: absolute;bottom: 9px;right: 23px;color: red;"
               >
                 (注意:绿色状态是禁用)
-              </div>
+              </div> -->
             </div>
+          </div>
+          <!-- <div class="oneLine">
             <div class="item">
               <div class="title" style="flex:3">
                 年保客户
@@ -498,28 +555,7 @@
                 </el-switch>
               </div>
             </div>
-            <div class="item">
-              <div class="title">
-                设备类型
-              </div>
-              <el-cascader
-                class="inp"
-                :show-all-levels="false"
-                :options="typeList"
-                v-model="editForm.deviceTypeIds"
-                :props="{
-                  checkStrictly: true,
-                  emitPath: false,
-                  value: 'id',
-                  label: 'name',
-                  multiple: true,
-                  children: 'list',
-                }"
-                collapse-tags
-                clearable
-              ></el-cascader>
-            </div>
-          </div>
+          </div> -->
         </div>
         <div slot="footer" class="dialog-footer" style="text-align: center;">
           <el-button @click="closeEditEnterprise">取 消</el-button>
@@ -595,12 +631,16 @@ import {
   getEnterpriseInfo,
   editEnterpriseInfo,
   queryEnterpriseName,
+  getEnterpriseInvitationCode,
 } from "@/api/boss";
 export default {
   title: "course",
   mixins: [tableMixin],
   data() {
     return {
+      enlargeInvitationCodeUrl: null,
+      enlargeInvitationCodeUrlList: null,
+
       editId: "",
       auditDialog: false, //审核弹窗默认
       auditSelect: "", //审核状态
@@ -649,6 +689,15 @@ export default {
     this.typeList = res.data;
   },
   methods: {
+    // 点击邀请码
+    async openInvitationCode(id) {
+      const res = await getEnterpriseInvitationCode(id);
+      this.enlargeInvitationCodeUrl = res.data;
+      this.enlargeInvitationCodeUrlList = [res.data];
+      setTimeout(() => {
+        this.$refs.enlargeInvitationCode.clickHandler();
+      }, 500);
+    },
     // 确定审核
     async auditDialogConfirm() {
       const data = {
@@ -710,6 +759,7 @@ export default {
         this.editForm.recommendMasterUid = uid;
       }
       this.editForm.id = this.editId;
+      this.editForm.address = this.editForm.enterpriseAddress;
       const res1 = await editEnterpriseInfo(this.editForm);
       if (res1.message === "操作成功") {
         this.$message({
@@ -756,7 +806,7 @@ export default {
       let data = {
         name: row.enterpriseName,
         pageNo: 1,
-        pageSize: 10,
+        pageSize: 99,
         query: "",
         id: row.id,
       };
