@@ -696,7 +696,7 @@ export default {
       this.enlargeInvitationCodeUrlList = [res.data];
       setTimeout(() => {
         this.$refs.enlargeInvitationCode.clickHandler();
-      }, 500);
+      }, 1000);
     },
     // 确定审核
     async auditDialogConfirm() {

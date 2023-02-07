@@ -119,14 +119,6 @@ const router = {
       component: () => import("@/views/financialManagement/incomeExpenditrue"),
       meta: { title: "收支明细" },
     },
-    {
-      path: "/maintenance/storageManagement/warehousingSingle",
-      name: "maintenance",
-      component: () =>
-        import("@/views/maintenance/storageManagement/warehousingSingle"),
-      meta: { title: "入库单" },
-    },
-
     // 暂时 不用这个功能 后续看情况补上
     {
       path: "/maintenance/maintenance",

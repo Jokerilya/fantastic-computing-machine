@@ -219,6 +219,15 @@
         >
         </el-table-column>
         <el-table-column
+          prop="createTime"
+          label="创建时间"
+          show-overflow-tooltip
+          width="150"
+          fixed="right"
+          align="center"
+        >
+        </el-table-column>
+        <el-table-column
           label="操作"
           width="200px"
           fixed="right"

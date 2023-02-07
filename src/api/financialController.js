@@ -37,3 +37,11 @@ export function handleMasterPayment(orderSn) {
     method: "GET",
   });
 }
+
+// 打款至银行卡
+export function handleConfirmPaymentToMaster(orderSn) {
+  return request({
+    url: "/admin/financial/handleConfirmPaymentToMaster?orderSn=" + orderSn,
+    method: "GET",
+  });
+}

@@ -212,7 +212,7 @@
 
       <!-- 检测结果tab -->
       <el-tab-pane
-        label="维保服务"
+        label="报价明细"
         name="meg"
         v-if="!(data.platformStatus == 0 && data.enterpriseMainStatus >= 0)"
       >
@@ -349,7 +349,7 @@
             <div class="pic" v-for="item in data.completePictureList">
               <el-image
                 v-if="item"
-                style="width: 150px; height: 150px;margin-right: 10px;"
+                style="width: 150px; height: 150px;margin-right: 20px;"
                 lazy
                 :src="item"
                 :preview-src-list="data.completePictureList"
@@ -367,13 +367,15 @@
                   {{ data.repairComment.content }}
                 </div>
               </div>
-              <div class="item" v-if="data.repairComment.images">
+              <div class="item" v-if="repairCommentImage">
                 <div class="label">评价图片:</div>
                 <el-image
+                  v-for="item in repairCommentImage"
+                  :key="item"
                   lazy
-                  :preview-src-list="[data.repairComment.images]"
-                  :src="data.repairComment.images"
-                  style="width: 150px; height: 150px;"
+                  :src="item"
+                  style="width: 150px; height: 150px;margin-right: 20px;"
+                  :preview-src-list="repairCommentImage"
                 ></el-image>
               </div>
               <!-- 星星评价 -->
@@ -1033,6 +1035,7 @@ export default {
   title: "maintenance_order_desc",
   data() {
     return {
+      repairCommentImage: null,
       content: "",
       // 取消订单
       delOrderinpValue: "",
@@ -1415,8 +1418,10 @@ export default {
       };
       getRepairOrderDetail(params).then((res) => {
         if (res.success) {
-          console.log(res);
           this.data = res.data;
+          if (res.data && res.data.repairComment.images) {
+            this.repairCommentImage = this.data.repairComment.images.split(",");
+          }
           this.$message({
             showClose: true,
             message: res.message,

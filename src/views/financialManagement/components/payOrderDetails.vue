@@ -29,7 +29,7 @@
           </div>
           <div class="line">
             <div class="item">
-              <span class="title">收支账号</span>
+              <span class="title">客户名称</span>
               <span class="desc">{{ orderDetails.contactsPeople }}</span>
             </div>
             <div class="item">
@@ -40,12 +40,31 @@
           <div class="line">
             <div class="item">
               <span class="title">支付日期</span>
-              <span class="desc">{{ rowList.payTime }}</span>
+              <span class="desc">{{
+                rowList.payTime ? rowList.payTime : "未支付"
+              }}</span>
             </div>
             <div class="item">
               <span class="title">订单金额</span>
               <span class="desc">{{ rowList.payMoney }}元</span>
             </div>
+          </div>
+          <div class="line">
+            <div class="item">
+              <span class="title">收款人员</span>
+              <span class="desc">{{ orderDetails.realName }}</span>
+            </div>
+            <div class="item">
+              <span class="title">所属银行</span>
+              <span class="desc">{{ orderDetails.bankName }}</span>
+            </div>
+          </div>
+          <div class="line">
+            <div class="item">
+              <span class="title">银行卡号</span>
+              <span class="desc">{{ orderDetails.realBankCode }}</span>
+            </div>
+            <div class="item"></div>
           </div>
         </div>
       </div>
@@ -132,8 +151,10 @@
 </template>
 
 <script>
-import { getRepairOrderCollectionInfo } from "@/api/financialController";
-import { handleMasterPayment } from "@/api/order";
+import {
+  getRepairOrderCollectionInfo,
+  handleConfirmPaymentToMaster,
+} from "@/api/financialController";
 
 export default {
   props: {
@@ -172,11 +193,12 @@ export default {
         const res = await getRepairOrderCollectionInfo(this.rowList.orderSn, 2);
         this.orderDetails = res.data;
       }
+      console.log(this.orderDetails);
       loading.close();
     },
     // 确定按钮
     async comfirmFn() {
-      const res = await handleMasterPayment(this.rowList.orderSn);
+      const res = await handleConfirmPaymentToMaster(this.rowList.orderSn);
       if (res.message === "操作成功") {
         this.$message({
           message: "支付成功!",
