@@ -117,13 +117,13 @@
           prop="orderSn"
           label="订单编号"
           show-overflow-tooltip
-          width="200"
+          width="180"
           align="center"
         ></el-table-column>
         <el-table-column
           label="工单类型"
           show-overflow-tooltip
-          width="100"
+          width="80"
           align="center"
         >
           <template slot-scope="{ row }">
@@ -134,7 +134,7 @@
         <el-table-column
           label="订单价格"
           show-overflow-tooltip
-          width="100"
+          width="80"
           align="center"
         >
           <template slot-scope="{ row }"> ￥{{ row.totalAmount }} </template>
@@ -150,7 +150,7 @@
           prop="no"
           label="设备编码"
           show-overflow-tooltip
-          width="150"
+          width="120"
           align="center"
         ></el-table-column>
         <el-table-column
@@ -164,12 +164,28 @@
           prop="deviceBrand"
           label="设备品牌"
           show-overflow-tooltip
-          width="200"
+          width="100"
           align="center"
         ></el-table-column>
         <el-table-column
-          prop="devicePlace"
-          label="设备产地"
+          prop="num"
+          label="设备数量"
+          show-overflow-tooltip
+          width="80"
+          align="center"
+        >
+          <template slot-scope="{ row }"> {{ row.num }}台 </template>
+        </el-table-column>
+        <el-table-column
+          prop="deviceSystemName"
+          label="设备系统"
+          show-overflow-tooltip
+          width="150"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="serviceTime"
+          label="服务时间"
           show-overflow-tooltip
           width="150"
           align="center"
@@ -185,28 +201,28 @@
           prop="contactsPeople"
           label="联系人"
           show-overflow-tooltip
-          width="150"
+          width="100"
           align="center"
         ></el-table-column>
         <el-table-column
           prop="contactsPhone"
           label="联系电话"
           show-overflow-tooltip
-          width="200"
+          width="160"
           align="center"
         ></el-table-column>
         <el-table-column
           prop="masterRealName"
           label="师傅名称"
           show-overflow-tooltip
-          width="200"
+          width="100"
           align="center"
         ></el-table-column>
         <el-table-column
           prop="masterPhone"
           label="师傅联系电话 "
           show-overflow-tooltip
-          width="200"
+          width="160"
           align="center"
         ></el-table-column>
         <el-table-column
@@ -227,12 +243,7 @@
           align="center"
         >
         </el-table-column>
-        <el-table-column
-          label="操作"
-          width="200px"
-          fixed="right"
-          align="center"
-        >
+        <el-table-column label="操作" width="120" fixed="right" align="center">
           <template slot-scope="{ row }">
             <div class="settings">
               <el-button type="info" size="mini" plain @click="queryDesc(row)"
@@ -561,6 +572,7 @@ export default {
       queryRepairOrderList(data).then((res) => {
         if (res) {
           this.dataList = res.data.records;
+          console.log(559, this.dataList);
           this.pageCount = res.data.total;
         }
         loading.close();

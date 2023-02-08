@@ -32,6 +32,13 @@
       <div class="operationBtnList">
         <el-button
           class="thrownIntoMarketBtn"
+          type="primary"
+          @click="openRegionChooseDialog"
+        >
+          区域指派</el-button
+        >
+        <el-button
+          class="thrownIntoMarketBtn"
           type="warning"
           @click="assignedBtn('market')"
           >抛入市场</el-button
@@ -115,14 +122,61 @@
         </div>
       </el-card>
     </div>
+
+    <!-- 区域选择 -->
+    <el-dialog
+      title="区域指派"
+      width="30%"
+      :visible="regionChooseDialog"
+      :show-close="false"
+    >
+      <div class="content">
+        <el-select
+          v-model="cityValue"
+          placeholder="请选择市"
+          style="margin-right: 20px;"
+          @change="cityValueChage"
+        >
+          <el-option
+            v-for="item in cityList"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          ></el-option>
+        </el-select>
+        <el-select
+          multiple
+          collapse-tags
+          placeholder="请选择区"
+          v-model="districtValue"
+        >
+          <el-option
+            v-for="item in districtList"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          ></el-option>
+        </el-select>
+      </div>
+      <span slot="footer">
+        <el-button @click="regionChooseDialog = false">取 消</el-button>
+        <el-button type="primary" @click="confirmRegionChoose">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import { queryAssignableMasterList, handleAssignMaster } from "@/api/user";
+import { addressFn } from "@/api/system";
 export default {
   data() {
     return {
+      districtValue: null,
+      districtList: null, //区级的列表
+      cityValue: null,
+      cityList: null, //市级的列表
+      regionChooseDialog: false,
       enterpriseOrderSn: "", //指派需要的企业工单订单编号
       params: {
         // 师傅查询需要的数据
@@ -139,6 +193,34 @@ export default {
     };
   },
   methods: {
+    // 确定区域
+    async confirmRegionChoose() {
+      const res = await handleAssignMaster({
+        areaIdList: this.districtValue,
+        enterpriseOrderSn: this.enterpriseOrderSn,
+        masterUidList: null,
+      });
+      if (res.message === "操作成功") {
+        this.$message({
+          message: "指派成功",
+          type: "success",
+        });
+        this.$router.push({
+          name: "maintenance_order_desc",
+          query: { orderSn: this.enterpriseOrderSn },
+        });
+      }
+    },
+    // 市级发生改变
+    async cityValueChage() {
+      // 获取区级
+      const districtList = await addressFn(this.cityValue);
+      this.districtList = districtList.data;
+    },
+    // 打开选择区域
+    openRegionChooseDialog() {
+      this.regionChooseDialog = true;
+    },
     // 删除指派师傅
     delAssignedWorker(index) {
       this.$confirm(
@@ -219,7 +301,7 @@ export default {
       loading.close();
     },
   },
-  created() {
+  async created() {
     const { masterNameList, masterUidList, orderSn } = this.$route.query;
     if (masterNameList) {
       masterNameList.forEach((item) => {
@@ -231,6 +313,9 @@ export default {
         this.masterUidList.push(item);
       });
     }
+    // 获取广东省的市
+    const cityList = await addressFn(440000);
+    this.cityList = cityList.data;
 
     this.enterpriseOrderSn = orderSn; //指派需要的企业工单订单编号
     this.getMasterList();
