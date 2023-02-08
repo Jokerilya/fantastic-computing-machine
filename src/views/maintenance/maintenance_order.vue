@@ -3,13 +3,7 @@
   <div class="app-container">
     <!-- 顶部工具栏部分 -->
     <div class="manage-top">
-      <el-form
-        v-model="searchForm"
-        ref="ruleForm"
-        label-width="80px"
-        class="rule-form"
-        label-position="right"
-      >
+      <el-form v-model="searchForm" ref="ruleForm" label-width="80px" class="rule-form" label-position="right">
         <el-row :gutter="20">
           <!-- <el-col :span="5">
             <el-form-item label="设备类型">
@@ -26,21 +20,14 @@
           <el-col :span="4">
             <el-form-item label="订单状态">
               <el-select v-model="searchForm.status" placeholder="请选择">
-                <el-option
-                  v-for="item in util.global.mainStatus"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                ></el-option>
+                <el-option v-for="item in util.global.mainStatus" :key="item.value" :label="item.label"
+                  :value="item.value"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item label="企业名称">
-              <el-input
-                v-model="searchForm.enterpriseName"
-                placeholder="企业名称"
-              ></el-input>
+              <el-input v-model="searchForm.enterpriseName" placeholder="企业名称"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="4">
@@ -52,44 +39,16 @@
             </el-form-item>
           </el-col>
           <el-col :span="4" style="display: flex;">
-            <el-button
-              icon="el-icon-zoom-in"
-              plain
-              type="primary"
-              @click="query_queryRepairOrderList"
-              >查询</el-button
-            >
-            <el-button
-              style="margin-right: 10px;"
-              icon="el-icon-refresh"
-              plain
-              type="info"
-              @click="resetFn"
-              >重置</el-button
-            >
-            <el-upload
-              class="upload-demo"
-              action
-              multiple
-              :http-request="workOrderImport"
-              :show-file-list="false"
-            >
+            <el-button icon="el-icon-zoom-in" plain type="primary" @click="query_queryRepairOrderList">查询</el-button>
+            <el-button style="margin-right: 10px;" icon="el-icon-refresh" plain type="info"
+              @click="resetFn">重置</el-button>
+            <el-upload class="upload-demo" action multiple :http-request="workOrderImport" :show-file-list="false">
               <el-button class="importBtn">工单批量下单</el-button>
             </el-upload>
-            <el-button
-              style="margin-left: 10px;"
-              type="warning"
-              plain
-              @click="templateDownload"
-            >
+            <el-button style="margin-left: 10px;" type="warning" plain @click="templateDownload">
               批量下单模板下载
             </el-button>
-            <el-button
-              style="margin-left: 10px;"
-              type="success"
-              plain
-              @click="$router.push('/maintenance/agentOrder')"
-            >
+            <el-button style="margin-left: 10px;" type="success" plain @click="$router.push('/maintenance/agentOrder')">
               代客户下单
             </el-button>
             <el-button type="success" plain @click="exportList">
@@ -105,69 +64,26 @@
 
     <el-card>
       <!-- 维保订单列表表格部分 -->
-      <el-table
-        highlight-current-row
-        v-loading.fullscreen.lock="loading"
-        element-loading-text="拼命加载中"
-        element-loading-spinner="el-icon-loading"
-        :data="dataList"
-        height="65vh"
-      >
-        <el-table-column
-          prop="orderSn"
-          label="订单编号"
-          show-overflow-tooltip
-          width="180"
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          label="工单类型"
-          show-overflow-tooltip
-          width="80"
-          align="center"
-        >
+      <el-table highlight-current-row v-loading.fullscreen.lock="loading" element-loading-text="拼命加载中"
+        element-loading-spinner="el-icon-loading" :data="dataList" height="65vh">
+        <el-table-column prop="orderSn" label="订单编号" show-overflow-tooltip width="170" align="center"></el-table-column>
+        <el-table-column label="工单类型" show-overflow-tooltip width="80" align="center">
           <template slot-scope="{ row }">
             <div v-if="row.orderType === 2">年保</div>
             <div v-if="row.orderType === 1">散单</div>
           </template>
         </el-table-column>
-        <el-table-column
-          label="订单价格"
-          show-overflow-tooltip
-          width="80"
-          align="center"
-        >
+        <el-table-column label="订单价格" show-overflow-tooltip width="80" align="center">
           <template slot-scope="{ row }"> ￥{{ row.totalAmount }} </template>
         </el-table-column>
-        <el-table-column
-          prop="enterpriseName"
-          label="企业名称"
-          show-overflow-tooltip
-          width="230"
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="no"
-          label="设备编码"
-          show-overflow-tooltip
-          width="120"
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="deviceTypeName"
-          label="设备类型"
-          show-overflow-tooltip
-          width="150"
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="deviceBrand"
-          label="设备品牌"
-          show-overflow-tooltip
-          width="100"
-          align="center"
-        ></el-table-column>
-        <el-table-column
+        <el-table-column prop="enterpriseName" label="企业名称" show-overflow-tooltip width="230"
+          align="center"></el-table-column>
+        <el-table-column prop="no" label="设备编码" show-overflow-tooltip width="110" align="center"></el-table-column>
+        <el-table-column prop="deviceTypeName" label="设备类型" show-overflow-tooltip width="130"
+          align="center"></el-table-column>
+        <el-table-column prop="deviceBrand" label="设备品牌" show-overflow-tooltip width="90"
+          align="center"></el-table-column>
+        <!-- <el-table-column
           prop="num"
           label="设备数量"
           show-overflow-tooltip
@@ -175,80 +91,30 @@
           align="center"
         >
           <template slot-scope="{ row }"> {{ row.num }}台 </template>
+        </el-table-column> -->
+        <el-table-column prop="deviceSystemName" label="设备系统" show-overflow-tooltip width="140"
+          align="center"></el-table-column>
+        <el-table-column prop="serviceTime" label="服务时间" show-overflow-tooltip width="150"
+          align="center"></el-table-column>
+        <el-table-column prop="simpleDesc" label="故障描述" show-overflow-tooltip width="200"
+          align="center"></el-table-column>
+        <el-table-column prop="contactsPeople" label="联系人" show-overflow-tooltip width="100"
+          align="center"></el-table-column>
+        <el-table-column prop="contactsPhone" label="联系电话" show-overflow-tooltip width="160"
+          align="center"></el-table-column>
+        <el-table-column prop="masterRealName" label="师傅名称" show-overflow-tooltip width="100"
+          align="center"></el-table-column>
+        <el-table-column prop="masterPhone" label="师傅联系电话 " show-overflow-tooltip width="160"
+          align="center"></el-table-column>
+        <el-table-column prop="orderStatusName" label="状态" show-overflow-tooltip width="150" fixed="right"
+          align="center">
         </el-table-column>
-        <el-table-column
-          prop="deviceSystemName"
-          label="设备系统"
-          show-overflow-tooltip
-          width="150"
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="serviceTime"
-          label="服务时间"
-          show-overflow-tooltip
-          width="150"
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="simpleDesc"
-          label="故障描述"
-          show-overflow-tooltip
-          width="200"
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="contactsPeople"
-          label="联系人"
-          show-overflow-tooltip
-          width="100"
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="contactsPhone"
-          label="联系电话"
-          show-overflow-tooltip
-          width="160"
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="masterRealName"
-          label="师傅名称"
-          show-overflow-tooltip
-          width="100"
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="masterPhone"
-          label="师傅联系电话 "
-          show-overflow-tooltip
-          width="160"
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="orderStatusName"
-          label="状态"
-          show-overflow-tooltip
-          width="150"
-          fixed="right"
-          align="center"
-        >
-        </el-table-column>
-        <el-table-column
-          prop="createTime"
-          label="创建时间"
-          show-overflow-tooltip
-          width="150"
-          fixed="right"
-          align="center"
-        >
+        <el-table-column prop="createTime" label="创建时间" show-overflow-tooltip width="150" fixed="right" align="center">
         </el-table-column>
         <el-table-column label="操作" width="120" fixed="right" align="center">
           <template slot-scope="{ row }">
             <div class="settings">
-              <el-button type="info" size="mini" plain @click="queryDesc(row)"
-                >查看详情</el-button
-              >
+              <el-button type="info" size="mini" plain @click="queryDesc(row)">查看详情</el-button>
               <!-- <el-button
                 v-if="
                   row.orderStatusName === '待平台指派' ||
@@ -303,15 +169,9 @@
 
       <!-- 分页 -->
       <div style="text-align: center;margin-top:20px ;">
-        <el-pagination
-          background
-          @size-change="handleSizeChange"
-          @current-change="updatePageNo"
-          :current-page="currentPage"
-          :page-size="10"
-          layout="total, prev, pager, next, jumper"
-          :total="pageCount"
-        ></el-pagination>
+        <el-pagination background @size-change="handleSizeChange" @current-change="updatePageNo"
+          :current-page="currentPage" :page-size="10" layout="total, prev, pager, next, jumper"
+          :total="pageCount"></el-pagination>
       </div>
     </el-card>
 
@@ -418,7 +278,9 @@
   </div>
 </template>
 
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+
+</style>
 
 <script>
 import {
@@ -705,7 +567,7 @@ export default {
         .then(({ data }) => {
           this.typeData = data;
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.info(error);
         });
       this.loading = false;
