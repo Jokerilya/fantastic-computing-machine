@@ -98,9 +98,62 @@
         </el-card>
       </el-tab-pane>
       <el-tab-pane label="师傅考核">
-        <el-card> </el-card>
+        <el-card>
+          <!-- <div class="title" style="margin-bottom: 20px;">
+            <el-select placeholder="请选择">
+              <el-option
+                v-for="item in yearList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              >
+              </el-option>
+            </el-select>
+          </div> -->
+          <el-table style="width: 100%" :data="assessmentData">
+            <el-table-column label="月份" prop="assessmentDate" align="center">
+            </el-table-column>
+            <el-table-column label="拒单次数" align="center">
+              <template slot-scope="{ row }">
+                {{ row.rejectionNum }}次
+              </template>
+            </el-table-column>
+            <el-table-column label="好评次数" align="center">
+              <template slot-scope="{ row }">
+                {{ row.positiveNum }}次
+              </template>
+            </el-table-column>
+            <el-table-column label="接单次数" align="center">
+              <template slot-scope="{ row }"> 2w次 </template>
+            </el-table-column>
+            <el-table-column label="准点到达率" align="center">
+              <template slot-scope="{ row }">
+                <div @click="punchInRecordShow = true">
+                  {{ row.arriveRatio }}%
+                </div>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-card>
       </el-tab-pane>
     </el-tabs>
+
+    <el-dialog
+      title="打卡记录"
+      :visible="punchInRecordShow"
+      width="60%"
+      align="center"
+      :before-close="closePunchInRecord"
+    >
+      <el-table>
+        <el-table-column label="订单编号" align="center"></el-table-column>
+        <el-table-column label="预期服务时间" align="center"></el-table-column>
+        <el-table-column label="实际到达时间" align="center"></el-table-column>
+        <el-table-column label="企业名称" align="center"></el-table-column>
+        <el-table-column label="打卡照片" align="center"></el-table-column>
+        <el-table-column label="是否合格" align="center"></el-table-column>
+      </el-table>
+    </el-dialog>
   </div>
 </template>
 
@@ -110,10 +163,12 @@ import { getMasterInfo } from "@/api/order";
 export default {
   data() {
     return {
+      assessmentData: [],
       activeName: "",
       workerDetailList: null,
       industryExperienceImages: [],
       skillCertificateImages: [],
+      punchInRecordShow: false,
     };
   },
   async created() {
@@ -134,6 +189,13 @@ export default {
       }
       this.skillCertificateImages = arr;
     }
+    console.log(199, res.data.list);
+    this.assessmentData = res.data.list;
+  },
+  methods: {
+    closePunchInRecord() {
+      this.punchInRecordShow = false;
+    },
   },
 };
 </script>

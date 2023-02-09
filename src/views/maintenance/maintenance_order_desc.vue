@@ -359,7 +359,9 @@
 
           <!-- 客户评价 -->
           <div class="customerEvaluate" v-if="data.repairComment">
-            <div class="title">客户评价:</div>
+            <div class="title">
+              客户评价:
+            </div>
             <div class="descPic">
               <div class="item" v-if="data.repairComment.content">
                 <div class="label">评价描述:</div>
@@ -422,6 +424,24 @@
                   :texts="['非常差', '差', '一般', '好', '非常好']"
                   v-model="data.repairComment.technologyScore"
                 ></el-rate>
+              </div>
+              <div class="item">
+                <div class="label1">客服回访描述:</div>
+                <div style="position: relative;">
+                  <el-input
+                    type="textarea"
+                    :rows="4"
+                    style="width: 500px;"
+                    placeholder="填写电话回访记录,以便考核师傅"
+                    resize="none"
+                  ></el-input>
+                  <div style="position: absolute;right: 15px;bottom: 10px;">
+                    <el-button
+                      style="width: 85px;background-color: #2e4c9e;height: 35px;color: #fff;"
+                      >确定</el-button
+                    >
+                  </div>
+                </div>
               </div>
             </div>
           </div>
