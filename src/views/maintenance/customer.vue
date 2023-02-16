@@ -544,6 +544,11 @@ export default {
     },
     // 导出功能
     async exportVip() {
+      const loading = this.$loading({
+        lock: true,
+        text: "数据传输中",
+        spinner: "el-icon-loading",
+      });
       this.exportParams.pageSize = 10000;
       const res = await handleButlerOrderExport(this.exportParams);
       if (res) {
@@ -557,6 +562,7 @@ export default {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+        loading.close();
       }
     },
     // 关闭绑定业务员弹窗
@@ -701,9 +707,9 @@ export default {
     // 查询订单列表的事件
     _queryButlerOrderList() {
       let params = {
-        contactsPeople: "",
-        contactsPhone: "",
-        enterpriseName: "",
+        contactsPeople: this.People,
+        contactsPhone: this.Phone,
+        enterpriseName: this.Name,
         pageNo: this.currentPage,
         pageSize: 10,
       };

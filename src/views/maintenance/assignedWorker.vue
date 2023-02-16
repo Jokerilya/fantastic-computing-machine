@@ -84,6 +84,8 @@
           </el-table-column>
           <el-table-column prop="phone" label="师傅电话" align="center">
           </el-table-column>
+          <el-table-column prop="identity" label="角色" align="center">
+          </el-table-column>
           <el-table-column label="服务状态" align="center">
             <template>
               可接单状态

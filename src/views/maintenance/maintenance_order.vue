@@ -516,6 +516,11 @@ export default {
     },
     // 导出
     async exportList() {
+      const loading = this.$loading({
+        lock: true,
+        text: "数据传输中",
+        spinner: "el-icon-loading",
+      });
       this.exportParams.pageSize = 10000;
       const res = await handleRepairOrderExport(this.exportParams);
       if (res) {
@@ -529,6 +534,7 @@ export default {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+        loading.close();
       }
     },
     // 重置

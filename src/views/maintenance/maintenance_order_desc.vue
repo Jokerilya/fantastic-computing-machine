@@ -382,6 +382,17 @@
               </div>
               <!-- 星星评价 -->
               <div class="item">
+                <div class="label1">客户综合评价:</div>
+                <el-rate
+                  disabled
+                  show-text
+                  :colors="['#fe5004', '#fe5004', '#fe5004']"
+                  text-color="#fe5004"
+                  :texts="['非常差', '差', '一般', '好', '非常好']"
+                  v-model="data.repairComment.comprehensiveScore "
+                ></el-rate>
+              </div>
+              <div class="item">
                 <div class="label1">沟通能力评分:</div>
                 <el-rate
                   disabled
@@ -427,8 +438,12 @@
               </div>
               <div class="item">
                 <div class="label1">客服回访描述:</div>
-                <div style="position: relative;">
+                <div v-if="data.repairComment.platformVisitMessage">
+                  {{ data.repairComment.platformVisitMessage }}
+                </div>
+                <div style="position: relative;" v-else>
                   <el-input
+                    v-model="platformVisitMessage"
                     type="textarea"
                     :rows="4"
                     style="width: 500px;"
@@ -438,6 +453,7 @@
                   <div style="position: absolute;right: 15px;bottom: 10px;">
                     <el-button
                       style="width: 85px;background-color: #2e4c9e;height: 35px;color: #fff;"
+                      @click="addReturnVistInfo"
                       >确定</el-button
                     >
                   </div>
@@ -1050,11 +1066,13 @@ import {
   examineMasterQuotation,
   handleMasterPayment,
   cancelRepairOrder,
+  handleRepairMessage,
 } from "@/api/order.js";
 export default {
   title: "maintenance_order_desc",
   data() {
     return {
+      platformVisitMessage: "",
       repairCommentImage: null,
       content: "",
       // 取消订单
@@ -1098,6 +1116,32 @@ export default {
     this._getRepairOrderDetail();
   },
   methods: {
+    // 确定添加回访信息
+    async addReturnVistInfo() {
+      if (!this.platformVisitMessage) {
+        this.$message({
+          message: "回访信息不能为空",
+          type: "warning",
+        });
+      } else {
+        const res = await handleRepairMessage({
+          orderSn: this.orderSn,
+          platformVisitMessage: this.platformVisitMessage,
+        });
+        if (res.message == "操作成功") {
+          this.$message({
+            message: res.message,
+            type: "success",
+          });
+          this._getRepairOrderDetail();
+        } else {
+          this.$message({
+            message: "网络不佳，稍后重试",
+            type: "warning",
+          });
+        }
+      }
+    },
     // 跳转指派师傅页面
     goAssignedMasterPage() {
       const { orderSn, masterUidList, masterNameList } = this.data;

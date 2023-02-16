@@ -819,6 +819,11 @@ export default {
     },
     // 点击导出触发的事件
     _handleEnterpriseInfoExport() {
+      const loading = this.$loading({
+        lock: true,
+        text: "数据传输中",
+        spinner: "el-icon-loading",
+      });
       let data = {
         name: this.enterpriseName,
         pageNo: 1,
@@ -835,11 +840,11 @@ export default {
           });
           link.style.display = "none";
           link.href = URL.createObjectURL(blob);
-
           link.download = "企业列表"; //下载的文件名
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
+          loading.close();
         }
       });
     },

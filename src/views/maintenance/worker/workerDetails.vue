@@ -111,7 +111,7 @@
             </el-select>
           </div> -->
           <el-table style="width: 100%" :data="assessmentData">
-            <el-table-column label="月份" prop="assessmentDate" align="center">
+            <el-table-column label="时间" prop="assessmentDate" align="center">
             </el-table-column>
             <el-table-column label="拒单次数" align="center">
               <template slot-scope="{ row }">
@@ -124,11 +124,13 @@
               </template>
             </el-table-column>
             <el-table-column label="接单次数" align="center">
-              <template slot-scope="{ row }"> 2w次 </template>
+              <template slot-scope="{ row }"
+                >{{ row.receiveNum ? receiveNum : 0 }}次
+              </template>
             </el-table-column>
             <el-table-column label="准点到达率" align="center">
               <template slot-scope="{ row }">
-                <div @click="punchInRecordShow = true">
+                <div @click="openPunchInRecord(row)" style="color: #409eff;">
                   {{ row.arriveRatio }}%
                 </div>
               </template>
@@ -141,28 +143,60 @@
     <el-dialog
       title="打卡记录"
       :visible="punchInRecordShow"
-      width="60%"
+      width="70%"
       align="center"
       :before-close="closePunchInRecord"
     >
-      <el-table>
-        <el-table-column label="订单编号" align="center"></el-table-column>
-        <el-table-column label="预期服务时间" align="center"></el-table-column>
-        <el-table-column label="实际到达时间" align="center"></el-table-column>
-        <el-table-column label="企业名称" align="center"></el-table-column>
-        <el-table-column label="打卡照片" align="center"></el-table-column>
-        <el-table-column label="是否合格" align="center"></el-table-column>
+      <el-table :data="punchInRecordList">
+        <el-table-column
+          label="订单编号"
+          align="center"
+          prop="relationOrderSn"
+        ></el-table-column>
+        <el-table-column
+          label="企业名称"
+          align="center"
+          prop="enterpriseName"
+        ></el-table-column>
+        <el-table-column
+          label="预期服务时间"
+          align="center"
+          prop="serviceTime"
+        ></el-table-column>
+        <el-table-column
+          label="实际到达时间"
+          align="center"
+          prop="punchTime"
+        ></el-table-column>
+        <el-table-column label="打卡照片" align="center">
+          <template slot-scope="{ row }">
+            <el-image
+              style="width: 100px;height: 100px;"
+              :src="row.punchImages"
+              :preview-src-list="[row.punchImages]"
+            ></el-image>
+          </template>
+        </el-table-column>
+        <el-table-column label="是否合格" align="center">
+          <template slot-scope="{ row }">
+            <div :style="{ color: row.punchStatus === 0 ? 'red' : 'green' }">
+              {{ row.punchStatus === 0 ? "不合格" : "合格" }}
+            </div>
+          </template>
+        </el-table-column>
       </el-table>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { getMasterInfo } from "@/api/order";
+import { getMasterInfo, queryPunchList } from "@/api/order";
+import { color } from "echarts/lib/export";
 
 export default {
   data() {
     return {
+      punchInRecordList: [],
       assessmentData: [],
       activeName: "",
       workerDetailList: null,
@@ -193,6 +227,18 @@ export default {
     this.assessmentData = res.data.list;
   },
   methods: {
+    // 打开打卡记录
+    async openPunchInRecord(row) {
+      const data = {
+        uid: row.uid,
+        date: row.assessmentDate,
+      };
+      const res = await queryPunchList(data);
+      this.punchInRecordList = res.data;
+      console.log(228, this.punchInRecordList);
+      this.punchInRecordShow = true;
+    },
+    // 关闭打卡记录
     closePunchInRecord() {
       this.punchInRecordShow = false;
     },

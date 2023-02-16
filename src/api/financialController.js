@@ -45,3 +45,22 @@ export function handleConfirmPaymentToMaster(orderSn) {
     method: "GET",
   });
 }
+
+// 收支明细列表导出
+export function handlePaymentListExport(data) {
+  return request({
+    url: "/admin/financial/handlePaymentListExport",
+    method: "post",
+    data,
+    responseType: "blob",
+  });
+}
+
+// 收支明细列表导入
+export function handlePaymentListImport(data) {
+  return request({
+    url: "/admin/financial/handlePaymentListImport",
+    method: "post",
+    data,
+  });
+}

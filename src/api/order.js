@@ -54,6 +54,15 @@ export function getMasterInfo(id) {
   });
 }
 
+// 查询打卡记录
+export function queryPunchList(data) {
+  return request({
+    url: "/admin/maintenance/queryPunchList",
+    method: "post",
+    data,
+  });
+}
+
 // 编辑师傅信息
 export function editMasterInfo(data) {
   return request({
@@ -321,6 +330,15 @@ export function agentCreateOrder(data) {
   });
 }
 
+// 设置师傅身份(区域经理、签约师傅)
+export function handleMasterIdentity(data) {
+  return request({
+    url: "/admin/maintenance/handleMasterIdentity",
+    method: "post",
+    data,
+  });
+}
+
 // 批量下单导入
 export function uploadBatchRepairOrder(data) {
   return request({
@@ -343,6 +361,15 @@ export function bindSalesmanAccount(data) {
 export function bindRecommendInfo(data) {
   return request({
     url: "/admin/maintenance/bindRecommendInfo",
+    method: "post",
+    data,
+  });
+}
+
+// 填写维保回访信息
+export function handleRepairMessage(data) {
+  return request({
+    url: "/admin/maintenance/handleRepairMessage",
     method: "post",
     data,
   });

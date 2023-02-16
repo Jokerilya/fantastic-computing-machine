@@ -50,20 +50,15 @@
         </el-col>
         <el-col :span="7">
           <el-button plain type="primary" @click="resetFn">重置</el-button>
-          <el-button
-            icon="el-icon-zoom-in"
-            plain
-            type="primary"
-            @click="_getMasterList()"
+          <el-button plain type="primary" @click="_getMasterList()"
             >查询</el-button
           >
-          <el-button
-            icon="el-icon-refresh"
-            plain
-            type="primary"
-            @click="_handleMasterInfoExport()"
+          <el-button plain type="primary" @click="_handleMasterInfoExport()"
             >导出师傅</el-button
           >
+          <!-- <el-button plain type="primary" @click="addSigningMaster"
+            >新增签约师傅</el-button
+          > -->
         </el-col>
       </el-row>
     </el-form>
@@ -108,14 +103,21 @@
           prop="superiorMasterName"
           label="团长"
           show-overflow-tooltip
-          width="150"
+          width="100"
           align="center"
         ></el-table-column>
         <el-table-column
           prop="recommendMasterName"
           label="推荐人"
           show-overflow-tooltip
-          width="150"
+          width="110"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="identity"
+          label="角色"
+          show-overflow-tooltip
+          width="100"
           align="center"
         ></el-table-column>
         <el-table-column
@@ -316,6 +318,14 @@
                       >成员</el-button
                     >
                   </el-option>
+                  <el-option v-if="row.identity === '普通师傅'">
+                    <el-button
+                      size="mini"
+                      type="success"
+                      @click="openChooseRoseDialog(row.uid)"
+                      >角色</el-button
+                    >
+                  </el-option>
                 </el-select>
               </div>
             </div>
@@ -336,6 +346,52 @@
         ></el-pagination>
       </div>
     </el-card>
+
+    <!-- 设置区域经理/签约师傅 -->、
+    <el-dialog
+      title="设置角色"
+      width="30%"
+      :visible="chooseRoseDialogShow"
+      :close-on-click-modal="false"
+      :before-close="closeChooseRoseDialog"
+    >
+      <div class="chooseRoseBox">
+        <div class="chooseRoseBox_title">
+          <div class="title">角色:</div>
+          <el-radio v-model="chooseRoseForm.masterRoleId" :label="3"
+            >签约师傅</el-radio
+          >
+          <el-radio
+            v-model="chooseRoseForm.masterRoleId"
+            :label="1"
+            @input="chooseMasterQuYu"
+            >区域经理</el-radio
+          >
+        </div>
+        <div
+          class="chooseRoseBox_master"
+          v-if="chooseRoseForm.masterRoleId === 3"
+        >
+          <div class="title">区域经理:</div>
+          <el-select
+            placeholder="请选择"
+            style="width: 150px;"
+            v-model="chooseRoseForm.superiorMasterUid"
+          >
+            <el-option
+              v-for="item in regionManagerList"
+              :key="item.uid"
+              :label="item.realName"
+              :value="item.uid"
+            ></el-option>
+          </el-select>
+        </div>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeChooseRoseDialog">取 消</el-button>
+        <el-button type="primary" @click="confirmChooseRose">确 定</el-button>
+      </span>
+    </el-dialog>
 
     <model
       ref="editStatusModel"
@@ -438,17 +494,431 @@
       :dialogVisible="dialogVisible"
       @closeFn="closeFn"
     ></EditWorker>
+
+    <!-- 新增签约师傅addSigningMaster -->
+    <el-dialog
+      :visible="addSigningMasterDialogShow"
+      :before-close="closeAddSigningMasterDialog"
+      title="入驻签约师傅"
+      width="42%"
+      :close-on-click-modal="false"
+    >
+      <div style="height: 500px;overflow:auto;">
+        <el-form
+          :rules="addSigningMasterRules"
+          ref="addSigningMasterForm"
+          :inline="true"
+          label-position="left"
+          :model="addSigningMasterForm"
+          label-width="110px"
+        >
+          <el-form-item
+            label="类型"
+            style="margin-bottom: 10px;"
+            prop="masterRoleId"
+          >
+            <el-radio
+              v-model="addSigningMasterForm.masterRoleId"
+              :label="3"
+              @input="changeMasterRoleId2"
+              >签约师傅</el-radio
+            >
+            <el-radio
+              v-model="addSigningMasterForm.masterRoleId"
+              :label="1"
+              @input="changeMasterRoleId1"
+              >区域经理</el-radio
+            >
+          </el-form-item>
+          <br />
+          <el-form-item
+            v-if="addSigningMasterForm.masterRoleId === 3"
+            label="区域经理"
+            style="margin-bottom: 20px;"
+            prop="superiorMasterUid"
+          >
+            <el-select
+              placeholder="请选择"
+              style="width: 150px;"
+              v-model="addSigningMasterForm.superiorMasterUid"
+              @change="changeSuperiorMasterUid"
+            >
+              <el-option
+                v-for="item in regionManagerList"
+                :key="item.uid"
+                :label="item.realName"
+                :value="item.uid"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+          <br v-if="addSigningMasterForm.masterRoleId === 3" />
+          <el-form-item
+            label="真实姓名"
+            style="margin-bottom: 20px;"
+            prop="realName"
+          >
+            <el-input
+              v-model="addSigningMasterForm.realName"
+              placeholder="请输入师傅真实姓名"
+              style="width: 300px;"
+            ></el-input>
+          </el-form-item>
+          <br />
+          <el-form-item
+            label="手机号码"
+            style="margin-bottom: 20px;"
+            prop="phone"
+          >
+            <el-input
+              v-model="addSigningMasterForm.phone"
+              placeholder="请输入手机号码"
+              style="width: 300px;"
+            ></el-input>
+          </el-form-item>
+          <br />
+          <el-form-item label="师傅编号" style="margin-bottom: 20px;">
+            <el-input
+              v-model="addSigningMasterForm.number"
+              placeholder="请输入师傅编号"
+              style="width: 300px;"
+            ></el-input>
+          </el-form-item>
+          <br />
+          <el-form-item
+            label="真实头像"
+            style="margin-bottom: 20px;"
+            prop="realPortrait"
+          >
+            <el-upload
+              list-type="picture-card"
+              :show-file-list="false"
+              :http-request="uploadRealPortrait"
+              class="avatar-uploader"
+            >
+              <img
+                v-if="uploadRealPortraitImg"
+                :src="uploadRealPortraitImg"
+                class="avatar"
+              />
+              <i class="el-icon-plus" v-else></i>
+            </el-upload>
+          </el-form-item>
+          <br />
+          <el-form-item
+            label="详细地址"
+            style="margin-bottom: 20px;"
+            prop="address"
+          >
+            <el-input
+              v-model="addSigningMasterForm.address"
+              placeholder="请输入师傅真实详细地址"
+              style="width: 300px;"
+            ></el-input>
+          </el-form-item>
+          <br />
+          <el-form-item
+            label="身份证号码"
+            style="margin-bottom: 20px;"
+            prop="identityNumber"
+          >
+            <el-input
+              v-model="addSigningMasterForm.identityNumber"
+              placeholder="请输入师傅身份证号码"
+              style="width: 300px;"
+            ></el-input>
+          </el-form-item>
+          <br />
+          <el-form-item
+            label="身份证正面照"
+            style="margin-bottom: 20px;"
+            prop="identityFrontImage"
+          >
+            <el-upload
+              list-type="picture-card"
+              :show-file-list="false"
+              :http-request="uploadIdentityFrontImage"
+              class="avatar-uploader"
+            >
+              <img
+                v-if="uploadIdentityFrontImageImg"
+                :src="uploadIdentityFrontImageImg"
+                class="avatar"
+              />
+              <i class="el-icon-plus" v-else></i>
+            </el-upload>
+          </el-form-item>
+          <el-form-item
+            label="身份证反面照"
+            style="margin-bottom: 20px;"
+            prop="identityBackImage"
+          >
+            <el-upload
+              list-type="picture-card"
+              :show-file-list="false"
+              :http-request="uploadIdentityBackImage"
+              class="avatar-uploader"
+            >
+              <img
+                v-if="uploadIdentityBackImageImg"
+                :src="uploadIdentityBackImageImg"
+                class="avatar"
+              />
+              <i class="el-icon-plus" v-else></i>
+            </el-upload>
+          </el-form-item>
+          <br />
+          <el-form-item
+            label="设备类型"
+            style="margin-bottom: 20px;"
+            prop="serviceTypes"
+          >
+            <el-select
+              style="margin-right: 20px;width: 150px;"
+              v-model="equipmentTypeOne"
+              placeholder="请选择"
+              @change="changeEquipmentTypeOne"
+            >
+              <el-option
+                v-for="item in equipmentTypeList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+              >
+              </el-option>
+            </el-select>
+            <el-select
+              style="width: 190px;"
+              placeholder="请选择"
+              multiple
+              collapse-tags
+              v-model="equipmentTypeTwo"
+              @change="changeEquipmentTypeTwo"
+            >
+              <el-option
+                v-for="item in equipmentTypeTwoList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+              >
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <br />
+          <el-form-item
+            label="设备系统"
+            style="margin-bottom: 20px;"
+            prop="serveSystem"
+          >
+            <el-select
+              style="margin-right: 20px;width: 150px;"
+              v-model="equipmentSystemOne"
+              placeholder="请选择"
+              @change="changeEquipmentSystemOne"
+            >
+              <el-option
+                v-for="item in equipmentSystemList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+              >
+              </el-option>
+            </el-select>
+            <el-select
+              style="width: 190px;"
+              placeholder="请选择"
+              multiple
+              collapse-tags
+              v-model="equipmentSystemTwo"
+              @change="changeEquipmentSystemTwo"
+            >
+              <el-option
+                v-for="item in equipmentSystemTwoList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+              >
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <br />
+          <el-form-item
+            label="服务部位"
+            style="margin-bottom: 20px;"
+            prop="servePosition"
+          >
+            <el-select
+              style="margin-right: 20px;width: 150px;"
+              v-model="serviceArea"
+              placeholder="请选择"
+              multiple
+              collapse-tags
+              @change="changeServiceArea"
+            >
+              <el-option
+                v-for="item in devicePositionList"
+                :key="item.name"
+                :label="item.name"
+                :value="item.name"
+              >
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <br />
+          <el-form-item
+            prop="serviceAreas"
+            label="服务区域"
+            style="margin-bottom: 20px;"
+            v-if="addSigningMasterForm.masterRoleId === 1"
+          >
+            <el-select
+              placeholder="请选择"
+              style="margin-right: 20px;width: 150px;"
+              v-model="provinceValue"
+              @change="changeProvinceValue"
+            >
+              <el-option
+                v-for="item in provinceList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+              >
+              </el-option>
+            </el-select>
+            <el-select
+              v-model="cityValue"
+              placeholder="请选择"
+              style="margin-right: 20px;width: 150px;"
+              @change="changeCityValue"
+            >
+              <el-option
+                v-for="item in cityList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+              >
+              </el-option>
+            </el-select>
+            <el-select
+              placeholder="请选择"
+              style="width: 150px;"
+              v-model="districtValue"
+              multiple
+              collapse-tags
+              @change="changeDistrictValue"
+            >
+              <el-option
+                v-for="item in districtList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+              >
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <br v-if="addSigningMasterForm.masterRoleId === 1" />
+          <el-form-item
+            label="行业经验"
+            style="margin-bottom: 20px;"
+            prop="industryExperience"
+          >
+            <el-input
+              v-model="addSigningMasterForm.industryExperience"
+              placeholder="请输入师傅行业经验"
+              style="width: 300px;"
+            ></el-input>
+          </el-form-item>
+          <br />
+          <el-form-item label="行业照片" style="margin-bottom: 10px;">
+            <div style="height:148px;width: 470px;overflow: hidden;">
+              <el-upload
+                ref="uploadIndustryPicRef"
+                list-type="picture-card"
+                :http-request="uploadIndustryPic"
+                :on-remove="delIndustryPic"
+              >
+                <i class="el-icon-plus"></i>
+              </el-upload>
+            </div>
+          </el-form-item>
+          <br />
+          <el-form-item label="技能证书">
+            <div style="height:148px;width: 470px;overflow: hidden;">
+              <el-upload
+                ref="uploadSkillCertificatePicRef"
+                list-type="picture-card"
+                :http-request="uploadSkillCertificatePic"
+                :on-remove="delSkillCertificatePic"
+              >
+                <i class="el-icon-plus"></i>
+              </el-upload>
+            </div>
+          </el-form-item>
+        </el-form>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="closeAddSigningMasterDialog">取 消</el-button>
+        <el-button type="primary" @click="confirmAddSigningMaster"
+          >确 定</el-button
+        >
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <style lang="less" scoped>
+.chooseRoseBox {
+  .chooseRoseBox_title,
+  .chooseRoseBox_master {
+    display: flex;
+    align-items: center;
+    .title {
+      font-size: 14px;
+      margin-right: 20px;
+      color: #606266;
+      font-weight: 700;
+      width: 100px;
+    }
+  }
+
+  .chooseRoseBox_title {
+    margin-bottom: 20px;
+  }
+}
 .row_button_item {
   display: flex;
   justify-content: center;
 }
+
+.avatar-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.avatar-uploader .el-upload:hover {
+  border-color: #409eff;
+}
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 178px;
+  height: 178px;
+  line-height: 178px;
+  text-align: center;
+}
+.avatar {
+  width: 142px;
+  height: 142px;
+  display: block;
+}
 </style>
 
 <script>
+import { UploadImg, addressFn } from "@/api/system";
 import EditWorker from "./components/editWorker.vue";
 import tableMixin from "@/mixin/table";
 import { getMasterList } from "@/api/user.js";
@@ -457,12 +927,170 @@ import {
   queryMasterMemberList,
   getMasterInfo,
   queryMasterName,
+  queryDeviceTypeList,
+  queryDeviceSystemList,
+  queryDevicePositionList,
+  editMasterInfo,
+  handleMasterIdentity,
 } from "@/api/order.js";
 export default {
   title: "course",
   mixins: [tableMixin],
   data() {
     return {
+      chooseRoseForm: {
+        masterRoleId: 3,
+        superiorMasterUid: "",
+        uid: "",
+      },
+      chooseRoseDialogShow: false,
+      regionManagerList: null,
+      addSigningMasterRules: {
+        phone: [
+          {
+            required: true,
+            message: "请填写手机号码",
+            trigger: "blur",
+          },
+        ],
+        masterRoleId: [
+          {
+            required: true,
+            message: "请选择类型",
+            trigger: "blur",
+          },
+        ],
+        realName: [
+          {
+            required: true,
+            message: "请输入真实姓名",
+            trigger: "blur",
+          },
+        ],
+        address: [
+          {
+            required: true,
+            message: "请输入详细地址",
+            trigger: "blur",
+          },
+        ],
+        identityNumber: [
+          {
+            required: true,
+            message: "请输入身份证号码",
+            trigger: "blur",
+          },
+        ],
+        industryExperience: [
+          {
+            required: true,
+            message: "请输入行业经验",
+            trigger: "blur",
+          },
+        ],
+        realPortrait: [
+          {
+            required: true,
+            message: "请上传真实头像",
+            trigger: "blur",
+          },
+        ],
+        identityBackImage: [
+          {
+            required: true,
+            message: "请上传身份证反面照",
+            trigger: "blur",
+          },
+        ],
+        identityFrontImage: [
+          {
+            required: true,
+            message: "请上传身份证正面照",
+            trigger: "blur",
+          },
+        ],
+        serviceTypes: [
+          {
+            required: true,
+            message: "请选择设备类型",
+            trigger: "blur",
+          },
+        ],
+        serveSystem: [
+          {
+            required: true,
+            message: "请输入设备系统",
+            trigger: "blur",
+          },
+        ],
+        servePosition: [
+          {
+            required: true,
+            message: "请输入服务部位",
+            trigger: "blur",
+          },
+        ],
+        superiorMasterUid: [
+          {
+            required: true,
+            message: "请选择区域经理",
+            trigger: "blur",
+          },
+        ],
+      },
+      skillCertificateImagesUid: [],
+      industryExperienceImagesUid: [],
+
+      provinceList: null, //省列表
+      provinceValue: null, //选中省
+
+      cityList: null, //市列表
+      cityValue: null, //选中市
+
+      districtList: null, //区列表
+      districtValue: null, //选中区
+
+      devicePositionList: null, //服务部位列表
+      serviceArea: null, //服务部位的值
+
+      equipmentSystemOne: null, //设备系统的值
+      equipmentSystemTwo: null, //设备系统的值
+      equipmentSystemList: [], //设备系统第一层
+      equipmentSystemTwoList: null, //设备系统第二层
+      equipmentSystemList1: [], //进口系统第二层
+      equipmentSystemList2: [], //国产系统第二层
+
+      equipmentTypeOne: null, //设备类型的值
+      equipmentTypeTwo: null, //设备类型的值
+      equipmentTypeList: [], //设备类型第一层
+      equipmentTypeTwoList: null, //设备类型第二层
+      equipmentTypeList1: [], //数控车床第二层
+      equipmentTypeList2: [], //加工中心第二层
+      equipmentTypeList3: [], //走心机第三层
+
+      uploadIdentityFrontImageImg: null, //身份证正面
+      uploadIdentityBackImageImg: null, //身份证反面
+      uploadRealPortraitImg: null, //真实头像
+      addSigningMasterForm: {
+        masterRoleId: 3,
+        realName: null,
+        address: null,
+        identityNumber: null,
+        industryExperience: null,
+        realPortrait: null,
+        identityBackImage: null,
+        identityFrontImage: null,
+        serviceTypes: null,
+        serveSystem: null,
+        servePosition: null,
+        serviceAreas: null,
+        industryExperienceImages: [],
+        skillCertificateImages: [],
+        phone: null,
+        number: null,
+        superiorMasterUid: null,
+      },
+      addSigningMasterDialogShow: false, //新增签约师傅弹框
       params: null,
 
       colonelName: null,
@@ -514,10 +1142,282 @@ export default {
   components: {
     EditWorker: EditWorker,
   },
-  created() {
+  async created() {
+    await this.getQueryDeviceTypeList();
+    await this.getQueryDeviceSystemList();
+    await this.getQueryDevicePositionList();
+    await this.getAddressFn();
+    await this.getMasterRoleList();
     this._getMasterList();
   },
   methods: {
+    // 确定设置师傅角色
+    async confirmChooseRose() {
+      if (
+        this.chooseRoseForm.masterRoleId === 3 &&
+        !this.chooseRoseForm.superiorMasterUid
+      ) {
+        // 提示区域经理必填
+        this.$message({
+          message: "区域经理不能为空",
+          type: "warning",
+        });
+        return;
+      } else {
+        const res = await handleMasterIdentity(this.chooseRoseForm);
+        if (res.code === "000") {
+          this.$message({
+            message: "设置成功",
+            type: "success",
+          });
+          this.closeChooseRoseDialog();
+          this._getMasterList();
+        }
+      }
+    },
+    // 点击区域经理
+    chooseMasterQuYu() {
+      this.chooseRoseForm.superiorMasterUid = null;
+    },
+    // 关闭设置师傅角色框
+    closeChooseRoseDialog() {
+      this.chooseRoseForm = {
+        masterRoleId: 3,
+        superiorMasterUid: "",
+        uid: "",
+      };
+      this.chooseRoseDialogShow = false;
+    },
+    // 打开设置师傅角色框
+    openChooseRoseDialog(uid) {
+      this.chooseRoseForm.uid = uid;
+      this.chooseRoseDialogShow = true;
+    },
+    // 区域经理的值变化
+    changeSuperiorMasterUid() {
+      this.$refs.addSigningMasterForm.validateField("superiorMasterUid");
+    },
+    // 查询区域经理列表
+    async getMasterRoleList() {
+      const res = await getMasterList({
+        type: 2,
+        masterRoleId: 1,
+        pageSize: 1000,
+      });
+      this.regionManagerList = res.data.records;
+    },
+    // 点击区域经理触发
+    changeMasterRoleId1() {
+      this.addSigningMasterRules.serviceAreas = [
+        {
+          required: true,
+          message: "请输入服务区域",
+          trigger: "blur",
+        },
+      ];
+      delete this.addSigningMasterRules.superiorMasterUid;
+    },
+    // 点击签约师傅触发
+    changeMasterRoleId2() {
+      delete this.addSigningMasterRules.serviceAreas;
+      this.addSigningMasterRules.superiorMasterUid = [
+        {
+          required: true,
+          message: "请输入服务区域",
+          trigger: "blur",
+        },
+      ];
+    },
+    // 服务区域的值变化触发
+    changeDistrictValue() {
+      this.addSigningMasterForm.serviceAreas = this.districtValue.toString();
+      this.$refs.addSigningMasterForm.validateField("serviceAreas");
+    },
+    // 设备类型的值变化触发
+    changeEquipmentTypeTwo() {
+      this.addSigningMasterForm.serviceTypes = this.equipmentTypeTwo.toString();
+      this.$refs.addSigningMasterForm.validateField("serviceTypes");
+    },
+    // 设备系统的值变化触发
+    changeEquipmentSystemTwo() {
+      this.addSigningMasterForm.serveSystem = this.equipmentSystemTwo.toString();
+      this.$refs.addSigningMasterForm.validateField("serveSystem");
+    },
+    // 服务部位的值变化触发
+    changeServiceArea() {
+      this.addSigningMasterForm.servePosition = this.serviceArea.toString();
+      this.$refs.addSigningMasterForm.validateField("servePosition");
+    },
+    // 确定签约师傅
+    async confirmAddSigningMaster() {
+      await this.$refs.addSigningMasterForm.validate();
+      this.addSigningMasterForm.type = 2;
+      if (this.addSigningMasterForm.industryExperienceImages) {
+        this.addSigningMasterForm.industryExperienceImages = this.addSigningMasterForm.industryExperienceImages.toString();
+      }
+      if (this.addSigningMasterForm.skillCertificateImages) {
+        this.addSigningMasterForm.skillCertificateImages = this.addSigningMasterForm.skillCertificateImages.toString();
+      }
+      const res = await editMasterInfo(this.addSigningMasterForm);
+      if (res.message === "操作成功") {
+        this.closeAddSigningMasterDialog();
+        this._getMasterList();
+      }
+    },
+    // 删除技能证书
+    delSkillCertificatePic(file) {
+      const index = this.skillCertificateImagesUid.indexOf(file.uid);
+      this.skillCertificateImagesUid.splice(index, 1);
+      this.addSigningMasterForm.skillCertificateImages.splice(index, 1);
+    },
+    // 上传技能证书
+    async uploadSkillCertificatePic(fileData) {
+      let formData = new FormData();
+      formData.append("file", fileData.file);
+      const res = await UploadImg(formData);
+      this.skillCertificateImagesUid.push(fileData.file.uid);
+      this.addSigningMasterForm.skillCertificateImages.push(res.data);
+    },
+    // 删除行业照片
+    delIndustryPic(file) {
+      const index = this.industryExperienceImagesUid.indexOf(file.uid);
+      this.industryExperienceImagesUid.splice(index, 1);
+      this.addSigningMasterForm.industryExperienceImages.splice(index, 1);
+    },
+    // 上传行业照片
+    async uploadIndustryPic(fileData) {
+      let formData = new FormData();
+      formData.append("file", fileData.file);
+      const res = await UploadImg(formData);
+      this.industryExperienceImagesUid.push(fileData.file.uid);
+      this.addSigningMasterForm.industryExperienceImages.push(res.data);
+    },
+    // 市变化
+    async changeCityValue() {
+      const res = await addressFn(this.cityValue);
+      this.districtList = res.data;
+    },
+    // 省变化
+    async changeProvinceValue() {
+      const res = await addressFn(this.provinceValue);
+      this.cityList = res.data;
+    },
+    // 获取地区
+    async getAddressFn() {
+      const res = await addressFn();
+      this.provinceList = res.data;
+    },
+    // 获取服务地区
+    async getQueryDevicePositionList() {
+      const res = await queryDevicePositionList();
+      this.devicePositionList = res.data;
+    },
+    // 改变第一层设备系统
+    changeEquipmentSystemOne() {
+      if (this.equipmentSystemOne === 1) {
+        this.equipmentSystemTwoList = this.equipmentSystemList1;
+      } else {
+        this.equipmentSystemTwoList = this.equipmentSystemList2;
+      }
+    },
+    // 获取设备系统
+    async getQueryDeviceSystemList() {
+      const { data } = await queryDeviceSystemList();
+      this.equipmentSystemList = data;
+      this.equipmentSystemList1 = data[0].list;
+      this.equipmentSystemList2 = data[1].list;
+    },
+    // 改变第一层设备类型
+    changeEquipmentTypeOne() {
+      if (this.equipmentTypeOne === 1) {
+        this.equipmentTypeTwoList = this.equipmentTypeList1;
+      } else if (this.equipmentTypeOne === 2) {
+        this.equipmentTypeTwoList = this.equipmentTypeList2;
+      } else {
+        this.equipmentTypeTwoList = this.equipmentTypeList3;
+      }
+    },
+    // 获取设备类型
+    async getQueryDeviceTypeList() {
+      const { data } = await queryDeviceTypeList();
+      this.equipmentTypeList = data;
+      this.equipmentTypeList1 = data[0].list;
+      this.equipmentTypeList2 = data[1].list;
+      this.equipmentTypeList3 = data[2].list;
+    },
+    // 上传身份证正面照
+    async uploadIdentityFrontImage(fileData) {
+      let formData = new FormData();
+      formData.append("file", fileData.file);
+      const res = await UploadImg(formData);
+      if (res.message) {
+        this.uploadIdentityFrontImageImg = res.data;
+        this.addSigningMasterForm.identityFrontImage = res.data;
+        this.$refs.addSigningMasterForm.validateField("identityFrontImage");
+      }
+    },
+    // 上传身份证反面照
+    async uploadIdentityBackImage(fileData) {
+      let formData = new FormData();
+      formData.append("file", fileData.file);
+      const res = await UploadImg(formData);
+      if (res.message) {
+        this.uploadIdentityBackImageImg = res.data;
+        this.addSigningMasterForm.identityBackImage = res.data;
+        this.$refs.addSigningMasterForm.validateField("identityBackImage");
+      }
+    },
+    // 上传真实头像
+    async uploadRealPortrait(fileData) {
+      let formData = new FormData();
+      formData.append("file", fileData.file);
+      const res = await UploadImg(formData);
+      if (res.message) {
+        this.uploadRealPortraitImg = res.data;
+        this.addSigningMasterForm.realPortrait = res.data;
+        this.$refs.addSigningMasterForm.validateField("realPortrait");
+      }
+    },
+    // 关闭新增签约师傅弹窗
+    async closeAddSigningMasterDialog() {
+      this.addSigningMasterForm = {
+        type: 2,
+        realName: null,
+        address: null,
+        identityNumber: null,
+        industryExperience: null,
+        realPortrait: null,
+        identityBackImage: null,
+        identityFrontImage: null,
+        serviceTypes: null,
+        serveSystem: null,
+        servePosition: null,
+        serviceAreas: null,
+        industryExperienceImages: [],
+        skillCertificateImages: [],
+      };
+      this.uploadRealPortraitImg = null;
+      this.uploadIdentityFrontImageImg = null;
+      this.uploadIdentityBackImageImg = null;
+      this.equipmentSystemOne = null;
+      this.equipmentSystemTwo = null;
+      this.equipmentTypeOne = null;
+      this.equipmentTypeTwo = null;
+      this.serviceArea = null;
+      this.provinceValue = null;
+      this.cityValue = null;
+      this.districtValue = null;
+      this.$refs.uploadIndustryPicRef.clearFiles();
+      this.$refs.uploadSkillCertificatePicRef.clearFiles();
+      this.skillCertificateImagesUid = [];
+      this.industryExperienceImagesUid = [];
+      this.addSigningMasterDialogShow = false;
+      this.$refs.addSigningMasterForm.resetFields();
+    },
+    // 打开新增签约师傅弹窗
+    addSigningMaster() {
+      this.addSigningMasterDialogShow = true;
+    },
     // 重置按钮
     resetFn() {
       this.referrerName = null;
@@ -534,6 +1434,11 @@ export default {
 
     // 导出师傅
     async _handleMasterInfoExport() {
+      const loading = this.$loading({
+        lock: true,
+        text: "数据传输中",
+        spinner: "el-icon-loading",
+      });
       const data = this.params;
       data.pageSize = 1000;
       handleMasterInfoExport(data).then((res) => {
@@ -548,6 +1453,7 @@ export default {
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
+          loading.close();
         }
       });
     },
@@ -594,6 +1500,7 @@ export default {
       }
       const res = await getMasterList(this.params);
       if (res.message === "操作成功") {
+        console.log(1375, res.data.records);
         this.masterList = res.data.records;
         this.pageCount = res.data.total;
         this.currentPage = res.data.current;
