@@ -125,13 +125,13 @@
             </el-table-column>
             <el-table-column label="接单次数" align="center">
               <template slot-scope="{ row }"
-                >{{ row.receiveNum ? receiveNum : 0 }}次
+                >{{ row.receiveNum ? row.receiveNum : 0 }}次
               </template>
             </el-table-column>
             <el-table-column label="准点到达率" align="center">
               <template slot-scope="{ row }">
                 <div @click="openPunchInRecord(row)" style="color: #409eff;">
-                  {{ row.arriveRatio }}%
+                  {{ Math.round(row.arriveRatio * 100) }}%
                 </div>
               </template>
             </el-table-column>

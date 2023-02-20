@@ -52,7 +52,7 @@
             size="mini"
             plain
             @click="sumbitQuotation()"
-            v-if="['2204'].includes(data.enterpriseSubStatus)"
+            v-if="['2202'].includes(data.enterpriseSubStatus)"
             >确认报价</el-button
           >
           <!-- <el-button type="primary" size="mini" plain @click="platformPayInit()">打款至师傅</el-button> -->
@@ -389,7 +389,7 @@
                   :colors="['#fe5004', '#fe5004', '#fe5004']"
                   text-color="#fe5004"
                   :texts="['非常差', '差', '一般', '好', '非常好']"
-                  v-model="data.repairComment.comprehensiveScore "
+                  v-model="data.repairComment.comprehensiveScore"
                 ></el-rate>
               </div>
               <div class="item">
