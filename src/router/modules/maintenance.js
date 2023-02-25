@@ -133,6 +133,14 @@ const router = {
         import("@/views/maintenance/equipmentManagement/addEquipment.vue"),
       meta: { title: "新增设备管理", noShow: "true" },
     },
+
+    // 保养明细模块
+    {
+      path: "/maintenance/upkeepDetailModule",
+      name: "upkeepDetailModule",
+      component: () => import("@/views/maintenance/upkeepDetailModule"),
+      meta: { title: "保养记录" },
+    },
   ],
 };
 export default router;

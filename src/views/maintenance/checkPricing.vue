@@ -76,7 +76,7 @@
     </div>
 
     <!-- 选择质保周期部分 -->
-    <div class="onload">
+    <!-- <div class="onload">
       <div class="onloadTitle">质保周期:</div>
       <div class="onloadPart">
         <el-radio-group
@@ -97,7 +97,7 @@
           @blur="judgeInp('warrantyTime', 'param')"
         ></el-input>
       </div>
-    </div>
+    </div> -->
 
     <!-- <div class="fishedTime">
       <div class="onloadTitle">预计完成时间:</div>
@@ -113,12 +113,12 @@
     </div>-->
 
     <!-- 空行横杠部分 -->
-    <br />
+    <!-- <br />
     <hr />
-    <br />
+    <br /> -->
 
     <!-- 配件明细部分 -->
-    <div class="peijian">
+    <div class="peijian" style="margin-top: 30px;">
       <div class="peijianTitle">配件明细:</div>
       <div class="addpeijian" @click="openAdd">添加配件</div>
     </div>
@@ -168,8 +168,8 @@
       </el-table>
     </div> -->
     <div class="addPartcs">
-      <el-table :data="param.parts" style="width: 50%" :key="againTableRefresh">
-        <el-table-column label="采购方式" align="center">
+      <el-table :data="param.parts" style="width: 70%" :key="againTableRefresh">
+        <el-table-column label="采购方式" align="center" width="100">
           <template slot-scope="{ row }">
             <img
               src="@/assets/logo/masterPurchase.png"
@@ -185,11 +185,20 @@
         </el-table-column>
         <el-table-column align="center" prop="name" label="配件名称">
         </el-table-column>
-        <el-table-column align="center" prop="num" label="配件数量">
+        <el-table-column align="center" prop="num" label="配件数量" width="80">
         </el-table-column>
-        <el-table-column align="center" prop="price" label="配件单价">
+        <el-table-column
+          align="center"
+          prop="price"
+          label="配件单价"
+          width="80"
+        >
         </el-table-column>
-        <el-table-column align="center" label="配件总金额">
+        <el-table-column align="center" prop="brand" label="配件品牌">
+        </el-table-column>
+        <el-table-column align="center" prop="parameter" label="配件参数">
+        </el-table-column>
+        <el-table-column align="center" label="配件总金额" width="100">
           <template slot-scope="{ row }">
             <div style="color: red;">￥{{ row.num * row.price }}</div>
           </template>
@@ -322,6 +331,13 @@
         <div class="addBorder">
           <div class="addPart">
             <div class="addcontent">
+              <div class="name">配件采购:</div>
+              <div style="width: 230px;">
+                <el-radio v-model="part.type" :label="2">平台采购</el-radio>
+                <el-radio v-model="part.type" :label="1">师傅采购</el-radio>
+              </div>
+            </div>
+            <div class="addcontent">
               <div class="name">配件名称:</div>
               <el-input
                 style="width: 230px;"
@@ -348,13 +364,29 @@
               ></el-input>
             </div>
             <div class="addcontent">
+              <div class="name">配件品牌:</div>
+              <el-input
+                style="width: 230px;"
+                v-model.trim="part.brand"
+                placeholder="请填写配件品牌"
+              ></el-input>
+            </div>
+            <div class="addcontent">
+              <div class="name">配件参数:</div>
+              <el-input
+                style="width: 230px;"
+                v-model.trim="part.parameter"
+                placeholder="请填写配件参数"
+              ></el-input>
+            </div>
+            <!-- <div class="addcontent">
               <div class="name">配件单位:</div>
               <el-input
                 style="width: 230px;"
                 v-model.trim="part.unit"
                 placeholder="请填写配件单位,例如：件、个"
               ></el-input>
-            </div>
+            </div> -->
             <!-- <div class="addcontent">
               <div class="name">配件金额:</div>
               <el-input
@@ -363,13 +395,6 @@
                 placeholder="请填写配件单位,例如：件、个"
               ></el-input>
             </div> -->
-            <div class="addcontent">
-              <div class="name">配件采购:</div>
-              <div style="width: 230px;">
-                <el-radio v-model="part.type" :label="2">平台采购</el-radio>
-                <el-radio v-model="part.type" :label="1">师傅采购</el-radio>
-              </div>
-            </div>
           </div>
         </div>
       </el-from>
@@ -412,11 +437,12 @@ export default {
       otherRadio: "",
 
       part: {
-        name: "",
+        name: null,
         price: null,
         num: null,
-        unit: "",
         type: null,
+        brand: null,
+        parameter: null,
       },
 
       param: {
@@ -496,11 +522,12 @@ export default {
     closeAddAccessories() {
       this.dialogpop = false;
       this.part = {
-        name: "",
+        name: null,
         price: null,
         num: null,
-        unit: "",
         type: null,
+        brand: null,
+        parameter: null,
       };
     },
     // 改变其他天数
@@ -577,8 +604,9 @@ export default {
         !this.part.name ||
         !this.part.price ||
         !this.part.num ||
-        !this.part.unit ||
-        !this.part.type
+        !this.part.type ||
+        !this.part.brand ||
+        !this.part.parameter
       ) {
         this.$message({
           message: "表单未填写完整",
@@ -593,11 +621,12 @@ export default {
         }
         this.getAccessoriesSum();
         this.part = {
-          name: "",
-          price: "",
-          num: "",
-          unit: "",
-          state: null,
+          name: null,
+          price: null,
+          num: null,
+          type: null,
+          brand: null,
+          parameter: null,
         };
         this.dialogpop = false;
       }

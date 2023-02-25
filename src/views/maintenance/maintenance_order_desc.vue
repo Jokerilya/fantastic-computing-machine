@@ -277,7 +277,7 @@
           </div>
 
           <!-- 配件明细 -->
-          <div class="accessoriesDetail" v-if="judgeParts()">
+          <!-- <div class="accessoriesDetail" v-if="judgeParts()">
             <div class="title">配件明细</div>
             <div>
               <div
@@ -303,6 +303,53 @@
                 </div>
               </div>
             </div>
+          </div> -->
+          <!-- 配件明细部分 -->
+          <div class="peijian" style="margin-top: 30px;">
+            <div class="peijianTitle">配件明细:</div>
+          </div>
+          <div class="addPartcs">
+            <el-table :data="data.partsList" style="width: 70%">
+              <el-table-column label="采购方式" align="center" width="100">
+                <template slot-scope="{ row }">
+                  <img
+                    src="@/assets/logo/masterPurchase.png"
+                    width="28px"
+                    v-if="row.type !== 2"
+                  />
+                  <img
+                    src="@/assets/logo/platformPurchase.png"
+                    width="28px"
+                    v-if="row.type === 2"
+                  />
+                </template>
+              </el-table-column>
+              <el-table-column align="center" prop="name" label="配件名称">
+              </el-table-column>
+              <el-table-column
+                align="center"
+                prop="num"
+                label="配件数量"
+                width="80"
+              >
+              </el-table-column>
+              <el-table-column
+                align="center"
+                prop="price"
+                label="配件单价"
+                width="80"
+              >
+              </el-table-column>
+              <el-table-column align="center" prop="brand" label="配件品牌">
+              </el-table-column>
+              <el-table-column align="center" prop="parameter" label="配件参数">
+              </el-table-column>
+              <el-table-column align="center" label="配件总金额" width="100">
+                <template slot-scope="{ row }">
+                  <div style="color: red;">￥{{ row.num * row.price }}</div>
+                </template>
+              </el-table-column>
+            </el-table>
           </div>
 
           <!-- 服务进度 -->
@@ -359,8 +406,18 @@
 
           <!-- 客户评价 -->
           <div class="customerEvaluate" v-if="data.repairComment">
-            <div class="title">
-              客户评价:
+            <div
+              class="title"
+              style="display: flex;justify-content: space-between;align-items: center;width: 250px;"
+            >
+              <div>客户评价:</div>
+              <div
+                v-if="data.repairComment.comprehensiveScore === 1"
+                style="color:#00b974;"
+              >
+                已好评
+              </div>
+              <div v-else style="color: #ff5000;">已差评</div>
             </div>
             <div class="descPic">
               <div class="item" v-if="data.repairComment.content">
@@ -381,7 +438,7 @@
                 ></el-image>
               </div>
               <!-- 星星评价 -->
-              <div class="item">
+              <!-- <div class="item"> 
                 <div class="label1">客户综合评价:</div>
                 <el-rate
                   disabled
@@ -435,7 +492,7 @@
                   :texts="['非常差', '差', '一般', '好', '非常好']"
                   v-model="data.repairComment.technologyScore"
                 ></el-rate>
-              </div>
+              </div> -->
               <div class="item">
                 <div class="label1">客服回访描述:</div>
                 <div v-if="data.repairComment.platformVisitMessage">
@@ -666,6 +723,36 @@
 </template>
 
 <style lang="less" scoped>
+.addPartcs {
+  padding: 30px 0;
+  .item {
+    height: 50px;
+    line-height: 50px;
+    display: flex;
+    width: 250px;
+    justify-content: space-between;
+    font-size: 18px;
+    position: relative;
+
+    .procurementLogo {
+      position: absolute;
+      left: -48px;
+      top: 8px;
+    }
+  }
+}
+.peijian {
+  width: 225px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  .peijianTitle {
+    font-size: 24px;
+    font-family: Microsoft YaHei-Bold, Microsoft YaHei;
+    font-weight: bold;
+    color: #707070;
+  }
+}
 .customerEvaluate {
   margin: 20px 0;
   .title {

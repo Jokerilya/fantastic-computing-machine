@@ -73,7 +73,7 @@
         </div>
       </div>
       <!-- 质保周期 -->
-      <div class="qualityEnsureCycle">
+      <!-- <div class="qualityEnsureCycle">
         <h3>质保周期:</h3>
         <div>
           <el-radio-group v-model.number="qualityEnsureCycleValue">
@@ -94,10 +94,10 @@
             "
           />
         </div>
-      </div>
+      </div> -->
 
       <!-- 分割线 -->
-      <hr color="#ebebeb" style="margin: 20px 0;" />
+      <!-- <hr color="#ebebeb" style="margin: 20px 0;" /> -->
 
       <!-- 配件明细 -->
       <div class="accessoriesDetail">
@@ -110,7 +110,7 @@
             style="width: 80%"
             :key="againTableRefresh"
           >
-            <el-table-column label="采购方式" align="center">
+            <el-table-column label="采购方式" align="center" width="100">
               <template slot-scope="{ row }">
                 <img
                   src="@/assets/logo/masterPurchase.png"
@@ -126,11 +126,25 @@
             </el-table-column>
             <el-table-column align="center" prop="name" label="配件名称">
             </el-table-column>
-            <el-table-column align="center" prop="num" label="配件数量">
+            <el-table-column
+              align="center"
+              prop="num"
+              label="配件数量"
+              width="80"
+            >
             </el-table-column>
-            <el-table-column align="center" prop="price" label="配件单价">
+            <el-table-column
+              align="center"
+              prop="price"
+              label="配件单价"
+              width="80"
+            >
             </el-table-column>
-            <el-table-column align="center" label="配件总金额">
+            <el-table-column align="center" prop="brand" label="配件品牌">
+            </el-table-column>
+            <el-table-column align="center" prop="parameter" label="配件参数">
+            </el-table-column>
+            <el-table-column align="center" label="配件总金额" width="100">
               <template slot-scope="{ row }">
                 <div style="color: red;">￥{{ row.num * row.price }}</div>
               </template>
@@ -292,6 +306,12 @@
         :rules="accessoriesRules"
         ref="accessoriesForm"
       >
+        <el-form-item label="配件采购" prop="type">
+          <el-radio-group v-model="accessoriesForm.type">
+            <el-radio :label="1">师傅自费</el-radio>
+            <el-radio :label="2">平台购买</el-radio>
+          </el-radio-group>
+        </el-form-item>
         <el-form-item label="配件名称" prop="name">
           <div class="accessoriesItem">
             <el-input
@@ -316,19 +336,21 @@
             ></el-input>
           </div>
         </el-form-item>
-        <el-form-item label="数量单位" prop="unit">
+        <el-form-item label="配件品牌" prop="brand">
           <div class="accessoriesItem">
             <el-input
-              v-model="accessoriesForm.unit"
-              placeholder="请填写配件数量单位"
+              v-model="accessoriesForm.brand"
+              placeholder="请填写配件品牌"
             ></el-input>
           </div>
         </el-form-item>
-        <el-form-item label="配件采购" prop="type">
-          <el-radio-group v-model="accessoriesForm.type">
-            <el-radio :label="1">师傅自费</el-radio>
-            <el-radio :label="2">平台购买</el-radio>
-          </el-radio-group>
+        <el-form-item label="配件参数" prop="parameter">
+          <div class="accessoriesItem">
+            <el-input
+              v-model="accessoriesForm.parameter"
+              placeholder="请填写配件参数"
+            ></el-input>
+          </div>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -390,10 +412,11 @@ export default {
       accessoriesForm: {
         // 新增配件的数据
         name: "",
-        unit: "",
         price: "",
         num: "",
         type: null,
+        brand: null,
+        parameter: null,
       },
 
       accessoriesRules: {
@@ -412,11 +435,14 @@ export default {
           { required: true, message: "配件数量不能为空", trigger: "blur" },
           { type: "number", message: "配件数量必须为数字值" },
         ],
-        unit: [
-          { required: true, message: "数量单位不能为空", trigger: "blur" },
-        ],
         type: [
           { required: true, message: "配件采购不能为空", trigger: "blur" },
+        ],
+        brand: [
+          { required: true, message: "配件品牌不能为空", trigger: "blur" },
+        ],
+        parameter: [
+          { required: true, message: "配件参数不能为空", trigger: "blur" },
         ],
       },
     };
@@ -505,10 +531,11 @@ export default {
     closeAddAccessoriesDialog() {
       this.accessoriesForm = {
         name: "",
-        unit: "",
         price: "",
         num: "",
         type: null,
+        brand: null,
+        parameter: null,
       };
       this.$refs.accessoriesForm.resetFields();
       this.addAccessoriesDialog = false;
@@ -520,13 +547,21 @@ export default {
         console.log({ ...this.accessoriesForm });
         this.accessoriesList.push({ ...this.accessoriesForm });
       } else {
-        const { price, num, type, name, unit } = this.accessoriesForm;
+        const {
+          price,
+          num,
+          type,
+          name,
+          brand,
+          parameter,
+        } = this.accessoriesForm;
         this.accessoriesList[index] = {
           price,
           num,
           type,
           name,
-          unit,
+          brand,
+          parameter,
         };
         this.againTableRefresh = !this.againTableRefresh;
       }
