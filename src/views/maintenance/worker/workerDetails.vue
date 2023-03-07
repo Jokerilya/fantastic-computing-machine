@@ -177,13 +177,13 @@
             ></el-image>
           </template>
         </el-table-column>
-        <el-table-column label="是否合格" align="center">
+        <!-- <el-table-column label="是否合格" align="center">
           <template slot-scope="{ row }">
             <div :style="{ color: row.punchStatus === 0 ? 'red' : 'green' }">
               {{ row.punchStatus === 0 ? "不合格" : "合格" }}
             </div>
           </template>
-        </el-table-column>
+        </el-table-column> -->
       </el-table>
     </el-dialog>
   </div>

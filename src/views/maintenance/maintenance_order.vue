@@ -316,10 +316,11 @@
       </el-table>
 
       <!-- 分页 -->
+
+      <!-- @size-change="handleSizeChange" -->
       <div style="text-align: center;margin-top:20px ;">
         <el-pagination
           background
-          @size-change="handleSizeChange"
           @current-change="updatePageNo"
           :current-page="currentPage"
           :page-size="10"
@@ -446,10 +447,11 @@ import {
   downloadBatchRepairOrderTemplate,
   handleRepairOrderExport,
 } from "@/api/order.js";
-import tableMixin from "@/mixin/table";
+// import tableMixin from "@/mixin/table";
+import { localStorageData } from "@/utils";
 export default {
   title: "course",
-  mixins: [tableMixin],
+  // mixins: [tableMixin],
   data() {
     return {
       exportParams: null,
@@ -505,7 +507,31 @@ export default {
     };
   },
   created() {
-    this._queryAssignableMasterList();
+    // 获取本地存储
+    let queryRepairDataStr;
+    if (localStorage.getItem("queryRepairData")) {
+      queryRepairDataStr = JSON.parse(localStorage.getItem("queryRepairData"));
+    }
+
+    if (queryRepairDataStr) {
+      const {
+        pageNo,
+        pageSize,
+        enterpriseName,
+        status,
+        orderType,
+      } = queryRepairDataStr;
+      this.currentPage = pageNo;
+      this.pageSize = pageSize;
+      this.searchForm.enterpriseName = enterpriseName;
+      this.searchForm.status = status;
+      this.searchForm.orderType = orderType;
+    } else {
+      this.currentPage = 1;
+      this.pageSize = 10;
+    }
+
+    // this._queryAssignableMasterList();
     this._queryRepairOrderList();
   },
   methods: {
@@ -588,11 +614,11 @@ export default {
         pageSize: 10,
         ...this.searchForm,
       };
+      localStorageData("queryRepairData", JSON.stringify(data));
       this.exportParams = data;
       queryRepairOrderList(data).then((res) => {
         if (res) {
           this.dataList = res.data.records;
-          console.log(559, this.dataList);
           this.pageCount = res.data.total;
         }
         loading.close();

@@ -238,6 +238,7 @@
       :visible="addSolvePlanDialog"
       width="30%"
       :before-close="closeAddSolvePlanDialog"
+      :close-on-click-modal="false"
     >
       <div>
         <div style="margin-bottom: 15px;">
@@ -297,6 +298,7 @@
       :visible="addAccessoriesDialog"
       width="30%"
       :before-close="closeAddAccessoriesDialog"
+      :close-on-click-modal="false"
     >
       <div slot="title" style="font-weight:700 ;color: #707070;">
         {{ accessoriesTitle }}
@@ -426,14 +428,14 @@ export default {
         price: [
           { required: true, message: "配件单价不能为空", trigger: "blur" },
           {
-            pattern: /^[1-9][0-9]*(\.[0-9]{1,2})?$/,
+            pattern: /^(?!(0[0-9]{0,}$))[0-9]{1,}[.]{0,}[0-9]{0,}$/,
             message: "配件单价必须为数字",
             trigger: "blur",
           },
         ],
         num: [
           { required: true, message: "配件数量不能为空", trigger: "blur" },
-          { type: "number", message: "配件数量必须为数字值" },
+          { type: "number", message: "配件数量必须为数字值", trigger: "blur" },
         ],
         type: [
           { required: true, message: "配件采购不能为空", trigger: "blur" },
@@ -596,6 +598,9 @@ export default {
     },
     // 确定添加方案
     async addSolvePlanConfirm() {
+      if (!this.solvePlanList) {
+        this.solvePlanList = [];
+      }
       if (this.addSolvePlanDialogTitle === "新增解决方案") {
         await this.solvePlanList.push(this.addSolvePlanList);
       } else {

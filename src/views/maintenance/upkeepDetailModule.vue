@@ -351,6 +351,7 @@ export default {
           }
           .desc {
             font-size: 18px;
+            flex: 1;
           }
         }
       }

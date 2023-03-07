@@ -434,6 +434,7 @@ import {
   bindRecommendInfo,
 } from "@/api/order.js";
 import tableMixin from "@/mixin/table";
+import { localStorageData } from "@/utils";
 export default {
   title: "course",
   mixins: [tableMixin],
@@ -505,6 +506,30 @@ export default {
     };
   },
   created() {
+    // 获取本地存储
+    let queryButlerParamsStr;
+    if (localStorage.getItem("queryButlerParams")) {
+      queryButlerParamsStr = JSON.parse(
+        localStorage.getItem("queryButlerParams")
+      );
+    }
+    console.log(514, "-------", queryButlerParamsStr);
+    if (queryButlerParamsStr) {
+      const {
+        pageNo,
+        enterpriseName,
+        contactsPhone,
+        contactsPeople,
+      } = queryButlerParamsStr;
+      this.currentPage = pageNo;
+      this.Name = enterpriseName;
+      this.Phone = contactsPhone;
+      this.People = contactsPeople;
+    } else {
+      this.currentPage = 1;
+      this.pageSize = 10;
+    }
+
     this._getMasterList();
     this._queryButlerOrderList();
     this._getEnterpriseList();
@@ -695,6 +720,7 @@ export default {
         pageNo: 1,
         pageSize: 10,
       };
+      localStorageData("queryButlerParams", JSON.stringify(params));
       this.exportParams = params;
       queryButlerOrderList(params).then((res) => {
         if (res) {
@@ -713,6 +739,8 @@ export default {
         pageNo: this.currentPage,
         pageSize: 10,
       };
+      // 储存查询年保订单的参数
+      localStorageData("queryButlerParams", JSON.stringify(params));
       this.exportParams = params;
       queryButlerOrderList(params).then((res) => {
         if (res) {

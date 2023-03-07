@@ -10,6 +10,7 @@
         :unique-opened="false"
         :active-text-color="variables.menuActiveText"
         :collapse-transition="false"
+        :default-openeds="['/maintenance']"
         mode="vertical"
       >
         <sidebar-item
