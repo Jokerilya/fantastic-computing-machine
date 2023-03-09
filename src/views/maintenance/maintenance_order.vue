@@ -11,7 +11,7 @@
         label-position="right"
       >
         <el-row :gutter="20">
-          <!-- <el-col :span="5">
+          <!-- <el-col :span="4">
             <el-form-item label="设备类型">
               <el-select v-model="searchForm.deviceTypeId" placeholder="请选择">
                 <el-option
@@ -44,6 +44,14 @@
             </el-form-item>
           </el-col>
           <el-col :span="4">
+            <el-form-item label="设备编码">
+              <el-input
+                v-model="searchForm.no"
+                placeholder="设备编码"
+              ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="4">
             <el-form-item label="订单类型">
               <el-select v-model="searchForm.orderType" placeholder="请选择">
                 <el-option label="散单" :value="1">散单</el-option>
@@ -51,51 +59,51 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="4" style="display: flex;">
-            <el-button
-              icon="el-icon-zoom-in"
-              plain
-              type="primary"
-              @click="query_queryRepairOrderList"
-              >查询</el-button
-            >
-            <el-button
-              style="margin-right: 10px;"
-              icon="el-icon-refresh"
-              plain
-              type="info"
-              @click="resetFn"
-              >重置</el-button
-            >
-            <el-upload
-              class="upload-demo"
-              action
-              multiple
-              :http-request="workOrderImport"
-              :show-file-list="false"
-            >
-              <el-button class="importBtn">工单批量下单</el-button>
-            </el-upload>
-            <el-button
-              style="margin-left: 10px;"
-              type="warning"
-              plain
-              @click="templateDownload"
-            >
-              批量下单模板下载
-            </el-button>
-            <el-button
-              style="margin-left: 10px;"
-              type="success"
-              plain
-              @click="$router.push('/maintenance/agentOrder')"
-            >
-              代客户下单
-            </el-button>
-            <el-button type="success" plain @click="exportList">
-              导出
-            </el-button>
-          </el-col>
+        </el-row>
+        <el-row style="display: flex;">
+          <el-button
+            icon="el-icon-zoom-in"
+            plain
+            type="primary"
+            @click="query_queryRepairOrderList"
+            >查询</el-button
+          >
+          <el-button
+            style="margin-right: 10px;"
+            icon="el-icon-refresh"
+            plain
+            type="info"
+            @click="resetFn"
+            >重置</el-button
+          >
+          <el-upload
+            class="upload-demo"
+            action
+            multiple
+            :http-request="workOrderImport"
+            :show-file-list="false"
+          >
+            <el-button class="importBtn">工单批量下单</el-button>
+          </el-upload>
+          <el-button
+            style="margin-left: 10px;"
+            type="warning"
+            plain
+            @click="templateDownload"
+          >
+            批量下单模板下载
+          </el-button>
+          <el-button
+            style="margin-left: 10px;"
+            type="success"
+            plain
+            @click="$router.push('/maintenance/agentOrder')"
+          >
+            代客户下单
+          </el-button>
+          <el-button type="success" plain @click="exportList">
+            导出
+          </el-button>
         </el-row>
       </el-form>
     </div>
@@ -150,7 +158,7 @@
           prop="no"
           label="设备编码"
           show-overflow-tooltip
-          width="110"
+          width="150"
           align="center"
         ></el-table-column>
         <el-table-column
@@ -460,6 +468,7 @@ export default {
         status: "",
         orderType: "",
         enterpriseName: "",
+        no: "",
       },
       dataList: [],
       pageCount: null,
@@ -520,12 +529,14 @@ export default {
         enterpriseName,
         status,
         orderType,
+        no,
       } = queryRepairDataStr;
       this.currentPage = pageNo;
       this.pageSize = pageSize;
       this.searchForm.enterpriseName = enterpriseName;
       this.searchForm.status = status;
       this.searchForm.orderType = orderType;
+      this.searchForm.no = no;
     } else {
       this.currentPage = 1;
       this.pageSize = 10;
@@ -569,6 +580,9 @@ export default {
       this.searchForm = {
         deviceTypeId: "",
         status: "",
+        orderType: "",
+        enterpriseName: "",
+        no: "",
       };
       this._queryRepairOrderList();
     },

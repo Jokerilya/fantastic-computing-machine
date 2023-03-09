@@ -250,7 +250,11 @@
             >
               故障解决方案:
             </div>
-            <div class="planItem" v-for="(item, index) in data.programmeList">
+            <div
+              class="planItem"
+              v-for="(item, index) in data.programmeList"
+              :key="index"
+            >
               <div class="label">解决方案{{ index + 1 }}</div>
               <div class="programmeItem">
                 <div class="item">
@@ -364,6 +368,7 @@
               <div
                 class="item"
                 v-for="(item, index) in data.serviceProgressList"
+                :key="index"
               >
                 <div class="title">进度描述{{ index + 1 }}</div>
                 <div>
@@ -393,7 +398,11 @@
           <!-- 完工信息 -->
           <div class="finishWork" v-if="data.completePictureList">
             <div class="title">完工信息:</div>
-            <div class="pic" v-for="item in data.completePictureList">
+            <div
+              class="pic"
+              v-for="item in data.completePictureList"
+              :key="item"
+            >
               <el-image
                 v-if="item"
                 style="width: 150px; height: 150px;margin-right: 20px;"
