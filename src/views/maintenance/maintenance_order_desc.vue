@@ -61,7 +61,7 @@
             size="mini"
             type="primary"
             plain
-            v-if="judgeAssignedBtnShow()"
+            v-if="data.enterpriseMainStatus <= 4"
             @click="goAssignedMasterPage"
           >
             指派师傅
