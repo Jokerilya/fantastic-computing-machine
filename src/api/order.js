@@ -374,3 +374,19 @@ export function handleRepairMessage(data) {
     data,
   });
 }
+
+// 标记已读
+export function handleUnReadMessage(id) {
+  return request({
+    url: "/admin/maintenance/handleUnReadMessage?id=" + id,
+    method: "get",
+  });
+}
+
+// 查询平台未读消息
+export function queryUnReadMessgae() {
+  return request({
+    url: "/admin/maintenance/queryUnReadMessgae",
+    method: "post",
+  });
+}

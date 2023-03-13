@@ -39,6 +39,7 @@
 import { mapGetters } from "vuex";
 import Breadcrumb from "@/components/Breadcrumb";
 import Hamburger from "@/components/Hamburger";
+import { handleUnReadMessage, queryUnReadMessgae } from "@/api/order";
 
 export default {
   components: {
@@ -56,6 +57,44 @@ export default {
       await this.$store.dispatch("user/logout");
       this.$router.push(`/login`);
     },
+
+    // 查询未处理订单
+    async getQueryUnprocessedOrder() {
+      const res = await queryUnReadMessgae();
+      let QueryUnprocessedOrder = res.data;
+      QueryUnprocessedOrder.forEach((i) => {
+        const item = this.$notify({
+          title: "待操作",
+          message: i.orderSn + i.message,
+          type: "success",
+          duration: 0,
+          showClose: false,
+          position: "bottom-right",
+          onClick: async () => {
+            const res = await handleUnReadMessage(i.id);
+            if (res.message === "操作成功") {
+              this.$router.push(
+                "/maintenance/maintenance_order_desc?orderSn=" + i.orderSn
+              );
+              item.close();
+              setTimeout(() => {
+                location.reload();
+              }, 1000);
+            }
+          },
+        });
+        setTimeout(() => {
+          item.close();
+        }, 60000);
+      });
+    },
+  },
+
+  created() {
+    this.getQueryUnprocessedOrder();
+    setInterval(() => {
+      this.getQueryUnprocessedOrder();
+    }, 61000);
   },
 };
 </script>
