@@ -708,7 +708,6 @@ export default {
 .footerBtn {
   height: 100px;
   display: flex;
-  justify-content: flex-end;
   align-items: center;
   background-color: #f6f8fc;
   padding-right: 50px;

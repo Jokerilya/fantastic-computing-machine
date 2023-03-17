@@ -861,6 +861,5 @@ export default {
 .toolBottom {
   margin-top: 20px;
   display: flex;
-  justify-content: flex-end;
 }
 </style>
