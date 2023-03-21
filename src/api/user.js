@@ -1,6 +1,24 @@
 import request from "@/utils/request";
 import { publicData } from "@/webConfig.js";
 
+// 设置佣金
+export function handleCommission(data) {
+  return request({
+    url: "/admin/maintenance/handleCommission",
+    method: "post",
+    data,
+  });
+}
+
+// 查询业务员信息列表
+export function querySalesmanList(data) {
+  return request({
+    url: "/admin/maintenance/querySalesmanList",
+    method: "post",
+    data,
+  });
+}
+
 // 绑定企业
 export function bindUserAccount(data) {
   return request({

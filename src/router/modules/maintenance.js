@@ -141,6 +141,14 @@ const router = {
       component: () => import("@/views/maintenance/upkeepDetailModule"),
       meta: { title: "保养记录" },
     },
+
+    // 业务人员
+    {
+      path: "/maintenance/businessPersonnel",
+      name: "businessPersonnel",
+      component: () => import("@/views/maintenance/businessPersonnel/index"),
+      meta: { title: "业务人员" },
+    },
   ],
 };
 export default router;

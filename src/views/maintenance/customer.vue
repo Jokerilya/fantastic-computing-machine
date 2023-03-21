@@ -54,59 +54,60 @@
           <el-table-column
             prop="orderSn"
             label="订单号"
-            width="100"
             show-overflow-tooltip
             align="center"
           ></el-table-column>
           <el-table-column
             prop="statusName"
             label="订单状态"
-            width="100"
             show-overflow-tooltip
             align="center"
           ></el-table-column>
           <el-table-column
             prop="payAmount"
             label="支付金额"
-            width="100"
             show-overflow-tooltip
             align="center"
           ></el-table-column>
           <el-table-column
             prop="enterpriseName"
             label="企业名称"
-            width="200"
             show-overflow-tooltip
             align="center"
           ></el-table-column>
           <el-table-column
             prop="contactsPeople"
             label="企业联系人"
-            width="140"
             show-overflow-tooltip
             align="center"
           ></el-table-column>
           <el-table-column
             prop="contactsPhone"
             label="客户电话"
-            width="150"
             show-overflow-tooltip
             align="center"
           ></el-table-column>
           <el-table-column
             prop="salesmanRealName"
-            label="客户经理"
+            label="业务员"
             width="100"
             show-overflow-tooltip
             align="center"
           ></el-table-column>
           <el-table-column
             prop="salesmanRealPhone"
-            label="客户经理电话"
+            label="业务员电话"
             width="150"
             show-overflow-tooltip
             align="center"
           ></el-table-column>
+          <el-table-column
+            prop="commission"
+            label="佣金"
+            show-overflow-tooltip
+            align="center"
+          ></el-table-column>
+          <!-- 
           <el-table-column
             prop="recommendPeople"
             label="订单销售员"
@@ -120,11 +121,10 @@
             show-overflow-tooltip
             width="150"
             align="center"
-          ></el-table-column>
+          ></el-table-column> -->
           <el-table-column
             prop="createTime"
             label="下单时间"
-            width="140"
             show-overflow-tooltip
             align="center"
           ></el-table-column>
@@ -132,7 +132,7 @@
             label="操作"
             fixed="right"
             align="center"
-            width="250"
+            width="180"
           >
             <template slot-scope="{ row }">
               <div class="settings">
@@ -141,6 +141,20 @@
                   style="color:#2E4C9E"
                   @click.prevent="jump2Detail(row.id)"
                   >详情</a
+                >
+                <a
+                  href="#"
+                  style="color:#2E4C9E;margin-left:6px;"
+                  @click.prevent="bindingReferrerFn(row.orderSn)"
+                  v-if="!row.commission"
+                  >佣金</a
+                >
+                <a
+                  href="#"
+                  style="color:#2E4C9E;margin-left:6px;"
+                  v-if="!row.salesmanRealName"
+                  @click.prevent="bindingSalesmanFn(row.orderSn)"
+                  >绑业务员</a
                 >
                 <!-- <a href="#" style="color:#2E4C9E;margin: 0 20px;">编辑</a>
                 <a href="#" style="color:#2E4C9E;">取消</a> -->
@@ -151,20 +165,6 @@
                   v-if="!row.uid"
                   >绑企业</a
                 > -->
-                <a
-                  href="#"
-                  style="color:#2E4C9E;margin-left:6px;"
-                  v-if="!row.salesmanRealName"
-                  @click.prevent="bindingSalesmanFn(row.orderSn)"
-                  >绑客户经理</a
-                >
-                <a
-                  href="#"
-                  style="color:#2E4C9E;margin-left:6px;"
-                  v-if="!row.recommendPhone"
-                  @click.prevent="bindingReferrerFn(row)"
-                  >绑销售员</a
-                >
               </div>
             </template>
           </el-table-column>
@@ -307,7 +307,7 @@
             v-for="item in salesmanOptions"
             :key="item.id"
             :label="item.realName"
-            :value="item.id"
+            :value="item.uid"
           >
           </el-option>
         </el-select>
@@ -320,6 +320,26 @@
 
     <!-- 绑定推荐人弹框 -->
     <el-dialog
+      :visible="referrerDialog"
+      width="30%"
+      :before-close="closeReferrerFn"
+    >
+      <div class="bindingSalesmanTitle">
+        设置佣金
+      </div>
+      <div style="text-align: center;">
+        <el-input
+          v-model.number="referrerForm.commission"
+          placeholder="请输入佣金金额"
+          style="width: 200px;"
+        ></el-input>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeReferrerFn">取 消</el-button>
+        <el-button type="primary" @click="referrerConfirm">确 定</el-button>
+      </span>
+    </el-dialog>
+    <!-- <el-dialog
       :visible="referrerDialog"
       width="30%"
       :before-close="closeReferrerFn"
@@ -353,7 +373,7 @@
         <el-button @click="closeReferrerFn">取 消</el-button>
         <el-button type="primary" @click="referrerConfirm">确 定</el-button>
       </span>
-    </el-dialog>
+    </el-dialog> -->
   </div>
 </template>
 
@@ -421,9 +441,10 @@
 import {
   getMasterList,
   handleAssignMaster,
-  queryUserName,
   getEnterpriseList,
   bindUserAccount,
+  querySalesmanList,
+  handleCommission,
 } from "@/api/user.js";
 import {
   bindSalesmanAccount,
@@ -442,8 +463,7 @@ export default {
     return {
       // 推荐人弹窗绑定的电话名字
       referrerForm: {
-        recommendPeople: "",
-        recommendPhone: "",
+        commission: null,
         orderSn: "",
       },
 
@@ -537,32 +557,43 @@ export default {
   methods: {
     // 绑定推荐人弹框的确定事件
     async referrerConfirm() {
-      if (!this.referrerForm.recommendPeople) {
+      if (!this.referrerForm.commission) {
         this.$message({
-          message: "推荐人姓名不能为空",
+          message: "佣金金额不能为空",
           type: "warning",
         });
         return;
       } else {
-        const res = await bindRecommendInfo(this.referrerForm);
+        const res = await handleCommission(this.referrerForm);
         if (res.message === "操作成功") {
-          console.log(res);
           await this._getOrderList();
           this.closeReferrerFn();
         }
       }
     },
     // 弹出推荐人弹窗
-    bindingReferrerFn(row) {
-      this.referrerForm.recommendPeople = row.recommendPeople;
-      this.referrerForm.orderSn = row.orderSn;
+    // bindingReferrerFn(row) {
+    //   this.referrerForm.recommendPeople = row.recommendPeople;
+    //   this.referrerForm.orderSn = row.orderSn;
+    //   this.referrerDialog = true;
+    // },
+    // 弹出绑定佣金框
+    bindingReferrerFn(orderSn) {
+      this.referrerForm.orderSn = orderSn;
       this.referrerDialog = true;
     },
     // 关闭推荐人弹窗
+    // closeReferrerFn() {
+    //   this.referrerForm = {
+    //     recommendPeople: "",
+    //     recommendPhone: "",
+    //     orderSn: "",
+    //   };
+    //   this.referrerDialog = false;
+    // },
     closeReferrerFn() {
       this.referrerForm = {
-        recommendPeople: "",
-        recommendPhone: "",
+        commission: null,
         orderSn: "",
       };
       this.referrerDialog = false;
@@ -605,7 +636,7 @@ export default {
         return;
       } else {
         const res = await bindSalesmanAccount({
-          id: this.salesmanSelect,
+          uid: this.salesmanSelect,
           orderSn: this.salesmanOrderSn,
         });
         if (res.message === "操作成功") {
@@ -620,8 +651,12 @@ export default {
     },
     // 查询业务员 触发的事件
     async salesmanRemoteMethod(val) {
-      const res = await queryUserName(val);
-      this.salesmanOptions = res.data;
+      const res = await querySalesmanList({
+        pageNo: 1,
+        pageSize: 99,
+        realName: val,
+      });
+      this.salesmanOptions = res.data.records;
     },
     // 点击绑定业务员触发的事件
     bindingSalesmanFn(orderSn) {
