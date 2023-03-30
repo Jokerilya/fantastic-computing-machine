@@ -116,6 +116,15 @@
               <div>
                 服务时间: <span>{{ data.serviceTime }}</span>
               </div>
+              <div>
+                企业设备编号: <span>{{ data.enterpriseDeviceNo }}</span>
+              </div>
+              <div>
+                企业设备位置: <span>{{ data.enterpriseDevicePosition }}</span>
+              </div>
+              <div>
+                设备型号: <span>{{ data.deviceModel }}</span>
+              </div>
             </div>
             <div class="item3">企业信息:</div>
             <div class="item4">

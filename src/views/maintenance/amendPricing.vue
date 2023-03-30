@@ -547,6 +547,9 @@ export default {
       await this.$refs.accessoriesForm.validate();
       if (this.accessoriesTitle === "新增配件") {
         console.log({ ...this.accessoriesForm });
+        if (this.accessoriesList === null) {
+          this.accessoriesList = [];
+        }
         this.accessoriesList.push({ ...this.accessoriesForm });
       } else {
         const {
