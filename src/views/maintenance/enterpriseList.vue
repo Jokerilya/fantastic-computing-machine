@@ -45,7 +45,7 @@
               icon="el-icon-zoom-in"
               plain
               type="primary"
-              @click="_getEnterpriseList()"
+              @click="_getEnterpriseList(1)"
               >查询</el-button
             >
             <el-button icon="el-icon-refresh" plain type="info" @click="resetFn"
@@ -886,7 +886,10 @@ export default {
       };
     },
     //获取企业列表
-    async _getEnterpriseList() {
+    async _getEnterpriseList(id) {
+      if (id === 1) {
+        this.currentPage = 1;
+      }
       let params = {
         pageNo: this.currentPage,
         pageSize: 20,

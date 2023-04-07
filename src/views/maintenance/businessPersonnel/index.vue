@@ -15,7 +15,7 @@
         class="toolInput"
       >
       </el-input>
-      <el-button class="toolBtn" @click="querySalesmanList">查询</el-button>
+      <el-button class="toolBtn" @click="querySalesmanList(1)">查询</el-button>
       <el-button class="toolBtn" @click="resetFn">重置</el-button>
     </div>
 
@@ -91,6 +91,7 @@
           :page-size="querySalesmanListData.pageSize"
           layout="jumper, prev, pager, next,total "
           :total="total"
+          :current-page="querySalesmanListData.pageNo"
         >
         </el-pagination>
       </div>
@@ -118,7 +119,10 @@ export default {
   },
   methods: {
     // 查询业务人员列表
-    async querySalesmanList() {
+    async querySalesmanList(id) {
+      if (id === 1) {
+        this.querySalesmanListData.pageNo = 1;
+      }
       const { data } = await querySalesmanList(this.querySalesmanListData);
       this.salesmanList = data.records;
       this.total = data.total;

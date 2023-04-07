@@ -280,3 +280,39 @@ export function handleStockClick(data) {
     data: data,
   });
 }
+
+// 查询客户池列表
+export function queryCustomerPool(data) {
+  return request({
+    url: "/admin/maintenance/queryCustomerPool",
+    method: "post",
+    data,
+  });
+}
+
+// 查询客户拜访列表
+export function queryCustomerVisitList(data) {
+  return request({
+    url: "/admin/maintenance/queryCustomerVisitList",
+    method: "post",
+    data,
+  });
+}
+
+// 查询客户申请列表
+export function queryCustomerApplyVisitList(data) {
+  return request({
+    url: "/admin/maintenance/queryCustomerApplyVisitList",
+    method: "post",
+    data,
+  });
+}
+
+// 审核客户申请
+export function handleCustomerApplyVisit(data) {
+  return request({
+    url: "/admin/maintenance/handleCustomerApplyVisit",
+    method: "post",
+    data,
+  });
+}

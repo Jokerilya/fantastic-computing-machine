@@ -158,6 +158,7 @@
               :page-size="PaymentListData.pageSize"
               layout="jumper, prev, pager, next,total "
               :total="total"
+              :current-page="PaymentListData.pageNo"
             >
             </el-pagination>
           </div>

@@ -149,6 +149,14 @@ const router = {
       component: () => import("@/views/maintenance/businessPersonnel/index"),
       meta: { title: "业务人员" },
     },
+
+    // 业务人员
+    {
+      path: "/maintenance/customerManagement",
+      name: "customerManagement",
+      component: () => import("@/views/maintenance/customerManagement"),
+      meta: { title: "客户管理" },
+    },
   ],
 };
 export default router;

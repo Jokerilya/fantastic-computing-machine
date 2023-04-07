@@ -50,7 +50,7 @@
         </el-col>
         <el-col :span="7">
           <el-button plain type="primary" @click="resetFn">重置</el-button>
-          <el-button plain type="primary" @click="_getMasterList()"
+          <el-button plain type="primary" @click="_getMasterList(1)"
             >查询</el-button
           >
           <el-button plain type="primary" @click="_handleMasterInfoExport()"
@@ -1482,7 +1482,10 @@ export default {
       this._getMasterList();
     },
     // 查询师傅列表
-    async _getMasterList() {
+    async _getMasterList(id) {
+      if (id === 1) {
+        this.currentPage = 1;
+      }
       this.params = {
         pageNo: this.currentPage,
         pageSize: 10,

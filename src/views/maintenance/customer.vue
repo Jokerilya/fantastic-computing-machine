@@ -661,6 +661,7 @@ export default {
     // 点击绑定业务员触发的事件
     bindingSalesmanFn(orderSn) {
       this.salesmanOrderSn = orderSn;
+      this.salesmanRemoteMethod("");
       this.dialogVisible = true;
     },
     // 重置功能

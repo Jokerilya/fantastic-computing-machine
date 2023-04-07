@@ -21,7 +21,7 @@
       >
       </el-date-picker>
 
-      <el-button class="toolBtn" @click="queryUpkeepListFn">查询</el-button>
+      <el-button class="toolBtn" @click="queryUpkeepListFn(1)">查询</el-button>
       <el-button class="toolBtn" @click="resetUpkeepListFn">重置</el-button>
       <el-button class="toolBtn" @click="exportBtn" style="margin-right: 10px;"
         >导入模板</el-button
@@ -93,6 +93,7 @@
               :page-size="queryUpkeepListParameter.pageSize"
               layout="jumper, prev, pager, next,total "
               :total="total"
+              :current-page="queryUpkeepListParameter.pageNo"
             >
             </el-pagination>
           </div>
@@ -213,7 +214,10 @@ export default {
     },
 
     // 查询
-    async queryUpkeepListFn() {
+    async queryUpkeepListFn(id) {
+      if (id === 1) {
+        this.queryUpkeepListParameter.pageNo = 1;
+      }
       const res = await queryDeviceKeepOrder(this.queryUpkeepListParameter);
       const { records, total } = res.data;
       this.upkeepList = records;

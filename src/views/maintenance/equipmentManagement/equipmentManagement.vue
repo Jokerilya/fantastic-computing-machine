@@ -131,7 +131,7 @@
           <div class="footer_pagination">
             <el-pagination
               @current-change="currentChangeFn"
-              :current-page="current"
+              :current-page="data.pageNo"
               :page-size="5"
               layout="jumper, prev, pager, next,total "
               :total="total"
