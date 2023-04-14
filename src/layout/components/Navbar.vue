@@ -68,7 +68,6 @@ export default {
           message: i.orderSn + i.message,
           type: "success",
           duration: 0,
-          showClose: false,
           position: "bottom-right",
           onClick: async () => {
             const res = await handleUnReadMessage(i.id);

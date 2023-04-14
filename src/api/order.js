@@ -390,3 +390,12 @@ export function queryUnReadMessgae() {
     method: "post",
   });
 }
+
+// 填写维保备注
+export function handleRepairRemarks(data) {
+  return request({
+    url: "/admin/maintenance/handleRepairRemarks",
+    method: "post",
+    data,
+  });
+}

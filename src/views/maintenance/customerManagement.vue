@@ -48,7 +48,13 @@
           ></el-table-column>
           <el-table-column label="状态">
             <template slot-scope="{ row }">
-              {{ row.status === 0 ? "已释放" : "跟进中" }}
+              {{
+                row.status === 0
+                  ? "已释放"
+                  : row.status === 1
+                  ? "跟进中"
+                  : "已签约"
+              }}
             </template>
           </el-table-column>
           <el-table-column label="操作">

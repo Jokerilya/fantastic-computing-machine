@@ -13,7 +13,7 @@ export function handleCommission(data) {
 // 查询业务员信息列表
 export function querySalesmanList(data) {
   return request({
-    url: "/admin/maintenance/querySalesmanList",
+    url: "/admin/business/querySalesmanList",
     method: "post",
     data,
   });
@@ -284,7 +284,7 @@ export function handleStockClick(data) {
 // 查询客户池列表
 export function queryCustomerPool(data) {
   return request({
-    url: "/admin/maintenance/queryCustomerPool",
+    url: "/admin/business/queryCustomerPool",
     method: "post",
     data,
   });
@@ -293,7 +293,7 @@ export function queryCustomerPool(data) {
 // 查询客户拜访列表
 export function queryCustomerVisitList(data) {
   return request({
-    url: "/admin/maintenance/queryCustomerVisitList",
+    url: "/admin/business/queryCustomerVisitList",
     method: "post",
     data,
   });
@@ -302,7 +302,7 @@ export function queryCustomerVisitList(data) {
 // 查询客户申请列表
 export function queryCustomerApplyVisitList(data) {
   return request({
-    url: "/admin/maintenance/queryCustomerApplyVisitList",
+    url: "/admin/business/queryCustomerApplyVisitList",
     method: "post",
     data,
   });
@@ -311,7 +311,7 @@ export function queryCustomerApplyVisitList(data) {
 // 审核客户申请
 export function handleCustomerApplyVisit(data) {
   return request({
-    url: "/admin/maintenance/handleCustomerApplyVisit",
+    url: "/admin/business/handleCustomerApplyVisit",
     method: "post",
     data,
   });

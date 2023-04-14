@@ -241,6 +241,13 @@
           align="center"
         ></el-table-column>
         <el-table-column
+          prop="remarks"
+          label="备注"
+          show-overflow-tooltip
+          width="120"
+          align="center"
+        ></el-table-column>
+        <el-table-column
           prop="platformVisitMessage"
           label="平台回访结果"
           show-overflow-tooltip
@@ -265,11 +272,18 @@
           align="center"
         >
         </el-table-column>
-        <el-table-column label="操作" width="120" fixed="right" align="center">
+        <el-table-column label="操作" width="150" fixed="right" align="center">
           <template slot-scope="{ row }">
             <div class="settings">
               <el-button type="info" size="mini" plain @click="queryDesc(row)"
-                >查看详情</el-button
+                >详情</el-button
+              >
+              <el-button
+                type="info"
+                size="mini"
+                plain
+                @click="openRemarksDialog(row)"
+                >备注</el-button
               >
               <!-- <el-button
                 v-if="
@@ -337,6 +351,27 @@
         ></el-pagination>
       </div>
     </el-card>
+
+    <!-- 备注框 -->
+    <el-dialog
+      title="备注"
+      width="30%"
+      :visible="openRemarksShow"
+      :before-close="closeRemarksDialog"
+      center
+    >
+      <el-input
+        type="textarea"
+        :rows="4"
+        placeholder="请输入内容"
+        v-model="remarksparams.remarks"
+      >
+      </el-input>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeRemarksDialog">取 消</el-button>
+        <el-button type="primary" @click="comfirmRemarks">确 定</el-button>
+      </span>
+    </el-dialog>
 
     <!-- 指派列表模态框 -->
     <!-- <model
@@ -454,6 +489,7 @@ import {
   queryRepairOrderList,
   downloadBatchRepairOrderTemplate,
   handleRepairOrderExport,
+  handleRepairRemarks,
 } from "@/api/order.js";
 // import tableMixin from "@/mixin/table";
 import { localStorageData } from "@/utils";
@@ -462,6 +498,12 @@ export default {
   // mixins: [tableMixin],
   data() {
     return {
+      remarksparams: {
+        remarks: null,
+        orderSn: null,
+      },
+      openRemarksShow: false,
+
       exportParams: null,
       searchForm: {
         deviceTypeId: "",
@@ -546,6 +588,28 @@ export default {
     this._queryRepairOrderList();
   },
   methods: {
+    // 确定添加备注
+    async comfirmRemarks() {
+      const res = await handleRepairRemarks(this.remarksparams);
+      if (res.message === "操作成功") {
+        this.closeRemarksDialog();
+        this._queryRepairOrderList();
+      }
+    },
+    // 关闭备注框
+    closeRemarksDialog() {
+      this.remarksparams = {
+        remarks: null,
+        orderSn: null,
+      };
+      this.openRemarksShow = false;
+    },
+    // 打开备注框
+    openRemarksDialog({ orderSn, remarks }) {
+      this.remarksparams.orderSn = orderSn;
+      this.remarksparams.remarks = remarks;
+      this.openRemarksShow = true;
+    },
     // 查询列表
     query_queryRepairOrderList() {
       this.currentPage = 1;
