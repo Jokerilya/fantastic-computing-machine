@@ -399,3 +399,11 @@ export function handleRepairRemarks(data) {
     data,
   });
 }
+
+// 师傅提交验收
+export function handleSubmitAcceptance(orderSn) {
+  return request({
+    url: "/admin/maintenance/handleSubmitAcceptance?orderSn=" + orderSn,
+    method: "get",
+  });
+}

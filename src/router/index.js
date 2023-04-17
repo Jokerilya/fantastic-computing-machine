@@ -5,8 +5,11 @@ Vue.use(Router);
 
 import Layout from "@/layout";
 import systemRouter from "./modules/system.js";
-// import contentRouter from './modules/content.js';
 import activityRouter from "./modules/activity.js";
+import maintenanceRouter from "./modules/maintenance.js";
+import financialManagement from "./modules/financialManagement"; // 财务管理
+import serviceManagement from "./modules/serviceManagement";
+// import contentRouter from './modules/content.js';
 // import schoolRouter from './modules/school.js';
 import orderRouter from "./modules/order.js";
 import installRouter from "./modules/install.js";
@@ -16,7 +19,6 @@ import userListRouter from "./modules/userList.js";
 import newsRouter from "./modules/news.js";
 import talentRouter from "./modules/talent.js";
 import bossRouter from "./modules/boss.js";
-import maintenanceRouter from "./modules/maintenance.js";
 import storeController from "./modules/storeController";
 
 export const constantRoutes = [
@@ -75,6 +77,8 @@ export const constantRoutes = [
   // userListRouter,
   maintenanceRouter,
   // storeController,
+  financialManagement,
+  serviceManagement,
   systemRouter,
   activityRouter,
   // productRouter,

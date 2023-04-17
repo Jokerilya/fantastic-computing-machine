@@ -113,12 +113,7 @@ const router = {
       component: () => import("@/views/maintenance/assignedWorker"),
       meta: { title: "指派师傅", noShow: "true" },
     },
-    {
-      path: "/financialManagement/incomeExpenditrue",
-      name: "workerDetails",
-      component: () => import("@/views/financialManagement/incomeExpenditrue"),
-      meta: { title: "收支明细" },
-    },
+
     // 暂时 不用这个功能 后续看情况补上
     {
       path: "/maintenance/maintenance",
@@ -140,22 +135,6 @@ const router = {
       name: "upkeepDetailModule",
       component: () => import("@/views/maintenance/upkeepDetailModule"),
       meta: { title: "保养记录" },
-    },
-
-    // 业务人员
-    {
-      path: "/maintenance/businessPersonnel",
-      name: "businessPersonnel",
-      component: () => import("@/views/maintenance/businessPersonnel/index"),
-      meta: { title: "业务人员" },
-    },
-
-    // 业务人员
-    {
-      path: "/maintenance/customerManagement",
-      name: "customerManagement",
-      component: () => import("@/views/maintenance/customerManagement"),
-      meta: { title: "客户管理" },
     },
   ],
 };

@@ -56,7 +56,14 @@
             >确认报价</el-button
           >
           <!-- <el-button type="primary" size="mini" plain @click="platformPayInit()">打款至师傅</el-button> -->
-
+          <el-button
+            type="primary"
+            size="mini"
+            plain
+            v-if="data.orderStatusName==='待平台指派'"
+            @click="submitForAcceptance(data.orderSn)"
+            >代提交验收</el-button
+          >
           <el-button
             size="mini"
             type="primary"
@@ -1167,6 +1174,7 @@
 <script>
 import { getRepairOrderDetail } from "@/api/user.js";
 import {
+  handleSubmitAcceptance,
   editOrderServiceProgress,
   examineMasterQuotation,
   handleMasterPayment,
@@ -1221,6 +1229,17 @@ export default {
     this._getRepairOrderDetail();
   },
   methods: {
+    // 代提交验收
+    async submitForAcceptance(orderSn) {
+      const res = await handleSubmitAcceptance(orderSn);
+      if (res.message === "操作成功") {
+        this.$message({
+          message: res.message,
+          type: "success",
+        });
+        this._getRepairOrderDetail();
+      }
+    },
     // 确定添加回访信息
     async addReturnVistInfo() {
       if (!this.platformVisitMessage) {
