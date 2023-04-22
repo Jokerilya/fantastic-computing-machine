@@ -59,8 +59,28 @@
               </el-select>
             </el-form-item>
           </el-col>
+          <el-col :span="6">
+            <el-button
+              icon="el-icon-zoom-in"
+              plain
+              type="primary"
+              @click="query_queryRepairOrderList"
+              >查询</el-button
+            >
+            <el-button
+              style="margin-right: 10px;"
+              icon="el-icon-refresh"
+              plain
+              type="info"
+              @click="resetFn"
+              >重置</el-button
+            >
+            <el-button type="success" plain @click="exportList">
+              导出
+            </el-button>
+          </el-col>
         </el-row>
-        <el-row style="display: flex;">
+        <!-- <el-row style="display: flex;">
           <el-button
             icon="el-icon-zoom-in"
             plain
@@ -104,7 +124,7 @@
           <el-button type="success" plain @click="exportList">
             导出
           </el-button>
-        </el-row>
+        </el-row> -->
       </el-form>
     </div>
 

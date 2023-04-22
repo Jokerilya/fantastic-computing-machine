@@ -264,6 +264,11 @@ export default {
     },
     // 导出
     async exportBtn() {
+      const loading = this.$loading({
+        lock: true,
+        text: "数据传输中",
+        spinner: "el-icon-loading",
+      });
       const res = await handlePaymentListExport(this.PaymentListData);
       if (res) {
         const link = document.createElement("a");

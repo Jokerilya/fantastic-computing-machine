@@ -12,7 +12,7 @@
             </div>
             <div class="item">
               <span class="item_title">保养周期</span>
-              <span>{{ equipmentDetails.cycle }}</span>
+              <span>{{ equipmentDetails.cycle }}周</span>
             </div>
             <div class="item">
               <span class="item_title">出厂时间</span>
@@ -70,14 +70,21 @@
               ><span>{{ equipmentDetails.enterpriseDevicePosition }}</span>
             </div>
           </div>
-          <div class="itemLine" v-if="equipmentDetails.nameplateImg">
+          <!-- <div
+            class="itemLine"
+            v-if="equipmentDetails.nameplateImg"
+            style="height: 150px;"
+          >
             <div class="item">
-              <span class="item_title">铭牌图片</span
-              ><span>
-                <img :src="equipmentDetails.nameplateImg" alt="" />
-              </span>
+              <span class="item_title">铭牌图片</span>
+              <div style="height: 150px;width: 150px;margin-right: 170px;">
+                <img
+                  :src="equipmentDetails.nameplateImg"
+                  style="height: 100%;width: 100%;"
+                />
+              </div>
             </div>
-          </div>
+          </div> -->
         </div>
       </el-card>
     </div>

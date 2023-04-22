@@ -27,7 +27,7 @@
                 style="width: 100%;"
                 v-model="equipmentAddForm.factoryTime"
                 type="datetime"
-                value-format="yyyy-MM-dd HH:mm:ss"
+                value-format="yyyy-MM-dd"
                 placeholder="请输入出厂时间"
               >
               </el-date-picker>
@@ -112,7 +112,7 @@
               <span class="item_title">维保时间</span>
               <el-date-picker
                 style="width: 100%;"
-                v-model="equipmentAddForm.time"
+                v-model="time"
                 type="daterange"
                 value-format="yyyy-MM-dd"
                 range-separator="至"
@@ -147,8 +147,8 @@
               ></el-input>
             </div>
           </div>
-          <div class="itemLine" style="height: 160px;">
-            <div class="item">
+          <!-- <div class="itemLine" style="height: 160px;">
+            <div class="item" style="position: relative;">
               <span class="item_title">铭牌图片</span>
               <el-upload
                 accept=".jpg, .jpeg, .JPG, .JPEG,.png"
@@ -162,7 +162,7 @@
                 <i class="el-icon-plus"></i>
               </el-upload>
             </div>
-          </div>
+          </div> -->
           <el-button class="btnTool" @click="addEditEquipment">{{
             titleName === "新增设备信息" ? "确定新增设备" : "确定编辑设备"
           }}</el-button>
@@ -301,10 +301,10 @@ export default {
         enterpriseDeviceNo: "",
         enterpriseDevicePosition: "",
         nameplateImg: "",
-        time: "",
         type: 0,
         orderSn: "SE447443",
       },
+      time: "",
       deviceTypeList: null, // 所有设备类型
       deviceSystemList: null, // 所有设备系统
       upload_btn: false, // 是否隐藏上传图片按钮
@@ -391,13 +391,16 @@ export default {
     },
     // 新增编辑设备
     async addEditEquipment() {
-      this.equipmentAddForm.endTime =
-        this.equipmentAddForm.time[1] + " 00:00:00";
-      this.equipmentAddForm.startTime =
-        this.equipmentAddForm.time[0] + " 00:00:00";
+      this.equipmentAddForm.endTime = this.time[1] + " 00:00:00";
+      this.equipmentAddForm.startTime = this.time[0] + " 00:00:00";
       console.log(this.equipmentAddForm);
       const res = await editDeviceInfo(this.equipmentAddForm);
-      console.log(res);
+      if (res.message === "操作成功") {
+        this.$router.push({
+          name: "equipmentDetails",
+          query: { id: this.equipmentAddForm.id },
+        });
+      }
     },
     // 移除铭牌图片
     removeNameplatePic() {
@@ -408,11 +411,17 @@ export default {
     },
     // 上传铭牌图片
     async uploadNameplatePic(fileData) {
+      const loading = this.$loading({
+        lock: true,
+        text: "上传铭牌中...",
+        spinner: "el-icon-loading",
+      });
       const formData = new FormData();
       this.upload_btn = true;
       formData.append("file", fileData.file);
       const res = await UploadImg(formData);
       this.equipmentAddForm.nameplateImg = res.data;
+      loading.close();
     },
   },
   async created() {
@@ -423,7 +432,7 @@ export default {
       const res = await getEquipmentDetails({ id: this.id });
       this.equipmentAddForm = { ...res.data };
       if (this.equipmentAddForm.startTime) {
-        this.equipmentAddForm.time = [
+        this.time = [
           res.data.startTime.substring(0, 10),
           res.data.endTime.substring(0, 10),
         ];

@@ -74,8 +74,8 @@
               label="客户名称"
             ></el-table-column>
             <el-table-column prop="no" label="设备编号"></el-table-column>
-            <!--数据暂时没有提供 <el-table-column prop="nameplateImg" label="设备铭牌">
-              </el-table-column> -->
+            <!-- <el-table-column prop="nameplateImg" label="设备铭牌">
+            </el-table-column> -->
             <el-table-column label="设备状态">
               <template slot-scope="{ row }">
                 <div v-if="row.status === 0" style="color:#4093ff;">
@@ -118,9 +118,7 @@
                     @click.prevent="goEquipmentDetails(row.id)"
                     >详情</a
                   >
-                  <!-- <a @click.prevent="editEquipmentPage(row.id)" 
-                    >编辑</a
-                  > -->
+                  <a @click.prevent="editEquipmentPage(row.id)">编辑</a>
                 </div>
               </template>
             </el-table-column>
