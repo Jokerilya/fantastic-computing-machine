@@ -100,6 +100,37 @@
           align="center"
         ></el-table-column>
         <el-table-column
+          prop="integral"
+          label="积分"
+          show-overflow-tooltip
+          width="150"
+          align="center"
+        >
+          <template slot-scope="{ row }">
+            {{ row.integral ? row.integral : 0 }}
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="积分等级"
+          show-overflow-tooltip
+          width="150"
+          align="center"
+        >
+          <template slot-scope="{ row }">
+            {{
+              row.leveId === 4
+                ? "高级管家"
+                : row.leveId === 2
+                ? "百钻维修师"
+                : row.leveId === 3
+                ? "初级管家"
+                : row.leveId === 1
+                ? "中级管家"
+                : "普通师傅"
+            }}
+          </template>
+        </el-table-column>
+        <el-table-column
           prop="superiorMasterName"
           label="团长"
           show-overflow-tooltip
@@ -324,6 +355,18 @@
                       type="success"
                       @click="openChooseRoseDialog(row.uid)"
                       >角色</el-button
+                    >
+                  </el-option>
+                  <el-option v-if="row.identity !== '普通师傅'">
+                    <el-button
+                      size="mini"
+                      @click="open_integral_dialog(row.uid)"
+                      >积分</el-button
+                    >
+                  </el-option>
+                  <el-option v-if="row.identity !== '普通师傅'">
+                    <el-button size="mini" @click="open_score_dialog(row.uid)"
+                      >分值</el-button
                     >
                   </el-option>
                 </el-select>
@@ -862,6 +905,86 @@
         >
       </div>
     </el-dialog>
+
+    <!-- 选积分 -->
+    <el-dialog
+      title="积分"
+      :visible="integral_dialogVisible"
+      width="30%"
+      :before-close="integral_handleClose"
+      :close-on-click-modal="false"
+    >
+      <el-form label-width="90px">
+        <el-form-item label="订单编号">
+          <el-input
+            placeholder="请填写订单编号"
+            v-model="integralFrom.relationOrderSn"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="积分类型">
+          <el-select v-model="integralFrom.type">
+            <el-option
+              :label="item.text"
+              :value="item.type"
+              v-for="item in masterIntegralList"
+              :key="item.type"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="integral_handleClose">取 消</el-button>
+        <el-button type="primary" @click="addIntegralConfirm">确 定</el-button>
+      </span>
+    </el-dialog>
+
+    <!-- 分值 -->
+    <el-dialog
+      title="分值"
+      :visible="score_dialogVisible"
+      width="50%"
+      :before-close="score_handleClose"
+    >
+      <el-table :data="scoreList">
+        <el-table-column
+          label="时间"
+          align="center"
+          prop="createTime"
+        ></el-table-column>
+        <el-table-column
+          label="订单号"
+          align="center"
+          prop="relationOrderSn"
+        ></el-table-column>
+        <el-table-column label="加减类型" align="center">
+          <template slot-scope="{ row }">
+            {{
+              row.type > 3
+                ? masterIntegralList[row.type - 4].text
+                : row.type === 1
+                ? "维修一单"
+                : row.type === 2
+                ? "配件师傅提供"
+                : "客户评价"
+            }}
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="加减分值"
+          align="center"
+          prop="value"
+        ></el-table-column>
+      </el-table>
+      <div style="margin-top: 20px;text-align: center;">
+        <el-pagination
+          layout="prev, pager, next"
+          :total="scoreListTotal"
+          @current-change="scoreCurrentChange"
+          :page-size="scoreForm.pageSize"
+        >
+        </el-pagination>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -932,12 +1055,50 @@ import {
   queryDevicePositionList,
   editMasterInfo,
   handleMasterIdentity,
+  handleMasterIntegral,
+  queryMasterIntegralList,
 } from "@/api/order.js";
 export default {
   title: "course",
   mixins: [tableMixin],
   data() {
     return {
+      scoreListTotal: "",
+      scoreList: [],
+      masterIntegralList: [
+        {
+          type: 4,
+          text: "主动提交维修单",
+          value: 30,
+        },
+        {
+          type: 5,
+          text: "介绍客户签约机床管家",
+          value: 30,
+        },
+        {
+          type: 6,
+          text: "拒单",
+          value: -1,
+        },
+        {
+          type: 7,
+          text: "同一故障返修",
+          value: -2,
+        },
+      ],
+      integralFrom: {
+        uid: "",
+        relationOrderSn: "",
+        type: "",
+      },
+      score_dialogVisible: false,
+      scoreForm: {
+        uid: "",
+        pageNo: 1,
+        pageSize: 5,
+      },
+      integral_dialogVisible: false,
       chooseRoseForm: {
         masterRoleId: 3,
         superiorMasterUid: "",
@@ -1151,6 +1312,66 @@ export default {
     this._getMasterList();
   },
   methods: {
+    // 改变分值列表页面触发
+    async scoreCurrentChange(page) {
+      this.scoreForm.pageNo = page;
+      const res = await queryMasterIntegralList(this.scoreForm);
+      this.scoreList = res.data.records;
+      this.scoreListTotal = res.data.total;
+    },
+    // 确定师傅积分选择
+    async addIntegralConfirm() {
+      if (
+        this.integralFrom.relationOrderSn === "" ||
+        this.integralFrom.type === ""
+      ) {
+        this.$message("订单编号和积分类型都是必填的......");
+        return;
+      }
+
+      let value = this.masterIntegralList[this.integralFrom.type - 4].value;
+      this.integralFrom.value = value;
+      const res = await handleMasterIntegral(this.integralFrom);
+      if (res.message === "操作成功") {
+        this.$message({
+          message: "操作成功",
+          type: "success",
+        });
+        this.integral_handleClose();
+        this._getMasterList();
+      }
+    },
+    // 打开分值框
+    async open_score_dialog(uid) {
+      this.scoreForm.uid = uid;
+      const res = await queryMasterIntegralList(this.scoreForm);
+      this.scoreList = res.data.records;
+      this.scoreListTotal = res.data.total;
+      this.score_dialogVisible = true;
+    },
+    // 关闭分值框
+    score_handleClose() {
+      (this.scoreForm = {
+        uid: "",
+        pageNo: 1,
+        pageSize: 5,
+      }),
+        (this.score_dialogVisible = false);
+    },
+    // 关闭积分框
+    integral_handleClose() {
+      this.integralFrom = {
+        uid: "",
+        relationOrderSn: "",
+        type: "",
+      };
+      this.integral_dialogVisible = false;
+    },
+    // 打开积分框
+    open_integral_dialog(uid) {
+      this.integralFrom.uid = uid;
+      this.integral_dialogVisible = true;
+    },
     // 确定设置师傅角色
     async confirmChooseRose() {
       if (

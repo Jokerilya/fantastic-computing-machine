@@ -4,16 +4,22 @@
       <div class="count-title">营收概况</div>
       <el-row :gutter="24">
         <el-col :span="6">
-          <el-card shadow="hover" :body-style="{ background: '#ff7970' }">
+          <el-card
+            shadow="hover"
+            :body-style="{ background: '#ff7970', height: '300px' }"
+          >
             <div class="count-top">
               <i class="el-icon-date"></i>
               <span>今日订单收入</span>
-              <span>￥{{ panelData.orderMoneyOfDay || 0 }}</span>
+              <span>{{ panelData.orderMoneyOfDay || 0 }}</span>
             </div>
           </el-card>
         </el-col>
         <el-col :span="6">
-          <el-card shadow="hover" :body-style="{ background: '#ffba44' }">
+          <el-card
+            shadow="hover"
+            :body-style="{ background: '#ffba44', height: '300px' }"
+          >
             <div class="count-top">
               <i class="el-icon-printer"></i>
               <span>今日订单数量</span>
@@ -22,7 +28,10 @@
           </el-card>
         </el-col>
         <el-col :span="6">
-          <el-card shadow="hover" :body-style="{ background: '#648cff' }">
+          <el-card
+            shadow="hover"
+            :body-style="{ background: '#648cff', height: '300px' }"
+          >
             <div class="count-top">
               <i class="el-icon-document-copy"></i>
               <span>7日内订单数量</span>
@@ -31,11 +40,14 @@
           </el-card>
         </el-col>
         <el-col :span="6">
-          <el-card shadow="hover" :body-style="{ background: '#4fccb0' }">
+          <el-card
+            shadow="hover"
+            :body-style="{ background: '#4fccb0', height: '300px' }"
+          >
             <div class="count-top">
               <i class="el-icon-data-line"></i>
               <span>7日内订单收入</span>
-              <span>￥{{ panelData.orderMoneyOfWeek || 0 }}</span>
+              <span>{{ panelData.orderMoneyOfWeek || 0 }}</span>
             </div>
           </el-card>
         </el-col>
@@ -82,7 +94,7 @@
       </el-row>
     </div>
     <!--  -->
-    <div style="height: 16px;"></div>
+    <!-- <div style="height: 16px;"></div>
     <div class="count-wrap">
       <div class="count-title">营收统计</div>
       <div class="count-tab">
@@ -90,7 +102,7 @@
         <span @click="getChartData(2)" :class="{ cur: type === 2 }">本月</span>
       </div>
       <div class="myCharts" ref="myCharts"></div>
-    </div>
+    </div> -->
   </div>
 </template>
 <script>
@@ -182,35 +194,37 @@ export default {
 .count-title {
   padding: 18px 0;
   font-weight: bold;
-  font-size: 17px;
+  font-size: 25px;
 }
 .count-top {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  padding: 10px 0 10px 34%;
+  align-items: center;
+  padding-top: 150px;
   position: relative;
   color: #fff;
   > i {
-    font-size: 52px;
+    font-size: 100px;
     position: absolute;
-    left: 18%;
-    top: 50%;
+    left: 48.5%;
+    top: 25%;
     transform: translate(-46%, -50%);
   }
   > span {
-    font-size: 14px;
-    margin: 4px 0;
+    font-size: 25px;
+    font-weight: 700;
+    padding-bottom: 30px;
   }
   > span:nth-of-type(2) {
-    font-size: 20px;
+    font-size: 35px;
     font-weight: bold;
   }
 }
 .count-content {
   display: flex;
   flex-direction: column;
-  padding: 16px 0 16px 0;
+  padding: 50px 0 50px 0;
   position: relative;
   > i {
     font-size: 32px;

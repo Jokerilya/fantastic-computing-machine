@@ -89,6 +89,13 @@
             </el-table-column>
             <el-table-column prop="deviceTypeName" label="设备类型">
             </el-table-column>
+            <el-table-column prop="enterpriseDeviceNo" label="企业设备编码">
+            </el-table-column>
+            <el-table-column
+              prop="enterpriseDevicePosition"
+              label="企业设备位置"
+            >
+            </el-table-column>
             <el-table-column prop="deviceBrand" label="设备品牌">
             </el-table-column>
             <el-table-column prop="deviceSystemName" label="设备系统">

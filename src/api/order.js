@@ -407,3 +407,21 @@ export function handleSubmitAcceptance(orderSn) {
     method: "get",
   });
 }
+
+// 操作师傅积分
+export function handleMasterIntegral(params) {
+  return request({
+    url: "/admin/maintenance/handleMasterIntegral",
+    method: "get",
+    params,
+  });
+}
+
+// 师傅积分记录  /maintenance/handleMasterIntegral
+export function queryMasterIntegralList(params) {
+  return request({
+    url: "/admin/maintenance/queryMasterIntegralList",
+    method: "get",
+    params,
+  });
+}
