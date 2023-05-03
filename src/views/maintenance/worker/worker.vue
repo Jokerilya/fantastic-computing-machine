@@ -118,15 +118,17 @@
         >
           <template slot-scope="{ row }">
             {{
-              row.leveId === 4
-                ? "高级管家"
-                : row.leveId === 2
+              row.identity === "普通师傅"
+                ? "普通师傅"
+                : row.levelId === 1
+                ? "签约师傅"
+                : row.levelId === 2
                 ? "百钻维修师"
-                : row.leveId === 3
+                : row.levelId === 3
                 ? "初级管家"
-                : row.leveId === 1
+                : row.levelId === 4
                 ? "中级管家"
-                : "普通师傅"
+                : "高级管家"
             }}
           </template>
         </el-table-column>
