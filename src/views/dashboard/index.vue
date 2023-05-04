@@ -10,8 +10,8 @@
           >
             <div class="count-top">
               <i class="el-icon-date"></i>
-              <span>今日订单收入</span>
-              <span>{{ panelData.orderMoneyOfDay || 0 }}</span>
+              <span>设备总数 </span>
+              <span>{{ panelData.deviceInfoCount || 0 }}</span>
             </div>
           </el-card>
         </el-col>
@@ -22,8 +22,8 @@
           >
             <div class="count-top">
               <i class="el-icon-printer"></i>
-              <span>今日订单数量</span>
-              <span>{{ panelData.orderNumOfDay || 0 }}</span>
+              <span>签约客户数</span>
+              <span>{{ panelData.enterpriseCount || 0 }}</span>
             </div>
           </el-card>
         </el-col>
@@ -34,8 +34,8 @@
           >
             <div class="count-top">
               <i class="el-icon-document-copy"></i>
-              <span>7日内订单数量</span>
-              <span>{{ panelData.orderNumOfWeek || 0 }}</span>
+              <span>入驻师傅数</span>
+              <span>{{ panelData.masterInfoCount || 0 }}</span>
             </div>
           </el-card>
         </el-col>
@@ -46,8 +46,8 @@
           >
             <div class="count-top">
               <i class="el-icon-data-line"></i>
-              <span>7日内订单收入</span>
-              <span>{{ panelData.orderMoneyOfWeek || 0 }}</span>
+              <span>业务人员数</span>
+              <span>{{ panelData.salesmanCount || 0 }}</span>
             </div>
           </el-card>
         </el-col>
@@ -63,8 +63,8 @@
             <router-link :to="{ name: 'OrderList' }" class="count-content">
               <i class="el-icon-date"></i>
               <div class="count-content-box">
-                <span>{{ panelData.waitPayOrderNum || 0 }}</span>
-                <span>待付款订单</span>
+                <span>{{ panelData.totalCount || 0 }}</span>
+                <span>维修订单总数</span>
               </div>
             </router-link>
           </el-card>
@@ -74,8 +74,8 @@
             <router-link :to="{ name: 'OrderList' }" class="count-content">
               <i class="el-icon-circle-check" style="background: #05abed;"></i>
               <div class="count-content-box">
-                <span>{{ panelData.waitShipOrderNum || 0 }}</span>
-                <span>待发货订单</span>
+                <span>{{ panelData.incompleteCount || 0 }}</span>
+                <span>待完成维修数</span>
               </div>
             </router-link>
           </el-card>
@@ -85,8 +85,8 @@
             <router-link :to="{ name: 'ServiceList' }" class="count-content">
               <i class="el-icon-refresh" style="background: #f44235;"></i>
               <div class="count-content-box">
-                <span>{{ panelData.refundOrderNum || 0 }}</span>
-                <span>待处理售后</span>
+                <span>{{ panelData.completeCount || 0 }}</span>
+                <span>已完成维修数</span>
               </div>
             </router-link>
           </el-card>
