@@ -101,9 +101,9 @@
         ></el-table-column>
         <el-table-column
           prop="integral"
-          label="积分"
+          label="钻石"
           show-overflow-tooltip
-          width="150"
+          width="100"
           align="center"
         >
           <template slot-scope="{ row }">
@@ -111,7 +111,7 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="积分等级"
+          label="等级"
           show-overflow-tooltip
           width="150"
           align="center"
@@ -363,7 +363,7 @@
                     <el-button
                       size="mini"
                       @click="open_integral_dialog(row.uid)"
-                      >积分</el-button
+                      >钻石</el-button
                     >
                   </el-option>
                   <el-option v-if="row.identity !== '普通师傅'">
