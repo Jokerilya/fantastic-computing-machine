@@ -74,17 +74,18 @@ export const constantRoutes = [
   //     }
   //   ]
   // },
-  // userListRouter,
   maintenanceRouter,
-  // storeController,
   financialManagement,
   serviceManagement,
   systemRouter,
   activityRouter,
+
+  // userListRouter,
+  // storeController,
   // productRouter,
   // orderRouter,
   // installRouter,
-  // newsRouter,
+  newsRouter,
   // talentRouter,
   // bossRouter,
   // contentRouter,
