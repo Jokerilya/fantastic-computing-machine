@@ -916,13 +916,7 @@
       :before-close="integral_handleClose"
       :close-on-click-modal="false"
     >
-      <el-form label-width="90px">
-        <el-form-item label="订单编号">
-          <el-input
-            placeholder="请填写订单编号"
-            v-model="integralFrom.relationOrderSn"
-          ></el-input>
-        </el-form-item>
+      <el-form label-width="90px" label-position="left">
         <el-form-item label="积分类型">
           <el-select v-model="integralFrom.type">
             <el-option
@@ -932,6 +926,25 @@
               :key="item.type"
             ></el-option>
           </el-select>
+        </el-form-item>
+        <el-form-item label="订单编号" v-if="integralFrom.type < 8">
+          <el-input
+            placeholder="请填写订单编号"
+            v-model="integralFrom.relationOrderSn"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="分值" v-else>
+          <el-input
+            placeholder="请填写分值"
+            v-model.number="integralFrom.value"
+            type="number"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="备注">
+          <el-input
+            placeholder="请填写备注"
+            v-model="integralFrom.remarks"
+          ></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -953,11 +966,11 @@
           align="center"
           prop="createTime"
         ></el-table-column>
-        <el-table-column
-          label="订单号"
-          align="center"
-          prop="relationOrderSn"
-        ></el-table-column>
+        <el-table-column label="订单号" align="center">
+          <template slot-scope="{ row }">
+            {{ row.relationOrderSn ? row.relationOrderSn : "无" }}
+          </template>
+        </el-table-column>
         <el-table-column label="加减类型" align="center">
           <template slot-scope="{ row }">
             {{
@@ -969,6 +982,11 @@
                 ? "配件师傅提供"
                 : "客户评价"
             }}
+          </template>
+        </el-table-column>
+        <el-table-column label="备注" align="center">
+          <template slot-scope="{ row }">
+            {{ row.remarks ? row.remarks : "无" }}
           </template>
         </el-table-column>
         <el-table-column
@@ -991,6 +1009,15 @@
 </template>
 
 <style lang="less" scoped>
+// css
+::v-deep input::-webkit-outer-spin-button,
+::v-deep input::-webkit-inner-spin-button {
+  -webkit-appearance: none !important;
+}
+::v-deep input[type="number"] {
+  -moz-appearance: textfield !important;
+}
+
 .chooseRoseBox {
   .chooseRoseBox_title,
   .chooseRoseBox_master {
@@ -1088,11 +1115,23 @@ export default {
           text: "同一故障返修",
           value: -2,
         },
+        {
+          type: 8,
+          text: "验机",
+          value: 0,
+        },
+        {
+          type: 9,
+          text: "保养",
+          value: 0,
+        },
       ],
       integralFrom: {
         uid: "",
         relationOrderSn: "",
         type: "",
+        remarks: "",
+        value: "",
       },
       score_dialogVisible: false,
       scoreForm: {
@@ -1323,16 +1362,18 @@ export default {
     },
     // 确定师傅积分选择
     async addIntegralConfirm() {
-      if (
-        this.integralFrom.relationOrderSn === "" ||
-        this.integralFrom.type === ""
-      ) {
-        this.$message("订单编号和积分类型都是必填的......");
-        return;
+      if (this.integralFrom.type < 8) {
+        if (
+          this.integralFrom.relationOrderSn === "" ||
+          this.integralFrom.type === ""
+        ) {
+          this.$message("订单编号和积分类型都是必填的......");
+          return;
+        }
+        let value = this.masterIntegralList[this.integralFrom.type - 4].value;
+        this.integralFrom.value = value;
       }
-
-      let value = this.masterIntegralList[this.integralFrom.type - 4].value;
-      this.integralFrom.value = value;
+      console.log(1371, this.integralFrom);
       const res = await handleMasterIntegral(this.integralFrom);
       if (res.message === "操作成功") {
         this.$message({
