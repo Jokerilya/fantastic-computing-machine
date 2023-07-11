@@ -183,10 +183,10 @@
           </el-table-column>
           <el-table-column prop="contactsPhone" label="客户电话" width="150">
           </el-table-column>
-          <el-table-column prop="masterPhone" label="师傅名称" width="150">
+          <el-table-column prop="masterRealName" label="师傅名称" width="150">
           </el-table-column>
           <el-table-column
-            prop="masterRealName"
+            prop="masterPhone"
             label="师傅联系电话"
             width="150"
           >

@@ -55,7 +55,7 @@
             </el-table-column>
             <el-table-column label="保养日期">
               <template slot-scope="{ row }">
-                {{ row.keepTime.substr(0, 10) }}
+                {{ row.keepTime && row.keepTime.substr(0, 10) }}
               </template>
             </el-table-column>
             <el-table-column
@@ -215,6 +215,7 @@ export default {
 
     // 查询
     async queryUpkeepListFn(id) {
+      console.log(218, "查询了");
       if (id === 1) {
         this.queryUpkeepListParameter.pageNo = 1;
       }

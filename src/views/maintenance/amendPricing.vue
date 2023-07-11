@@ -102,7 +102,7 @@
       <!-- 配件明细 -->
       <div class="accessoriesDetail">
         <h3>
-          配件明细 <a href="#" @click.prevent="addAccessories">添加配件</a>
+          配件明细<a href="#" @click.prevent="addAccessories">添加配件</a>
         </h3>
         <div class="content">
           <el-table
@@ -140,7 +140,16 @@
               width="80"
             >
             </el-table-column>
-            <el-table-column align="center" prop="brand" label="配件品牌">
+            <el-table-column align="center" label="配件品牌">
+              <template slot-scope="{ row }">
+                <div
+                  :class="[
+                    row.type === 1 && !row.brandId ? 'inquireBrandNone' : '',
+                  ]"
+                >
+                  {{ row.brand }}
+                </div>
+              </template>
             </el-table-column>
             <el-table-column align="center" prop="parameter" label="配件参数">
             </el-table-column>
@@ -314,12 +323,105 @@
             <el-radio :label="2">平台购买</el-radio>
           </el-radio-group>
         </el-form-item>
+        <el-form-item label="配件品牌" prop="brand">
+          <div class="accessoriesItem">
+            <el-input
+              v-model="accessoriesForm.brand"
+              placeholder="请填写配件品牌"
+              v-if="!searchBrandToggle"
+            ></el-input>
+            <el-select
+              clearable
+              v-else
+              v-model="accessoriesForm.brand"
+              filterable
+              remote
+              :remote-method="searchBrand"
+              placeholder="请填写配件品牌"
+            >
+              <el-option
+                v-for="item in searchBrandList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.name"
+              >
+              </el-option>
+            </el-select>
+            <el-button
+              style="margin-left: 5px;font-size: 15px;"
+              @click="searchBrandToggle = !searchBrandToggle"
+              >{{ searchBrandToggle ? "增" : "选" }}</el-button
+            >
+          </div>
+        </el-form-item>
         <el-form-item label="配件名称" prop="name">
           <div class="accessoriesItem">
             <el-input
               v-model="accessoriesForm.name"
               placeholder="请填写配件名称"
+              v-if="!searchNameToggle"
             ></el-input>
+            <el-select
+              clearable
+              v-else
+              v-model="accessoriesForm.name"
+              filterable
+              remote
+              @change="
+                () => {
+                  accessoriesForm.parameter = null;
+                }
+              "
+              :remote-method="searchName"
+              placeholder="请填写配件名称"
+            >
+              <el-option
+                v-for="item in searchNameList"
+                :key="item"
+                :label="item"
+                :value="item"
+              >
+              </el-option>
+            </el-select>
+            <el-button
+              style="margin-left: 5px;font-size: 15px;"
+              @click="searchNameToggle = !searchNameToggle"
+              >{{ searchNameToggle ? "增" : "选" }}</el-button
+            >
+          </div>
+        </el-form-item>
+
+        <el-form-item label="配件参数" prop="parameter">
+          <div class="accessoriesItem">
+            <el-input
+              v-model="accessoriesForm.parameter"
+              placeholder="请填写配件参数"
+              v-if="!searchParameterToggle"
+            ></el-input>
+            <el-select
+              clearable
+              v-else
+              v-model="accessoriesForm.parameter"
+              filterable
+              remote
+              @focus="searchParameterFocus"
+              :disabled="!accessoriesForm.name"
+              :remote-method="searchParameter"
+              placeholder="请填写配件参数"
+            >
+              <el-option
+                v-for="item in searchParameterList"
+                :key="item"
+                :label="item"
+                :value="item"
+              >
+              </el-option>
+            </el-select>
+            <el-button
+              style="margin-left: 5px;font-size: 15px;"
+              @click="searchParameterToggle = !searchParameterToggle"
+              >{{ searchParameterToggle ? "增" : "选" }}</el-button
+            >
           </div>
         </el-form-item>
         <el-form-item label="配件单价" prop="price">
@@ -335,22 +437,6 @@
             <el-input
               v-model.number="accessoriesForm.num"
               placeholder="请填写配件数量"
-            ></el-input>
-          </div>
-        </el-form-item>
-        <el-form-item label="配件品牌" prop="brand">
-          <div class="accessoriesItem">
-            <el-input
-              v-model="accessoriesForm.brand"
-              placeholder="请填写配件品牌"
-            ></el-input>
-          </div>
-        </el-form-item>
-        <el-form-item label="配件参数" prop="parameter">
-          <div class="accessoriesItem">
-            <el-input
-              v-model="accessoriesForm.parameter"
-              placeholder="请填写配件参数"
             ></el-input>
           </div>
         </el-form-item>
@@ -374,12 +460,25 @@
 </template>
 
 <script>
-import { editRepairOrder, queryDevicePositionList } from "@/api/order"; //故障部位列表
+import {
+  editRepairOrder,
+  queryDevicePositionList,
+  queryDeviceBrandList,
+  queryJdProductList,
+} from "@/api/order"; //故障部位列表
 import { getRepairOrderDetail } from "@/api/user";
 
 export default {
   data() {
     return {
+      searchNameToggle: true,
+      searchParameterToggle: true,
+      searchBrandToggle: true,
+
+      searchNameList: [],
+      searchParameterList: [],
+      searchBrandList: [], //查询设备品牌的列表
+
       orderSn: null,
       editIndex: null,
       accessoriesTitle: "添加配件",
@@ -450,10 +549,45 @@ export default {
     };
   },
   methods: {
+    // 聚焦触发查询规格
+    async searchParameterFocus() {
+      const res = await queryJdProductList({
+        name: this.accessoriesForm.name,
+        model: "",
+        type: 2,
+      });
+      this.searchParameterList = res.data;
+    },
+    // 查询名称规格
+    async searchName(name) {
+      const res = await queryJdProductList({
+        name,
+        type: 1,
+      });
+      this.searchNameList = res.data;
+    },
+    async searchParameter(model) {
+      const res = await queryJdProductList({
+        name: this.accessoriesForm.name,
+        model,
+        type: 2,
+      });
+      this.searchParameterList = res.data;
+    },
+
+    // 查询设备品牌
+    async searchBrand(name) {
+      const res = await queryDeviceBrandList({
+        name,
+      });
+      this.searchBrandList = res.data;
+    },
+
     // 点击编辑配件
     editAccessories(item, index) {
       this.accessoriesTitle = "编辑配件";
       this.accessoriesForm = { ...item, index };
+      console.log(581, this.accessoriesForm);
       this.addAccessoriesDialog = true;
     },
     // 算配件总价
@@ -546,12 +680,25 @@ export default {
     async addAccessoriesComfirm(index) {
       await this.$refs.accessoriesForm.validate();
       if (this.accessoriesTitle === "新增配件") {
-        console.log({ ...this.accessoriesForm });
+        let brandId = null;
+        this.searchBrandList.forEach((item) => {
+          if (item.name === this.accessoriesForm.brand) {
+            brandId = item.id;
+            return;
+          }
+        });
         if (this.accessoriesList === null) {
           this.accessoriesList = [];
         }
-        this.accessoriesList.push({ ...this.accessoriesForm });
+        this.accessoriesList.push({ ...this.accessoriesForm, brandId });
       } else {
+        let brandId = null;
+        this.searchBrandList.forEach((item) => {
+          if (item.name === this.accessoriesForm.brand) {
+            brandId = item.id;
+            return;
+          }
+        });
         const {
           price,
           num,
@@ -567,7 +714,9 @@ export default {
           name,
           brand,
           parameter,
+          brandId,
         };
+        console.log(713, this.accessoriesList);
         this.againTableRefresh = !this.againTableRefresh;
       }
       this.getAccessoriesSum();
@@ -690,6 +839,11 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.inquireBrandNone {
+  background-color: red;
+  color: #fff;
+}
+
 .accessoriesItem {
   display: flex;
   margin: 0 75px;

@@ -11,18 +11,24 @@
         label-position="right"
       >
         <el-row :gutter="20">
-          <!-- <el-col :span="4">
-            <el-form-item label="设备类型">
-              <el-select v-model="searchForm.deviceTypeId" placeholder="请选择">
+          <el-col :span="4">
+            <el-form-item label="师傅名称">
+              <el-select
+                v-model="searchForm.masterUid"
+                filterable
+                placeholder="请选择"
+                :remote-method="searchMaster"
+                remote
+              >
                 <el-option
-                  v-for="item in typeData"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id"
+                  v-for="item in masterSearchList"
+                  :key="item.uid"
+                  :label="item.realName"
+                  :value="item.uid"
                 ></el-option>
               </el-select>
             </el-form-item>
-          </el-col> -->
+          </el-col>
           <el-col :span="4">
             <el-form-item label="订单状态">
               <el-select v-model="searchForm.status" placeholder="请选择">
@@ -518,6 +524,7 @@ export default {
   // mixins: [tableMixin],
   data() {
     return {
+      masterSearchList: [],
       remarksparams: {
         remarks: null,
         orderSn: null,
@@ -526,6 +533,7 @@ export default {
 
       exportParams: null,
       searchForm: {
+        masterUid: "",
         deviceTypeId: "",
         status: "",
         orderType: "",
@@ -608,6 +616,14 @@ export default {
     this._queryRepairOrderList();
   },
   methods: {
+    // 查询师傅列表
+    async searchMaster(val) {
+      const res = await getMasterList({
+        realName: val,
+      });
+      this.masterSearchList = res.data.records;
+      console.log(625, this.masterSearchList);
+    },
     // 确定添加备注
     async comfirmRemarks() {
       const res = await handleRepairRemarks(this.remarksparams);
@@ -706,7 +722,7 @@ export default {
     },
     // 获取维保订单列表
     _queryRepairOrderList() {
-      const loading = this.$loading({ text: "加载中.." });
+      // const loading = this.$loading({ text: "加载中.." });
       let data = {
         pageNo: this.currentPage,
         pageSize: 10,
@@ -714,13 +730,14 @@ export default {
       };
       localStorageData("queryRepairData", JSON.stringify(data));
       this.exportParams = data;
-      queryRepairOrderList(data).then((res) => {
-        if (res) {
-          this.dataList = res.data.records;
-          this.pageCount = res.data.total;
-        }
-        loading.close();
-      });
+      queryRepairOrderList(data)
+        .then((res) => {
+          if (res) {
+            this.dataList = res.data.records;
+            this.pageCount = res.data.total;
+          }
+        })
+        .finally(() => {});
     },
     // 点击页码触发的事件
     updatePageNo(val) {

@@ -60,7 +60,7 @@
             type="primary"
             size="mini"
             plain
-            v-if="data.orderStatusName==='待平台指派'"
+            v-if="data.orderStatusName === '待平台指派'"
             @click="submitForAcceptance(data.orderSn)"
             >代提交验收</el-button
           >
@@ -360,7 +360,16 @@
                 width="80"
               >
               </el-table-column>
-              <el-table-column align="center" prop="brand" label="配件品牌">
+              <el-table-column align="center" label="配件品牌">
+                <template slot-scope="{ row }">
+                  <div
+                    :class="[
+                      row.type === 1 && !row.brandId ? 'inquireBrandNone' : '',
+                    ]"
+                  >
+                    {{ row.brand }}
+                  </div>
+                </template>
               </el-table-column>
               <el-table-column align="center" prop="parameter" label="配件参数">
               </el-table-column>
@@ -748,6 +757,11 @@
 </template>
 
 <style lang="less" scoped>
+.inquireBrandNone {
+  background-color: red;
+  color: #fff;
+}
+
 .addPartcs {
   padding: 30px 0;
   .item {
@@ -1406,6 +1420,12 @@ export default {
     },
     // 点击确定报价触发的事件
     sumbitQuotation() {
+      const loading = this.$loading({
+        lock: true,
+        text: "Loading",
+        spinner: "el-icon-loading",
+        background: "rgba(0, 0, 0, 0.7)",
+      });
       let data = {
         orderSn: this.orderSn,
         status: 2,
@@ -1419,6 +1439,9 @@ export default {
             type: "success",
           });
           this.$router.push("/maintenance/maintenance_order");
+          loading.close();
+        } else {
+          loading.close();
         }
       });
     },

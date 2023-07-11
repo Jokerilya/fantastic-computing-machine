@@ -417,11 +417,29 @@ export function handleMasterIntegral(params) {
   });
 }
 
-// 师傅积分记录  /maintenance/handleMasterIntegral
+// 师傅积分记录
 export function queryMasterIntegralList(params) {
   return request({
     url: "/admin/maintenance/queryMasterIntegralList",
     method: "get",
     params,
+  });
+}
+
+// 查询设备品牌
+export function queryDeviceBrandList(params) {
+  return request({
+    url: "/admin/maintenance/queryDeviceBrandList",
+    method: "get",
+    params,
+  });
+}
+
+// 查询金蝶商品
+export function queryJdProductList(data) {
+  return request({
+    url: "/admin/maintenance/queryJdProductList",
+    method: "post",
+    data,
   });
 }

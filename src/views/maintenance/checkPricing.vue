@@ -75,98 +75,11 @@
       </div>
     </div>
 
-    <!-- 选择质保周期部分 -->
-    <!-- <div class="onload">
-      <div class="onloadTitle">质保周期:</div>
-      <div class="onloadPart">
-        <el-radio-group
-          v-model="param.warrantyTime"
-          style="display:flex;"
-          @input="checkqualityWeekDataInp"
-        >
-          <el-radio :label="10">10天</el-radio>
-          <el-radio :label="15">15天</el-radio>
-          <el-radio :label="30">30天</el-radio>
-          <el-radio :label="180">180天</el-radio>
-          <el-radio :label="0">其他天数</el-radio>
-        </el-radio-group>
-        <el-input
-          v-if="qualityWeekDataInp"
-          v-model.number="param.warrantyTime"
-          class="onloadPart_inp"
-          @blur="judgeInp('warrantyTime', 'param')"
-        ></el-input>
-      </div>
-    </div> -->
-
-    <!-- <div class="fishedTime">
-      <div class="onloadTitle">预计完成时间:</div>
-      <el-time-picker
-        style="margin: 0 50px;"
-        arrow-control
-        v-model="param.serviceCompleteTime"
-        :picker-options="{
-      selectableRange: '请选中一个维修完成时间'
-    }"
-        placeholder="任意时间点"
-      ></el-time-picker>
-    </div>-->
-
-    <!-- 空行横杠部分 -->
-    <!-- <br />
-    <hr />
-    <br /> -->
-
     <!-- 配件明细部分 -->
     <div class="peijian" style="margin-top: 30px;">
       <div class="peijianTitle">配件明细:</div>
       <div class="addpeijian" @click="openAdd">添加配件</div>
     </div>
-    <!-- 原本版本 配件明细-->
-    <!-- <div class="addPart">
-      <el-table
-        highlight-current-row
-        v-loading.fullscreen.lock="loading"
-        element-loading-text="拼命加载中"
-        element-loading-spinner="el-icon-loading"
-        :data="param.parts"
-        style="width: 100%;"
-      >
-        <el-table-column
-          prop="name"
-          label="配件名称"
-          show-overflow-tooltip
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="price"
-          label="价格"
-          show-overflow-tooltip
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="num"
-          label="数量"
-          show-overflow-tooltip
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="unit"
-          label="单位"
-          show-overflow-tooltip
-          align="center"
-        ></el-table-column>
-        <el-table-column label="操作" width="300px" fixed="right">
-          <template slot-scope="{ row }">
-            <div class="settings">
-              <el-button type="info" size="mini" plain @click="deleted(row)"
-                >删除</el-button
-              >
-            </div>
-          </template>
-        </el-table-column>
-      </el-table>
-    </div> -->
     <div class="addPartcs">
       <el-table :data="param.parts" style="width: 70%" :key="againTableRefresh">
         <el-table-column label="采购方式" align="center" width="100">
@@ -194,7 +107,16 @@
           width="80"
         >
         </el-table-column>
-        <el-table-column align="center" prop="brand" label="配件品牌">
+        <el-table-column align="center" label="配件品牌">
+          <template slot-scope="{ row }">
+            <div
+              :class="[
+                row.type === 1 && !row.brandId ? 'inquireBrandNone' : '',
+              ]"
+            >
+              {{ row.brand }}
+            </div>
+          </template>
         </el-table-column>
         <el-table-column align="center" prop="parameter" label="配件参数">
         </el-table-column>
@@ -337,13 +259,108 @@
                 <el-radio v-model="part.type" :label="1">师傅采购</el-radio>
               </div>
             </div>
-            <div class="addcontent">
+            <div class="addcontent" style="position:relative">
+              <div class="name">配件品牌:</div>
+              <el-input
+                style="width: 230px;"
+                v-model.trim="part.brand"
+                placeholder="请填写配件品牌"
+                v-if="!searchBrandToggle"
+              ></el-input>
+              <el-select
+                style="width: 230px;"
+                v-else
+                clearable
+                v-model="part.brand"
+                filterable
+                remote
+                :remote-method="searchBrand"
+                placeholder="请填写配件品牌"
+              >
+                <el-option
+                  v-for="item in searchBrandList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.name"
+                >
+                </el-option>
+              </el-select>
+              <el-button
+                @click="searchBrandToggle = !searchBrandToggle"
+                style="position:absolute;right:10px;top:0"
+                >{{ searchBrandToggle ? "增" : "选" }}</el-button
+              >
+            </div>
+            <div class="addcontent" style="position:relative">
               <div class="name">配件名称:</div>
               <el-input
+                v-if="!searchNameToggle"
                 style="width: 230px;"
                 v-model.trim="part.name"
                 placeholder="请填写配件名称"
               ></el-input>
+              <el-select
+                v-else
+                style="width: 230px;"
+                clearable
+                v-model="part.name"
+                filterable
+                remote
+                @change="
+                  () => {
+                    part.parameter = null;
+                  }
+                "
+                :remote-method="searchName"
+                placeholder="请填写配件名称"
+              >
+                <el-option
+                  v-for="item in searchNameList"
+                  :key="item"
+                  :label="item"
+                  :value="item"
+                >
+                </el-option>
+              </el-select>
+              <el-button
+                @click="searchNameToggle = !searchNameToggle"
+                style="position:absolute;right:10px;top:0"
+                >{{ searchNameToggle ? "增" : "选" }}</el-button
+              >
+            </div>
+            <div class="addcontent" style="position:relative">
+              <div class="name">配件参数:</div>
+              <el-input
+                v-if="!searchParameterToggle"
+                style="width: 230px;"
+                v-model.trim="part.parameter"
+                placeholder="请填写配件参数"
+              ></el-input>
+              <el-select
+                v-else
+                clearable
+                style="width: 230px;"
+                v-model="part.parameter"
+                filterable
+                remote
+                @focus="searchParameterFocus"
+                :disabled="!part.name"
+                :remote-method="searchParameter"
+                placeholder="请填写配件参数"
+              >
+                <el-option
+                  v-for="item in searchParameterList"
+                  :key="item"
+                  :label="item"
+                  :value="item"
+                >
+                </el-option>
+              </el-select>
+              <el-button
+                @click="searchParameterToggle = !searchParameterToggle"
+                style="position:absolute;right:10px;top:0"
+                >{{ searchParameterToggle ? "增" : "选" }}</el-button
+              >
             </div>
             <div class="addcontent">
               <div class="name">配件单价:</div>
@@ -363,38 +380,6 @@
                 placeholder="请填写配件数量,例如：2"
               ></el-input>
             </div>
-            <div class="addcontent">
-              <div class="name">配件品牌:</div>
-              <el-input
-                style="width: 230px;"
-                v-model.trim="part.brand"
-                placeholder="请填写配件品牌"
-              ></el-input>
-            </div>
-            <div class="addcontent">
-              <div class="name">配件参数:</div>
-              <el-input
-                style="width: 230px;"
-                v-model.trim="part.parameter"
-                placeholder="请填写配件参数"
-              ></el-input>
-            </div>
-            <!-- <div class="addcontent">
-              <div class="name">配件单位:</div>
-              <el-input
-                style="width: 230px;"
-                v-model.trim="part.unit"
-                placeholder="请填写配件单位,例如：件、个"
-              ></el-input>
-            </div> -->
-            <!-- <div class="addcontent">
-              <div class="name">配件金额:</div>
-              <el-input
-                style="width: 230px;"
-                v-model.trim="part.money"
-                placeholder="请填写配件单位,例如：件、个"
-              ></el-input>
-            </div> -->
           </div>
         </div>
       </el-from>
@@ -413,13 +398,26 @@
 </template>
 
 <script>
-import { handleMasterQuotation, queryDevicePositionList } from "@/api/order.js";
+import {
+  handleMasterQuotation,
+  queryDevicePositionList,
+  queryDeviceBrandList,
+  queryJdProductList,
+} from "@/api/order.js";
 import { getRepairOrderDetail } from "@/api/user.js";
 export default {
   title: "checkPricing",
 
   data() {
     return {
+      searchNameToggle: true,
+      searchParameterToggle: true,
+      searchBrandToggle: true,
+
+      searchParameterList: [],
+      searchBrandList: [],
+      searchNameList: [],
+
       faultTypeCheckbox: [], //故障类型多选
       faultPartsCheckbox: [], //故障部位 多选
       equipmentPosition: null, //故障部位列表
@@ -505,6 +503,40 @@ export default {
     },
   },
   methods: {
+    // 聚焦触发查询规格
+    async searchParameterFocus() {
+      const res = await queryJdProductList({
+        name: this.part.name,
+        model: "",
+        type: 2,
+      });
+      this.searchParameterList = res.data;
+    },
+    // 查询名称规格
+    async searchName(name) {
+      const res = await queryJdProductList({
+        name,
+        type: 1,
+      });
+      this.searchNameList = res.data;
+    },
+    async searchParameter(model) {
+      const res = await queryJdProductList({
+        name: this.part.name,
+        model,
+        type: 2,
+      });
+      this.searchParameterList = res.data;
+    },
+    // 查询设备品牌
+    async searchBrand(name) {
+      console.log(430, name);
+      const res = await queryDeviceBrandList({
+        name,
+      });
+      this.searchBrandList = res.data;
+    },
+
     // 算配件总价
     getAccessoriesSum() {
       this.param.partsAmount = 0;
@@ -614,9 +646,23 @@ export default {
         });
       } else {
         if (this.accessoriesTitle === "添加配件") {
-          this.param.parts.push(this.part);
+          let brandId = null;
+          this.searchBrandList.forEach((item) => {
+            if (item.name === this.part.brand) {
+              brandId = item.id;
+              return;
+            }
+          });
+          this.param.parts.push({ ...this.part, brandId });
         } else {
-          this.param.parts[index] = this.part;
+          let brandId = null;
+          this.searchBrandList.forEach((item) => {
+            if (item.name === this.part.brand) {
+              brandId = item.id;
+              return;
+            }
+          });
+          this.param.parts[index] = { ...this.part, brandId };
           this.againTableRefresh = !this.againTableRefresh;
         }
         this.getAccessoriesSum();
@@ -686,6 +732,11 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.inquireBrandNone {
+  background-color: red;
+  color: #fff;
+}
+
 .faultSolveProgramme {
   .lineItem {
     display: flex;
