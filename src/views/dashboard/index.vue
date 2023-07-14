@@ -1,6 +1,7 @@
 <template>
   <div class="content_box">
-    <div class="count-wrap">
+    <h1 class="text">欢迎使用机将后台管理系统</h1>
+    <!-- <div class="count-wrap">
       <div class="count-title">营收概况</div>
       <el-row :gutter="24">
         <el-col :span="6">
@@ -52,10 +53,8 @@
           </el-card>
         </el-col>
       </el-row>
-    </div>
-    <!--  -->
-    <div style="height: 16px;"></div>
-    <div class="count-wrap">
+    </div> -->
+    <!-- <div class="count-wrap">
       <div class="count-title">待办事项</div>
       <el-row :gutter="24">
         <el-col :span="8">
@@ -92,7 +91,7 @@
           </el-card>
         </el-col>
       </el-row>
-    </div>
+    </div> -->
     <!--  -->
     <!-- <div style="height: 16px;"></div>
     <div class="count-wrap">
@@ -187,6 +186,35 @@ export default {
 </script>
 
 <style lang="scss">
+.content_box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  background: url("https://snk-1305456087.cos.ap-guangzhou.myqcloud.com/user/20220701/KH81694623.png")
+    no-repeat;
+  background-size: 100vw 100vh;
+}
+@keyframes scaleUp {
+  0% {
+    font-size: 12px;
+  }
+  70% {
+    font-size: 80px;
+  }
+  85% {
+    font-size: 70px;
+  }
+  100% {
+    font-size: 80px;
+    color: #fff;
+  }
+}
+.text {
+  animation: scaleUp 1.5s forwards;
+  padding-bottom: 100px;
+}
+
 .count-wrap {
   background: #fff;
   padding: 18px;
