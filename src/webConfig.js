@@ -2,6 +2,6 @@ module.exports={
     "webName": "机将",
     "webICP": "粤ICP备19047662号",
     "qiniuHost": "https://img.hqjiankang.com/",
-    "version": 219,
-    "versionTime": "2023-07-11T10:02:29.863Z"
+    "version": 228,
+    "versionTime": "2023-08-21T10:01:47.840Z"
 }

@@ -30,7 +30,7 @@
         </div>
       </div>
       <div class="operationBtnList">
-        <el-button
+        <!-- <el-button
           class="thrownIntoMarketBtn"
           type="primary"
           @click="openRegionChooseDialog"
@@ -42,7 +42,7 @@
           type="warning"
           @click="assignedBtn('market')"
           >抛入市场</el-button
-        >
+        > -->
         <el-button
           class="thrownIntoMarketBtn"
           type="success"

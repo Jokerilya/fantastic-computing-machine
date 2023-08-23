@@ -161,8 +161,13 @@
           align="center"
         >
           <template slot-scope="{ row }">
-            <div v-if="row.orderType === 2">年保</div>
-            <div v-if="row.orderType === 1">散单</div>
+            {{
+              row.orderType === 1
+                ? "普通"
+                : row.orderType === 2
+                ? "年保"
+                : "年卡"
+            }}
           </template>
         </el-table-column>
         <el-table-column

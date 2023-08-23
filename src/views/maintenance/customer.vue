@@ -414,15 +414,12 @@
     display: flex;
     align-items: center;
     .addBtn {
-      height: 38px;
-      width: 130px;
       background-color: #2e4c9e;
       color: #fff;
       margin-right: 10px;
       font-weight: 700;
     }
     .importBtn {
-      width: 130px;
       background-color: #d4e0ff;
       color: #0b2059;
       font-weight: 700;
@@ -431,9 +428,6 @@
 }
 .manage-top {
   width: 1500px;
-}
-.upload-demo {
-  margin: 10px 0;
 }
 </style>
 

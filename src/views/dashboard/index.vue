@@ -1,5 +1,5 @@
 <template>
-  <div class="content_box">
+  <div class="content_box1">
     <h1 class="text">欢迎使用机将后台管理系统</h1>
     <!-- <div class="count-wrap">
       <div class="count-title">营收概况</div>
@@ -186,7 +186,7 @@ export default {
 </script>
 
 <style lang="scss">
-.content_box {
+.content_box1 {
   display: flex;
   justify-content: center;
   align-items: center;

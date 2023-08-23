@@ -73,6 +73,11 @@
               prop="enterpriseName"
               label="客户名称"
             ></el-table-column>
+            <el-table-column label="类型">
+              <template slot-scope="{ row }">
+                {{ row.type === 1 ? "普通" : row.type === 2 ? "年保" : "年卡" }}
+              </template>
+            </el-table-column>
             <el-table-column prop="no" label="设备编号"></el-table-column>
             <!-- <el-table-column prop="nameplateImg" label="设备铭牌">
             </el-table-column> -->
@@ -237,6 +242,7 @@ export default {
     async getEquipmentList(data) {
       const res = await getEquipmentList(data);
       const { records, total, current } = res.data;
+      console.log(240, records);
       this.equipmentList = records;
       this.total = total;
       this.current = current;

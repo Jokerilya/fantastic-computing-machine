@@ -2,7 +2,9 @@
 <template>
   <div class="checkPart">
     <!-- 故障解决方案 -->
-    <h2 style="color: #0b2059;margin-bottom: 20px;">故障解决方案</h2>
+    <h2 style="color: #0b2059;margin-bottom: 20px;font-size:24px">
+      故障解决方案
+    </h2>
     <div class="faultSolveProgramme">
       <div class="lineItem">
         <div class="title">
@@ -34,7 +36,6 @@
       </div>
     </div>
 
-    <div class="solutionTitle">解决方案</div>
     <!-- 故障原因部分 -->
     <div class="solutionPart">
       <div class="describe">
@@ -142,13 +143,90 @@
       </el-table>
     </div>
 
+    <!-- 增值服务项 -->
+    <h2 style="color: #0b2059;margin: 20px 0;font-size:24px">
+      增值服务项
+    </h2>
+    <div class="faultSolveProgramme">
+      <div class="lineItem">
+        <div class="title">
+          预防性检测:
+        </div>
+        <div class="content">
+          <el-radio-group v-model="orderDetail.preventType">
+            <el-radio :label="2">不需要</el-radio>
+            <el-radio :label="1">需要(5%)</el-radio>
+          </el-radio-group>
+        </div>
+      </div>
+      <div class="lineItem">
+        <div class="title">
+          协助清理机台:
+        </div>
+        <div class="content">
+          <el-radio-group v-model="orderDetail.assistCleanType">
+            <el-radio :label="2">不需要</el-radio>
+            <el-radio :label="1">需要(1%)</el-radio>
+          </el-radio-group>
+        </div>
+      </div>
+      <div class="lineItem">
+        <div class="title">
+          配件:
+        </div>
+        <div class="content">
+          <el-radio-group v-model="orderDetail.accessoryType">
+            <el-radio :label="1">自备</el-radio>
+            <el-radio :label="2">平台提供(1%)</el-radio>
+          </el-radio-group>
+        </div>
+      </div>
+      <div class="lineItem">
+        <div class="title">
+          到达时间:
+        </div>
+        <div class="content">
+          <el-radio-group v-model="orderDetail.arrivalTimeType">
+            <el-radio :label="3">当天</el-radio>
+            <el-radio :label="1">1小时(10%)</el-radio>
+            <el-radio :label="2">2小时(5%)</el-radio>
+          </el-radio-group>
+        </div>
+      </div>
+      <div class="lineItem">
+        <div class="title">
+          师傅技术能力:
+        </div>
+        <div class="content">
+          <el-radio-group v-model="orderDetail.technicalCapabilitiesType">
+            <el-radio :label="3">初级</el-radio>
+            <el-radio :label="2">中级(5%)</el-radio>
+            <el-radio :label="1">高级(10%)</el-radio>
+          </el-radio-group>
+        </div>
+      </div>
+      <div class="lineItem">
+        <div class="title">
+          配件质保时间:
+        </div>
+        <div class="content">
+          <el-radio-group v-model="orderDetail.warrantyPeriodType">
+            <el-radio :label="1">7天</el-radio>
+            <el-radio :label="2">30天(1%)</el-radio>
+            <el-radio :label="3">90天(2%)</el-radio>
+            <el-radio :label="4">180天(3%)</el-radio>
+          </el-radio-group>
+        </div>
+      </div>
+    </div>
+
     <!-- 维保报价部分 -->
     <div class="pricing">
-      <div class="pricingTitle">维保报价:</div>
+      <div class="pricingTitle" style="color: #0b2059;">维保报价</div>
       <div class="pricingPart">
         <div class="pricingLine" style="margin: 1px 0 ;">
           <div class="lineLeft">
-            <div class="left1">上门费用</div>
+            <div class="left1">人工费</div>
             <div class="left2">建议每公里2元，估算距离费用</div>
           </div>
           <div class="lineRight">
@@ -159,7 +237,7 @@
             ></el-input>
           </div>
         </div>
-        <div class="pricingLine">
+        <!-- <div class="pricingLine">
           <div class="lineLeft">
             <div class="left1">技术服务费</div>
             <div class="left2">含检测费用</div>
@@ -171,7 +249,7 @@
               placeholder="￥0.00"
             ></el-input>
           </div>
-        </div>
+        </div> -->
         <div class="pricingLine">
           <div class="lineLeft">
             <div class="left1">配件费</div>
@@ -185,7 +263,7 @@
             ></el-input>
           </div>
         </div>
-        <div class="pricingLine">
+        <!-- <div class="pricingLine">
           <div class="lineLeft">
             <div class="left1">其他费用</div>
             <div class="left2"></div>
@@ -197,7 +275,7 @@
               placeholder="￥0.00"
             ></el-input>
           </div>
-        </div>
+        </div> -->
         <div class="pricingLine">
           <div class="lineLeft">
             <div class="left1" style="font-weight:bold">合计</div>
@@ -253,114 +331,67 @@
         <div class="addBorder">
           <div class="addPart">
             <div class="addcontent">
+              <div class="name">配件选择:</div>
+              <div style="width: 230px;">
+                <el-radio v-model="part.choose" :label="2">仓库</el-radio>
+                <el-radio v-model="part.choose" :label="1">新增</el-radio>
+              </div>
+            </div>
+            <div class="addcontent" v-if="part.choose != 2">
               <div class="name">配件采购:</div>
               <div style="width: 230px;">
                 <el-radio v-model="part.type" :label="2">平台采购</el-radio>
                 <el-radio v-model="part.type" :label="1">师傅采购</el-radio>
               </div>
             </div>
-            <div class="addcontent" style="position:relative">
+            <div
+              class="addcontent"
+              style="position:relative"
+              v-if="part.choose == 2"
+            >
+              <div class="name">勾选配件:</div>
+              <el-input
+                style="width: 230px;"
+                v-model="part.chooseStashPartsValue"
+                @focus="openChooseStashParts"
+                placeholder="点击选择仓库已有的配件"
+              ></el-input>
+            </div>
+            <div
+              class="addcontent"
+              style="position:relative"
+              v-if="part.choose != 2"
+            >
               <div class="name">配件品牌:</div>
               <el-input
                 style="width: 230px;"
                 v-model.trim="part.brand"
                 placeholder="请填写配件品牌"
-                v-if="!searchBrandToggle"
               ></el-input>
-              <el-select
-                style="width: 230px;"
-                v-else
-                clearable
-                v-model="part.brand"
-                filterable
-                remote
-                :remote-method="searchBrand"
-                placeholder="请填写配件品牌"
-              >
-                <el-option
-                  v-for="item in searchBrandList"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.name"
-                >
-                </el-option>
-              </el-select>
-              <el-button
-                @click="searchBrandToggle = !searchBrandToggle"
-                style="position:absolute;right:10px;top:0"
-                >{{ searchBrandToggle ? "增" : "选" }}</el-button
-              >
             </div>
-            <div class="addcontent" style="position:relative">
+            <div
+              class="addcontent"
+              style="position:relative"
+              v-if="part.choose != 2"
+            >
               <div class="name">配件名称:</div>
               <el-input
-                v-if="!searchNameToggle"
                 style="width: 230px;"
                 v-model.trim="part.name"
                 placeholder="请填写配件名称"
               ></el-input>
-              <el-select
-                v-else
-                style="width: 230px;"
-                clearable
-                v-model="part.name"
-                filterable
-                remote
-                @change="
-                  () => {
-                    part.parameter = null;
-                  }
-                "
-                :remote-method="searchName"
-                placeholder="请填写配件名称"
-              >
-                <el-option
-                  v-for="item in searchNameList"
-                  :key="item"
-                  :label="item"
-                  :value="item"
-                >
-                </el-option>
-              </el-select>
-              <el-button
-                @click="searchNameToggle = !searchNameToggle"
-                style="position:absolute;right:10px;top:0"
-                >{{ searchNameToggle ? "增" : "选" }}</el-button
-              >
             </div>
-            <div class="addcontent" style="position:relative">
+            <div
+              class="addcontent"
+              style="position:relative"
+              v-if="part.choose != 2"
+            >
               <div class="name">配件参数:</div>
               <el-input
-                v-if="!searchParameterToggle"
                 style="width: 230px;"
                 v-model.trim="part.parameter"
                 placeholder="请填写配件参数"
               ></el-input>
-              <el-select
-                v-else
-                clearable
-                style="width: 230px;"
-                v-model="part.parameter"
-                filterable
-                remote
-                @focus="searchParameterFocus"
-                :disabled="!part.name"
-                :remote-method="searchParameter"
-                placeholder="请填写配件参数"
-              >
-                <el-option
-                  v-for="item in searchParameterList"
-                  :key="item"
-                  :label="item"
-                  :value="item"
-                >
-                </el-option>
-              </el-select>
-              <el-button
-                @click="searchParameterToggle = !searchParameterToggle"
-                style="position:absolute;right:10px;top:0"
-                >{{ searchParameterToggle ? "增" : "选" }}</el-button
-              >
             </div>
             <div class="addcontent">
               <div class="name">配件单价:</div>
@@ -394,6 +425,42 @@
         >
       </div>
     </el-dialog>
+
+    <!-- 选择仓库配件 -->
+    <el-dialog
+      title="选择仓库配件"
+      :close-on-click-modal="false"
+      :visible="chooseStashPartsVisible"
+      :before-close="closeChooseStashParts"
+      center
+    >
+      <div style="display: flex;align-items: center;margin-bottom: 10px;">
+        <el-input
+          placeholder="请输入商品名称查询"
+          style="width: 20vw;margin-right: 10px;"
+          v-model="jdProductListQuery"
+        ></el-input>
+        <el-button @click="queryJdProductList">搜索</el-button>
+      </div>
+      <el-table
+        height="400px"
+        highlight-current-row
+        :data="stashPartsData"
+        @current-change="changeStashParts"
+      >
+        <el-table-column type="index"></el-table-column>
+        <el-table-column label="商品名称" property="name"> </el-table-column>
+        <el-table-column label="品牌名称" property="brandName">
+        </el-table-column>
+        <el-table-column label="规格型号" property="model"> </el-table-column>
+      </el-table>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeChooseStashParts">取 消</el-button>
+        <el-button type="primary" @click="comfirmChooseStashParts"
+          >确 定</el-button
+        >
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -410,13 +477,10 @@ export default {
 
   data() {
     return {
-      searchNameToggle: true,
-      searchParameterToggle: true,
-      searchBrandToggle: true,
-
-      searchParameterList: [],
-      searchBrandList: [],
-      searchNameList: [],
+      chooseStashPartData: [],
+      stashPartsData: [],
+      jdProductListQuery: "",
+      chooseStashPartsVisible: false,
 
       faultTypeCheckbox: [], //故障类型多选
       faultPartsCheckbox: [], //故障部位 多选
@@ -441,6 +505,8 @@ export default {
         type: null,
         brand: null,
         parameter: null,
+        choose: 2,
+        chooseStashPartsValue: "",
       },
 
       param: {
@@ -488,45 +554,86 @@ export default {
   computed: {
     // 计算维保报价总价
     sum() {
-      let {
-        doorAmount,
-        technologyAmount,
-        partsAmount,
-        otherAmount,
-      } = this.param;
-      let sum =
-        Number(doorAmount) +
-        Number(technologyAmount) +
-        Number(partsAmount) +
-        Number(otherAmount);
-      return sum ? sum.toFixed(2) : "0.00";
+      const { doorAmount, partsAmount } = this.param;
+
+      const coefficientMap = {
+        accessoryType: { 2: 0.01 },
+        assistCleanType: { 1: 0.01 },
+        warrantyPeriodType: { 2: 0.01, 3: 0.02, 4: 0.03 },
+        technicalCapabilitiesType: { 1: 0.1, 2: 0.05 },
+        preventType: { 1: 0.05 },
+        arrivalTimeType: { 1: 0.1, 2: 0.05 },
+      };
+
+      let addSum = 0;
+
+      for (const condition in coefficientMap) {
+        if (condition == "accessoryType") {
+          if (coefficientMap[condition][this.orderDetail[condition]]) {
+            addSum +=
+              coefficientMap[condition][this.orderDetail[condition]] *
+              partsAmount;
+          }
+        } else {
+          if (coefficientMap[condition][this.orderDetail[condition]]) {
+            addSum +=
+              coefficientMap[condition][this.orderDetail[condition]] *
+              doorAmount;
+          }
+        }
+      }
+
+      const sum = Number(doorAmount) + Number(partsAmount) + addSum;
+      return sum.toFixed(2);
     },
   },
   methods: {
-    // 聚焦触发查询规格
-    async searchParameterFocus() {
-      const res = await queryJdProductList({
-        name: this.part.name,
-        model: "",
-        type: 2,
-      });
-      this.searchParameterList = res.data;
-    },
-    // 查询名称规格
-    async searchName(name) {
-      const res = await queryJdProductList({
-        name,
-        type: 1,
-      });
-      this.searchNameList = res.data;
-    },
-    async searchParameter(model) {
-      const res = await queryJdProductList({
-        name: this.part.name,
+    // 确定选择仓库配件
+    comfirmChooseStashParts() {
+      const {
+        brandId,
+        brandName,
         model,
-        type: 2,
+        name,
+        id,
+        unitId,
+      } = this.chooseStashPartData;
+      this.part.chooseStashPartsValue = name + "/" + brandName + "/" + model;
+      this.closeChooseStashParts();
+      this.part.brand = brandName;
+      this.part.brandId = brandId;
+      this.part.parameter = model;
+      this.part.name = name;
+      this.part.id = id;
+      this.part.unitId = unitId;
+    },
+    // 选中仓库配件的数据
+    changeStashParts(val) {
+      this.chooseStashPartData = val;
+    },
+    // 查询金蝶仓库
+    async queryJdProductList() {
+      const res = await queryJdProductList({
+        query: this.jdProductListQuery,
       });
-      this.searchParameterList = res.data;
+      this.stashPartsData = res.data;
+    },
+    // 关闭选择仓库配件框
+    closeChooseStashParts() {
+      this.jdProductListQuery = "";
+      this.chooseStashPartData = [];
+      this.chooseStashPartsVisible = false;
+    },
+    // 打开选择仓库配件框
+    async openChooseStashParts() {
+      const loading = this.$loading({
+        lock: true,
+        text: "Loading",
+        spinner: "el-icon-loading",
+      });
+      await this.queryJdProductList();
+      this.chooseStashPartsVisible = true;
+      loading.close();
     },
     // 查询设备品牌
     async searchBrand(name) {
@@ -560,6 +667,7 @@ export default {
         type: null,
         brand: null,
         parameter: null,
+        choose: 2,
       };
     },
     // 改变其他天数
@@ -632,13 +740,14 @@ export default {
     },
     // 点击添加配件弹窗里的提交按钮的事件
     addTrue(index) {
+      if (this.part.choose === 2) {
+        this.part.type = 2;
+      }
       if (
         !this.part.name ||
         !this.part.price ||
         !this.part.num ||
-        !this.part.type ||
-        !this.part.brand ||
-        !this.part.parameter
+        !this.part.type
       ) {
         this.$message({
           message: "表单未填写完整",
@@ -646,23 +755,9 @@ export default {
         });
       } else {
         if (this.accessoriesTitle === "添加配件") {
-          let brandId = null;
-          this.searchBrandList.forEach((item) => {
-            if (item.name === this.part.brand) {
-              brandId = item.id;
-              return;
-            }
-          });
-          this.param.parts.push({ ...this.part, brandId });
+          this.param.parts.push({ ...this.part });
         } else {
-          let brandId = null;
-          this.searchBrandList.forEach((item) => {
-            if (item.name === this.part.brand) {
-              brandId = item.id;
-              return;
-            }
-          });
-          this.param.parts[index] = { ...this.part, brandId };
+          this.param.parts[index] = { ...this.part };
           this.againTableRefresh = !this.againTableRefresh;
         }
         this.getAccessoriesSum();
@@ -673,6 +768,8 @@ export default {
           type: null,
           brand: null,
           parameter: null,
+          id: null,
+          unitId: null,
         };
         this.dialogpop = false;
       }
@@ -704,9 +801,23 @@ export default {
     },
     //定价
     _handleMasterQuotation() {
+      const {
+        accessoryType,
+        assistCleanType,
+        warrantyPeriodType,
+        technicalCapabilitiesType,
+        preventType,
+        arrivalTimeType,
+      } = this.orderDetail;
       this.param.programme = this.programmes;
       let param = {
         ...this.param,
+        accessoryType,
+        assistCleanType,
+        warrantyPeriodType,
+        technicalCapabilitiesType,
+        preventType,
+        arrivalTimeType,
       };
       param.servicePositions = this.repairData(this.faultPartsCheckbox);
       param.type = this.repairData(this.faultTypeCheckbox);
@@ -743,7 +854,7 @@ export default {
     align-items: center;
     margin-bottom: 15px;
     .title {
-      flex: 1;
+      flex: 1.4;
       font-size: 20px;
       color: #707070;
       font-weight: 700;

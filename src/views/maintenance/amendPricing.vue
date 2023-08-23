@@ -7,12 +7,13 @@
         <h3>故障类型:</h3>
         <div>
           <el-checkbox-group v-model="faultTypeValue">
-            <el-checkbox :label="1">机械故障</el-checkbox>
-            <el-checkbox :label="2">电气故障</el-checkbox>
-            <el-checkbox :label="3">系统故障</el-checkbox>
+            <el-checkbox label="机械故障">机械故障</el-checkbox>
+            <el-checkbox label="电气故障">电气故障</el-checkbox>
+            <el-checkbox label="系统故障">系统故障</el-checkbox>
           </el-checkbox-group>
         </div>
       </div>
+
       <!-- 故障部位: -->
       <div class="siteOfFailure">
         <h3>故障部位:</h3>
@@ -28,6 +29,68 @@
           </el-checkbox-group>
         </div>
       </div>
+
+      <!-- 增值服务项 -->
+      <h3 class="oneLineTitle">增值服务项</h3>
+      <div class="faultType">
+        <h3>预防性检测:</h3>
+        <div>
+          <el-radio-group v-model="orderDetails.preventType">
+            <el-radio :label="2">不需要</el-radio>
+            <el-radio :label="1">需要(5%)</el-radio>
+          </el-radio-group>
+        </div>
+      </div>
+      <div class="faultType">
+        <h3>协助清理机台:</h3>
+        <div>
+          <el-radio-group v-model="orderDetails.assistCleanType">
+            <el-radio :label="2">不需要</el-radio>
+            <el-radio :label="1">需要(1%)</el-radio>
+          </el-radio-group>
+        </div>
+      </div>
+      <div class="faultType">
+        <h3>配件:</h3>
+        <div>
+          <el-radio-group v-model="orderDetails.accessoryType">
+            <el-radio :label="1">自备</el-radio>
+            <el-radio :label="2">平台提供(1%)</el-radio>
+          </el-radio-group>
+        </div>
+      </div>
+      <div class="faultType">
+        <h3>到达时间:</h3>
+        <div>
+          <el-radio-group v-model="orderDetails.arrivalTimeType">
+            <el-radio :label="3">当天</el-radio>
+            <el-radio :label="1">1小时(10%)</el-radio>
+            <el-radio :label="2">2小时(5%)</el-radio>
+          </el-radio-group>
+        </div>
+      </div>
+      <div class="faultType">
+        <h3>师傅技术能力:</h3>
+        <div>
+          <el-radio-group v-model="orderDetails.technicalCapabilitiesType">
+            <el-radio :label="3">初级</el-radio>
+            <el-radio :label="2">中级(5%)</el-radio>
+            <el-radio :label="1">高级(10%)</el-radio>
+          </el-radio-group>
+        </div>
+      </div>
+      <div class="faultType">
+        <h3>配件质保时间:</h3>
+        <div>
+          <el-radio-group v-model="orderDetails.warrantyPeriodType">
+            <el-radio :label="1">7天</el-radio>
+            <el-radio :label="2">30天(1%)</el-radio>
+            <el-radio :label="3">90天(2%)</el-radio>
+            <el-radio :label="4">180天(3%)</el-radio>
+          </el-radio-group>
+        </div>
+      </div>
+
       <!-- 解决方案 -->
       <div class="solvePlan">
         <h3>
@@ -72,32 +135,6 @@
           </div>
         </div>
       </div>
-      <!-- 质保周期 -->
-      <!-- <div class="qualityEnsureCycle">
-        <h3>质保周期:</h3>
-        <div>
-          <el-radio-group v-model.number="qualityEnsureCycleValue">
-            <el-radio :label="10">10天</el-radio>
-            <el-radio :label="15">15天</el-radio>
-            <el-radio :label="30">30天</el-radio>
-            <el-radio :label="180">半年</el-radio>
-            <el-radio>其他天数</el-radio>
-          </el-radio-group>
-          <input
-            class="inp"
-            v-model.number="qualityEnsureCycleValue"
-            v-if="
-              qualityEnsureCycleValue !== 10 &&
-                qualityEnsureCycleValue !== 15 &&
-                qualityEnsureCycleValue !== 30 &&
-                qualityEnsureCycleValue !== 180
-            "
-          />
-        </div>
-      </div> -->
-
-      <!-- 分割线 -->
-      <!-- <hr color="#ebebeb" style="margin: 20px 0;" /> -->
 
       <!-- 配件明细 -->
       <div class="accessoriesDetail">
@@ -177,12 +214,10 @@
       </div>
       <!-- 维保报价 -->
       <div class="maintenanceOffer">
-        <h3>维保报价</h3>
+        <h3 style="color: #0b2059;">维保报价</h3>
         <div class="content">
           <div class="item">
-            <span class="title"
-              >上门费用 <i>建议每公里2元,估算距离费用</i></span
-            >
+            <span class="title">人工费 <i>建议每公里2元,估算距离费用</i></span>
             <el-input
               @input="judgeInp('doorAmount')"
               class="inp"
@@ -190,7 +225,7 @@
               placeholder="0.00"
             ></el-input>
           </div>
-          <div class="item">
+          <!-- <div class="item">
             <span class="title">技术服务费<i>含检测和服务费</i></span>
             <el-input
               @input="judgeInp('technologyAmount')"
@@ -198,7 +233,7 @@
               class="inp"
               placeholder="0.00"
             ></el-input>
-          </div>
+          </div> -->
           <div class="item">
             <span>配件费</span>
             <el-input
@@ -208,7 +243,7 @@
               placeholder="0.00"
             ></el-input>
           </div>
-          <div class="item">
+          <!-- <div class="item">
             <span>其他费用</span>
             <el-input
               @input="judgeInp('otherAmount')"
@@ -216,7 +251,7 @@
               v-model="otherAmount"
               placeholder="0.00"
             ></el-input>
-          </div>
+          </div> -->
           <div class="item">
             <span>合计</span>
             <span class="text" style="color: red;">{{ priceSum }}元</span>
@@ -228,15 +263,13 @@
     <!-- 底部工具栏 -->
     <div class="toolBottom">
       <el-button
-        style="width: 170px;border: 1px solid #2e4c9e;color: #2e4c9e;"
+        class="toolBottom_cancel"
         @click="
           $router.push('/maintenance/maintenance_order_desc?orderSn=' + orderSn)
         "
         >取消</el-button
       >
-      <el-button
-        style="width: 170px;background-color: #2e4c9e;color: #fff;"
-        @click="confirmEditBtn"
+      <el-button class="toolBottom_comfirm" @click="confirmEditBtn"
         >确定修改</el-button
       >
     </div>
@@ -305,123 +338,80 @@
     <!-- 新增配件 -->
     <el-dialog
       :visible="addAccessoriesDialog"
-      width="30%"
+      width="35%"
       :before-close="closeAddAccessoriesDialog"
       :close-on-click-modal="false"
     >
-      <div slot="title" style="font-weight:700 ;color: #707070;">
+      <div slot="title" style="font-weight:700 ;color: #707070;font-size:20px">
         {{ accessoriesTitle }}
       </div>
       <el-form
+        label-width="80px"
+        label-position="right"
         :model="accessoriesForm"
         :rules="accessoriesRules"
         ref="accessoriesForm"
       >
-        <el-form-item label="配件采购" prop="type">
+        <el-form-item label="配件选择">
+          <el-radio-group
+            v-model="accessoriesForm.choose"
+            @input="changeChoose"
+          >
+            <el-radio :label="2">仓库</el-radio>
+            <el-radio :label="1">新增</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item
+          label="配件采购"
+          prop="type"
+          v-if="accessoriesForm.choose != 2"
+        >
           <el-radio-group v-model="accessoriesForm.type">
             <el-radio :label="1">师傅自费</el-radio>
             <el-radio :label="2">平台购买</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="配件品牌" prop="brand">
+        <el-form-item label="勾选配件" v-if="accessoriesForm.choose == 2">
+          <el-input
+            placeholder="点击选择仓库已有的配件"
+            @focus="openChooseStashParts"
+            v-model="accessoriesForm.chooseStashPartsValue"
+          ></el-input>
+        </el-form-item>
+        <el-form-item
+          v-if="accessoriesForm.choose != 2"
+          label="配件品牌"
+          prop="brand"
+        >
           <div class="accessoriesItem">
             <el-input
               v-model="accessoriesForm.brand"
               placeholder="请填写配件品牌"
-              v-if="!searchBrandToggle"
             ></el-input>
-            <el-select
-              clearable
-              v-else
-              v-model="accessoriesForm.brand"
-              filterable
-              remote
-              :remote-method="searchBrand"
-              placeholder="请填写配件品牌"
-            >
-              <el-option
-                v-for="item in searchBrandList"
-                :key="item.id"
-                :label="item.name"
-                :value="item.name"
-              >
-              </el-option>
-            </el-select>
-            <el-button
-              style="margin-left: 5px;font-size: 15px;"
-              @click="searchBrandToggle = !searchBrandToggle"
-              >{{ searchBrandToggle ? "增" : "选" }}</el-button
-            >
           </div>
         </el-form-item>
-        <el-form-item label="配件名称" prop="name">
+        <el-form-item
+          v-if="accessoriesForm.choose != 2"
+          label="配件名称"
+          prop="name"
+        >
           <div class="accessoriesItem">
             <el-input
               v-model="accessoriesForm.name"
               placeholder="请填写配件名称"
-              v-if="!searchNameToggle"
             ></el-input>
-            <el-select
-              clearable
-              v-else
-              v-model="accessoriesForm.name"
-              filterable
-              remote
-              @change="
-                () => {
-                  accessoriesForm.parameter = null;
-                }
-              "
-              :remote-method="searchName"
-              placeholder="请填写配件名称"
-            >
-              <el-option
-                v-for="item in searchNameList"
-                :key="item"
-                :label="item"
-                :value="item"
-              >
-              </el-option>
-            </el-select>
-            <el-button
-              style="margin-left: 5px;font-size: 15px;"
-              @click="searchNameToggle = !searchNameToggle"
-              >{{ searchNameToggle ? "增" : "选" }}</el-button
-            >
           </div>
         </el-form-item>
-
-        <el-form-item label="配件参数" prop="parameter">
+        <el-form-item
+          v-if="accessoriesForm.choose != 2"
+          label="配件参数"
+          prop="parameter"
+        >
           <div class="accessoriesItem">
             <el-input
               v-model="accessoriesForm.parameter"
               placeholder="请填写配件参数"
-              v-if="!searchParameterToggle"
             ></el-input>
-            <el-select
-              clearable
-              v-else
-              v-model="accessoriesForm.parameter"
-              filterable
-              remote
-              @focus="searchParameterFocus"
-              :disabled="!accessoriesForm.name"
-              :remote-method="searchParameter"
-              placeholder="请填写配件参数"
-            >
-              <el-option
-                v-for="item in searchParameterList"
-                :key="item"
-                :label="item"
-                :value="item"
-              >
-              </el-option>
-            </el-select>
-            <el-button
-              style="margin-left: 5px;font-size: 15px;"
-              @click="searchParameterToggle = !searchParameterToggle"
-              >{{ searchParameterToggle ? "增" : "选" }}</el-button
-            >
           </div>
         </el-form-item>
         <el-form-item label="配件单价" prop="price">
@@ -456,6 +446,42 @@
         </div>
       </span></el-dialog
     >
+
+    <!-- 选择仓库配件 -->
+    <el-dialog
+      title="选择仓库配件"
+      :close-on-click-modal="false"
+      :visible="chooseStashPartsVisible"
+      :before-close="closeChooseStashParts"
+      center
+    >
+      <div style="display: flex;align-items: center;margin-bottom: 10px;">
+        <el-input
+          placeholder="请输入商品名称查询"
+          style="width: 20vw;margin-right: 10px;"
+          v-model="jdProductListQuery"
+        ></el-input>
+        <el-button @click="queryJdProductList">搜索</el-button>
+      </div>
+      <el-table
+        height="400px"
+        highlight-current-row
+        :data="stashPartsData"
+        @current-change="changeStashParts"
+      >
+        <el-table-column type="index"></el-table-column>
+        <el-table-column label="商品名称" property="name"> </el-table-column>
+        <el-table-column label="品牌名称" property="brandName">
+        </el-table-column>
+        <el-table-column label="规格型号" property="model"> </el-table-column>
+      </el-table>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeChooseStashParts">取 消</el-button>
+        <el-button type="primary" @click="comfirmChooseStashParts"
+          >确 定</el-button
+        >
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -463,7 +489,6 @@
 import {
   editRepairOrder,
   queryDevicePositionList,
-  queryDeviceBrandList,
   queryJdProductList,
 } from "@/api/order"; //故障部位列表
 import { getRepairOrderDetail } from "@/api/user";
@@ -471,13 +496,10 @@ import { getRepairOrderDetail } from "@/api/user";
 export default {
   data() {
     return {
-      searchNameToggle: true,
-      searchParameterToggle: true,
-      searchBrandToggle: true,
-
-      searchNameList: [],
-      searchParameterList: [],
-      searchBrandList: [], //查询设备品牌的列表
+      chooseStashPartData: [],
+      stashPartsData: [],
+      jdProductListQuery: "",
+      chooseStashPartsVisible: false,
 
       orderSn: null,
       editIndex: null,
@@ -500,7 +522,6 @@ export default {
 
       addSolvePlanDialog: false, //新增方案弹窗
       addSolvePlanDialogTitle: "新增解决方案",
-      activeName: "故障描述", //新增方案标签页默认
       active: 1, //点击tabs的状态
       addSolvePlanList: {
         //方案的表格数据
@@ -510,14 +531,17 @@ export default {
       },
 
       addAccessoriesDialog: false, //新增配件弹窗
+
       accessoriesForm: {
         // 新增配件的数据
+        type: null,
         name: "",
         price: "",
         num: "",
-        type: null,
         brand: null,
         parameter: null,
+        choose: 2,
+        chooseStashPartsValue: "",
       },
 
       accessoriesRules: {
@@ -549,45 +573,65 @@ export default {
     };
   },
   methods: {
-    // 聚焦触发查询规格
-    async searchParameterFocus() {
-      const res = await queryJdProductList({
-        name: this.accessoriesForm.name,
-        model: "",
-        type: 2,
-      });
-      this.searchParameterList = res.data;
-    },
-    // 查询名称规格
-    async searchName(name) {
-      const res = await queryJdProductList({
-        name,
-        type: 1,
-      });
-      this.searchNameList = res.data;
-    },
-    async searchParameter(model) {
-      const res = await queryJdProductList({
-        name: this.accessoriesForm.name,
+    // 确定选择仓库配件
+    comfirmChooseStashParts() {
+      const {
+        brandId,
+        brandName,
         model,
-        type: 2,
-      });
-      this.searchParameterList = res.data;
-    },
-
-    // 查询设备品牌
-    async searchBrand(name) {
-      const res = await queryDeviceBrandList({
         name,
-      });
-      this.searchBrandList = res.data;
+        id,
+        unitId,
+      } = this.chooseStashPartData;
+      this.accessoriesForm.chooseStashPartsValue =
+        name + "/" + brandName + "/" + model;
+      this.closeChooseStashParts();
+      this.accessoriesForm.id = id;
+      this.accessoriesForm.brand = brandName;
+      this.accessoriesForm.brandId = brandId;
+      this.accessoriesForm.parameter = model;
+      this.accessoriesForm.name = name;
+      this.accessoriesForm.unitId = unitId;
     },
-
+    // 选中仓库配件的数据
+    changeStashParts(val) {
+      this.chooseStashPartData = val;
+    },
+    // 查询金蝶仓库
+    async queryJdProductList() {
+      const res = await queryJdProductList({
+        query: this.jdProductListQuery,
+      });
+      this.stashPartsData = res.data;
+    },
+    // 修改配件选择
+    changeChoose() {
+      this.accessoriesForm.type = null;
+      this.accessoriesForm.price = "";
+      this.accessoriesForm.num = "";
+      this.$refs["accessoriesForm"].clearValidate();
+    },
+    // 关闭选择仓库配件框
+    closeChooseStashParts() {
+      this.jdProductListQuery = "";
+      this.chooseStashPartData = [];
+      this.chooseStashPartsVisible = false;
+    },
+    // 打开选择仓库配件框
+    async openChooseStashParts() {
+      const loading = this.$loading({
+        lock: true,
+        text: "Loading",
+        spinner: "el-icon-loading",
+      });
+      await this.queryJdProductList();
+      this.chooseStashPartsVisible = true;
+      loading.close();
+    },
     // 点击编辑配件
     editAccessories(item, index) {
       this.accessoriesTitle = "编辑配件";
       this.accessoriesForm = { ...item, index };
-      console.log(581, this.accessoriesForm);
       this.addAccessoriesDialog = true;
     },
     // 算配件总价
@@ -607,42 +651,39 @@ export default {
         });
       }
     },
-    // 改造数据方案
-    repairData(arr) {
-      let str = null;
-      if (Array.isArray(arr)) {
-        arr.forEach((el, index) => {
-          if (index === 0) {
-            str = "" + el;
-          } else {
-            str = str + "," + el;
-          }
-        });
-      }
-      return str;
-    },
     // 确定修改的按钮
     async confirmEditBtn() {
+      const {
+        accessoryType,
+        assistCleanType,
+        warrantyPeriodType,
+        technicalCapabilitiesType,
+        preventType,
+        arrivalTimeType,
+      } = this.orderDetails;
       let data = {
         orderSn: this.orderSn,
         warrantyTime: this.qualityEnsureCycleValue,
-        parts: [],
-        programme: [],
+        parts: JSON.stringify(this.accessoriesList),
+        programme: JSON.stringify(this.solvePlanList),
         partsAmount: +this.partsAmount,
         doorAmount: +this.doorAmount,
         technologyAmount: +this.technologyAmount,
         otherAmount: +this.otherAmount,
+        type: this.faultTypeValue.join(","),
+        servicePositions: this.siteOfFailureValue.join(","),
+        accessoryType,
+        assistCleanType,
+        warrantyPeriodType,
+        technicalCapabilitiesType,
+        preventType,
+        arrivalTimeType,
       };
-      data.servicePositions = this.repairData(this.siteOfFailureValue);
-      data.type = this.repairData(this.faultTypeValue);
-      data.parts = JSON.stringify(this.accessoriesList);
-      data.programme = JSON.stringify(this.solvePlanList);
       const res = await editRepairOrder(data);
-      console.log(res);
       if (res.message === "操作成功") {
-        this.$router.push(
-          "/maintenance/maintenance_order_desc?orderSn=" + this.orderSn
-        );
+        const route =
+          "/maintenance/maintenance_order_desc?orderSn=" + this.orderSn;
+        this.$router.push(route);
         this.$message({
           showClose: true,
           message: res.message,
@@ -672,33 +713,26 @@ export default {
         type: null,
         brand: null,
         parameter: null,
+        choose: 2,
+        id: null,
       };
-      this.$refs.accessoriesForm.resetFields();
+      this.accessoriesForm.chooseStashPartsValue = "";
       this.addAccessoriesDialog = false;
+      // this.$refs["accessoriesForm"].resetFields();
     },
     // 新增配件确定
     async addAccessoriesComfirm(index) {
+      if (this.accessoriesForm.choose === 2) {
+        this.accessoriesForm.type = 2;
+      }
+
       await this.$refs.accessoriesForm.validate();
       if (this.accessoriesTitle === "新增配件") {
-        let brandId = null;
-        this.searchBrandList.forEach((item) => {
-          if (item.name === this.accessoriesForm.brand) {
-            brandId = item.id;
-            return;
-          }
-        });
-        if (this.accessoriesList === null) {
+        if (!this.accessoriesList) {
           this.accessoriesList = [];
         }
-        this.accessoriesList.push({ ...this.accessoriesForm, brandId });
+        this.accessoriesList.push({ ...this.accessoriesForm });
       } else {
-        let brandId = null;
-        this.searchBrandList.forEach((item) => {
-          if (item.name === this.accessoriesForm.brand) {
-            brandId = item.id;
-            return;
-          }
-        });
         const {
           price,
           num,
@@ -706,17 +740,25 @@ export default {
           name,
           brand,
           parameter,
+          brandId,
+          choose,
+          chooseStashPartsValue,
+          id,
+          unitId,
         } = this.accessoriesForm;
         this.accessoriesList[index] = {
+          id,
           price,
           num,
           type,
           name,
           brand,
           parameter,
+          choose,
           brandId,
+          unitId,
+          chooseStashPartsValue,
         };
-        console.log(713, this.accessoriesList);
         this.againTableRefresh = !this.againTableRefresh;
       }
       this.getAccessoriesSum();
@@ -767,7 +809,6 @@ export default {
         desc: "",
         programme: "",
       };
-      this.activeName = "故障描述";
       this.active = 1;
       this.addSolvePlanDialog = false;
     },
@@ -784,8 +825,9 @@ export default {
     const res = await queryDevicePositionList();
     this.equipmentPosition = res.data;
     this.orderSn = this.$route.query.orderSn;
-    const params = { enterpriseOrderSn: this.orderSn };
-    const { data } = await getRepairOrderDetail(params);
+    const { data } = await getRepairOrderDetail({
+      enterpriseOrderSn: this.orderSn,
+    });
     const {
       type,
       servicePositions,
@@ -799,15 +841,7 @@ export default {
     } = data;
     this.orderDetails = data;
     // 故障类型回显
-    if (type.indexOf("机械故障") !== -1) {
-      this.faultTypeValue.push(1);
-    }
-    if (type.indexOf("电气故障") !== -1) {
-      this.faultTypeValue.push(2);
-    }
-    if (type.indexOf("系统故障") !== -1) {
-      this.faultTypeValue.push(3);
-    }
+    this.faultTypeValue = type ? type.split(",") : [];
     // 故障部位回显
     this.siteOfFailureValue = servicePositions
       ? servicePositions.split(",")
@@ -819,20 +853,43 @@ export default {
     // 配件列表
     this.accessoriesList = partsList;
     // 费用回显
-    this.doorAmount = doorAmount ? doorAmount : 0;
-    this.technologyAmount = technologyAmount ? technologyAmount : 0;
-    this.otherAmount = otherAmount ? otherAmount : 0;
-    this.partsAmount = partsAmount ? partsAmount : 0;
+    this.doorAmount = doorAmount || 0;
+    this.technologyAmount = technologyAmount || 0;
+    this.otherAmount = otherAmount || 0;
+    this.partsAmount = partsAmount || 0;
     loading.close();
   },
   computed: {
     priceSum() {
-      const num =
-        +this.doorAmount +
-        +this.technologyAmount +
-        +this.otherAmount +
-        +this.partsAmount;
-      return num ? num.toFixed(2) : "0.00";
+      const coefficientMap = {
+        accessoryType: { 2: 0.01 },
+        assistCleanType: { 1: 0.01 },
+        warrantyPeriodType: { 2: 0.01, 3: 0.02, 4: 0.03 },
+        technicalCapabilitiesType: { 1: 0.1, 2: 0.05 },
+        preventType: { 1: 0.05 },
+        arrivalTimeType: { 1: 0.1, 2: 0.05 },
+      };
+
+      let addSum = 0;
+
+      for (const condition in coefficientMap) {
+        if (condition == "accessoryType") {
+          if (coefficientMap[condition][this.orderDetails[condition]]) {
+            addSum +=
+              coefficientMap[condition][this.orderDetails[condition]] *
+              this.partsAmount;
+          }
+        } else {
+          if (coefficientMap[condition][this.orderDetails[condition]]) {
+            addSum +=
+              coefficientMap[condition][this.orderDetails[condition]] *
+              this.doorAmount;
+          }
+        }
+      }
+
+      let sum = Number(this.doorAmount) + Number(this.partsAmount) + addSum;
+      return sum.toFixed(2);
     },
   },
 };
@@ -845,8 +902,6 @@ export default {
 }
 
 .accessoriesItem {
-  display: flex;
-  margin: 0 75px;
   .label {
     width: 100px;
     font-weight: 700;
@@ -1018,5 +1073,15 @@ export default {
 .toolBottom {
   margin-top: 20px;
   display: flex;
+  .toolBottom_cancel {
+    width: 170px;
+    border: 1px solid #2e4c9e;
+    color: #2e4c9e;
+  }
+  .toolBottom_comfirm {
+    width: 170px;
+    background-color: #2e4c9e;
+    color: #fff;
+  }
 }
 </style>

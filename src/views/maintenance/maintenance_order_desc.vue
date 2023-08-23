@@ -286,15 +286,74 @@
             </div>
           </div>
 
+          <!-- 增值服务项 -->
+          <div class="information">
+            <div class="oneline">
+              <div class="item1">增值服务项:</div>
+              <div class="item2">
+                <div>
+                  预防性检测:
+                  <span>{{
+                    data.preventType == 1 ? "需要(5%)" : "不需要"
+                  }}</span>
+                </div>
+                <div>
+                  协助清理机台:
+                  <span>{{
+                    data.assistCleanType == 1 ? "需要(1%)" : "不需要"
+                  }}</span>
+                </div>
+                <div>
+                  配件类型:
+                  <span>{{
+                    data.accessoryType == 1 ? "自备" : "平台提供(1%)"
+                  }}</span>
+                </div>
+                <div>
+                  到达时间:
+                  <span>{{
+                    data.arrivalTimeType == 1
+                      ? "1小时(10%)"
+                      : data.arrivalTimeType == 2
+                      ? "2小时(5%)"
+                      : "当天"
+                  }}</span>
+                </div>
+                <div>
+                  师傅技术能力:
+                  <span>{{
+                    data.technicalCapabilitiesType == 1
+                      ? "高级(10%)"
+                      : data.technicalCapabilitiesType == 2
+                      ? "中级(5%)"
+                      : "初级"
+                  }}</span>
+                </div>
+                <div>
+                  配件质保时间:
+                  <span>{{
+                    data.warrantyPeriodType == 1
+                      ? "7天"
+                      : data.warrantyPeriodType == 2
+                      ? "30天(1%)"
+                      : data.warrantyPeriodType == 3
+                      ? "90天(2%)"
+                      : "180天(3%)"
+                  }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- 质保周期 -->
-          <div v-if="data.warrantyTime" class="qualityProtectTime">
+          <!-- <div v-if="data.warrantyTime" class="qualityProtectTime">
             <div class="title">质保周期:</div>
             <div class="time">{{ data.warrantyTime }}/天</div>
             <div class="title" style="margin-left: 50px;">预计完成时间:</div>
             <div class="time">
               {{ data.serviceCompleteTime ? data.serviceCompleteTime : "未定" }}
             </div>
-          </div>
+          </div> -->
 
           <!-- 配件明细 -->
           <!-- <div class="accessoriesDetail" v-if="judgeParts()">
@@ -559,27 +618,20 @@
               <div class="item1">订单费用:</div>
               <div class="item2">
                 <div>
-                  上门费用: <span>￥{{ data.doorAmount }}元</span>
+                  人工费: <span>￥{{ data.doorAmount }}元</span>
                 </div>
-                <div>
+                <!-- <div>
                   技术服务费: <span>￥{{ data.technologyAmount }}元</span>
-                </div>
+                </div> -->
                 <div>
                   配件费: <span>￥{{ data.partsAmount }}元</span>
                 </div>
-                <div>
+                <!-- <div>
                   其他费用: <span>￥{{ data.otherAmount }}元</span>
-                </div>
+                </div> -->
                 <div>
                   合计:
-                  <span style="color: red;"
-                    >￥{{
-                      data.doorAmount +
-                        data.technologyAmount +
-                        data.partsAmount +
-                        data.otherAmount
-                    }}元</span
-                  >
+                  <span style="color: red;">￥{{ data.totalAmount }}元</span>
                 </div>
               </div>
             </div>
@@ -886,6 +938,7 @@
 .people {
   display: flex;
   margin-bottom: 20px;
+  font-size: 20px;
   .createPeople,
   .handlePeople {
     display: flex;
@@ -893,7 +946,6 @@
     align-items: center;
     .title {
       color: #707070;
-      font-size: 20px;
       font-weight: 700;
       margin-right: 30px;
     }
@@ -1063,7 +1115,7 @@
     margin-bottom: 30px;
     .item1,
     .item3 {
-      width: 150px;
+      width: 143px;
       color: #707070;
       font-size: 20px;
       font-weight: 600;
@@ -1100,10 +1152,11 @@
     display: flex;
     align-items: center;
     margin-bottom: 25px;
+    font-size: 20px;
+
     .title {
       width: 150px;
       color: #707070;
-      font-size: 20px;
       font-weight: 600;
     }
 
@@ -1622,7 +1675,6 @@ export default {
       this._getRepairOrderDetail();
       fn(false);
     },
-    // 打款信息的模态框取消的事件
     _getRepairOrderDetail() {
       let params = {
         enterpriseOrderSn: this.orderSn,

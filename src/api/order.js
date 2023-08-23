@@ -436,10 +436,10 @@ export function queryDeviceBrandList(params) {
 }
 
 // 查询金蝶商品
-export function queryJdProductList(data) {
+export function queryJdProductList(params) {
   return request({
     url: "/admin/maintenance/queryJdProductList",
-    method: "post",
-    data,
+    method: "get",
+    params,
   });
 }
