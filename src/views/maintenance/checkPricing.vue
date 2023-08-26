@@ -583,11 +583,29 @@ export default {
         }
       }
 
-      const sum = Number(doorAmount) + Number(partsAmount) + addSum;
+      let sum = Number(doorAmount) + Number(partsAmount) + addSum;
+      // 需要判断一个非工作时间
+      sum = this.judgNoWorkTime(sum, doorAmount);
       return sum.toFixed(2);
     },
   },
   methods: {
+    // 判断非工作时间
+    judgNoWorkTime(sum, doorAmount) {
+      const currentDateTime = new Date();
+      const dayOfWeek = currentDateTime.getDay(); // 0 = Sunday, 6 = Saturday
+      const currentHour = currentDateTime.getHours();
+
+      if (dayOfWeek === 6 || dayOfWeek === 0) {
+        // 星期六日
+        return sum + doorAmount * 0.2;
+      } else if (currentHour < 8 || currentHour >= 18) {
+        // 判断8点前和6点后
+        return sum + doorAmount * 0.2;
+      } else {
+        return sum;
+      }
+    },
     // 确定选择仓库配件
     comfirmChooseStashParts() {
       const {
