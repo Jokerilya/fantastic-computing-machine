@@ -90,9 +90,18 @@ export function handleMasterPayment(orderSn) {
 }
 
 //合同上传
-export async function uploadButlerOrder(data) {
+export async function uploadButlerOrder(data, num) {
   return request({
-    url: "/admin/maintenance/uploadButlerOrder",
+    url: "/admin/maintenance/uploadButlerOrder?type=" + num,
+    method: "POST",
+    data,
+  });
+}
+
+//合同上传 -- 斯奈克
+export async function uploadButlerOrderByOwn(data) {
+  return request({
+    url: "/admin/maintenance/uploadButlerOrderByOwn?",
     method: "POST",
     data,
   });

@@ -143,79 +143,81 @@
       </el-table>
     </div>
 
-    <!-- 增值服务项 -->
-    <h2 style="color: #0b2059;margin: 20px 0;font-size:24px">
-      增值服务项
-    </h2>
-    <div class="faultSolveProgramme">
-      <div class="lineItem">
-        <div class="title">
-          预防性检测:
+    <div v-if="orderDetail.orderType === 1">
+      <!-- 增值服务项 -->
+      <h2 style="color: #0b2059;margin: 20px 0;font-size:24px">
+        增值服务项
+      </h2>
+      <div class="faultSolveProgramme">
+        <div class="lineItem">
+          <div class="title">
+            预防性检测:
+          </div>
+          <div class="content">
+            <el-radio-group v-model="orderDetail.preventType">
+              <el-radio :label="2">不需要</el-radio>
+              <el-radio :label="1">需要(5%)</el-radio>
+            </el-radio-group>
+          </div>
         </div>
-        <div class="content">
-          <el-radio-group v-model="orderDetail.preventType">
-            <el-radio :label="2">不需要</el-radio>
-            <el-radio :label="1">需要(5%)</el-radio>
-          </el-radio-group>
+        <div class="lineItem">
+          <div class="title">
+            协助清理机台:
+          </div>
+          <div class="content">
+            <el-radio-group v-model="orderDetail.assistCleanType">
+              <el-radio :label="2">不需要</el-radio>
+              <el-radio :label="1">需要(1%)</el-radio>
+            </el-radio-group>
+          </div>
         </div>
-      </div>
-      <div class="lineItem">
-        <div class="title">
-          协助清理机台:
+        <div class="lineItem">
+          <div class="title">
+            配件:
+          </div>
+          <div class="content">
+            <el-radio-group v-model="orderDetail.accessoryType">
+              <el-radio :label="1">自备</el-radio>
+              <el-radio :label="2">平台提供(1%)</el-radio>
+            </el-radio-group>
+          </div>
         </div>
-        <div class="content">
-          <el-radio-group v-model="orderDetail.assistCleanType">
-            <el-radio :label="2">不需要</el-radio>
-            <el-radio :label="1">需要(1%)</el-radio>
-          </el-radio-group>
+        <div class="lineItem">
+          <div class="title">
+            到达时间:
+          </div>
+          <div class="content">
+            <el-radio-group v-model="orderDetail.arrivalTimeType">
+              <el-radio :label="3">当天</el-radio>
+              <el-radio :label="1">1小时(10%)</el-radio>
+              <el-radio :label="2">2小时(5%)</el-radio>
+            </el-radio-group>
+          </div>
         </div>
-      </div>
-      <div class="lineItem">
-        <div class="title">
-          配件:
+        <div class="lineItem">
+          <div class="title">
+            师傅技术能力:
+          </div>
+          <div class="content">
+            <el-radio-group v-model="orderDetail.technicalCapabilitiesType">
+              <el-radio :label="3">初级</el-radio>
+              <el-radio :label="2">中级(5%)</el-radio>
+              <el-radio :label="1">高级(10%)</el-radio>
+            </el-radio-group>
+          </div>
         </div>
-        <div class="content">
-          <el-radio-group v-model="orderDetail.accessoryType">
-            <el-radio :label="1">自备</el-radio>
-            <el-radio :label="2">平台提供(1%)</el-radio>
-          </el-radio-group>
-        </div>
-      </div>
-      <div class="lineItem">
-        <div class="title">
-          到达时间:
-        </div>
-        <div class="content">
-          <el-radio-group v-model="orderDetail.arrivalTimeType">
-            <el-radio :label="3">当天</el-radio>
-            <el-radio :label="1">1小时(10%)</el-radio>
-            <el-radio :label="2">2小时(5%)</el-radio>
-          </el-radio-group>
-        </div>
-      </div>
-      <div class="lineItem">
-        <div class="title">
-          师傅技术能力:
-        </div>
-        <div class="content">
-          <el-radio-group v-model="orderDetail.technicalCapabilitiesType">
-            <el-radio :label="3">初级</el-radio>
-            <el-radio :label="2">中级(5%)</el-radio>
-            <el-radio :label="1">高级(10%)</el-radio>
-          </el-radio-group>
-        </div>
-      </div>
-      <div class="lineItem">
-        <div class="title">
-          配件质保时间:
-        </div>
-        <div class="content">
-          <el-radio-group v-model="orderDetail.warrantyPeriodType">
-            <el-radio :label="1">7天</el-radio>
-            <el-radio :label="2">30天(1%)</el-radio>
-            <el-radio :label="3">90天(2%)</el-radio>
-            <el-radio :label="4">180天(3%)</el-radio>
-          </el-radio-group>
+        <div class="lineItem">
+          <div class="title">
+            配件质保时间:
+          </div>
+          <div class="content">
+            <el-radio-group v-model="orderDetail.warrantyPeriodType">
+              <el-radio :label="1">7天</el-radio>
+              <el-radio :label="2">30天(1%)</el-radio>
+              <el-radio :label="3">90天(2%)</el-radio>
+              <el-radio :label="4">180天(3%)</el-radio>
+            </el-radio-group>
+          </div>
         </div>
       </div>
     </div>

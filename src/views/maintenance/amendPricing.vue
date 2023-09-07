@@ -30,64 +30,66 @@
         </div>
       </div>
 
-      <!-- 增值服务项 -->
-      <h3 class="oneLineTitle">增值服务项</h3>
-      <div class="faultType">
-        <h3>预防性检测:</h3>
-        <div>
-          <el-radio-group v-model="orderDetails.preventType">
-            <el-radio :label="2">不需要</el-radio>
-            <el-radio :label="1">需要(5%)</el-radio>
-          </el-radio-group>
+      <div v-if="orderDetails.orderType === 1">
+        <!-- 增值服务项 -->
+        <h3 class="oneLineTitle">增值服务项</h3>
+        <div class="faultType">
+          <h3>预防性检测:</h3>
+          <div>
+            <el-radio-group v-model="orderDetails.preventType">
+              <el-radio :label="2">不需要</el-radio>
+              <el-radio :label="1">需要(5%)</el-radio>
+            </el-radio-group>
+          </div>
         </div>
-      </div>
-      <div class="faultType">
-        <h3>协助清理机台:</h3>
-        <div>
-          <el-radio-group v-model="orderDetails.assistCleanType">
-            <el-radio :label="2">不需要</el-radio>
-            <el-radio :label="1">需要(1%)</el-radio>
-          </el-radio-group>
+        <div class="faultType">
+          <h3>协助清理机台:</h3>
+          <div>
+            <el-radio-group v-model="orderDetails.assistCleanType">
+              <el-radio :label="2">不需要</el-radio>
+              <el-radio :label="1">需要(1%)</el-radio>
+            </el-radio-group>
+          </div>
         </div>
-      </div>
-      <div class="faultType">
-        <h3>配件:</h3>
-        <div>
-          <el-radio-group v-model="orderDetails.accessoryType">
-            <el-radio :label="1">自备</el-radio>
-            <el-radio :label="2">平台提供(1%)</el-radio>
-          </el-radio-group>
+        <div class="faultType">
+          <h3>配件:</h3>
+          <div>
+            <el-radio-group v-model="orderDetails.accessoryType">
+              <el-radio :label="1">自备</el-radio>
+              <el-radio :label="2">平台提供(1%)</el-radio>
+            </el-radio-group>
+          </div>
         </div>
-      </div>
-      <div class="faultType">
-        <h3>到达时间:</h3>
-        <div>
-          <el-radio-group v-model="orderDetails.arrivalTimeType">
-            <el-radio :label="3">当天</el-radio>
-            <el-radio :label="1">1小时(10%)</el-radio>
-            <el-radio :label="2">2小时(5%)</el-radio>
-          </el-radio-group>
+        <div class="faultType">
+          <h3>到达时间:</h3>
+          <div>
+            <el-radio-group v-model="orderDetails.arrivalTimeType">
+              <el-radio :label="3">当天</el-radio>
+              <el-radio :label="1">1小时(10%)</el-radio>
+              <el-radio :label="2">2小时(5%)</el-radio>
+            </el-radio-group>
+          </div>
         </div>
-      </div>
-      <div class="faultType">
-        <h3>师傅技术能力:</h3>
-        <div>
-          <el-radio-group v-model="orderDetails.technicalCapabilitiesType">
-            <el-radio :label="3">初级</el-radio>
-            <el-radio :label="2">中级(5%)</el-radio>
-            <el-radio :label="1">高级(10%)</el-radio>
-          </el-radio-group>
+        <div class="faultType">
+          <h3>师傅技术能力:</h3>
+          <div>
+            <el-radio-group v-model="orderDetails.technicalCapabilitiesType">
+              <el-radio :label="3">初级</el-radio>
+              <el-radio :label="2">中级(5%)</el-radio>
+              <el-radio :label="1">高级(10%)</el-radio>
+            </el-radio-group>
+          </div>
         </div>
-      </div>
-      <div class="faultType">
-        <h3>配件质保时间:</h3>
-        <div>
-          <el-radio-group v-model="orderDetails.warrantyPeriodType">
-            <el-radio :label="1">7天</el-radio>
-            <el-radio :label="2">30天(1%)</el-radio>
-            <el-radio :label="3">90天(2%)</el-radio>
-            <el-radio :label="4">180天(3%)</el-radio>
-          </el-radio-group>
+        <div class="faultType">
+          <h3>配件质保时间:</h3>
+          <div>
+            <el-radio-group v-model="orderDetails.warrantyPeriodType">
+              <el-radio :label="1">7天</el-radio>
+              <el-radio :label="2">30天(1%)</el-radio>
+              <el-radio :label="3">90天(2%)</el-radio>
+              <el-radio :label="4">180天(3%)</el-radio>
+            </el-radio-group>
+          </div>
         </div>
       </div>
 

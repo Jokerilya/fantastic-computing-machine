@@ -132,6 +132,9 @@
               <div>
                 设备型号: <span>{{ data.deviceModel }}</span>
               </div>
+              <div>
+                出厂时间: <span>{{ data.factoryTime }}</span>
+              </div>
             </div>
             <div class="item3">企业信息:</div>
             <div class="item4">
@@ -287,7 +290,7 @@
           </div>
 
           <!-- 增值服务项 -->
-          <div class="information">
+          <div class="information" v-if="data.orderType === 1">
             <div class="oneline">
               <div class="item1">增值服务项:</div>
               <div class="item2">

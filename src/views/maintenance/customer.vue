@@ -175,15 +175,43 @@
             <el-button @click="contractBtnFn" class="contractBtn"
               >管家合同模板下载</el-button
             >
-            <el-upload
-              class="upload-demo"
-              action
-              :http-request="httpRequestFn"
-              multiple
-              :show-file-list="false"
-            >
-              <el-button class="importBtn">年保设备批量导入</el-button>
-            </el-upload>
+            <el-dropdown>
+              <el-button type="primary">
+                导入<i class="el-icon-arrow-down el-icon--right"></i>
+              </el-button>
+              <el-dropdown-menu slot="dropdown">
+                <el-upload
+                  class="upload-demo"
+                  action
+                  :http-request="httpRequestFn"
+                  :data="{ num: 1 }"
+                  multiple
+                  :show-file-list="false"
+                >
+                  <el-dropdown-item>斯奈克设备导入</el-dropdown-item>
+                </el-upload>
+                <el-upload
+                  class="upload-demo"
+                  action
+                  :http-request="httpRequestFn"
+                  :data="{ num: 2 }"
+                  multiple
+                  :show-file-list="false"
+                >
+                  <el-dropdown-item>年保设备导入</el-dropdown-item>
+                </el-upload>
+                <el-upload
+                  class="upload-demo"
+                  action
+                  :http-request="httpRequestFn"
+                  :data="{ num: 3 }"
+                  multiple
+                  :show-file-list="false"
+                >
+                  <el-dropdown-item>年卡设备导入</el-dropdown-item>
+                </el-upload>
+              </el-dropdown-menu>
+            </el-dropdown>
             <span
               style="font-size: 12px;font-weight: 700;color: #606266;margin-left: 15px;"
               >注:请上传.XLSX格式文件合同</span
@@ -422,6 +450,7 @@
     .importBtn {
       background-color: #d4e0ff;
       color: #0b2059;
+      margin-right: 20px;
       font-weight: 700;
     }
   }
@@ -446,7 +475,7 @@ import {
   uploadButlerOrder,
   downloadButlerOrderTemplate,
   handleButlerOrderExport,
-  bindRecommendInfo,
+  uploadButlerOrderByOwn,
 } from "@/api/order.js";
 import tableMixin from "@/mixin/table";
 import { localStorageData } from "@/utils";
@@ -716,30 +745,52 @@ export default {
     },
     // 上传文件的函数
     httpRequestFn(data) {
+      const { num } = data.data;
       const loading = this.$loading({ text: "上传中.." });
       const formData = new FormData();
       formData.append("file", data.file);
-      uploadButlerOrder(formData)
-        .then((res) => {
-          this.$emit("uploadSuc", res.data);
-          this.$message({
-            showClose: true,
-            message: "文件上传成功！",
-            type: "success",
+      // nsk的上传
+      if (num === 1) {
+        uploadButlerOrderByOwn(formData)
+          .then((res) => {
+            this.$emit("uploadSuc", res.data);
+            this.$message({
+              showClose: true,
+              message: "文件上传成功！",
+              type: "success",
+            });
+            loading.close();
+            this._getOrderList();
+          })
+          .catch(() => {
+            this.$message({
+              showClose: true,
+              message: "文件上传失败！",
+              type: "warning",
+            });
+            loading.close();
           });
-          loading.close();
-          this._getOrderList();
-          // this.deviceList.nameplateImg = res.data;
-          // console.log(this.deviceList.nameplateImg, "文件上传");
-        })
-        .catch(() => {
-          this.$message({
-            showClose: true,
-            message: "文件上传失败！",
-            type: "warning",
+      } else {
+        uploadButlerOrder(formData, num)
+          .then((res) => {
+            this.$emit("uploadSuc", res.data);
+            this.$message({
+              showClose: true,
+              message: "文件上传成功！",
+              type: "success",
+            });
+            loading.close();
+            this._getOrderList();
+          })
+          .catch(() => {
+            this.$message({
+              showClose: true,
+              message: "文件上传失败！",
+              type: "warning",
+            });
+            loading.close();
           });
-          loading.close();
-        });
+      }
     },
     // 查询列表的事件
     _getOrderList() {
