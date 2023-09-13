@@ -586,8 +586,10 @@ export default {
       }
 
       let sum = Number(doorAmount) + Number(partsAmount) + addSum;
+      if (this.orderDetail.orderType === 1) {
+        sum = this.judgNoWorkTime(sum, doorAmount);
+      }
       // 需要判断一个非工作时间
-      sum = this.judgNoWorkTime(sum, doorAmount);
       return sum.toFixed(2);
     },
   },

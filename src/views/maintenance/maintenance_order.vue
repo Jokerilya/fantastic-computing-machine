@@ -11,7 +11,7 @@
         label-position="right"
       >
         <el-row :gutter="20">
-          <el-col :span="4">
+          <el-col :span="6">
             <el-form-item label="师傅名称">
               <el-select
                 v-model="searchForm.masterUid"
@@ -29,7 +29,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="4">
+          <el-col :span="6">
             <el-form-item label="订单状态">
               <el-select v-model="searchForm.status" placeholder="请选择">
                 <el-option
@@ -41,7 +41,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="4">
+          <el-col :span="6">
             <el-form-item label="企业名称">
               <el-input
                 v-model="searchForm.enterpriseName"
@@ -49,7 +49,7 @@
               ></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="4">
+          <el-col :span="6">
             <el-form-item label="设备编码">
               <el-input
                 v-model="searchForm.no"
@@ -57,11 +57,35 @@
               ></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="4">
+          <el-col :span="6">
             <el-form-item label="订单类型">
               <el-select v-model="searchForm.orderType" placeholder="请选择">
                 <el-option label="散单" :value="1">散单</el-option>
                 <el-option label="年保" :value="2">年保</el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="订单编号">
+              <el-input
+                v-model="searchForm.orderSn"
+                placeholder="订单编号"
+              ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="平台状态">
+              <el-select
+                v-model="searchForm.platformStatus"
+                placeholder="请选择"
+              >
+                <el-option label="师傅取消" :value="-1">师傅取消</el-option>
+                <el-option label="待检测定价" :value="0">待检测定价</el-option>
+                <el-option label="待派发" :value="1">待派发</el-option>
+                <el-option label="待审核定价" :value="2">待审核定价</el-option>
+                <el-option label="待打款至师傅" :value="3"
+                  >待打款至师傅</el-option
+                >
               </el-select>
             </el-form-item>
           </el-col>
@@ -303,11 +327,19 @@
           align="center"
         >
         </el-table-column>
-        <el-table-column label="操作" width="150" fixed="right" align="center">
+        <el-table-column label="操作" width="220" fixed="right" align="center">
           <template slot-scope="{ row }">
             <div class="settings">
               <el-button type="info" size="mini" plain @click="queryDesc(row)"
                 >详情</el-button
+              >
+              <el-button
+                type="info"
+                size="mini"
+                plain
+                v-if="row.orderType == 1"
+                @click="openConvertToInsurance(row.orderSn)"
+                >转年保</el-button
               >
               <el-button
                 type="info"
@@ -401,6 +433,26 @@
       <span slot="footer" class="dialog-footer">
         <el-button @click="closeRemarksDialog">取 消</el-button>
         <el-button type="primary" @click="comfirmRemarks">确 定</el-button>
+      </span>
+    </el-dialog>
+
+    <!-- 转年保框 -->
+    <el-dialog
+      title="散单转年保"
+      width="30%"
+      :visible="openConvertToInsuranceShow"
+      :before-close="closeConvertToInsurance"
+      center
+    >
+      <el-input
+        :rows="4"
+        placeholder="请输入设备编号"
+        v-model="convertToInsuranceparams.no"
+      >
+      </el-input>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeConvertToInsurance">取 消</el-button>
+        <el-button type="primary" @click="convertToInsurance">确 定</el-button>
       </span>
     </el-dialog>
 
@@ -521,6 +573,7 @@ import {
   downloadBatchRepairOrderTemplate,
   handleRepairOrderExport,
   handleRepairRemarks,
+  convertToInsurance,
 } from "@/api/order.js";
 // import tableMixin from "@/mixin/table";
 import { localStorageData } from "@/utils";
@@ -535,6 +588,11 @@ export default {
         orderSn: null,
       },
       openRemarksShow: false,
+      convertToInsuranceparams: {
+        orderSn: null,
+        no: null,
+      },
+      openConvertToInsuranceShow: false,
 
       exportParams: null,
       searchForm: {
@@ -544,6 +602,8 @@ export default {
         orderType: "",
         enterpriseName: "",
         no: "",
+        platformStatus: "",
+        orderSn: "",
       },
       dataList: [],
       pageCount: null,
@@ -605,6 +665,8 @@ export default {
         status,
         orderType,
         no,
+        orderSn,
+        platformStatus,
       } = queryRepairDataStr;
       this.currentPage = pageNo;
       this.pageSize = pageSize;
@@ -612,6 +674,8 @@ export default {
       this.searchForm.status = status;
       this.searchForm.orderType = orderType;
       this.searchForm.no = no;
+      this.searchForm.orderSn = orderSn;
+      this.searchForm.platformStatus = platformStatus;
     } else {
       this.currentPage = 1;
       this.pageSize = 10;
@@ -621,6 +685,31 @@ export default {
     this._queryRepairOrderList();
   },
   methods: {
+    // 确认散单转年保
+    async convertToInsurance() {
+      const res = await convertToInsurance(this.convertToInsuranceparams);
+      if (res.message === "操作成功") {
+        this.$message({
+          message: "操作成功",
+          type: "success",
+        });
+        this.closeConvertToInsurance();
+        this._queryRepairOrderList();
+      }
+    },
+    // 关闭转年保框
+    closeConvertToInsurance() {
+      this.openConvertToInsuranceShow = false;
+      this.convertToInsuranceparams = {
+        orderSn: null,
+        no: null,
+      };
+    },
+    // 打开转年保框
+    openConvertToInsurance(orderSn) {
+      this.convertToInsuranceparams.orderSn = orderSn;
+      this.openConvertToInsuranceShow = true;
+    },
     // 查询师傅列表
     async searchMaster(val) {
       const res = await getMasterList({
@@ -688,6 +777,8 @@ export default {
         orderType: "",
         enterpriseName: "",
         no: "",
+        platformStatus: "",
+        orderSn: "",
       };
       this._queryRepairOrderList();
     },

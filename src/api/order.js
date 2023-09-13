@@ -452,3 +452,12 @@ export function queryJdProductList(params) {
     params,
   });
 }
+
+// 散单转年保
+export function convertToInsurance(params) {
+  return request({
+    url: "/admin/maintenance/convertToInsurance",
+    method: "get",
+    params,
+  });
+}

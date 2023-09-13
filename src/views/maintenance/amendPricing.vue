@@ -907,7 +907,9 @@ export default {
       }
 
       let sum = Number(this.doorAmount) + Number(this.partsAmount) + addSum;
-      sum = this.judgNoWorkTime(sum, this.doorAmount);
+      if (this.orderDetails.orderType === 1) {
+        sum = this.judgNoWorkTime(sum, this.doorAmount);
+      }
       return sum.toFixed(2);
     },
   },
