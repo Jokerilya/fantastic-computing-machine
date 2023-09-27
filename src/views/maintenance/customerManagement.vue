@@ -204,6 +204,8 @@ import {
 export default {
   data() {
     return {
+      copyId: null,
+
       statusValue: null,
       chooseAuditVisible: false,
       customerApplyVisitId: null,
@@ -243,7 +245,7 @@ export default {
       });
       if (res.message === "操作成功") {
         this.closeChooseAuditDialog();
-        this.openAuditDialog();
+        this.openAuditDialog(this.copyId);
       }
     },
     /* 关闭 */
@@ -283,6 +285,7 @@ export default {
     },
     //打开跟进审核框
     async openAuditDialog(id) {
+      this.copyId = id;
       this.customerApplyVisitId = id;
       const res = await queryCustomerApplyVisitList({
         customerId: id,

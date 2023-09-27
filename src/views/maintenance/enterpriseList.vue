@@ -97,6 +97,13 @@
           width="70"
           align="center"
         ></el-table-column>
+        <el-table-column
+          prop="salesman"
+          label="业务员"
+          show-overflow-tooltip
+          width="70"
+          align="center"
+        ></el-table-column>
         <!-- <el-table-column
         prop="salesmanId"
         label="业务员"
@@ -743,7 +750,8 @@ export default {
     async confirmFn() {
       // 修改设备类型格式
       let str = "";
-      if (this.editForm.deviceTypeIds) {
+      console.log(Array.isArray(this.editForm.deviceTypeIds));
+      if (Array.isArray(this.editForm.deviceTypeIds)) {
         this.editForm.deviceTypeIds.forEach((el, index) => {
           if (index === 0) {
             str = "" + el;

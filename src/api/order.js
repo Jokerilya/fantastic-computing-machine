@@ -454,10 +454,19 @@ export function queryJdProductList(params) {
 }
 
 // 散单转年保
-export function convertToInsurance(params) {
+export function convertToInsurance(data) {
   return request({
     url: "/admin/maintenance/convertToInsurance",
-    method: "get",
-    params,
+    method: "post",
+    data,
+  });
+}
+
+// 标记散单完成
+export function markOrderCompletion(data) {
+  return request({
+    url: "/admin/maintenance/markOrderCompletion",
+    method: "post",
+    data,
   });
 }

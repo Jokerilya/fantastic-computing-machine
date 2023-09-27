@@ -327,7 +327,7 @@
           align="center"
         >
         </el-table-column>
-        <el-table-column label="操作" width="220" fixed="right" align="center">
+        <el-table-column label="操作" width="350" fixed="right" align="center">
           <template slot-scope="{ row }">
             <div class="settings">
               <el-button type="info" size="mini" plain @click="queryDesc(row)"
@@ -339,7 +339,20 @@
                 plain
                 v-if="row.orderType == 1"
                 @click="openConvertToInsurance(row.orderSn)"
-                >转年保</el-button
+                >转类型</el-button
+              >
+              <el-button
+                type="info"
+                size="mini"
+                plain
+                style=""
+                v-if="
+                  row.orderType == 1 &&
+                    row.mainStatus >= 3 &&
+                    row.mainStatus < 6
+                "
+                @click="markOrderCompletion(row.orderSn)"
+                >标记完成</el-button
               >
               <el-button
                 type="info"
@@ -444,12 +457,22 @@
       :before-close="closeConvertToInsurance"
       center
     >
-      <el-input
-        :rows="4"
-        placeholder="请输入设备编号"
-        v-model="convertToInsuranceparams.no"
-      >
-      </el-input>
+      <el-form>
+        <el-form-item label="类型选择" label-width="70px">
+          <el-radio-group v-model="convertToInsuranceparams.type">
+            <el-radio :label="2">转年保</el-radio>
+            <el-radio :label="3">转年卡</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="设备编号" label-width="70px">
+          <el-input
+            :rows="4"
+            placeholder="请输入设备编号"
+            v-model="convertToInsuranceparams.no"
+          >
+          </el-input>
+        </el-form-item>
+      </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="closeConvertToInsurance">取 消</el-button>
         <el-button type="primary" @click="convertToInsurance">确 定</el-button>
@@ -574,6 +597,7 @@ import {
   handleRepairOrderExport,
   handleRepairRemarks,
   convertToInsurance,
+  markOrderCompletion,
 } from "@/api/order.js";
 // import tableMixin from "@/mixin/table";
 import { localStorageData } from "@/utils";
@@ -591,6 +615,7 @@ export default {
       convertToInsuranceparams: {
         orderSn: null,
         no: null,
+        type: null,
       },
       openConvertToInsuranceShow: false,
 
@@ -685,6 +710,24 @@ export default {
     this._queryRepairOrderList();
   },
   methods: {
+    // 标记散单完成
+    markOrderCompletion(orderSn) {
+      this.$confirm("你确定标记散单已完成", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then(async () => {
+        const res = await markOrderCompletion({ orderSn });
+        if (res.message === "操作成功") {
+          this.$message({
+            message: "操作成功",
+            type: "success",
+          });
+          this.closeConvertToInsurance();
+          this._queryRepairOrderList();
+        }
+      });
+    },
     // 确认散单转年保
     async convertToInsurance() {
       const res = await convertToInsurance(this.convertToInsuranceparams);

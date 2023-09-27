@@ -185,11 +185,12 @@
           >
             <div class="title">设备视图:</div>
             <div>
-              <img
+              <el-image
                 v-for="item in data.pictureList"
                 :key="item"
                 :src="item"
-                style="width: 200px;height: 200px;"
+                style="width: 300px;height: 300px;margin-right:40px;"
+                :preview-src-list="data.pictureList"
               />
               <video
                 style="margin-right:40px;"
@@ -507,19 +508,32 @@
               style="display: flex;justify-content: space-between;align-items: center;width: 250px;"
             >
               <div>客户评价:</div>
-              <div
-                v-if="data.repairComment.comprehensiveScore === 1"
-                style="color:#00b974;"
-              >
-                已好评
-              </div>
-              <div v-else style="color: #ff5000;">已差评</div>
             </div>
             <div class="descPic">
-              <div class="item" v-if="data.repairComment.content">
-                <div class="label">评价描述:</div>
-                <div class="desc">
-                  {{ data.repairComment.content }}
+              <div class="item">
+                <div class="label">师傅的着装是否规范:</div>
+                <div>
+                  {{
+                    data.repairComment.dressEvaluate === 0 ? "不规范" : "规范"
+                  }}
+                </div>
+              </div>
+              <div class="item">
+                <div class="label">对师傅服务是否满意:</div>
+                <div>
+                  {{
+                    data.repairComment.serviceEvaluate === 0 ? "不满意" : "满意"
+                  }}
+                </div>
+              </div>
+              <div class="item">
+                <div class="label">师傅的上门是否及时:</div>
+                <div>
+                  {{
+                    data.repairComment.punctualityEvaluate === 0
+                      ? "不及时"
+                      : "及时"
+                  }}
                 </div>
               </div>
               <div class="item" v-if="repairCommentImage">
@@ -864,11 +878,11 @@
       font-size: 18px;
       margin-bottom: 15px;
       .label {
-        margin-right: 90px;
         color: #707070;
+        width: 220px;
       }
       .label1 {
-        margin-right: 50px;
+        width: 220px;
         color: #707070;
       }
     }
@@ -1105,7 +1119,7 @@
   display: flex;
   margin: 20px 0;
   .title {
-    width: 150px;
+    width: 220px;
     color: #707070;
     font-size: 20px;
     font-weight: 600;
@@ -1118,7 +1132,7 @@
     margin-bottom: 30px;
     .item1,
     .item3 {
-      width: 143px;
+      width: 220px;
       color: #707070;
       font-size: 20px;
       font-weight: 600;
