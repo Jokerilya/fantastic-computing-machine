@@ -329,29 +329,30 @@
               >
               <div>
                 <el-select
+                  v-model="row.abc"
                   placeholder="更多"
                   style="width: 71px;margin-left: 10px;"
                   size="mini"
                 >
-                  <el-option v-show="!row.isLock">
+                  <el-option v-show="!row.isLock" value="1">
                     <el-button @click="isLock(row)" size="mini" type="danger"
                       >锁定</el-button
                     >
                   </el-option>
-                  <el-option v-show="row.isLock">
+                  <el-option v-show="row.isLock" value="2">
                     <el-button size="mini" @click="isLock(row)" type="success"
                       >解锁</el-button
                     >
                   </el-option>
-                  <el-option v-if="!(row.status == 2)">
+                  <el-option v-if="!(row.status == 2)" value="3">
                     <el-button size="mini" @click="open(row)">审核</el-button>
                   </el-option>
-                  <el-option>
+                  <el-option value="1">
                     <el-button type="info" size="mini" @click="checkTeam(row)"
                       >成员</el-button
                     >
                   </el-option>
-                  <el-option v-if="row.identity === '普通师傅'">
+                  <el-option v-if="row.identity === '普通师傅'" value="4">
                     <el-button
                       size="mini"
                       type="success"
@@ -359,14 +360,14 @@
                       >角色</el-button
                     >
                   </el-option>
-                  <el-option v-if="row.identity !== '普通师傅'">
+                  <el-option v-if="row.identity !== '普通师傅'" value="5">
                     <el-button
                       size="mini"
                       @click="open_integral_dialog(row.uid)"
                       >钻石</el-button
                     >
                   </el-option>
-                  <el-option v-if="row.identity !== '普通师傅'">
+                  <el-option v-if="row.identity !== '普通师傅'" value="6">
                     <el-button size="mini" @click="open_score_dialog(row.uid)"
                       >分值</el-button
                     >

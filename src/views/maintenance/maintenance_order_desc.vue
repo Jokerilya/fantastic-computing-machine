@@ -68,7 +68,7 @@
             size="mini"
             type="primary"
             plain
-            v-if="data.enterpriseMainStatus <= 4"
+            v-if="data.platformStatus > 0 && data.enterpriseMainStatus <= 4"
             @click="goAssignedMasterPage"
           >
             指派师傅

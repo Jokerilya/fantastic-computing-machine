@@ -2,25 +2,35 @@
   <section class="app-main">
     <transition name="fade-transform" mode="out-in">
       <!-- <router-view :key="key" /> -->
-	  <keep-alive :include="cachedViews">  <!--这个是新增的-->
-		<router-view></router-view>
-	  </keep-alive>
+      <keep-alive :include="cachedViews">
+        <!--这个是新增的-->
+        <router-view></router-view>
+      </keep-alive>
     </transition>
+
+    <!-- 做一个客服操作的提示 -->
+    <div class="serviceTip">
+      <ServiceTip></ServiceTip>
+    </div>
   </section>
 </template>
 
 <script>
+import ServiceTip from "../components/ServiceTip.vue";
 export default {
-  name: 'AppMain',
+  name: "AppMain",
+  components: {
+    ServiceTip,
+  },
   computed: {
     key() {
-      return this.$route.path
+      return this.$route.path;
     },
-	cachedViews () {   
-	  return this.$store.state.tagsView.cachedViews
-	}
-  }
-}
+    cachedViews() {
+      return this.$store.state.tagsView.cachedViews;
+    },
+  },
+};
 </script>
 
 <style scoped>
@@ -31,8 +41,15 @@ export default {
   position: relative;
   overflow: auto;
 }
-.fixed-header+.app-main {
+.fixed-header + .app-main {
   padding-top: 50px;
+}
+
+.serviceTip {
+  z-index: 4;
+  position: fixed;
+  right: 0px;
+  bottom: 0px;
 }
 
 .hasTagsView {

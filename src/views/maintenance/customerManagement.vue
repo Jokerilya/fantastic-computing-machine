@@ -35,7 +35,7 @@
           ></el-table-column>
           <el-table-column label="设备类型">
             <template slot-scope="{ row }">
-              {{ changDeviceTypeIds(row.deviceTypeIds) }}
+              {{ row.deviceTypeIds }}
             </template>
           </el-table-column>
           <el-table-column
@@ -258,17 +258,18 @@ export default {
       this.customerApplyVisitId = id;
       this.chooseAuditVisible = true;
     },
-    // 转换类型的JSON格式
-    changDeviceTypeIds(deviceTypeIds) {
-      let str = "";
-      if (deviceTypeIds) {
-        let arr = JSON.parse(deviceTypeIds);
-        arr.forEach((item) => {
-          str += item + " ";
-        });
-      }
-      return str == "" ? "暂无" : str;
-    },
+    // // 转换类型的JSON格式
+    // changDeviceTypeIds(deviceTypeIds) {
+    //   let str = "";
+    //   console.log(264, deviceTypeIds);
+    //   if (deviceTypeIds) {
+    //     let arr = JSON.parse(deviceTypeIds);
+    //     arr.forEach((item) => {
+    //       str += item + " ";
+    //     });
+    //   }
+    //   return str == "" ? "暂无" : str;
+    // },
     // 获取客户池
     async queryCustomerPool() {
       const res = await queryCustomerPool({
