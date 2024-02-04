@@ -23,6 +23,7 @@ service.interceptors.request.use(
 
 service.interceptors.response.use(
 	response => {
+		console.log(26,response.data);
 		if (response.config.responseType == 'blob') {
 			return response;
 		} else {

@@ -98,7 +98,7 @@
               >查询</el-button
             >
             <el-button
-              style="margin-right: 10px;"
+              style="margin-right: 10px"
               icon="el-icon-refresh"
               plain
               type="info"
@@ -159,7 +159,7 @@
     </div>
 
     <!-- 空行 -->
-    <div style="height: 16px;"></div>
+    <div style="height: 16px"></div>
 
     <el-card>
       <!-- 维保订单列表表格部分 -->
@@ -348,8 +348,8 @@
                 style=""
                 v-if="
                   row.orderType == 1 &&
-                    row.mainStatus >= 3 &&
-                    row.mainStatus < 6
+                  row.mainStatus >= 3 &&
+                  row.mainStatus < 6
                 "
                 @click="markOrderCompletion(row.orderSn)"
                 >标记完成</el-button
@@ -416,7 +416,7 @@
       <!-- 分页 -->
 
       <!-- @size-change="handleSizeChange" -->
-      <div style="text-align: center;margin-top:20px ;">
+      <div style="text-align: center; margin-top: 20px">
         <el-pagination
           background
           @current-change="updatePageNo"
@@ -1005,7 +1005,7 @@ export default {
         .then(({ data }) => {
           this.typeData = data;
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.info(error);
         });
       this.loading = false;

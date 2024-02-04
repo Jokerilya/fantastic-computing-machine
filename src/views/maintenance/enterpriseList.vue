@@ -5,7 +5,7 @@
     <div class="manage-top">
       <el-form label-width="88px" class="rule-form" label-position="right">
         <el-row :gutter="25">
-          <el-col :span="5" style="padding: 0;">
+          <el-col :span="5" style="padding: 0">
             <el-form-item label="公司名称">
               <el-input
                 placeholder="请输入公司名称"
@@ -13,7 +13,7 @@
               ></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="5" style="padding: 0;">
+          <el-col :span="5" style="padding: 0">
             <el-form-item label="联系电话">
               <el-input
                 placeholder="请输入联系电话"
@@ -21,20 +21,20 @@
               ></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="5" style="padding: 0;">
-            <el-form-item label="推荐人">
+          <el-col :span="5" style="padding: 0">
+            <el-form-item label="业务员">
               <el-select
                 filterable
                 :remote-method="remoteMethod"
                 remote
                 v-model="referencePerson"
-                placeholder="请输入推荐人"
+                placeholder="请输入业务员"
               >
                 <el-option
                   v-for="item in masterOptions"
-                  :key="item.value"
+                  :key="item.id"
                   :label="item.realName"
-                  :value="item.realName"
+                  :value="item.id"
                 >
                 </el-option>
               </el-select>
@@ -64,7 +64,7 @@
     </div>
 
     <!-- 空行 -->
-    <div style="height: 16px;"></div>
+    <div style="height: 16px"></div>
 
     <el-card>
       <!-- 企业列表表格部分 -->
@@ -153,13 +153,11 @@
               v-if="scope.row.businessLicense"
             >
               <el-image
-                style="width:50px;height:50px"
+                style="width: 50px; height: 50px"
                 :src="scope.row.businessLicense"
               ></el-image>
             </a>
-            <div v-else style="font-size: 25px;">
-              /
-            </div>
+            <div v-else style="font-size: 25px">/</div>
           </template>
         </el-table-column>
         <el-table-column
@@ -184,16 +182,16 @@
           align="center"
         >
           <template slot-scope="{ row }">
-            <div v-if="row.enterpriseFlag === 0" style="color: #ccc;">
+            <div v-if="row.enterpriseFlag === 0" style="color: #ccc">
               未认证
             </div>
-            <div v-if="row.enterpriseFlag === 1" style="color: blue;">
+            <div v-if="row.enterpriseFlag === 1" style="color: blue">
               审核中
             </div>
-            <div v-if="row.enterpriseFlag === 2" style="color: green;">
+            <div v-if="row.enterpriseFlag === 2" style="color: green">
               审核成功
             </div>
-            <div v-if="row.enterpriseFlag === 3" style="color: red;">
+            <div v-if="row.enterpriseFlag === 3" style="color: red">
               审核失败
             </div>
           </template>
@@ -316,7 +314,7 @@
               element-loading-spinner="el-icon-loading"
               :data="enpTeamList"
               max-height="700"
-              style="width: 1500px;"
+              style="width: 1500px"
             >
               <el-table-column
                 prop="realName"
@@ -373,13 +371,13 @@
                 </template>
               </el-table-column>
             </el-table>
-            <div style="height: 40px;"></div>
+            <div style="height: 40px"></div>
           </model>
         </el-table-column>
       </el-table>
 
       <!-- 分页部分 -->
-      <div style="margin-top: 20px;display: flex;justify-content: center;">
+      <div style="margin-top: 20px; display: flex; justify-content: center">
         <el-pagination
           background
           @size-change="handleSizeChange"
@@ -414,45 +412,33 @@
         <div class="content">
           <div class="oneLine">
             <div class="item">
-              <div class="title">
-                联系人
-              </div>
+              <div class="title">联系人</div>
               <el-input class="inp" v-model="editForm.maintenancePeople">
               </el-input>
             </div>
             <div class="item">
-              <div class="title">
-                联系电话
-              </div>
+              <div class="title">联系电话</div>
               <el-input class="inp" v-model="editForm.maintenancePhone">
               </el-input>
             </div>
             <div class="item">
-              <div class="title">
-                法人代表
-              </div>
+              <div class="title">法人代表</div>
               <el-input class="inp" v-model="editForm.frname"> </el-input>
             </div>
           </div>
           <div class="oneLine">
             <div class="item">
-              <div class="title">
-                企业名称
-              </div>
+              <div class="title">企业名称</div>
               <el-input class="inp" v-model="editForm.enterpriseName">
               </el-input>
             </div>
             <div class="item">
-              <div class="title">
-                企业地址
-              </div>
+              <div class="title">企业地址</div>
               <el-input class="inp" v-model="editForm.enterpriseAddress">
               </el-input>
             </div>
             <div class="item">
-              <div class="title">
-                纳税人识别号
-              </div>
+              <div class="title">纳税人识别号</div>
               <el-input
                 class="inp"
                 v-model="editForm.taxpayerNo"
@@ -463,9 +449,7 @@
           </div>
           <div class="oneLine">
             <div class="item">
-              <div class="title">
-                设备类型
-              </div>
+              <div class="title">设备类型</div>
               <el-cascader
                 class="inp"
                 :show-all-levels="false"
@@ -503,9 +487,7 @@
               <el-input class="inp" v-model="editForm.regCapital"> </el-input>
             </div> -->
             <div class="item">
-              <div class="title">
-                直推师傅
-              </div>
+              <div class="title">直推师傅</div>
               <el-select
                 filterable
                 :remote-method="remoteMethod"
@@ -524,7 +506,7 @@
               </el-select>
             </div>
 
-            <div class="item" style="position: relative;">
+            <div class="item" style="position: relative">
               <!-- <div class="title" style="flex:3">
                 是否禁用
               </div>
@@ -564,7 +546,7 @@
             </div>
           </div> -->
         </div>
-        <div slot="footer" class="dialog-footer" style="text-align: center;">
+        <div slot="footer" class="dialog-footer" style="text-align: center">
           <el-button @click="closeEditEnterprise">取 消</el-button>
           <el-button type="primary" @click="confirmFn">确 定</el-button>
         </div>
@@ -578,16 +560,26 @@
       width="30%"
       :before-close="auditDialogClose"
     >
-      <div
-        style="text-align: center;display: flex;justify-content: center;align-items: center;"
-      >
-        <div style="margin-right: 20px;font-size: 18px;font-weight: 700;">
-          审核状态:
+      <div class="auditDialog">
+        <div class="auditDialog_line">
+          <div class="auditDialog_line_title">审核状态:</div>
+          <div class="auditDialog_line_inp">
+            <el-select
+              v-model="auditSelect"
+              @change="cleanReason"
+              placeholder="请选择审核状态"
+            >
+              <el-option label="已通过" :value="2"></el-option>
+              <el-option label="已驳回" :value="3"></el-option>
+            </el-select>
+          </div>
         </div>
-        <el-select v-model="auditSelect" placeholder="请选择审核状态">
-          <el-option label="已通过" :value="2"></el-option>
-          <el-option label="已驳回" :value="3"></el-option>
-        </el-select>
+        <div class="auditDialog_line" v-if="auditSelect == 3">
+          <div class="auditDialog_line_title">驳回原因:</div>
+          <div class="auditDialog_line_inp">
+            <el-input placeholder="请输入驳回原因" v-model="reason"></el-input>
+          </div>
+        </div>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="auditDialogClose">取 消</el-button>
@@ -598,6 +590,25 @@
 </template>
 
 <style lang="less" scoped>
+.auditDialog {
+  .auditDialog_line {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+    .auditDialog_line_title {
+      margin-right: 20px;
+      font-size: 18px;
+      font-weight: 700;
+      width: 100px;
+    }
+    .auditDialog_line_inp {
+      flex: 1;
+    }
+  }
+}
+
 .table-wrapper {
   height: calc(100%-200px);
 }
@@ -626,7 +637,7 @@
 
 <script>
 import tableMixin from "@/mixin/table";
-import { getEnterpriseList } from "@/api/user.js";
+import { getEnterpriseList, querySalesmanList } from "@/api/user.js";
 import {
   handleEnterpriseInfoExport,
   queryDeviceTypeList,
@@ -645,6 +656,8 @@ export default {
   mixins: [tableMixin],
   data() {
     return {
+      reason: "", //驳回原因
+
       enlargeInvitationCodeUrl: null,
       enlargeInvitationCodeUrlList: null,
 
@@ -696,6 +709,9 @@ export default {
     this.typeList = res.data;
   },
   methods: {
+    cleanReason() {
+      this.reason = "";
+    },
     // 点击邀请码
     async openInvitationCode(id) {
       const res = await getEnterpriseInvitationCode(id);
@@ -710,6 +726,7 @@ export default {
       const data = {
         status: this.auditSelect,
         id: this.auditUid,
+        reason: this.reason,
       };
       const res = await handleEnterpriseExamine(data);
       if (res.message === "操作成功") {
@@ -739,12 +756,18 @@ export default {
     resetFn() {
       this.enterpriseName = "";
       this.enterprisePhone = "";
+      this.referencePerson = "";
       this._getEnterpriseList();
     },
     // 推荐人搜索
     async remoteMethod(query) {
-      const res = await queryMasterName(query);
-      this.masterOptions = res.data;
+      const params = {
+        pageNo: 1,
+        pageSize: 999,
+        realName: query,
+      };
+      const res = await querySalesmanList(params);
+      this.masterOptions = res.data.records;
     },
     // 编辑确定按钮触发的事件
     async confirmFn() {
@@ -874,7 +897,7 @@ export default {
           this._getEnterpriseList();
           this.resetEditForm(false);
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.info(error);
         });
     },
@@ -903,11 +926,8 @@ export default {
         pageSize: 20,
         name: this.enterpriseName,
         phone: this.enterprisePhone,
+        salesmanId: this.referencePerson,
       };
-      if (this.referencePerson) {
-        const res = await queryMasterName(this.referencePerson);
-        params.uid = res.data[0] && res.data[0].uid;
-      }
       getEnterpriseList(params).then((res) => {
         if (res) {
           console.log(res);

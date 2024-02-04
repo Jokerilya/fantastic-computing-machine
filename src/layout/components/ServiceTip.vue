@@ -1,11 +1,11 @@
 <template>
-  <div class="ServiceTip">
+  <div class="ServiceTip" v-if="!(unReadMessgaeList.length == 0)">
     <!-- 点击触发列表 -->
     <div class="clickOpenList" @click="clickListShow">
       <div class="title">
         待处理订单
         <div class="tipIcon" v-if="!listShow">
-          {{ unReadMessgaeList.length ? unReadMessgaeList.length : 0 }}
+          {{ unReadMessgaeList.length }}
         </div>
       </div>
       <div>

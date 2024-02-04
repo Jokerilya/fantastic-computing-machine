@@ -82,7 +82,7 @@
       <div class="addpeijian" @click="openAdd">添加配件</div>
     </div>
     <div class="addPartcs">
-      <el-table :data="param.parts" style="width: 70%" :key="againTableRefresh">
+      <el-table :data="param.parts" style="width: 80%" :key="againTableRefresh">
         <el-table-column label="采购方式" align="center" width="100">
           <template slot-scope="{ row }">
             <img
@@ -120,6 +120,8 @@
           </template>
         </el-table-column>
         <el-table-column align="center" prop="parameter" label="配件参数">
+        </el-table-column>
+        <el-table-column align="center" prop="number" label="物料编码">
         </el-table-column>
         <el-table-column align="center" label="配件总金额" width="100">
           <template slot-scope="{ row }">
@@ -454,6 +456,8 @@
         <el-table-column label="商品名称" property="name"> </el-table-column>
         <el-table-column label="品牌名称" property="brandName">
         </el-table-column>
+          <el-table-column label="物料编码" property="number">
+        </el-table-column>
         <el-table-column label="规格型号" property="model"> </el-table-column>
       </el-table>
       <span slot="footer" class="dialog-footer">
@@ -509,6 +513,7 @@ export default {
         parameter: null,
         choose: 2,
         chooseStashPartsValue: "",
+        number:null,
       },
 
       param: {
@@ -618,13 +623,16 @@ export default {
         model,
         name,
         id,
+        number,
         unitId,
       } = this.chooseStashPartData;
+      console.log(this.chooseStashPartData);
       this.part.chooseStashPartsValue = name + "/" + brandName + "/" + model;
       this.closeChooseStashParts();
       this.part.brand = brandName;
       this.part.brandId = brandId;
       this.part.parameter = model;
+      this.part.number= number
       this.part.name = name;
       this.part.id = id;
       this.part.unitId = unitId;

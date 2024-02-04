@@ -146,7 +146,6 @@
         <div class="content">
           <el-table
             :data="accessoriesList"
-            style="width: 80%"
             :key="againTableRefresh"
           >
             <el-table-column label="采购方式" align="center" width="100">
@@ -191,6 +190,8 @@
               </template>
             </el-table-column>
             <el-table-column align="center" prop="parameter" label="配件参数">
+            </el-table-column>
+              <el-table-column align="center" prop="number" label="物料编码">
             </el-table-column>
             <el-table-column align="center" label="配件总金额" width="100">
               <template slot-scope="{ row }">
@@ -475,6 +476,8 @@
         <el-table-column label="商品名称" property="name"> </el-table-column>
         <el-table-column label="品牌名称" property="brandName">
         </el-table-column>
+         <el-table-column label="物料编码" property="number">
+        </el-table-column>
         <el-table-column label="规格型号" property="model"> </el-table-column>
       </el-table>
       <span slot="footer" class="dialog-footer">
@@ -544,6 +547,7 @@ export default {
         parameter: null,
         choose: 2,
         chooseStashPartsValue: "",
+        number:null,
       },
 
       accessoriesRules: {
@@ -600,6 +604,7 @@ export default {
         name,
         id,
         unitId,
+        number
       } = this.chooseStashPartData;
       this.accessoriesForm.chooseStashPartsValue =
         name + "/" + brandName + "/" + model;
@@ -610,6 +615,7 @@ export default {
       this.accessoriesForm.parameter = model;
       this.accessoriesForm.name = name;
       this.accessoriesForm.unitId = unitId;
+      this.accessoriesForm.number = number
     },
     // 选中仓库配件的数据
     changeStashParts(val) {
@@ -733,6 +739,7 @@ export default {
         parameter: null,
         choose: 2,
         id: null,
+        number:null
       };
       this.accessoriesForm.chooseStashPartsValue = "";
       this.addAccessoriesDialog = false;
@@ -763,6 +770,7 @@ export default {
           chooseStashPartsValue,
           id,
           unitId,
+          number
         } = this.accessoriesForm;
         this.accessoriesList[index] = {
           id,
@@ -775,6 +783,7 @@ export default {
           choose,
           brandId,
           unitId,
+          number,
           chooseStashPartsValue,
         };
         this.againTableRefresh = !this.againTableRefresh;
@@ -1025,7 +1034,7 @@ export default {
       }
     }
     .content {
-      padding: 0px 100px;
+      padding: 0px 70px;
       .item {
         height: 35px;
         display: flex;

@@ -3,18 +3,15 @@
     <!-- 查询工具栏 -->
     <div class="searchTool">
       <div class="workerName">
-        <h4 style="color: #999;">师傅名称</h4>
+        <h4 style="color: #999">师傅名称</h4>
         <div class="inp">
           <el-input
             clearable
             placeholder="请输入你的师傅名称"
             v-model="params.realName"
-            @input="realNameBlurFn"
           ></el-input>
         </div>
-        <h4 style="color: #999;width: 90px;;margin-left: 20px;">
-          指派的师傅:
-        </h4>
+        <h4 style="color: #999; width: 90px; margin-left: 20px">指派的师傅:</h4>
         <div class="assignedWorkerList">
           <span
             v-for="(item, index) in masterNameList"
@@ -24,9 +21,7 @@
           >
             {{ item }}
           </span>
-          <div class="notiveText">
-            ( 注:点击姓名即可删除！)
-          </div>
+          <div class="notiveText">( 注:点击姓名即可删除！)</div>
         </div>
       </div>
       <div class="operationBtnList">
@@ -43,6 +38,7 @@
           @click="assignedBtn('market')"
           >抛入市场</el-button
         > -->
+        <el-button type="primary" @click="realNameBlurFn"> 搜索 </el-button>
         <el-button
           class="thrownIntoMarketBtn"
           type="success"
@@ -69,7 +65,7 @@
             <template slot-scope="{ row }">
               <input
                 type="checkbox"
-                style="zoom:120%"
+                style="zoom: 120%"
                 @click="manyPeopleAssigned(row.show, row.uid, row.realName)"
                 v-model="row.show"
               />
@@ -87,16 +83,12 @@
           <el-table-column prop="identity" label="角色" align="center">
           </el-table-column>
           <el-table-column label="服务状态" align="center">
-            <template>
-              可接单状态
-            </template>
+            <template> 可接单状态 </template>
           </el-table-column>
           <el-table-column prop="createTime" label="入驻时间" align="center">
           </el-table-column>
           <el-table-column label="所属" align="center">
-            <template>
-              广东机床加工有限公司
-            </template>
+            <template> 广东机床加工有限公司 </template>
           </el-table-column>
           <el-table-column label="操作" align="center">
             <template slot-scope="{ row }">
@@ -136,7 +128,7 @@
         <el-select
           v-model="cityValue"
           placeholder="请选择市"
-          style="margin-right: 20px;"
+          style="margin-right: 20px"
           @change="cityValueChage"
         >
           <el-option

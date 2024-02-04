@@ -9,10 +9,16 @@ const systemRouter = {
 	meta: { title: '系统管理', icon: 'el-icon-s-tools' },
 	children: [
 		{
-			path: 'base-info',
-			name: 'BaseInfo',
-			component: () => import('@/views/system/base-info'),
-			meta: { title: '系统参数配置', icon: 'el-icon-c-scale-to-original' },
+			path: 'agreement',
+			name: 'Agreement',
+			component: () => import('@/views/system/agreement'),
+			meta: { title: '系统说明', icon: 'el-icon-document' },
+		},
+		{
+			path: 'exp',
+			name: 'Exp',
+			component: () => import('@/views/system/exp'),
+			meta: { title: '运费模板', icon: 'el-icon-truck' }
 		},
 		{
 			path: 'base-logList',
@@ -33,6 +39,12 @@ const systemRouter = {
 			meta: { title: '后台角色管理', icon: 'el-icon-coordinate' },
 		},
 		{
+			path: 'base-info',
+			name: 'BaseInfo',
+			component: () => import('@/views/system/base-info'),
+			meta: { title: '系统参数配置', icon: 'el-icon-c-scale-to-original' },
+		},
+		{
 			path: 'setup-operator',
 			name: 'SetupOperator',
 			component: () => import('@/views/system/setup-operator'),
@@ -44,17 +56,24 @@ const systemRouter = {
 		// 	component: () => import('@/views/system/app-version'),
 		// 	meta: { title: 'App版本管理', icon: 'el-icon-mobile-phone' },
 		// },
+		
 		{
-			path: 'agreement',
-			name: 'Agreement',
-			component: () => import('@/views/system/agreement'),
-			meta: { title: '系统说明', icon: 'el-icon-document' },
+			path: 'masterLvManage',
+			name: 'masterLvManage',
+			component: () => import('@/views/system/masterLvManage'),
+			meta: { title: '师傅等级管理', icon: 'el-icon-trophy' }
 		},
 		{
-			path: 'exp',
-			name: 'Exp',
-			component: () => import('@/views/system/exp'),
-			meta: { title: '运费模板', icon: 'el-icon-truck' }
+			path: 'faultItemsExamine',
+			name: 'faultItemsExamine',
+			component: () => import('@/views/system/faultItemsExamine'),
+			meta: { title: '故障项目管理', icon: 'el-icon-setting' }
+		},
+		{
+			path: 'faultyPricingCount',
+			name: 'faultyPricingCount',
+			component: () => import('@/views/system/faultyPricingCount'),
+			meta: { title: '故障项定价统计', icon: 'el-icon-setting' }
 		}
 	],
 };

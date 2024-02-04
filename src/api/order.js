@@ -470,3 +470,167 @@ export function markOrderCompletion(data) {
     data,
   });
 }
+
+// 查询物流
+export function queryLogistics(params) {
+  return request({
+    url: "/admin/maintenance/queryLogistics",
+    method: "get",
+    params,
+  });
+}
+
+// 上传物流信息
+export function uploadLogisticsInfo(data) {
+  return request({
+    url: "/admin/maintenance/uploadLogisticsInfo",
+    method: "post",
+    data,
+  });
+}
+
+// 审核配件商品
+export function examinePartProduct(data) {
+  return request({
+    url: "/admin/maintenance/examinePartProduct",
+    method: "post",
+    data,
+  });
+}
+
+// 审核故障项目
+export function examineFaultItem(data) {
+  return request({
+    url: "/admin/maintenance/examineFaultItem",
+    method: "post",
+    data,
+  });
+}
+
+// 查询自动抢单列表
+export function queryAutomaticAssignList() {
+  return request({
+    url: "/admin/maintenance/queryAutomaticAssignList",
+    method: "post",
+  });
+}
+
+// 查询师傅等级列表
+export function queryMasterLevelList() {
+  return request({
+    url: "/admin/maintenance/queryMasterLevelList",
+    method: "get",
+  });
+}
+
+// 故障项目列表
+export function queryFaultItems(data) {
+  return request({
+    url: "/admin/maintenance/queryFaultItems",
+    method: "post",
+    data
+  });
+}
+
+// 保存故障列表
+export function saveFaultItems(data) {
+  return request({
+    url: "/admin/maintenance/saveFaultItems",
+    method: "post",
+    data
+  });
+}
+
+// 查询师傅故障项定价列表
+export function queryMasterFaultPriceList(data) {
+  return request({
+    url: "/admin/maintenance/queryMasterFaultPriceList",
+    method: "post",
+    data
+  });
+}
+
+// 师傅故障项定价审核
+export function examineMasterFaultPrice(data) {
+  return request({
+    url: "/admin/maintenance/examineMasterFaultPrice",
+    method: "post",
+    data
+  });
+}
+
+// 寄修
+export function sendRepair(orderSn) {
+	return request({
+		url: '/admin/maintenance/sendRepair?orderSn=' + orderSn,
+		method: 'get',
+	})
+}
+
+// 新增/编辑配件商品
+export function editPartProduct(data) {
+	return request({
+		url: '/admin/maintenance/editPartProduct',
+		method: 'post',
+    data
+	})
+}
+
+// 删除配件商品
+export function deletePartProduct(data) {
+	return request({
+		url: '/admin/maintenance/deletePartProduct',
+		method: 'post',
+    data
+	})
+}
+
+// 查询维保供应商信息
+export function queryMaintenanceSupplierInfo() {
+	return request({
+		url: '/admin/maintenance/queryMaintenanceSupplierInfo',
+		method: 'get',
+	})
+}
+
+// 填写物流信息
+export function fillLogisticsInformation(data) {
+	return request({
+		url: '/admin/maintenance/fillLogisticsInformation',
+		method: 'post',
+    data
+	})
+}
+
+// 故障项定价申请列表
+export function queryFaultItemApplyList() {
+	return request({
+		url: '/admin/maintenance/queryFaultItemApplyList',
+		method: 'get'
+	})
+}
+
+// 故障项定价申请明细
+export function queryFaultItemApplyDetails(faultItemId) {
+	return request({
+		url: '/admin/maintenance/queryFaultItemApplyDetails?faultItemId='+faultItemId,
+		method: 'get'
+	})
+}
+
+// 申诉操作师傅金额
+export function handleMasterAmount(data) {
+	return request({
+		url: '/admin/maintenance/handleMasterAmount',
+		method: 'POST',
+    data
+	})
+}
+
+// 标记为活跃师傅
+export function handleActiveMaster({uid,flag}) {
+	return request({
+		url: `/admin/maintenance/handleActiveMaster?uid=${uid}&flag=${flag}`,
+		method: 'get',
+	})
+}

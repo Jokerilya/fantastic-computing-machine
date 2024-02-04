@@ -34,6 +34,18 @@ const router = {
       meta: { title: "维保工单" },
     },
     {
+      path: "/maintenance/autoSendOrders",
+      name: "autoSendOrders",
+      component: () => import("@/views/maintenance/autoSendOrders"),
+      meta: { title: "自动派单" },
+    },
+    {
+      path: "/maintenance/faultItemPricing",
+      name: "faultItemPricing",
+      component: () => import("@/views/maintenance/faultItemPricing"),
+      meta: { title: "故障定价" },
+    },
+    {
       path: "/maintenance/maintenance_order_desc",
       name: "maintenance_order_desc",
       component: () => import("@/views/maintenance/maintenance_order_desc"),
@@ -68,18 +80,13 @@ const router = {
       path: "/maintenance/customer",
       name: "customer",
       component: () => import("@/views/maintenance/customer"),
-      meta: { title: "年保订单" },
+      meta: { title: "年保合同" },
     },
     {
       path: "/maintenance/customerDetail",
       name: "customerDetail",
       component: () => import("@/views/maintenance/customerDetail"),
       meta: { title: "年保订单详情", noShow: "true" },
-    },
-    {
-      path: "/maintenance/text",
-      component: () => import("@/views/maintenance/text.vue"),
-      meta: { title: "测试", noShow: "true" },
     },
     {
       path: "/maintenance/equipmentManagement",
@@ -136,6 +143,15 @@ const router = {
       component: () => import("@/views/maintenance/upkeepDetailModule"),
       meta: { title: "保养记录" },
     },
+
+    // 物流详情
+		{
+			path:'/maintenance/logisticsDetails',
+			name:'logisticsDetails',
+			component: () => import('@/views/maintenance/logisticsDetails'),
+			meta: { title: '物流详情'},
+			hidden:true
+		}
   ],
 };
 export default router;

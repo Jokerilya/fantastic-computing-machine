@@ -3,7 +3,7 @@
   <div class="app-container">
     <el-form label-width="88px" class="rule-form" label-position="right">
       <el-row :gutter="20">
-        <el-col :span="17" style="display: flex;">
+        <el-col :span="17" style="display: flex">
           <el-form-item label="师傅名称">
             <el-input
               placeholder="请输入师傅名称"
@@ -93,13 +93,23 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="是否活跃"
+          show-overflow-tooltip
+          width="150"
+          align="center"
+        >
+          <template slot-scope="{ row }">
+            {{ row.activeFlag == 1 ? "是" : "否" }}
+          </template>
+        </el-table-column>
+        <el-table-column
           prop="phone"
           label="联系电话"
           show-overflow-tooltip
           width="150"
           align="center"
         ></el-table-column>
-        <el-table-column
+        <!-- <el-table-column
           prop="integral"
           label="钻石"
           show-overflow-tooltip
@@ -109,7 +119,7 @@
           <template slot-scope="{ row }">
             {{ row.integral ? row.integral : 0 }}
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column
           label="等级"
           show-overflow-tooltip
@@ -117,20 +127,10 @@
           align="center"
         >
           <template slot-scope="{ row }">
-            {{
-              row.identity === "普通师傅"
-                ? "普通师傅"
-                : row.levelId === 1
-                ? "签约师傅"
-                : row.levelId === 2
-                ? "百钻维修师"
-                : row.levelId === 3
-                ? "初级管家"
-                : row.levelId === 4
-                ? "中级管家"
-                : "高级管家"
-            }}
+            {{ row.levelName }}
           </template>
+        </el-table-column>
+        <el-table-column prop="integral" label="积分" align="center">
         </el-table-column>
         <el-table-column
           prop="superiorMasterName"
@@ -315,7 +315,7 @@
         </el-table-column>
         <el-table-column label="操作" width="220" fixed="right" align="center">
           <template slot-scope="{ row }">
-            <div style="display: flex;">
+            <div style="display: flex">
               <el-button
                 type="primary"
                 size="mini"
@@ -331,28 +331,28 @@
                 <el-select
                   v-model="row.abc"
                   placeholder="更多"
-                  style="width: 71px;margin-left: 10px;"
+                  style="width: 71px; margin-left: 10px"
                   size="mini"
                 >
-                  <el-option v-show="!row.isLock" value="1">
+                  <el-option v-show="!row.isLock">
                     <el-button @click="isLock(row)" size="mini" type="danger"
                       >锁定</el-button
                     >
                   </el-option>
-                  <el-option v-show="row.isLock" value="2">
+                  <el-option v-show="row.isLock">
                     <el-button size="mini" @click="isLock(row)" type="success"
                       >解锁</el-button
                     >
                   </el-option>
-                  <el-option v-if="!(row.status == 2)" value="3">
+                  <el-option v-if="row.status === 1">
                     <el-button size="mini" @click="open(row)">审核</el-button>
                   </el-option>
-                  <el-option value="1">
+                  <el-option>
                     <el-button type="info" size="mini" @click="checkTeam(row)"
                       >成员</el-button
                     >
                   </el-option>
-                  <el-option v-if="row.identity === '普通师傅'" value="4">
+                  <el-option v-if="row.identity === '普通师傅'">
                     <el-button
                       size="mini"
                       type="success"
@@ -360,16 +360,23 @@
                       >角色</el-button
                     >
                   </el-option>
-                  <el-option v-if="row.identity !== '普通师傅'" value="5">
+                  <el-option>
                     <el-button
                       size="mini"
                       @click="open_integral_dialog(row.uid)"
                       >钻石</el-button
                     >
                   </el-option>
-                  <el-option v-if="row.identity !== '普通师傅'" value="6">
+                  <el-option>
                     <el-button size="mini" @click="open_score_dialog(row.uid)"
                       >分值</el-button
+                    >
+                  </el-option>
+                  <el-option>
+                    <el-button
+                      size="mini"
+                      @click="openSetActiveDialog(row.uid, row.activeFlag)"
+                      >活跃</el-button
                     >
                   </el-option>
                 </el-select>
@@ -380,7 +387,7 @@
       </el-table>
 
       <!-- 分页部分 -->
-      <div style="margin-top: 20px;display: flex;justify-content: center ;">
+      <div style="margin-top: 20px; display: flex; justify-content: center">
         <el-pagination
           background
           @size-change="handleSizeChange"
@@ -421,7 +428,7 @@
           <div class="title">区域经理:</div>
           <el-select
             placeholder="请选择"
-            style="width: 150px;"
+            style="width: 150px"
             v-model="chooseRoseForm.superiorMasterUid"
           >
             <el-option
@@ -452,13 +459,18 @@
         status-icon
         label-width="120px"
         class="demo-ruleForm"
+        label-position="top"
+        center
       >
         <el-form-item
-          label="审核状态"
+          label="审核状态:"
           prop="name"
-          style="width:calc(100% - 120px)"
+          style="width: calc(100% - 120px)"
         >
-          <el-switch v-model="editForm.status"></el-switch>
+          <el-radio-group v-model="editForm.status" style="display: flex">
+            <el-radio :label="2">通过</el-radio>
+            <el-radio :label="3">驳回</el-radio>
+          </el-radio-group>
         </el-form-item>
       </el-form>
     </model>
@@ -479,7 +491,7 @@
         <el-form-item
           label="审核状态"
           prop="name"
-          style="width:calc(100% - 120px)"
+          style="width: calc(100% - 120px)"
         >
           <el-switch v-model="editForm.status"></el-switch>
         </el-form-item>
@@ -500,7 +512,7 @@
         element-loading-spinner="el-icon-loading"
         :data="masterTeamList"
         max-height="700"
-        style="width: 1500px;"
+        style="width: 1500px"
       >
         <el-table-column
           prop="realName"
@@ -549,7 +561,7 @@
       width="42%"
       :close-on-click-modal="false"
     >
-      <div style="height: 500px;overflow:auto;">
+      <div style="height: 500px; overflow: auto">
         <el-form
           :rules="addSigningMasterRules"
           ref="addSigningMasterForm"
@@ -560,7 +572,7 @@
         >
           <el-form-item
             label="类型"
-            style="margin-bottom: 10px;"
+            style="margin-bottom: 10px"
             prop="masterRoleId"
           >
             <el-radio
@@ -580,12 +592,12 @@
           <el-form-item
             v-if="addSigningMasterForm.masterRoleId === 3"
             label="区域经理"
-            style="margin-bottom: 20px;"
+            style="margin-bottom: 20px"
             prop="superiorMasterUid"
           >
             <el-select
               placeholder="请选择"
-              style="width: 150px;"
+              style="width: 150px"
               v-model="addSigningMasterForm.superiorMasterUid"
               @change="changeSuperiorMasterUid"
             >
@@ -600,39 +612,39 @@
           <br v-if="addSigningMasterForm.masterRoleId === 3" />
           <el-form-item
             label="真实姓名"
-            style="margin-bottom: 20px;"
+            style="margin-bottom: 20px"
             prop="realName"
           >
             <el-input
               v-model="addSigningMasterForm.realName"
               placeholder="请输入师傅真实姓名"
-              style="width: 300px;"
+              style="width: 300px"
             ></el-input>
           </el-form-item>
           <br />
           <el-form-item
             label="手机号码"
-            style="margin-bottom: 20px;"
+            style="margin-bottom: 20px"
             prop="phone"
           >
             <el-input
               v-model="addSigningMasterForm.phone"
               placeholder="请输入手机号码"
-              style="width: 300px;"
+              style="width: 300px"
             ></el-input>
           </el-form-item>
           <br />
-          <el-form-item label="师傅编号" style="margin-bottom: 20px;">
+          <el-form-item label="师傅编号" style="margin-bottom: 20px">
             <el-input
               v-model="addSigningMasterForm.number"
               placeholder="请输入师傅编号"
-              style="width: 300px;"
+              style="width: 300px"
             ></el-input>
           </el-form-item>
           <br />
           <el-form-item
             label="真实头像"
-            style="margin-bottom: 20px;"
+            style="margin-bottom: 20px"
             prop="realPortrait"
           >
             <el-upload
@@ -652,31 +664,31 @@
           <br />
           <el-form-item
             label="详细地址"
-            style="margin-bottom: 20px;"
+            style="margin-bottom: 20px"
             prop="address"
           >
             <el-input
               v-model="addSigningMasterForm.address"
               placeholder="请输入师傅真实详细地址"
-              style="width: 300px;"
+              style="width: 300px"
             ></el-input>
           </el-form-item>
           <br />
           <el-form-item
             label="身份证号码"
-            style="margin-bottom: 20px;"
+            style="margin-bottom: 20px"
             prop="identityNumber"
           >
             <el-input
               v-model="addSigningMasterForm.identityNumber"
               placeholder="请输入师傅身份证号码"
-              style="width: 300px;"
+              style="width: 300px"
             ></el-input>
           </el-form-item>
           <br />
           <el-form-item
             label="身份证正面照"
-            style="margin-bottom: 20px;"
+            style="margin-bottom: 20px"
             prop="identityFrontImage"
           >
             <el-upload
@@ -695,7 +707,7 @@
           </el-form-item>
           <el-form-item
             label="身份证反面照"
-            style="margin-bottom: 20px;"
+            style="margin-bottom: 20px"
             prop="identityBackImage"
           >
             <el-upload
@@ -715,11 +727,11 @@
           <br />
           <el-form-item
             label="设备类型"
-            style="margin-bottom: 20px;"
+            style="margin-bottom: 20px"
             prop="serviceTypes"
           >
             <el-select
-              style="margin-right: 20px;width: 150px;"
+              style="margin-right: 20px; width: 150px"
               v-model="equipmentTypeOne"
               placeholder="请选择"
               @change="changeEquipmentTypeOne"
@@ -733,7 +745,7 @@
               </el-option>
             </el-select>
             <el-select
-              style="width: 190px;"
+              style="width: 190px"
               placeholder="请选择"
               multiple
               collapse-tags
@@ -752,11 +764,11 @@
           <br />
           <el-form-item
             label="设备系统"
-            style="margin-bottom: 20px;"
+            style="margin-bottom: 20px"
             prop="serveSystem"
           >
             <el-select
-              style="margin-right: 20px;width: 150px;"
+              style="margin-right: 20px; width: 150px"
               v-model="equipmentSystemOne"
               placeholder="请选择"
               @change="changeEquipmentSystemOne"
@@ -770,7 +782,7 @@
               </el-option>
             </el-select>
             <el-select
-              style="width: 190px;"
+              style="width: 190px"
               placeholder="请选择"
               multiple
               collapse-tags
@@ -789,11 +801,11 @@
           <br />
           <el-form-item
             label="服务部位"
-            style="margin-bottom: 20px;"
+            style="margin-bottom: 20px"
             prop="servePosition"
           >
             <el-select
-              style="margin-right: 20px;width: 150px;"
+              style="margin-right: 20px; width: 150px"
               v-model="serviceArea"
               placeholder="请选择"
               multiple
@@ -813,12 +825,12 @@
           <el-form-item
             prop="serviceAreas"
             label="服务区域"
-            style="margin-bottom: 20px;"
+            style="margin-bottom: 20px"
             v-if="addSigningMasterForm.masterRoleId === 1"
           >
             <el-select
               placeholder="请选择"
-              style="margin-right: 20px;width: 150px;"
+              style="margin-right: 20px; width: 150px"
               v-model="provinceValue"
               @change="changeProvinceValue"
             >
@@ -833,7 +845,7 @@
             <el-select
               v-model="cityValue"
               placeholder="请选择"
-              style="margin-right: 20px;width: 150px;"
+              style="margin-right: 20px; width: 150px"
               @change="changeCityValue"
             >
               <el-option
@@ -846,7 +858,7 @@
             </el-select>
             <el-select
               placeholder="请选择"
-              style="width: 150px;"
+              style="width: 150px"
               v-model="districtValue"
               multiple
               collapse-tags
@@ -864,18 +876,18 @@
           <br v-if="addSigningMasterForm.masterRoleId === 1" />
           <el-form-item
             label="行业经验"
-            style="margin-bottom: 20px;"
+            style="margin-bottom: 20px"
             prop="industryExperience"
           >
             <el-input
               v-model="addSigningMasterForm.industryExperience"
               placeholder="请输入师傅行业经验"
-              style="width: 300px;"
+              style="width: 300px"
             ></el-input>
           </el-form-item>
           <br />
-          <el-form-item label="行业照片" style="margin-bottom: 10px;">
-            <div style="height:148px;width: 470px;overflow: hidden;">
+          <el-form-item label="行业照片" style="margin-bottom: 10px">
+            <div style="height: 148px; width: 470px; overflow: hidden">
               <el-upload
                 ref="uploadIndustryPicRef"
                 list-type="picture-card"
@@ -888,7 +900,7 @@
           </el-form-item>
           <br />
           <el-form-item label="技能证书">
-            <div style="height:148px;width: 470px;overflow: hidden;">
+            <div style="height: 148px; width: 470px; overflow: hidden">
               <el-upload
                 ref="uploadSkillCertificatePicRef"
                 list-type="picture-card"
@@ -958,7 +970,7 @@
     <el-dialog
       title="分值"
       :visible="score_dialogVisible"
-      width="50%"
+      width="6                                                                                        m  30%"
       :before-close="score_handleClose"
     >
       <el-table :data="scoreList">
@@ -972,19 +984,6 @@
             {{ row.relationOrderSn ? row.relationOrderSn : "无" }}
           </template>
         </el-table-column>
-        <el-table-column label="加减类型" align="center">
-          <template slot-scope="{ row }">
-            {{
-              row.type > 3
-                ? masterIntegralList[row.type - 4].text
-                : row.type === 1
-                ? "维修一单"
-                : row.type === 2
-                ? "配件师傅提供"
-                : "客户评价"
-            }}
-          </template>
-        </el-table-column>
         <el-table-column label="备注" align="center">
           <template slot-scope="{ row }">
             {{ row.remarks ? row.remarks : "无" }}
@@ -996,7 +995,7 @@
           prop="value"
         ></el-table-column>
       </el-table>
-      <div style="margin-top: 20px;text-align: center;">
+      <div style="margin-top: 20px; text-align: center">
         <el-pagination
           layout="prev, pager, next"
           :total="scoreListTotal"
@@ -1005,6 +1004,30 @@
         >
         </el-pagination>
       </div>
+    </el-dialog>
+
+    <!-- 活跃 -->
+    <el-dialog
+      title="设置活跃师傅"
+      :visible="setActiveDialog"
+      width="30%"
+      center
+      :before-close="closeSetActiveDialog"
+    >
+      <div class="setActiveDialog">
+        <el-form label-width="45%">
+          <el-form-item label="活跃师傅:">
+            <el-radio-group v-model="setActiveParmas.flag">
+              <el-radio :label="1">是</el-radio>
+              <el-radio :label="0">否</el-radio>
+            </el-radio-group>
+          </el-form-item>
+        </el-form>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeSetActiveDialog">取 消</el-button>
+        <el-button type="primary" @click="confirmSetActive">确 定</el-button>
+      </span>
     </el-dialog>
   </div>
 </template>
@@ -1087,12 +1110,18 @@ import {
   handleMasterIdentity,
   handleMasterIntegral,
   queryMasterIntegralList,
+  handleActiveMaster,
 } from "@/api/order.js";
 export default {
   title: "course",
   mixins: [tableMixin],
   data() {
     return {
+      setActiveParmas: {
+        uid: "",
+        flag: "",
+      },
+      setActiveDialog: false,
       scoreListTotal: "",
       scoreList: [],
       masterIntegralList: [
@@ -1354,6 +1383,28 @@ export default {
     this._getMasterList();
   },
   methods: {
+    // 确定设置活跃师傅
+    async confirmSetActive() {
+      const res = await handleActiveMaster(this.setActiveParmas);
+      if (res.message == "操作成功") {
+        this.closeSetActiveDialog();
+        this._getMasterList();
+      }
+    },
+    // 关闭活跃师傅框
+    closeSetActiveDialog() {
+      this.setActiveDialog = false;
+      this.setActiveParmas = {
+        uid: "",
+        flag: "",
+      };
+    },
+    // 打开活跃师傅框
+    openSetActiveDialog(uid, flag) {
+      this.setActiveDialog = true;
+      this.setActiveParmas.uid = uid;
+      this.setActiveParmas.flag = flag;
+    },
     // 改变分值列表页面触发
     async scoreCurrentChange(page) {
       this.scoreForm.pageNo = page;
@@ -1505,7 +1556,8 @@ export default {
     },
     // 设备系统的值变化触发
     changeEquipmentSystemTwo() {
-      this.addSigningMasterForm.serveSystem = this.equipmentSystemTwo.toString();
+      this.addSigningMasterForm.serveSystem =
+        this.equipmentSystemTwo.toString();
       this.$refs.addSigningMasterForm.validateField("serveSystem");
     },
     // 服务部位的值变化触发
@@ -1518,10 +1570,12 @@ export default {
       await this.$refs.addSigningMasterForm.validate();
       this.addSigningMasterForm.type = 2;
       if (this.addSigningMasterForm.industryExperienceImages) {
-        this.addSigningMasterForm.industryExperienceImages = this.addSigningMasterForm.industryExperienceImages.toString();
+        this.addSigningMasterForm.industryExperienceImages =
+          this.addSigningMasterForm.industryExperienceImages.toString();
       }
       if (this.addSigningMasterForm.skillCertificateImages) {
-        this.addSigningMasterForm.skillCertificateImages = this.addSigningMasterForm.skillCertificateImages.toString();
+        this.addSigningMasterForm.skillCertificateImages =
+          this.addSigningMasterForm.skillCertificateImages.toString();
       }
       const res = await editMasterInfo(this.addSigningMasterForm);
       if (res.message === "操作成功") {
@@ -1608,7 +1662,7 @@ export default {
       this.equipmentTypeList = data;
       this.equipmentTypeList1 = data[0].list;
       this.equipmentTypeList2 = data[1].list;
-      this.equipmentTypeList3 = data[2].list;
+      // this.equipmentTypeList3 = data[2].list;
     },
     // 上传身份证正面照
     async uploadIdentityFrontImage(fileData) {
@@ -1781,7 +1835,7 @@ export default {
         .then(({ data }) => {
           this.typeData = data;
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.info(error);
         });
       this.loading = false;
@@ -1811,7 +1865,7 @@ export default {
       this.$axios
         .post(this.url.updateStatus, {
           ...this.editForm,
-          status: this.editForm.status ? 2 : 3,
+          status: this.editForm.status,
         })
         .then((data) => {
           this.util.message(this, data.status, data.message);
@@ -1819,7 +1873,7 @@ export default {
           this._getMasterList();
           this.resetEditForm(false);
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.info(error);
         });
 
