@@ -42,6 +42,12 @@
         <el-button
           class="thrownIntoMarketBtn"
           type="success"
+          @click="handleTakeOrder"
+          >代师傅接单</el-button
+        >
+        <el-button
+          class="thrownIntoMarketBtn"
+          type="success"
           @click="assignedBtn('worker')"
           >指派师傅</el-button
         >
@@ -161,6 +167,7 @@
 </template>
 
 <script>
+import { handleTakeOrder } from "@/api/order";
 import { queryAssignableMasterList, handleAssignMaster } from "@/api/user";
 import { addressFn } from "@/api/system";
 export default {
@@ -187,6 +194,30 @@ export default {
     };
   },
   methods: {
+    async handleTakeOrder() {
+      if (!(this.masterUidList.length > 0 && this.masterUidList.length < 2)) {
+        this.$message({
+          message: "请选择一名师傅进行指派",
+          type: "warning",
+        });
+        return;
+      }
+      let params = {
+        uid: this.masterUidList[0],
+        relationOrderSn: this.enterpriseOrderSn,
+      };
+      const res = await handleTakeOrder(params);
+      if (res.message == "操作成功") {
+        this.$message({
+          message: "操作成功",
+          type: "success",
+        });
+        this.$router.push({
+          name: "maintenance_order_desc",
+          query: { orderSn: this.enterpriseOrderSn },
+        });
+      }
+    },
     // 确定区域
     async confirmRegionChoose() {
       const res = await handleAssignMaster({

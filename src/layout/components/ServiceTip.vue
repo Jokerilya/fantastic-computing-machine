@@ -24,7 +24,7 @@
       </div>
     </div>
     <!-- 通知订单列表 -->
-    <div class="orderTipList" v-if="listShow">
+    <!-- <div class="orderTipList" v-if="listShow">
       <div
         class="orderTipListItem"
         :style="{ backgroundColor: item.bgcChange ? '#efefef' : '#fff' }"
@@ -37,7 +37,7 @@
         <div class="orderSn">{{ item.orderSn }}</div>
         <div class="message">{{ item.message }}</div>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -83,10 +83,10 @@ export default {
     },
   },
   created() {
-    this.queryUnReadMessgae();
-    setInterval(() => {
-      this.queryUnReadMessgae();
-    }, 61000);
+    // this.queryUnReadMessgae();
+    // setInterval(() => {
+    //   this.queryUnReadMessgae();
+    // }, 61000);
   },
 };
 </script>

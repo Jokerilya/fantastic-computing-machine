@@ -23,7 +23,7 @@
         range-separator="至"
         start-placeholder="开始日期"
         end-placeholder="结束日期"
-        style="margin-right: 10px;"
+        style="margin-right: 10px"
         value-format="yyyy-MM-dd HH:mm:ss"
       >
       </el-date-picker>
@@ -48,7 +48,7 @@
       </el-select>
       <el-button class="toolBtn" @click="searchBtn">查询</el-button>
       <el-button class="toolBtn" @click="resetBtn">重置</el-button>
-      <el-button class="toolBtn" @click="exportBtn" style="margin-right: 10px;"
+      <el-button class="toolBtn" @click="exportBtn" style="margin-right: 10px"
         >导出</el-button
       >
 
@@ -77,42 +77,50 @@
               'text-align': 'center',
             }"
           >
-            <el-table-column width="150" label="订单号">
+            <el-table-column width="150" label="企业订单号">
               <template slot-scope="{ row }">
                 <a
                   @click.prevent="
                     $router.push(
                       '/maintenance/maintenance_order_desc?orderSn=' +
-                        row.orderSn
+                        row.relationOrderSn
                     )
                   "
-                  style="color: #61afef;"
-                  >{{ row.orderSn }}
+                  style="color: #61afef"
+                  >{{ row.relationOrderSn }}
                 </a>
               </template>
             </el-table-column>
+            <el-table-column label="师傅订单号" prop="orderSn">
+            </el-table-column>
             <el-table-column label="订单类型">
               <template slot-scope="{ row }">
-                {{ row.orderType === 1 ? "散单" : "年保" }}
+                {{
+                  row.orderType === 1
+                    ? "散单"
+                    : row.orderType === 2
+                    ? "年保"
+                    : "年卡"
+                }}
               </template>
             </el-table-column>
-            <el-table-column
+            <!-- <el-table-column
               width="150"
               prop="payCode"
               label="支付流水号"
-            ></el-table-column>
-            <el-table-column prop="payTime" label="支付时间"></el-table-column>
+            ></el-table-column> -->
+            <!-- <el-table-column prop="payTime" label="支付时间"></el-table-column> -->
             <el-table-column label="支付金额">
-              <template slot-scope="{ row }"> ￥{{ row.payMoney }} </template>
+              <template slot-scope="{ row }"> ￥{{ row.payAmount }} </template>
             </el-table-column>
             <el-table-column
               prop="targetName"
-              label="客户名称"
+              label="收付款对象"
             ></el-table-column>
-            <el-table-column
+            <!-- <el-table-column
               prop="transCode"
               label="第三方交易账号"
-            ></el-table-column>
+            ></el-table-column> -->
             <el-table-column label="业务类型名">
               <template slot-scope="{ row }">
                 {{
@@ -124,8 +132,8 @@
             </el-table-column>
             <el-table-column label="收支状态">
               <template slot-scope="{ row }">
-                <div v-if="row.status === 0" style="color:red;">未支付</div>
-                <div v-if="row.status === 1" style="color:green;">已支付</div>
+                <div v-if="row.status === 0" style="color: red">未支付</div>
+                <div v-if="row.status === 1" style="color: green">已支付</div>
               </template>
             </el-table-column>
             <el-table-column label="操作">
@@ -141,7 +149,7 @@
                 > -->
                 <a
                   href="#"
-                  style="color: #0b2059;"
+                  style="color: #0b2059"
                   @click.prevent="detailsOpen(row, false)"
                   >详情</a
                 >

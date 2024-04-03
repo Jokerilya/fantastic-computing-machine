@@ -1414,6 +1414,10 @@ export default {
     },
     // 确定师傅积分选择
     async addIntegralConfirm() {
+      if (!this.integralFrom.remarks) {
+        this.integralFrom.remarks =
+          this.masterIntegralList[this.integralFrom.type - 4].text;
+      }
       if (this.integralFrom.type < 8) {
         if (
           this.integralFrom.relationOrderSn === "" ||
@@ -1425,7 +1429,6 @@ export default {
         let value = this.masterIntegralList[this.integralFrom.type - 4].value;
         this.integralFrom.value = value;
       }
-      console.log(1371, this.integralFrom);
       const res = await handleMasterIntegral(this.integralFrom);
       if (res.message === "操作成功") {
         this.$message({

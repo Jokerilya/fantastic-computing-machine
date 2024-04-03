@@ -1,70 +1,89 @@
 <template>
   <!-- 物流详情 -->
   <div class="logisticsDetails">
+    <div class="topOperate">
+      <el-button @click="openSynchronousDialog">同步物流信息</el-button>
+    </div>
     <div class="logisticsDetails_steps">
-      <div class="logisticsDetails_steps_right" v-if="collectLogistics.expVo">
-        <div class="logisticsDetails_steps_title">
-          客户 <span style="font-weight: 400; margin: 10px">——</span> 供应商
-        </div>
-        <div
-          class="logisticsDetails_steps_Title"
-          v-if="collectLogistics && collectLogistics.length > 0"
-        >
-          <div>{{ collectLogistics.expVo.expName }}快递:</div>
-          <div>{{ collectLogistics.expVo.expNo }}</div>
-        </div>
-        <el-steps
-          direction="vertical"
-          :active="0"
-          :space="80"
-          v-if="collectLogistics.expVo.expNo"
-        >
-          <el-step
-            v-for="item in collectLogistics.expVo.list"
-            :key="item.time"
-            :title="item.time"
-            :description="item.remark"
-            icon="el-icon-truck"
-          ></el-step>
-        </el-steps>
-        <div class="collectLogistics-none" v-else>
-          <div style="margin-bottom: 15px">此配件暂未同步物流信息</div>
-          <div>请稍后查看</div>
-        </div>
-      </div>
-      <div class="logisticsDetails_steps_left" v-if="sendLogistics.expVo">
-        <div class="logisticsDetails_steps_title">
-          供应商 <span style="font-weight: 400; margin: 10px">——</span> 客户
-          <el-button style="margin-left: 10px" @click="openSynchronousDialog"
-            >同步</el-button
+      <!-- 客户 —— 供应商 -->
+      <el-card style="flex: 1; margin-right: 10px" v-if="model == 1">
+        <div class="logisticsDetails_steps_right">
+          <div class="logisticsDetails_steps_title">
+            客户 <span style="font-weight: 400; margin: 10px">——</span> 供应商
+          </div>
+          <div
+            class="logisticsDetails_steps_Title"
+            v-if="
+              collectLogistics &&
+              collectLogistics.expVo &&
+              collectLogistics.expVo.expNo
+            "
           >
+            <div>{{ collectLogistics.expVo.expName }}快递:</div>
+            <div>{{ collectLogistics.expVo.expNo }}</div>
+          </div>
+          <el-steps
+            direction="vertical"
+            :active="0"
+            :space="80"
+            v-if="
+              collectLogistics &&
+              collectLogistics.expVo &&
+              collectLogistics.expVo.expNo
+            "
+          >
+            <el-step
+              v-for="item in collectLogistics.expVo.list"
+              :key="item.time"
+              :title="item.time"
+              :description="item.remark"
+              icon="el-icon-truck"
+            ></el-step>
+          </el-steps>
+          <div class="collectLogistics-none" v-else>
+            <div style="margin-bottom: 15px">此配件暂未同步物流信息</div>
+            <div>点按钮同步</div>
+          </div>
         </div>
-        <div
-          class="logisticsDetails_steps_Title"
-          v-if="sendLogistics && sendLogistics.length > 0"
-        >
-          <div>{{ sendLogistics.expVo.expName }}快递:</div>
-          <div>{{ sendLogistics.expVo.expNo }}</div>
+      </el-card>
+
+      <el-card style="flex: 1">
+        <!-- 供应商 —— 客户 -->
+        <div class="logisticsDetails_steps_left">
+          <div class="logisticsDetails_steps_title">
+            供应商 <span style="font-weight: 400; margin: 10px">——</span> 客户
+          </div>
+          <div
+            class="logisticsDetails_steps_Title"
+            v-if="
+              sendLogistics && sendLogistics.expVo && sendLogistics.expVo.expNo
+            "
+          >
+            <div>{{ sendLogistics.expVo.expName }}快递:</div>
+            <div>{{ sendLogistics.expVo.expNo }}</div>
+          </div>
+          <el-steps
+            direction="vertical"
+            :active="0"
+            :space="80"
+            v-if="
+              sendLogistics && sendLogistics.expVo && sendLogistics.expVo.expNo
+            "
+          >
+            <el-step
+              v-for="item in sendLogistics.expVo.list"
+              :key="item.time"
+              :title="item.time"
+              :description="item.remark"
+              icon="el-icon-truck"
+            ></el-step>
+          </el-steps>
+          <div class="sendLogistics-none" v-else>
+            <div>此配件暂未同步物流信息</div>
+            <div style="margin: 15px 0">点按钮同步</div>
+          </div>
         </div>
-        <el-steps
-          direction="vertical"
-          :active="0"
-          :space="80"
-          v-if="sendLogistics.expVo.expNo"
-        >
-          <el-step
-            v-for="item in sendLogistics.expVo.list"
-            :key="item.time"
-            :title="item.time"
-            :description="item.remark"
-            icon="el-icon-truck"
-          ></el-step>
-        </el-steps>
-        <div class="sendLogistics-none" v-else>
-          <div>此配件暂未同步物流信息</div>
-          <div style="margin: 15px 0">点按钮同步</div>
-        </div>
-      </div>
+      </el-card>
     </div>
 
     <!-- 同步弹框 -->
@@ -81,10 +100,20 @@
         :model="synchronousParmas"
         :rules="logisticsSynchronousRules"
         ref="logisticsSynchronousRef"
+        label-position="left"
       >
+        <el-form-item label="发货方" prop="type">
+          <el-select
+            placeholder="请选择发货方"
+            v-model="synchronousParmas.type"
+          >
+            <el-option label="客户" :value="1" v-if="model == 1"> </el-option>
+            <el-option label="供应商" :value="2"> </el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="快递公司" prop="expCom">
           <el-select
-            placeholder="请选择"
+            placeholder="请选择快递公司"
             v-model="synchronousParmas.expCom"
             @change="changeExp"
           >
@@ -127,7 +156,9 @@ import {
 export default {
   data() {
     return {
+      model: null,
       synchronousParmas: {
+        type: null,
         expCom: null,
         phone: null,
         logisticsNumber: null,
@@ -156,6 +187,7 @@ export default {
         logisticsNumber: [
           { required: true, message: "请填写快递单号", trigger: "blur" },
         ],
+        type: [{ required: true, message: "请选择发货方", trigger: "blur" }],
       },
     };
   },
@@ -175,6 +207,7 @@ export default {
         ...this.synchronousParmas,
         ...this.option,
       };
+      delete parmas.model;
       const res = await uploadLogisticsInfo(parmas);
       res.message == "操作成功"
         ? this.$message({
@@ -202,13 +235,20 @@ export default {
     // 查询物流详情
     async queryLogistics(params) {
       const res = await queryLogistics(params);
-      this.sendLogistics = res.data[1];
-      this.collectLogistics = res.data[0];
-      console.log(this.sendLogistics, this.collectLogistics);
+      if (res.data) {
+        res.data.forEach((item) => {
+          if (item.type == 1) {
+            this.collectLogistics = item;
+          } else {
+            this.sendLogistics = item;
+          }
+        });
+      }
     },
   },
   created() {
     this.option = this.$route.query;
+    this.model = this.option.model;
     this.queryLogistics(this.option);
     this.queryOrderBasicFn();
   },
@@ -218,6 +258,12 @@ export default {
 <style lang="less" scoped>
 .logisticsDetails {
   padding: 30px;
+
+  // 顶部操作按钮
+  .topOperate {
+    text-align: right;
+    margin-bottom: 20px;
+  }
 
   .logisticsDetails_steps {
     display: flex;
@@ -249,8 +295,6 @@ export default {
 
     .logisticsDetails_steps_right {
       text-align: center;
-      border-right: 1px solid #000;
-      flex: 1;
       .collectLogistics-none {
         min-height: 50vh;
         font-weight: 700;

@@ -151,7 +151,22 @@ const router = {
 			component: () => import('@/views/maintenance/logisticsDetails'),
 			meta: { title: '物流详情'},
 			hidden:true
-		}
+		},
+
+    // 师傅考核列表
+    {
+      path: "/maintenance/examineItem",
+      name: "examineItem",
+      component: () => import("@/views/maintenance/examineItem"),
+      meta: { title: "师傅考核" },
+    },
+    {
+      path: "/maintenance/examineRecord",
+      name: "examineRecord",
+      component: () => import("@/views/maintenance/examineRecord"),
+      meta: { title: "师傅考核记录" },
+      hidden:true
+    }
   ],
 };
 export default router;

@@ -248,7 +248,7 @@ export function UploadImg(data) {
   return request({
     url: "/admin/base/uploadImg",
     method: "post",
-    data: data,
+    data,
   });
 }
 // export function UploadImg(data) {

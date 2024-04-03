@@ -381,15 +381,15 @@ export default {
   operator: [
     {
       value: "1",
-      label: "平台",
-    },
-    {
-      value: "2",
       label: "企业",
     },
     {
-      value: "3",
+      value: "2",
       label: "师傅",
+    },
+    {
+      value: "3",
+      label: "平台",
     },
   ],
   // 是否锁定

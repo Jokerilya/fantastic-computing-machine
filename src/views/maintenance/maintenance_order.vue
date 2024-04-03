@@ -194,14 +194,14 @@
             }}
           </template>
         </el-table-column>
-        <el-table-column
+        <!-- <el-table-column
           label="订单价格"
           show-overflow-tooltip
           width="80"
           align="center"
         >
           <template slot-scope="{ row }"> ￥{{ row.totalAmount }} </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column
           prop="enterpriseName"
           label="企业名称"
@@ -340,19 +340,6 @@
                 v-if="row.orderType == 1"
                 @click="openConvertToInsurance(row.orderSn)"
                 >转类型</el-button
-              >
-              <el-button
-                type="info"
-                size="mini"
-                plain
-                style=""
-                v-if="
-                  row.orderType == 1 &&
-                  row.mainStatus >= 3 &&
-                  row.mainStatus < 6
-                "
-                @click="markOrderCompletion(row.orderSn)"
-                >标记完成</el-button
               >
               <el-button
                 type="info"
@@ -597,7 +584,6 @@ import {
   handleRepairOrderExport,
   handleRepairRemarks,
   convertToInsurance,
-  markOrderCompletion,
 } from "@/api/order.js";
 // import tableMixin from "@/mixin/table";
 import { localStorageData } from "@/utils";
@@ -710,24 +696,6 @@ export default {
     this._queryRepairOrderList();
   },
   methods: {
-    // 标记散单完成
-    markOrderCompletion(orderSn) {
-      this.$confirm("你确定标记散单已完成", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      }).then(async () => {
-        const res = await markOrderCompletion({ orderSn });
-        if (res.message === "操作成功") {
-          this.$message({
-            message: "操作成功",
-            type: "success",
-          });
-          this.closeConvertToInsurance();
-          this._queryRepairOrderList();
-        }
-      });
-    },
     // 确认散单转年保
     async convertToInsurance() {
       const res = await convertToInsurance(this.convertToInsuranceparams);

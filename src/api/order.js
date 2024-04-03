@@ -101,7 +101,7 @@ export async function uploadButlerOrder(data, num) {
 //合同上传 -- 斯奈克
 export async function uploadButlerOrderByOwn(data) {
   return request({
-    url: "/admin/maintenance/uploadButlerOrderByOwn?",
+    url: "/admin/maintenance/uploadButlerOrderByOwn",
     method: "POST",
     data,
   });
@@ -445,11 +445,11 @@ export function queryDeviceBrandList(params) {
 }
 
 // 查询金蝶商品
-export function queryJdProductList(params) {
+export function queryJdProductList(data) {
   return request({
     url: "/admin/maintenance/queryJdProductList",
-    method: "get",
-    params,
+    method: "post",
+    data,
   });
 }
 
@@ -463,11 +463,10 @@ export function convertToInsurance(data) {
 }
 
 // 标记散单完成
-export function markOrderCompletion(data) {
+export function markOrderCompletion(orderSn) {
   return request({
-    url: "/admin/maintenance/markOrderCompletion",
-    method: "post",
-    data,
+    url: "/admin/maintenance/markOrderCompletion?orderSn=" +orderSn,
+    method: "get",
   });
 }
 
@@ -501,7 +500,7 @@ export function examinePartProduct(data) {
 // 审核故障项目
 export function examineFaultItem(data) {
   return request({
-    url: "/admin/maintenance/examineFaultItem",
+    url: "/admin/maintenance/examineOrderFaultItem",
     method: "post",
     data,
   });
@@ -586,9 +585,9 @@ export function deletePartProduct(data) {
 }
 
 // 查询维保供应商信息
-export function queryMaintenanceSupplierInfo() {
+export function queryMaintenanceSupplierInfo(query) {
 	return request({
-		url: '/admin/maintenance/queryMaintenanceSupplierInfo',
+		url: '/admin/maintenance/queryMaintenanceSupplierInfo?query='+query,
 		method: 'get',
 	})
 }
@@ -634,3 +633,91 @@ export function handleActiveMaster({uid,flag}) {
 		method: 'get',
 	})
 }
+
+// 查询考核项目列表
+export function queryMasterAssessmentItemList() {
+	return request({
+		url: `/admin/maintenance/queryMasterAssessmentItemList`,
+		method: 'get',
+	})
+}
+
+// 查询师傅考核记录列表
+export function queryMasterAssessmentRecords(id) {
+	return request({
+		url: `/admin/maintenance/queryMasterAssessmentRecords?id=${id}`,
+		method: 'get',
+	})
+}
+
+// 编辑师傅考核项目
+export function editMasterAssessmentItem(data,montageData) {
+  console.log(656,`/admin/maintenance/editMasterAssessmentItem`+montageData);
+	return request({
+		url: `/admin/maintenance/editMasterAssessmentItem`+montageData,
+		method: 'post',
+    data
+	})
+}
+
+// 删除配件商品
+export function deleteOrderFaultItem(data) {
+	return request({
+		url: '/admin/maintenance/deleteOrderFaultItem',
+		method: 'post',
+    data
+	})
+}
+
+// 新增订单故障项目
+export function addOrderFaultItem(data) {
+	return request({
+		url: '/admin/maintenance/addOrderFaultItem',
+		method: 'post',
+    data
+	})
+}
+
+// 协商费用
+export function consultCost(data) {
+	return request({
+		url: '/admin/maintenance/consultCost',
+		method: 'post',
+    data
+	})
+}
+
+// 机将大师傅接单
+export function handleSystemCreateOrder(orderSn) {
+	return request({
+		url: '/admin/maintenance/handleSystemCreateOrder?orderSn='+orderSn,
+		method: 'get'
+	})
+}
+
+// 代企业确认验收
+export function handleEnterpriseCheck(orderSn) {
+	return request({
+		url: '/admin/maintenance/handleEnterpriseCheck?orderSn='+orderSn,
+		method: 'GET',
+	})
+}
+
+// 故障减免费用
+export function handleFaultCost(data) {
+	return request({
+		url: '/admin/maintenance/handleFaultCost',
+		method: 'post',
+    data
+	})
+}
+
+// 代师傅接单
+export function handleTakeOrder(data) {
+	return request({
+		url: '/admin/maintenance/handleTakeOrder',
+		method: 'post',
+    data
+	})
+}
+

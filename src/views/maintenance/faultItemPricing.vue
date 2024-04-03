@@ -155,14 +155,15 @@ export default {
           this.warningMessage("分数类型不能为空");
           return;
         }
+        if (
+          this.examinePricingParams.value > 10 ||
+          this.examinePricingParams.value < 1
+        ) {
+          this.warningMessage("请填写1到10以内的整数");
+          return;
+        }
       }
-      if (
-        this.examinePricingParams.value > 10 ||
-        this.examinePricingParams.value < 1
-      ) {
-        this.warningMessage("请填写1到10以内的整数");
-        return;
-      }
+
       // 校验结束
 
       const res = await examineMasterFaultPrice(this.examinePricingParams);

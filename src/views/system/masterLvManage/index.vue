@@ -19,13 +19,6 @@
           </el-table-column>
           <el-table-column prop="value" label="积分" align="center" width="120">
           </el-table-column>
-          <el-table-column
-            prop="privilegeNum"
-            label="特权次数"
-            align="center"
-            width="120"
-          >
-          </el-table-column>
           <el-table-column label="定位" align="center" width="180">
             <template slot-scope="{ row }">
               {{ locationList[row.id - 1] }}
@@ -43,7 +36,12 @@
           </el-table-column>
           <el-table-column label="平台权益" align="center">
             <template slot-scope="{ row }">
-              {{ welfareList[row.id - 1] }}
+              <div
+                v-for="(item, index) in row.welfareItemVoList"
+                :key="item.title"
+              >
+                {{ index + 1 }}.{{ item.title }}:{{ item.simpleDesc }}
+              </div>
             </template>
           </el-table-column>
           <el-table-column label="平台资质要求" align="center">
@@ -90,7 +88,7 @@ export default {
   },
   methods: {
     objectSpanMethod({ row, column, rowIndex, columnIndex }) {
-      if (columnIndex === 4) {
+      if (columnIndex === 3) {
         if (rowIndex % 5 === 0) {
           return {
             rowspan: 5,

@@ -20,7 +20,12 @@
       </div>
 
       <div class="faultItemsExamine_top_right">
-        <!-- <el-button type="primary">搜索</el-button> -->
+        <el-input
+          v-model="queryFaultItemsParams.query"
+          placeholder="请输入您要找的故障项目"
+          style="margin-right: 10px"
+        ></el-input>
+        <el-button type="primary" @click="searchFaultList">搜索</el-button>
         <el-button type="success" @click="openExamineFaultItemsDialog"
           >新增</el-button
         >
@@ -29,6 +34,13 @@
     <div class="faultItemsExamine_table">
       <el-card>
         <el-table border style="width: 100%" :data="queryFaultItemsList">
+          <el-table-column
+            label="故障编码"
+            prop="code"
+            width="100"
+            align="center"
+          >
+          </el-table-column>
           <el-table-column label="机床类型" align="center">
             <template slot-scope="{ row }">
               {{
@@ -44,6 +56,7 @@
           </el-table-column>
           <el-table-column label="故障项目" prop="simpleDesc" align="center">
           </el-table-column>
+
           <el-table-column
             label="师傅价格"
             prop="masterAmount"
@@ -101,20 +114,6 @@
           label-width="120px"
           label-position="left"
         >
-          <el-form-item label="故障部位:" prop="position">
-            <el-select
-              placeholder="请选择"
-              v-model="examineFaultItemsParams.position"
-            >
-              <el-option
-                v-for="item in positionList"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              >
-              </el-option>
-            </el-select>
-          </el-form-item>
           <el-form-item label="机床类型:" prop="machineType">
             <el-select
               placeholder="请选择"
@@ -129,10 +128,35 @@
               </el-option>
             </el-select>
           </el-form-item>
+          <el-form-item label="故障部位:" prop="position">
+            <!-- <el-select
+              placeholder="请选择"
+              v-model="examineFaultItemsParams.position"
+            >
+              <el-option
+                v-for="item in positionList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              >
+              </el-option>
+            </el-select> -->
+            <el-input
+              placeholder="请填写故障部位"
+              v-model="examineFaultItemsParams.position"
+            ></el-input>
+          </el-form-item>
+
           <el-form-item label="故障项目:" prop="simpleDesc">
             <el-input
               v-model="examineFaultItemsParams.simpleDesc"
               placeholder="请输入故障项目"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="故障编码:" prop="code">
+            <el-input
+              v-model="examineFaultItemsParams.code"
+              placeholder="请输入故障编码"
             ></el-input>
           </el-form-item>
           <el-form-item label="师傅价格:" prop="masterAmount">
@@ -191,6 +215,7 @@ export default {
       queryFaultItemsParams: {
         pageNo: 1,
         pageSize: 10,
+        query: null,
       },
       queryFaultItemsList: [],
       total: 10,
@@ -203,6 +228,7 @@ export default {
         annualAmount: null,
         generalAmount: null,
         machineType: null,
+        code: null,
       },
       examineFaultItemsRules: {
         annualAmount: [
@@ -231,10 +257,18 @@ export default {
         simpleDesc: [
           { required: true, message: "请输入故障项目", trigger: "change" },
         ],
+        code: [
+          { required: true, message: "请输入故障编码", trigger: "change" },
+        ],
       },
     };
   },
   methods: {
+    // 通过故障描述查询故障项目列表
+    async searchFaultList() {
+      this.queryFaultItemsParams.pageNo = 1;
+      await this.queryFaultItems();
+    },
     // 新增/修改 故障项目
     async examineFaultItemsConfirm() {
       await this.$refs["examineFaultItemsRef"].validate();
@@ -321,6 +355,10 @@ export default {
           margin-right: 20px;
         }
       }
+    }
+    .faultItemsExamine_top_right {
+      display: flex;
+      align-items: center;
     }
   }
 
