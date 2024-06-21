@@ -15,6 +15,7 @@
   "dependencies": {
     "axios": "^0.21.1",
     "core-js": "^3.22.4",
+    "crypto-js": "^4.2.0",
     "echarts": "^4.9.0",
     "element-ui": "^2.15.7",
     "es6-promise": "^4.2.8",

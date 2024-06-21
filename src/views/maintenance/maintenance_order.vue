@@ -11,7 +11,7 @@
         label-position="right"
       >
         <el-row :gutter="20">
-          <el-col :span="6">
+          <el-col :span="4">
             <el-form-item label="师傅名称">
               <el-select
                 v-model="searchForm.masterUid"
@@ -29,7 +29,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="4">
             <el-form-item label="订单状态">
               <el-select v-model="searchForm.status" placeholder="请选择">
                 <el-option
@@ -38,6 +38,42 @@
                   :label="item.label"
                   :value="item.value"
                 ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="4">
+            <el-form-item label="订单类型">
+              <el-select v-model="searchForm.orderType" placeholder="请选择">
+                <el-option label="散单" :value="1">散单</el-option>
+                <el-option label="年保" :value="2">年保</el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="4">
+            <el-form-item label="平台状态">
+              <el-select
+                v-model="searchForm.platformStatus"
+                placeholder="请选择"
+              >
+                <el-option label="师傅取消" :value="-1">师傅取消</el-option>
+                <el-option label="待检测定价" :value="0">待检测定价</el-option>
+                <el-option label="待派发" :value="1">待派发</el-option>
+                <el-option label="待审核定价" :value="2">待审核定价</el-option>
+                <el-option label="待打款至师傅" :value="3"
+                  >待打款至师傅</el-option
+                >
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="4">
+            <el-form-item label="审核状态">
+              <el-select
+                v-model="searchForm.finalExamineStatus"
+                placeholder="请选择"
+              >
+                <el-option label="未审核" :value="0">未审核</el-option>
+                <el-option label="部分审核" :value="1">部分审核</el-option>
+                <el-option label="已审核" :value="2">已审核</el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -58,14 +94,6 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="订单类型">
-              <el-select v-model="searchForm.orderType" placeholder="请选择">
-                <el-option label="散单" :value="1">散单</el-option>
-                <el-option label="年保" :value="2">年保</el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
             <el-form-item label="订单编号">
               <el-input
                 v-model="searchForm.orderSn"
@@ -73,22 +101,7 @@
               ></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
-            <el-form-item label="平台状态">
-              <el-select
-                v-model="searchForm.platformStatus"
-                placeholder="请选择"
-              >
-                <el-option label="师傅取消" :value="-1">师傅取消</el-option>
-                <el-option label="待检测定价" :value="0">待检测定价</el-option>
-                <el-option label="待派发" :value="1">待派发</el-option>
-                <el-option label="待审核定价" :value="2">待审核定价</el-option>
-                <el-option label="待打款至师傅" :value="3"
-                  >待打款至师傅</el-option
-                >
-              </el-select>
-            </el-form-item>
-          </el-col>
+
           <el-col :span="6">
             <el-button
               icon="el-icon-zoom-in"
@@ -175,7 +188,7 @@
           prop="orderSn"
           label="订单编号"
           show-overflow-tooltip
-          width="170"
+          width="200"
           align="center"
         ></el-table-column>
         <el-table-column
@@ -212,6 +225,13 @@
         <el-table-column
           prop="no"
           label="设备编码"
+          show-overflow-tooltip
+          width="150"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="devicePlace"
+          label="设备产地"
           show-overflow-tooltip
           width="150"
           align="center"
@@ -313,7 +333,7 @@
           prop="orderStatusName"
           label="状态"
           show-overflow-tooltip
-          width="150"
+          width="120"
           fixed="right"
           align="center"
         >
@@ -322,12 +342,21 @@
           prop="createTime"
           label="创建时间"
           show-overflow-tooltip
-          width="150"
+          width="120"
           fixed="right"
           align="center"
         >
         </el-table-column>
-        <el-table-column label="操作" width="350" fixed="right" align="center">
+        <el-table-column
+          prop="finalExamineStatusName"
+          label="审核状态"
+          show-overflow-tooltip
+          width="120"
+          fixed="right"
+          align="center"
+        >
+        </el-table-column>
+        <el-table-column label="操作" width="300" fixed="right" align="center">
           <template slot-scope="{ row }">
             <div class="settings">
               <el-button type="info" size="mini" plain @click="queryDesc(row)"
@@ -615,6 +644,7 @@ export default {
         no: "",
         platformStatus: "",
         orderSn: "",
+        finalExamineStatus: null,
       },
       dataList: [],
       pageCount: null,
@@ -790,6 +820,7 @@ export default {
         no: "",
         platformStatus: "",
         orderSn: "",
+        finalExamineStatus: null,
       };
       this._queryRepairOrderList();
     },

@@ -20,13 +20,13 @@
             </el-form-item>
           </el-col>
           <el-col :span="9">
-            <el-button style="color: #2E4C9E;" plain @click="_getOrderList()"
+            <el-button style="color: #2e4c9e" plain @click="_getOrderList()"
               >查询</el-button
             >
-            <el-button style="color: #2E4C9E;" plain @click="resetFn"
+            <el-button style="color: #2e4c9e" plain @click="resetFn"
               >重置</el-button
             >
-            <el-button style="color: #2E4C9E;" plain @click="exportVip"
+            <el-button style="color: #2e4c9e" plain @click="exportVip"
               >导出</el-button
             >
           </el-col>
@@ -36,7 +36,7 @@
 
     <el-card>
       <!-- 表格内容 -->
-      <div class="text" style="margin-bottom: 20px;">
+      <div class="text" style="margin-bottom: 20px">
         <!-- 表格 -->
         <el-table
           highlight-current-row
@@ -44,7 +44,7 @@
           element-loading-text="拼命加载中"
           element-loading-spinner="el-icon-loading"
           :data="orderList"
-          style="width: 100%;"
+          style="width: 100%"
           :header-cell-style="{
             background: '#f6f8fc',
             color: '#707070',
@@ -138,20 +138,20 @@
               <div class="settings">
                 <a
                   href="#"
-                  style="color:#2E4C9E"
+                  style="color: #2e4c9e"
                   @click.prevent="jump2Detail(row.id)"
                   >详情</a
                 >
                 <a
                   href="#"
-                  style="color:#2E4C9E;margin-left:6px;"
+                  style="color: #2e4c9e; margin-left: 6px"
                   @click.prevent="bindingReferrerFn(row.orderSn)"
                   v-if="!row.commission"
                   >佣金</a
                 >
                 <a
                   href="#"
-                  style="color:#2E4C9E;margin-left:6px;"
+                  style="color: #2e4c9e; margin-left: 6px"
                   v-if="!row.salesmanRealName"
                   @click.prevent="bindingSalesmanFn(row.orderSn)"
                   >绑业务员</a
@@ -188,7 +188,7 @@
                   multiple
                   :show-file-list="false"
                 >
-                  <el-dropdown-item>斯奈克设备导入</el-dropdown-item>
+                  <el-dropdown-item>斯耐克设备导入</el-dropdown-item>
                 </el-upload>
                 <el-upload
                   class="upload-demo"
@@ -213,7 +213,12 @@
               </el-dropdown-menu>
             </el-dropdown>
             <span
-              style="font-size: 12px;font-weight: 700;color: #606266;margin-left: 15px;"
+              style="
+                font-size: 12px;
+                font-weight: 700;
+                color: #606266;
+                margin-left: 15px;
+              "
               >注:请上传.XLSX格式文件合同</span
             >
           </div>
@@ -235,7 +240,7 @@
     </el-card>
 
     <!-- 空行 -->
-    <div style="margin:20px 0"></div>
+    <div style="margin: 20px 0"></div>
 
     <!-- 绑定企业弹框-->
     <model
@@ -273,7 +278,7 @@
         border
         element-loading-spinner="el-icon-loading"
         :data="enterpriseList"
-        style="width: 1500px;"
+        style="width: 1500px"
       >
         <el-table-column
           prop="enterpriseName"
@@ -319,17 +324,15 @@
       width="30%"
       :before-close="closeSalesmanFn"
     >
-      <div class="bindingSalesmanTitle">
-        绑定业务员
-      </div>
-      <div style="text-align: center;">
+      <div class="bindingSalesmanTitle">绑定业务员</div>
+      <div style="text-align: center">
         <el-select
           filterable
           remote
           v-model="salesmanSelect"
           :remote-method="salesmanRemoteMethod"
           placeholder="请选择业务员"
-          style="width: 200px;"
+          style="width: 200px"
         >
           <el-option
             v-for="item in salesmanOptions"
@@ -352,14 +355,12 @@
       width="30%"
       :before-close="closeReferrerFn"
     >
-      <div class="bindingSalesmanTitle">
-        设置佣金
-      </div>
-      <div style="text-align: center;">
+      <div class="bindingSalesmanTitle">设置佣金</div>
+      <div style="text-align: center">
         <el-input
           v-model.number="referrerForm.commission"
           placeholder="请输入佣金金额"
-          style="width: 200px;"
+          style="width: 200px"
         ></el-input>
       </div>
       <span slot="footer" class="dialog-footer">
@@ -558,12 +559,8 @@ export default {
     }
     console.log(514, "-------", queryButlerParamsStr);
     if (queryButlerParamsStr) {
-      const {
-        pageNo,
-        enterpriseName,
-        contactsPhone,
-        contactsPeople,
-      } = queryButlerParamsStr;
+      const { pageNo, enterpriseName, contactsPhone, contactsPeople } =
+        queryButlerParamsStr;
       this.currentPage = pageNo;
       this.Name = enterpriseName;
       this.Phone = contactsPhone;
@@ -978,7 +975,7 @@ export default {
         .then(({ data }) => {
           this.typeData = data;
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.info(error);
         });
       this.loading = false;

@@ -49,8 +49,8 @@
         <!-- <el-button style="color:#2E4C9E" @click="addEquipmentPage" disabled
           >新增</el-button
         > -->
-        <el-button style="color:#2E4C9E" @click="findFn">查询</el-button>
-        <el-button style="color:#2E4C9E" @click="resetFn">重置</el-button>
+        <el-button style="color: #2e4c9e" @click="findFn">查询</el-button>
+        <el-button style="color: #2e4c9e" @click="resetFn">重置</el-button>
       </div>
     </div>
 
@@ -83,12 +83,8 @@
             </el-table-column> -->
             <el-table-column label="设备状态">
               <template slot-scope="{ row }">
-                <div v-if="row.status === 0" style="color:#4093ff;">
-                  进行中
-                </div>
-                <div v-if="row.status === 1" style="color:#04d372;">
-                  报修中
-                </div>
+                <div v-if="row.status === 0" style="color: #4093ff">进行中</div>
+                <div v-if="row.status === 1" style="color: #04d372">报修中</div>
                 <!-- 数据暂时没有提供 <div style="color:#ff4b4b;">已停保</div> -->
               </template>
             </el-table-column>
@@ -124,9 +120,9 @@
             </el-table-column>
             <el-table-column label="操作">
               <template slot-scope="{ row }">
-                <div style="color:#0b2059">
+                <div style="color: #0b2059">
                   <a
-                    style="margin-right: 10px;"
+                    style="margin-right: 10px"
                     @click.prevent="goEquipmentDetails(row.id)"
                     >详情</a
                   >

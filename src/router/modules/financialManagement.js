@@ -6,7 +6,7 @@ const router = {
   component: Layout,
   redirect: "/financialManagement",
   name: "FinancialManagement",
-  meta: { title: "财务管理", icon: "el-icon-coin" },
+  meta: { title: "财务管理", icon: "el-icon-notebook-1" },
   children: [
     {
       path: "/financialManagement/incomeExpenditrue",

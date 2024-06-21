@@ -64,3 +64,13 @@ export function handlePaymentListImport(data) {
     data,
   });
 }
+
+// 批量更新付款状态
+export function handleBatchPayment(data) {
+  return request({
+    url: "/admin/financial/handleBatchPayment",
+    method: "post",
+    data,
+  });
+}
+

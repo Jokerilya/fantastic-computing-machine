@@ -1,18 +1,85 @@
 import axios from 'axios';
-import { MessageBox, Message } from 'element-ui';
+import { MessageBox, Message,Loading  } from 'element-ui';
 import store from '@/store';
 import { getToken } from '@/utils/auth';
+
+import CryptoJS from 'crypto-js'
+
+// 密钥
+var key = CryptoJS.enc.Hex.parse("d86d7bab3d6ac01ad9dc6a897652f2d2");
+
+// 加密
+function Encrypt(word) {
+	var srcs = CryptoJS.enc.Utf8.parse(word);
+	var encrypted = CryptoJS.AES.encrypt(srcs, key, {
+		mode: CryptoJS.mode.ECB,
+		padding: CryptoJS.pad.Pkcs7
+	});
+	return encrypted.toString();
+}
+
+// 解密
+function Decrypt(word) {
+	var decrypt = CryptoJS.AES.decrypt(word, key, {
+		mode: CryptoJS.mode.ECB,
+		padding: CryptoJS.pad.Pkcs7
+	});
+	return CryptoJS.enc.Utf8.stringify(decrypt).toString();
+}
+
+var loadingInstance 
+
 
 const service = axios.create({
 	baseURL: process.env.VUE_APP_BASE_API,
 	timeout: 3000000,
 });
 
+// 图片接口 导入的接口不需要
+const forbiddenUrl = [
+	'/admin/base/uploadImg',
+	'/admin/financial/handlePaymentListImport',
+	'/admin/maintenance/uploadBatchRepairOrder',
+	'/admin/maintenance/uploadButlerOrder',
+	'/admin/maintenance/uploadButlerOrder?type=2',
+	'/admin/maintenance/uploadButlerOrder?type=3',
+	'/admin/maintenance/uploadButlerOrderByOwn',
+	'/admin/maintenance/handleMasterInfoExport',
+	'/admin/maintenance/handleEnterpriseInfoExport',
+	'/admin/maintenance/handleButlerOrderExport',
+	'/admin/maintenance/handleRepairOrderExport',
+	'/admin/maintenance/uploadDeviceKeepOrder',
+	'/admin/financial/handlePaymentListExport']
+
 service.interceptors.request.use(
 	config => {
 		if (store.getters.token) {
 			config.headers['admin-token'] = getToken();
 		}
+		// post 的数据加密  判断在测试环境下
+		if(config.method=="post"||config.method=="POST"){
+			loadingInstance = Loading.service({
+				lock: true,
+				text: '加载中...',
+				spinner: 'el-icon-loading',
+				background: 'rgba(0, 0, 0, 0.7)'
+			  });
+			// 图片接口 导入的接口不需要
+			if(process.env.NODE_ENV != 'development'){
+				let pass = true
+				forbiddenUrl.forEach(item=>{
+					if(config.url == item){
+						pass = false
+					}
+				})
+				if(pass){
+					config.data = Encrypt(JSON.stringify(config.data))
+					config.headers['Content-Type'] = "application/json"
+					config.dataType = 'text'
+				}
+			}
+		}
+		
 		return config;
 	},
 	error => {
@@ -23,10 +90,24 @@ service.interceptors.request.use(
 
 service.interceptors.response.use(
 	response => {
-		console.log(26,response.data);
+		if(response.config.method=='post' || response.config.method=='POST' ){
+		loadingInstance.close();
+		}
 		if (response.config.responseType == 'blob') {
 			return response;
 		} else {
+			// 图片接口不需要  判断在测试环境下
+			if(process.env.NODE_ENV != 'development'){
+				let pass = true
+				forbiddenUrl.forEach(item=>{
+					if(response.config.url == item){
+						pass = false
+					}
+				})
+				if(pass){
+					response.data = JSON.parse(Decrypt(response.data))
+				}
+			}
 			const res = response.data;
 			if (res.code == '000') {
 				return res;
@@ -51,12 +132,12 @@ service.interceptors.response.use(
 		}
 	},
 	error => {
-		console.log('err' + error); // for debug
 		Message({
 			message: error.message,
 			type: 'error',
 			duration: 5 * 1000,
 		});
+		loadingInstance.close();
 		return Promise.reject(error);
 	}
 );

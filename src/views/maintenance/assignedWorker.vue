@@ -167,7 +167,7 @@
 </template>
 
 <script>
-import { handleTakeOrder } from "@/api/order";
+import { handleTakeOrder } from "@/api/proxy";
 import { queryAssignableMasterList, handleAssignMaster } from "@/api/user";
 import { addressFn } from "@/api/system";
 export default {

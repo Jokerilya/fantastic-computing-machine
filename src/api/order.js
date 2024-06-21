@@ -98,7 +98,7 @@ export async function uploadButlerOrder(data, num) {
   });
 }
 
-//合同上传 -- 斯奈克
+//合同上传 -- 斯耐克
 export async function uploadButlerOrderByOwn(data) {
   return request({
     url: "/admin/maintenance/uploadButlerOrderByOwn",
@@ -409,14 +409,6 @@ export function handleRepairRemarks(data) {
   });
 }
 
-// 师傅提交验收
-export function handleSubmitAcceptance(orderSn) {
-  return request({
-    url: "/admin/maintenance/handleSubmitAcceptance?orderSn=" + orderSn,
-    method: "get",
-  });
-}
-
 // 操作师傅积分
 export function handleMasterIntegral(params) {
   return request({
@@ -585,10 +577,11 @@ export function deletePartProduct(data) {
 }
 
 // 查询维保供应商信息
-export function queryMaintenanceSupplierInfo(query) {
+export function queryMaintenanceSupplierInfo(data) {
 	return request({
-		url: '/admin/maintenance/queryMaintenanceSupplierInfo?query='+query,
-		method: 'get',
+		url: '/admin/maintenance/queryMaintenanceSupplierInfo',
+		method: 'post',
+    data
 	})
 }
 
@@ -695,13 +688,6 @@ export function handleSystemCreateOrder(orderSn) {
 	})
 }
 
-// 代企业确认验收
-export function handleEnterpriseCheck(orderSn) {
-	return request({
-		url: '/admin/maintenance/handleEnterpriseCheck?orderSn='+orderSn,
-		method: 'GET',
-	})
-}
 
 // 故障减免费用
 export function handleFaultCost(data) {
@@ -712,10 +698,99 @@ export function handleFaultCost(data) {
 	})
 }
 
-// 代师傅接单
-export function handleTakeOrder(data) {
+// 查询师傅保险列表
+export function queryMasterInsuranceList(data) {
 	return request({
-		url: '/admin/maintenance/handleTakeOrder',
+		url: '/admin/maintenance/queryMasterInsuranceList',
+		method: 'post',
+    data
+	})
+}
+
+// 新增编辑师傅保险信息
+export function editMasterInsurance(data) {
+	return request({
+		url: '/admin/maintenance/editMasterInsurance',
+		method: 'post',
+    data
+	})
+}
+
+// 查询开票列表 
+export function queryRepairInvoiceOrderList(data) {
+	return request({
+		url: '/admin/maintenance/queryRepairInvoiceOrderList',
+		method: 'post',
+    data
+	})
+}
+
+// 上传发票
+export function uploadRepairInvoice(data) {
+	return request({
+		url: '/admin/maintenance/uploadRepairInvoice',
+		method: 'post',
+    data
+	})
+}
+
+// 订单抵扣标识
+export function handleOrderDiscountFlag(orderSn,flag) {
+	return request({
+		url: `/admin/maintenance/handleOrderDiscountFlag?orderSn=${orderSn}&flag=${flag}`,
+		method: 'get'
+	})
+}
+
+// 上传线下工单
+export function handleOfflineImages(data) {
+	return request({
+		url: `/admin/maintenance/handleOfflineImages`,
+		method: 'post',
+    data
+	})
+}
+
+// 同步金蝶单据
+export function synchronizationJdOrder(data) {
+	return request({
+		url: `/admin/maintenance/synchronizationJdOrder`,
+		method: 'post',
+    data
+	})
+}
+
+// 编辑维保供应商信息
+export function editMaintenanceSupplierInfo(data) {
+	return request({
+		url: `/admin/maintenance/editMaintenanceSupplierInfo`,
+		method: 'post',
+    data
+	})
+}
+
+// 师傅订单折扣记录列表
+export function queryMasterOrderDiscountList(data) {
+	return request({
+		url: `/admin/maintenance/queryMasterOrderDiscountList`,
+		method: 'post',
+    data
+	})
+}
+
+// 手动合并师傅折扣
+export function handleMergeMasterOrder(data) {
+	return request({
+		url: `/admin/maintenance/handleMergeMasterOrder`,
+		method: 'post',
+    data
+	})
+}
+
+// 删除师傅折扣记录
+export function deleteMasterDiscountLog(data) {
+	return request({
+		url: `/admin/maintenance/deleteMasterDiscountLog`,
 		method: 'post',
     data
 	})

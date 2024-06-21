@@ -24,7 +24,7 @@
             <div class="item">
               <span class="item_title">出厂时间</span>
               <el-date-picker
-                style="width: 100%;"
+                style="width: 100%"
                 v-model="equipmentAddForm.factoryTime"
                 type="datetime"
                 value-format="yyyy-MM-dd"
@@ -37,7 +37,7 @@
             <div class="item">
               <span class="item_title">设备类型</span>
               <el-cascader
-                style="width: 100%;"
+                style="width: 100%"
                 :props="{
                   label: 'name',
                   children: 'list',
@@ -79,7 +79,7 @@
             <div class="item">
               <span class="item_title">设备系统</span>
               <el-cascader
-                style="width: 100%;"
+                style="width: 100%"
                 :props="{
                   label: 'name',
                   children: 'list',
@@ -99,8 +99,8 @@
               <span class="item_title">设备产地</span>
               <el-select
                 v-model="equipmentAddForm.devicePlace"
-                placeholder="请输入设备产地"
-                style="width: 100%;"
+                placeholder="请选择设备产地"
+                style="width: 100%"
               >
                 <el-option label="进口" value="进口"> </el-option>
                 <el-option label="国产" value="国产"> </el-option>
@@ -111,7 +111,7 @@
             <div class="item">
               <span class="item_title">维保时间</span>
               <el-date-picker
-                style="width: 100%;"
+                style="width: 100%"
                 v-model="time"
                 type="daterange"
                 value-format="yyyy-MM-dd"
@@ -121,7 +121,6 @@
               >
               </el-date-picker>
             </div>
-
             <div class="item">
               <span class="item_title">价格</span>
               <el-input
@@ -129,6 +128,18 @@
                 v-model.number="equipmentAddForm.price"
                 placeholder="请输入价格"
               ></el-input>
+            </div>
+            <div class="item">
+              <span class="item_title">设备类型</span>
+              <el-select
+                v-model="equipmentAddForm.type"
+                placeholder="请选择设备类型"
+                style="width: 100%"
+              >
+                <el-option label="普通" :value="1"> </el-option>
+                <el-option label="年保" :value="2"> </el-option>
+                <el-option label="年卡" :value="3"> </el-option>
+              </el-select>
             </div>
           </div>
           <div class="itemLine">
@@ -177,14 +188,14 @@
       <div class="tool">
         <h2 class="configInfo_title">设备配件信息</h2>
         <el-button
-          style="background-color: #2f4d9e;color: #fffefd;"
+          style="background-color: #2f4d9e; color: #fffefd"
           @click="addPartsList"
           >新增</el-button
         >
-        <el-button style="color: #2f4d9e;border: 1px solid #2f4d9e;"
+        <el-button style="color: #2f4d9e; border: 1px solid #2f4d9e"
           >保存</el-button
         >
-        <span style="margin-left: 10px;color: red;">注:配件修改完必须保存</span>
+        <span style="margin-left: 10px; color: red">注:配件修改完必须保存</span>
       </div>
       <el-card>
         <!-- 放配件表格 -->
@@ -211,12 +222,12 @@
           <el-table-column label="操作">
             <template slot-scope="scope">
               <a
-                style="color: #2f4d9e;margin-right: 10px;"
+                style="color: #2f4d9e; margin-right: 10px"
                 @click="editpartsList(scope.row, scope.$index)"
                 >修改</a
               >
               <a
-                style="color: #2f4d9e;"
+                style="color: #2f4d9e"
                 @click="delpartsList(scope.$index, scope.row)"
                 >删除</a
               >
@@ -234,11 +245,11 @@
     >
       <div
         slot="title"
-        style="margin-top: 20px;color: #7a797c;font-weight: 700;"
+        style="margin-top: 20px; color: #7a797c; font-weight: 700"
       >
         {{ addPartsListName }}
       </div>
-      <div style="padding: 0 20%;">
+      <div style="padding: 0 20%">
         <el-form
           :model="partsListForm"
           label-width="100px"
@@ -263,12 +274,12 @@
       </div>
       <span slot="footer">
         <el-button
-          style="width: 100px;color: #2d4da0;border: 1px solid #2d4da0;"
+          style="width: 100px; color: #2d4da0; border: 1px solid #2d4da0"
           @click="closeAddPartsListDialog"
           >取消</el-button
         >
         <el-button
-          style="width: 100px;background-color: #2d4da0;color: #fff;"
+          style="width: 100px; background-color: #2d4da0; color: #fff"
           @click="addPartsListComfirm(partsListForm.index)"
           >确定</el-button
         >
@@ -301,7 +312,7 @@ export default {
         enterpriseDeviceNo: "",
         enterpriseDevicePosition: "",
         nameplateImg: "",
-        type: 0,
+        type: null,
         orderSn: "SE447443",
       },
       time: "",
@@ -391,9 +402,10 @@ export default {
     },
     // 新增编辑设备
     async addEditEquipment() {
-      this.equipmentAddForm.endTime = this.time[1] + " 00:00:00";
-      this.equipmentAddForm.startTime = this.time[0] + " 00:00:00";
-      console.log(this.equipmentAddForm);
+      if (this.time) {
+        this.equipmentAddForm.endTime = this.time[1] + " 00:00:00";
+        this.equipmentAddForm.startTime = this.time[0] + " 00:00:00";
+      }
       const res = await editDeviceInfo(this.equipmentAddForm);
       if (res.message === "操作成功") {
         this.$router.push({

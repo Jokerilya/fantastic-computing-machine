@@ -15,15 +15,14 @@
         range-separator="至"
         start-placeholder="开始日期"
         end-placeholder="结束日期"
-        style="margin-right: 10px;"
+        style="margin-right: 10px"
         value-format="yyyy-MM-dd"
         @change="changeData"
       >
       </el-date-picker>
-
       <el-button class="toolBtn" @click="queryUpkeepListFn(1)">查询</el-button>
       <el-button class="toolBtn" @click="resetUpkeepListFn">重置</el-button>
-      <el-button class="toolBtn" @click="exportBtn" style="margin-right: 10px;"
+      <el-button class="toolBtn" @click="exportBtn" style="margin-right: 10px"
         >导入模板</el-button
       >
       <el-upload
@@ -51,6 +50,8 @@
               'text-align': 'center',
             }"
           >
+            <el-table-column width="150" label="订单编号" prop="orderSn">
+            </el-table-column>
             <el-table-column width="150" label="设备编号" prop="no">
             </el-table-column>
             <el-table-column label="保养日期">
@@ -73,12 +74,12 @@
             <el-table-column label="操作">
               <template slot-scope="{ row }">
                 <a
-                  style="color: #0b2059;margin-right: 10px;"
+                  style="color: #0b2059; margin-right: 10px"
                   @click.prevent="openUpkeepDetailsDialogFn(row)"
                   >详情</a
                 >
                 <a
-                  style="color: #0b2059;"
+                  style="color: #0b2059"
                   @click.prevent="delUpkeepDetails(row.id)"
                   >删除</a
                 >
@@ -110,9 +111,7 @@
     >
       <div v-if="upkeepDetails">
         <div class="orderDetails">
-          <h2 style="text-align:center;">
-            保养详情
-          </h2>
+          <h2 style="text-align: center">保养详情</h2>
           <div class="content">
             <div class="line">
               <div class="item">
@@ -168,7 +167,7 @@
             </div>
           </div>
         </div>
-        <div style="display: flex;justify-content: flex-end;">
+        <div style="display: flex; justify-content: flex-end">
           <el-button @click="closeUpkeepDetailsDialogFn" class="closeBtn"
             >关闭</el-button
           >

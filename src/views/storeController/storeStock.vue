@@ -22,7 +22,7 @@
         </el-table-column>
         <el-table-column prop="price" label="价格" align="center">
           <template slot-scope="{ row }">
-            <div style="color: red;">{{ row.price }}￥</div>
+            <div style="color: red">{{ row.price }}￥</div>
           </template>
         </el-table-column>
         <el-table-column prop="productCode" label="商品编码" align="center">
@@ -52,7 +52,7 @@ export default {
       total: 0,
       tableData: [
         {
-          deviceBrand: "斯奈克",
+          deviceBrand: "斯耐克",
           deviceFaultName: "生锈老化",
           deviceModel: "SNK001",
           deviceName: "螺丝",
@@ -63,7 +63,7 @@ export default {
           productCode: "Code001",
         },
         {
-          deviceBrand: "斯奈克",
+          deviceBrand: "斯耐克",
           deviceFaultName: "生锈变钝",
           deviceModel: "SNK002",
           deviceName: "刀片",

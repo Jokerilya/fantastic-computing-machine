@@ -59,6 +59,16 @@
               <span class="item_title">价格</span
               ><span>{{ equipmentDetails.price }}.00</span>
             </div>
+            <div class="item">
+              <span class="item_title">设备类型</span
+              ><span>{{
+                equipmentDetails.type == 1
+                  ? "普通"
+                  : equipmentDetails.type == 2
+                  ? "年保"
+                  : "年卡"
+              }}</span>
+            </div>
           </div>
           <div class="itemLine">
             <div class="item">
@@ -124,7 +134,7 @@
         <el-button
           @click="ordinaryBtnFn"
           :type="activeBtn === 1 ? 'primary' : ''"
-          style="margin-bottom: 20px;"
+          style="margin-bottom: 20px"
           >工单记录</el-button
         >
         <!-- 年保记录 -->
@@ -142,8 +152,8 @@
           <el-table-column prop="orderSn" label="订单号"> </el-table-column>
           <el-table-column prop="status" label="订单状态">
             <template slot-scope="{ row }">
-              <div v-if="row.status === 1" style="color:green">生效中</div>
-              <div v-if="row.status === 2" style="color:red">已过期</div>
+              <div v-if="row.status === 1" style="color: green">生效中</div>
+              <div v-if="row.status === 2" style="color: red">已过期</div>
             </template>
           </el-table-column>
           <el-table-column prop="contactsPeople" label="客户负责人">
@@ -154,7 +164,7 @@
           </el-table-column>
           <el-table-column label="操作">
             <template slot-scope="{ row }">
-              <a style="color:#2e4c9e" @click.prevent="goDetailsVip(row.id)"
+              <a style="color: #2e4c9e" @click.prevent="goDetailsVip(row.id)"
                 >详情</a
               >
             </template>
@@ -185,11 +195,7 @@
           </el-table-column>
           <el-table-column prop="masterRealName" label="师傅名称" width="150">
           </el-table-column>
-          <el-table-column
-            prop="masterPhone"
-            label="师傅联系电话"
-            width="150"
-          >
+          <el-table-column prop="masterPhone" label="师傅联系电话" width="150">
           </el-table-column>
           <el-table-column prop="type" label="故障类型" width="150">
             <template slot-scope="{ row }">
@@ -212,7 +218,7 @@
             <template slot-scope="{ row }">
               <a
                 href="#"
-                style="color:#2e4c9e"
+                style="color: #2e4c9e"
                 @click.prevent="goDetailsOrdinary(row.orderSn)"
                 >详情</a
               >
@@ -255,7 +261,9 @@ export default {
     },
     // 改变时间格式
     changeTimeFn(time) {
-      return time.slice(0, 10);
+      if (time) {
+        return time.slice(0, 10);
+      }
     },
     //点击工单记录触发的事件
     ordinaryBtnFn() {

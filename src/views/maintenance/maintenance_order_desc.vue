@@ -3,7 +3,12 @@
   <div class="box">
     <el-tabs v-model="activeName" type="border-card">
       <!-- 企业描述tab -->
-      <el-tab-pane label="企业描述" name="desc">
+      <el-tab-pane
+        :label="
+          data.examineStatus == 0 ? '(未审核)企业描述' : '(已审核)企业描述'
+        "
+        name="desc"
+      >
         <div class="big_title">
           <div class="bigTitleLeft">
             <!-- <div class="item" style="color: red; font-size: 18px">
@@ -21,22 +26,13 @@
             </div>
           </div>
           <div>
-            <!-- <el-button
-              type="primary"
-              size="mini"
-              plain
-              @click="sumbitQuotation()"
-              v-if="['2202'].includes(data.enterpriseSubStatus)"
-              >确认报价</el-button
-            >
             <el-button
               type="primary"
               size="mini"
               plain
-              v-if="data.orderStatusName === '待平台指派'"
-              @click="submitForAcceptance(data.orderSn)"
-              >代提交验收</el-button
-            > -->
+              @click="synchronizationJdOrder(data.orderSn)"
+              >同步金蝶单据</el-button
+            >
             <el-button
               size="mini"
               type="primary"
@@ -73,6 +69,16 @@
           <div class="oneline">
             <div class="item1">需求信息:</div>
             <div class="item2">
+              <div v-if="data.no">
+                订单类型:
+                <span>{{
+                  data.orderType == 1
+                    ? "散单"
+                    : data.orderType == 2
+                    ? "年保"
+                    : "年卡"
+                }}</span>
+              </div>
               <div v-if="data.no">
                 设备编码: <span>{{ data.no }}</span>
               </div>
@@ -263,7 +269,127 @@
               <div>{{ item.subStatusName }}</div>
             </div>
           </div>
+          <div v-if="index != data.enrollRepairOrderOutList.length - 1">
+            <!-- 代企业操作 -->
+            <el-dropdown style="margin-right: 10px">
+              <el-button size="mini" plain type="primary">
+                代企业操作<i class="el-icon-arrow-down el-icon--right"></i>
+              </el-button>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item
+                  ><div @click="handleProxyConfirmQuotation(item.orderSn)">
+                    代企业确认师傅报价
+                  </div></el-dropdown-item
+                >
+                <el-dropdown-item
+                  ><div @click="handleEnterpriseCheck(item.orderSn)">
+                    代企业确认验收
+                  </div></el-dropdown-item
+                >
+                <el-dropdown-item
+                  ><div @click="handleProxyPayment(item.orderSn)">
+                    代企业付款
+                  </div></el-dropdown-item
+                >
+                <!-- <el-dropdown-item>代企业发布评价</el-dropdown-item> -->
+              </el-dropdown-menu>
+            </el-dropdown>
+            <!-- 代师傅操作 -->
+            <el-dropdown style="margin-right: 10px">
+              <el-button type="primary" size="mini" plain>
+                代师傅操作<i class="el-icon-arrow-down el-icon--right"></i>
+              </el-button>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item
+                  ><div @click="openRemindStartedDialog(item.orderSn)">
+                    代师傅开始出发
+                  </div>
+                </el-dropdown-item>
+                <el-dropdown-item>
+                  <div @click="openHandlePhotographPunchDialog(item.orderSn)">
+                    代师傅拍照打卡
+                  </div>
+                </el-dropdown-item>
+                <el-dropdown-item>
+                  <div @click="handleStartService(item.orderSn)">
+                    代师傅开始服务
+                  </div>
+                </el-dropdown-item>
+                <el-dropdown-item
+                  ><div @click="openSubmitAcceptanceDialog(item.orderSn)">
+                    代师傅提交验收
+                  </div></el-dropdown-item
+                >
+              </el-dropdown-menu>
+            </el-dropdown>
+            <el-button
+              type="primary"
+              size="mini"
+              plain
+              @click="
+                openConsultPriceDialog(
+                  item.orderSn,
+                  item.doorAmount,
+                  item.partsAmount
+                )
+              "
+              >协商费用</el-button
+            >
+          </div>
           <div v-if="index == data.enrollRepairOrderOutList.length - 1">
+            <!-- 代企业操作 -->
+            <el-dropdown style="margin-right: 10px">
+              <el-button size="mini" plain type="primary">
+                代企业操作<i class="el-icon-arrow-down el-icon--right"></i>
+              </el-button>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item
+                  ><div @click="handleProxyConfirmQuotation(item.orderSn)">
+                    代企业确认师傅报价
+                  </div></el-dropdown-item
+                >
+                <el-dropdown-item
+                  ><div @click="handleEnterpriseCheck(item.orderSn)">
+                    代企业确认验收
+                  </div></el-dropdown-item
+                >
+                <el-dropdown-item
+                  ><div @click="handleProxyPayment(item.orderSn)">
+                    代企业付款
+                  </div></el-dropdown-item
+                >
+                <!-- <el-dropdown-item>代企业发布评价</el-dropdown-item> -->
+              </el-dropdown-menu>
+            </el-dropdown>
+            <!-- 代师傅操作 -->
+            <el-dropdown style="margin-right: 10px">
+              <el-button type="primary" size="mini" plain>
+                代师傅操作<i class="el-icon-arrow-down el-icon--right"></i>
+              </el-button>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item
+                  ><div @click="openRemindStartedDialog(item.orderSn)">
+                    代师傅开始出发
+                  </div>
+                </el-dropdown-item>
+                <el-dropdown-item>
+                  <div @click="openHandlePhotographPunchDialog(item.orderSn)">
+                    代师傅拍照打卡
+                  </div>
+                </el-dropdown-item>
+                <el-dropdown-item>
+                  <div @click="handleStartService(item.orderSn)">
+                    代师傅开始服务
+                  </div>
+                </el-dropdown-item>
+                <el-dropdown-item
+                  ><div @click="openSubmitAcceptanceDialog(item.orderSn)">
+                    代师傅提交验收
+                  </div></el-dropdown-item
+                >
+              </el-dropdown-menu>
+            </el-dropdown>
+
             <el-button
               type="primary"
               size="mini"
@@ -276,7 +402,20 @@
               type="primary"
               size="mini"
               plain
-              @click="openConsultPriceDialog(item.orderSn)"
+              @click="openOrderDiscountDialog(item.orderSn, item.discountFlag)"
+              >订单折扣</el-button
+            >
+            <el-button
+              type="primary"
+              size="mini"
+              plain
+              @click="
+                openConsultPriceDialog(
+                  item.orderSn,
+                  item.doorAmount,
+                  item.partsAmount
+                )
+              "
               >协商费用</el-button
             >
             <el-button
@@ -288,20 +427,6 @@
               >确认报价</el-button
             >
             <!-- <el-button type="primary" size="mini" plain @click="platformPayInit()">打款至师傅</el-button> -->
-            <el-button
-              type="primary"
-              size="mini"
-              plain
-              @click="submitForAcceptance(item.orderSn)"
-              >代师傅提交验收</el-button
-            >
-            <el-button
-              type="primary"
-              size="mini"
-              plain
-              @click="handleEnterpriseCheck(item.orderSn)"
-              >代企业确认验收</el-button
-            >
             <!-- v-if="data.platformStatus > 0 && data.enterpriseMainStatus <= 4" -->
             <el-button
               size="mini"
@@ -393,7 +518,7 @@
               ></el-table-column>
               <el-table-column label="师傅价格" align="center">
                 <template slot-scope="{ row }">
-                  {{ row.masterAmount }}
+                  {{ row.masterAmount ? row.masterAmount : "0" }}
                 </template>
               </el-table-column>
               <el-table-column
@@ -461,9 +586,10 @@
                 <template slot-scope="{ row }">
                   <el-button
                     type="text"
-                    @click="openExamineFaultsDialog(row, item.orderSn)"
-                    v-if="row.status == 1"
-                    >审核</el-button
+                    @click="
+                      openExamineFaultsDialog(row, item.orderSn, data.orderType)
+                    "
+                    >修改</el-button
                   >
                   <el-button
                     type="text"
@@ -499,8 +625,8 @@
                 <template slot-scope="{ row }">
                   <el-image
                     style="width: 100px; height: 100px"
-                    :src="row.image"
-                    :preview-src-list="[row.image]"
+                    :src="row.image.split(',')[0]"
+                    :preview-src-list="row.image.split(',')"
                   ></el-image>
                 </template>
               </el-table-column>
@@ -601,17 +727,16 @@
                     物流设置
                   </el-button>
                   <el-button
-                    v-if="row.status == 1"
                     type="text"
                     @click="openAddEditPart(row, $index, item.orderSn)"
                     >修改</el-button
                   >
-                  <el-button
+                  <!-- <el-button
                     v-if="row.status == 1"
                     type="text"
                     @click="openExaminePartsDialog(row, item.orderSn)"
                     >审核</el-button
-                  >
+                  > -->
                   <el-button
                     type="text"
                     @click="delPartsList(row, item.orderSn)"
@@ -640,15 +765,42 @@
             </div>
           </div>
 
+          <!-- 完工照片 -->
+          <div class="finishWork" v-if="item.completeImages">
+            <div class="title">完工照片</div>
+            <div>
+              <el-image
+                v-for="src in item.completeImages"
+                :key="src"
+                :src="src"
+                style="width: 150px; height: 150px; margin-right: 20px"
+                lazy
+                :preview-src-list="[src]"
+              ></el-image>
+            </div>
+          </div>
+
           <!-- 工单图片 -->
           <div class="finishWork" v-if="item.offlineImages">
-            <div class="title">工单图片:</div>
-            <el-image
-              :src="item.offlineImages"
-              style="width: 150px; height: 150px; margin-right: 20px"
-              lazy
-              :preview-src-list="[item.offlineImages]"
-            ></el-image>
+            <div class="title">
+              <div>工单图片</div>
+              <el-upload
+                action="#"
+                :data="{ orderSn: item.orderSn }"
+                :show-file-list="false"
+                :http-request="handleOfflineImages"
+              >
+                <el-button size="small" type="primary">点击上传</el-button>
+              </el-upload>
+            </div>
+            <div>
+              <el-image
+                :src="item.offlineImages"
+                style="width: 150px; height: 150px; margin-right: 20px"
+                lazy
+                :preview-src-list="[item.offlineImages]"
+              ></el-image>
+            </div>
           </div>
 
           <!-- 客户评价 -->
@@ -806,7 +958,7 @@
                 </div>
                 <div>
                   <div>
-                    故障项减免费用:
+                    订单费用调整:
                     <span
                       >￥{{
                         item.faultReductionAmount
@@ -814,16 +966,33 @@
                           : 0
                       }}元</span
                     >
+                    <!-- <span v-if="item.discountRemark"
+                      >({{ item.discountRemark }})</span
+                    > -->
                     <el-button
                       style="margin-left: 20px"
                       type="primary"
-                      @click="openFaultDeratePriceDialog(item.orderSn)"
+                      @click="
+                        openFaultDeratePriceDialog(
+                          item.orderSn,
+                          item.faultReductionAmount,
+                          item.faultReductionRemark
+                        )
+                      "
                       >设置</el-button
                     >
                   </div>
                   <div>
-                    合计:
-                    <span style="color: red">￥{{ item.totalAmount }}元</span>
+                    调整费用备注:
+                    <span>{{ item.faultReductionRemark }}</span>
+                  </div>
+                  <div>
+                    折扣金额:
+                    <span>￥{{ item.discountAmount }}元</span>
+                  </div>
+                  <div>
+                    折扣标识描述:
+                    <span>{{ item.discountRemark }}</span>
                   </div>
                   <div>
                     最终协商价:
@@ -832,7 +1001,14 @@
                         item.consultAmount ? item.consultAmount : 0
                       }}元</span
                     >
-                    (备注:{{ item.consultRemarks }})
+                    <span v-if="item.consultRemarks">
+                      (备注:{{ item.consultRemarks }})
+                    </span>
+                  </div>
+                  <div>
+                    合计:
+                    <span style="color: red">￥{{ item.totalAmount }}元</span
+                    ><span v-if="item.discountFlag === 0">(不纳入折扣)</span>
                   </div>
                 </div>
               </div>
@@ -936,7 +1112,7 @@
     </model>
 
     <!-- 确认验收的模态框 -->
-    <model
+    <!-- <model
       ref="checkForm"
       title="确认验收"
       @ok="sumbitCheck"
@@ -974,7 +1150,7 @@
           ></el-input>
         </el-form-item>
       </el-form>
-    </model>
+    </model> -->
 
     <!-- 打款信息的模态框 -->
     <model
@@ -999,14 +1175,30 @@
       title="设置故障减免费用"
       width="40%"
       center
+      :show-close="false"
       :visible="faultDeratePriceVisible"
     >
-      <el-input
-        @mousewheel.native.prevent
-        type="number"
-        v-model.number="faultDeratePriceParams.amount"
-        placeholder="填写您要设置故障减免费用"
-      ></el-input>
+      <el-form
+        :model="faultDeratePriceParams"
+        :rules="faultDeratePriceParamsRules"
+        ref="faultDeratePriceParamsRef"
+        label-width="150px"
+      >
+        <el-form-item label="订单费用调整" prop="amount">
+          <el-input
+            @mousewheel.native.prevent
+            type="number"
+            v-model.number="faultDeratePriceParams.amount"
+            placeholder="填写订单费用调整"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="调整费用备注" prop="remark">
+          <el-input
+            v-model="faultDeratePriceParams.remark"
+            placeholder="填写调整费用备注"
+          ></el-input>
+        </el-form-item>
+      </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="closeFaultDeratePriceDialog">取 消</el-button>
         <el-button type="primary" @click="confirmSetFaultDeratePrice"
@@ -1272,111 +1464,115 @@
     <!-- 新增修改配件框 -->
     <el-dialog
       :title="addEditPartTitle"
-      width="30%"
+      width="35%"
       top="5vh"
       :append-to-body="true"
       :visible="addEditPartDialogShow"
       :before-close="closeAddEditPart"
     >
-      <el-form label-position="left" label-width="80px" :model="partInfo">
-        <el-form-item label="配件模式">
-          <el-radio-group v-model="partInfo.model">
-            <el-radio :label="1">外发维修</el-radio>
-            <el-radio :label="2">采买新件</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="采买角色">
-          <el-radio-group v-model="partInfo.type">
-            <el-radio :label="1">师傅自费</el-radio>
-            <el-radio :label="2">平台购买</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="配件来源">
-          <el-radio-group
-            v-model="partInfo.stashPartsWay"
-            @input="changeStashPartsWay"
-          >
-            <el-radio :label="1">新增配件</el-radio>
-            <el-radio :label="2">仓库搜索</el-radio>
-            <el-button
-              v-if="partInfo.stashPartsWay == 2"
-              size="mini"
-              icon="el-icon-search"
-              @click="openWarehouseSearch"
+      <div style="width: 100%">
+        <el-form
+          label-position="left"
+          label-width="80px"
+          :model="partInfo"
+          :rules="partInfoRules"
+          ref="partInfoRuleForm"
+        >
+          <el-form-item label="配件模式" prop="model">
+            <el-radio-group v-model="partInfo.model" @input="changeModel">
+              <el-radio :label="1">外发维修</el-radio>
+              <el-radio :label="2">采买新件</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="采买角色" prop="type" @input="changeType">
+            <el-radio-group v-model="partInfo.type">
+              <el-radio :label="1">师傅自费</el-radio>
+              <el-radio :label="2">平台购买</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="配件来源">
+            <el-radio-group
+              v-model="partInfo.stashPartsWay"
+              @input="changeStashPartsWay"
             >
-            </el-button>
-          </el-radio-group>
-        </el-form-item>
-        <!-- v-if="partInfo.type == 2" -->
-        <el-form-item label="物料编码">
-          <el-input
-            v-model="partInfo.number"
-            :disabled="partInfo.stashPartsWay == 2"
-            placeholder="请输入物料编码"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="配件名称">
-          <el-input
-            v-model="partInfo.name"
-            :disabled="partInfo.stashPartsWay == 2"
-            placeholder="请输入配件名称"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="配件品牌">
-          <el-input
-            v-model="partInfo.brand"
-            :disabled="partInfo.stashPartsWay == 2"
-            placeholder="请输入配件品牌"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="配件参数">
-          <el-input
-            v-model="partInfo.parameter"
-            :disabled="partInfo.stashPartsWay == 2"
-            placeholder="请输入配件参数"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="配件备注">
-          <el-input
-            v-model="partInfo.remarks"
-            placeholder="请输入备注"
-          ></el-input>
-        </el-form-item>
-        <el-form-item>
-          <div slot="label">配件单价</div>
-          <!--  :disabled="
-              partInfo.stashPartsWay == 2 &&
-              partInfo.type == 2 &&
-              partInfo.model == 2
-            " -->
-          <el-input
-            type="number"
-            v-model.number="partInfo.price"
-            placeholder="请输入配件单价"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="配件数量">
-          <el-input-number
-            v-model.number="partInfo.num"
-            :min="1"
-            :max="999"
-          ></el-input-number>
-        </el-form-item>
-        <el-form-item label="配件图片">
-          <div class="hiddenUploadBox">
-            <el-upload
-              action="#"
-              list-type="picture-card"
-              :http-request="uploadPartImg"
-              :file-list="uploadPartImgList"
-              :on-remove="delUploadPartImg"
-              :limit="1"
-            >
-              <i class="el-icon-plus"></i>
-            </el-upload>
-          </div>
-        </el-form-item>
-      </el-form>
+              <el-radio :label="1">新增配件</el-radio>
+              <el-radio :label="2">仓库搜索</el-radio>
+              <el-button
+                v-if="partInfo.stashPartsWay == 2"
+                size="mini"
+                icon="el-icon-search"
+                @click="openWarehouseSearch"
+              >
+              </el-button>
+            </el-radio-group>
+          </el-form-item>
+          <!-- v-if="partInfo.type == 2" -->
+          <el-form-item label="物料编码">
+            <el-input
+              v-model="partInfo.number"
+              :disabled="partInfo.stashPartsWay == 2"
+              placeholder="请输入物料编码"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="配件名称" prop="name">
+            <el-input
+              v-model="partInfo.name"
+              :disabled="partInfo.stashPartsWay == 2"
+              placeholder="请输入配件名称"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="配件品牌" prop="brand">
+            <el-input
+              v-model="partInfo.brand"
+              :disabled="partInfo.stashPartsWay == 2"
+              placeholder="请输入配件品牌"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="配件参数" prop="parameter">
+            <el-input
+              v-model="partInfo.parameter"
+              :disabled="partInfo.stashPartsWay == 2"
+              placeholder="请输入配件参数"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="配件故障">
+            <el-input
+              v-model="partInfo.remarks"
+              placeholder="请输入配件故障"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="配件单价" prop="price">
+            <el-input
+              type="number"
+              v-model.number="partInfo.price"
+              placeholder="请输入配件单价"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="配件数量">
+            <el-input-number
+              v-model.number="partInfo.num"
+              :min="1"
+              :max="999"
+            ></el-input-number>
+          </el-form-item>
+          <el-form-item label="配件图片">
+            <div class="hiddenUploadBox">
+              <el-upload
+                action="#"
+                list-type="picture-card"
+                :http-request="uploadPartImg"
+                :file-list="uploadPartImgList"
+                :on-remove="delUploadPartImg"
+                :multiple="true"
+                :limit="3"
+              >
+                <i class="el-icon-plus"></i>
+              </el-upload>
+            </div>
+          </el-form-item>
+        </el-form>
+      </div>
+
       <span slot="footer" class="dialog-footer">
         <el-button @click="closeAddEditPart">取 消</el-button>
         <el-button type="primary" @click="confirmAddEditPart">确 定</el-button>
@@ -1431,14 +1627,13 @@
       width="40%"
       top="5vh"
       :visible="setLogisticsDialogShow"
-      :before-close="closeSetLogistics"
     >
       <div class="setLogisticsDialog">
         <div class="setLogisticsDialogSearch">
           <el-input
             style="margin-right: 20px"
             placeholder="输入供应商名字搜索"
-            v-model="maintenanceSupplierInfoQuery"
+            v-model="supplierInfoListParams.query"
           ></el-input>
           <el-button type="primary" @click="searchMaintenanceSupplierInfo"
             >搜索</el-button
@@ -1460,6 +1655,17 @@
               <div>范围:{{ item.businessScope }}</div>
             </el-radio>
           </el-radio-group>
+        </div>
+        <div class="tabelPagination">
+          <el-pagination
+            background
+            layout="prev, pager, next"
+            :total="supplierInfoListTotal"
+            :page-size="10"
+            :current-page="supplierInfoListParams.pageNo"
+            @current-change="changesupplierInfoListPage"
+          >
+          </el-pagination>
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
@@ -1558,7 +1764,7 @@
 
     <!-- 协商费用 -->
     <el-dialog
-      title="协商费用"
+      title="协商费用(该功能仅支持异常订单使用)"
       width="40%"
       center
       :visible="consultPriceVisible"
@@ -1579,6 +1785,12 @@
               <el-radio :label="2">师傅支付费用</el-radio>
             </el-radio-group>
           </el-form-item> -->
+          <el-form-item label="是否纳入折扣" prop="flag">
+            <el-radio-group v-model="consultCostParams.flag">
+              <el-radio :label="0">不纳入</el-radio>
+              <el-radio :label="1">纳入</el-radio>
+            </el-radio-group>
+          </el-form-item>
           <el-form-item label="协商金额" prop="amount">
             <el-input
               type="number"
@@ -1586,7 +1798,7 @@
               placeholder="请输入协商金额"
             ></el-input>
           </el-form-item>
-          <el-form-item label="备注">
+          <el-form-item label="备注" prop="remarks">
             <el-input
               v-model="consultCostParams.remarks"
               placeholder="请输入想备注的内容"
@@ -1599,6 +1811,164 @@
         <el-button type="primary" @click="confirmConsultPrice">确 定</el-button>
       </span>
     </el-dialog>
+
+    <!-- 订单折扣 -->
+    <el-dialog
+      title="订单折扣"
+      width="40%"
+      center
+      :visible="orderDiscountVisible"
+      :close-on-click-modal="false"
+      :before-close="closeOrderDiscountDialog"
+    >
+      <div class="orderDiscount">
+        <el-form label-position="right" label-width="250px">
+          <el-form-item label="是否使用:">
+            <el-radio-group v-model="handleOrderDiscountFlagParams.flag">
+              <el-radio :label="0">不计算折扣</el-radio>
+              <el-radio :label="1">计算折扣</el-radio>
+            </el-radio-group>
+          </el-form-item>
+        </el-form>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeOrderDiscountDialog"> 取 消</el-button>
+        <el-button type="primary" @click="confirmOrderDiscount"
+          >确 定</el-button
+        >
+      </span>
+    </el-dialog>
+
+    <!-- 代师傅操作 -->
+    <!-- 代师傅拍照打卡 -->
+    <el-dialog
+      title="代师傅拍照打卡"
+      width="40%"
+      center
+      :visible="photographPunchDialogVisible"
+      :close-on-click-modal="false"
+      :before-close="closeHandlePhotographPunchDialog"
+    >
+      <div>
+        <el-form>
+          <el-form-item label="打卡时间">
+            <el-date-picker
+              v-model="handlePhotographPunchParams.punchTime"
+              value-format="yyyy-MM-dd HH:mm:ss"
+              type="datetime"
+              placeholder="选择打卡时间"
+            >
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item label="打卡照片">
+            <el-upload
+              :file-list="punchImagesList"
+              ref="uploadPunchImagesRef"
+              :http-request="uploadPunchImages"
+              :on-remove="delPunchImages"
+              :limit="1"
+              action="#"
+              list-type="picture-card"
+            >
+              <i class="el-icon-plus"></i>
+            </el-upload>
+          </el-form-item>
+        </el-form>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeHandlePhotographPunchDialog"> 取 消</el-button>
+        <el-button type="primary" @click="handlePhotographPunch"
+          >确 定</el-button
+        >
+      </span>
+    </el-dialog>
+
+    <!-- 代师傅开始出发 -->
+    <el-dialog
+      title="代师傅开始出发"
+      width="40%"
+      center
+      :visible="remindStartedDialogVisible"
+      :close-on-click-modal="false"
+      :before-close="closeRemindStartedDialog"
+    >
+      <div>
+        <el-form>
+          <el-form-item label="出发时间">
+            <el-date-picker
+              v-model="handleRemindStartedParams.punchTime"
+              value-format="yyyy-MM-dd HH:mm:ss"
+              type="datetime"
+              placeholder="选择出发时间"
+            >
+            </el-date-picker>
+          </el-form-item>
+        </el-form>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeRemindStartedDialog"> 取 消</el-button>
+        <el-button type="primary" @click="handleRemindStarted">确 定</el-button>
+      </span>
+    </el-dialog>
+
+    <!-- 代师傅提交验收 -->
+    <el-dialog
+      title="代师傅提交验收"
+      width="40%"
+      center
+      :visible="submitAcceptanceDialogVisible"
+      :close-on-click-modal="false"
+      :before-close="closeSubmitAcceptanceDialog"
+    >
+      <div>
+        <el-form>
+          <el-form-item label="验收时间">
+            <el-date-picker
+              v-model="handleSubmitAcceptanceParams.time"
+              value-format="yyyy-MM-dd HH:mm:ss"
+              type="datetime"
+              placeholder="选择验收时间"
+            >
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item label="工单照片">
+            <el-upload
+              :file-list="offlineImagesList"
+              ref="uploadOfflineImagesRef"
+              :http-request="uploadOfflineImages"
+              :on-remove="delOfflineImages"
+              :limit="1"
+              action="#"
+              list-type="picture-card"
+            >
+              <i class="el-icon-plus"></i>
+            </el-upload>
+          </el-form-item>
+          <el-form-item label="完工照片">
+            <div>
+              <el-upload
+                :file-list="completeImagesList"
+                ref="uploadCompleteImagesRef"
+                :http-request="uploadCompleteImages"
+                :on-remove="delCompleteImages"
+                :multiple="true"
+                :limit="6"
+                action="#"
+                list-type="picture-card"
+              >
+                <i class="el-icon-plus"></i>
+              </el-upload>
+            </div>
+          </el-form-item>
+        </el-form>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeSubmitAcceptanceDialog"> 取 消</el-button>
+        <el-button type="primary" @click="handleSubmitAcceptance"
+          >确 定</el-button
+        >
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -1607,12 +1977,18 @@
   .setLogisticsDialogSearch {
     display: flex;
     align-items: center;
+    margin-bottom: 20px;
   }
 
   .supplierList {
     padding: 20px 0;
     height: 550px;
     overflow: auto;
+  }
+
+  .tabelPagination {
+    margin-top: 20px;
+    text-align: center;
   }
 }
 // 新增故障项目框
@@ -1635,7 +2011,7 @@
 }
 
 .hiddenUploadBox {
-  width: 148px;
+  width: 460px;
   overflow: hidden;
   white-space: nowrap;
 }
@@ -1978,13 +2354,16 @@
 
 // 完工信息
 .finishWork {
-  display: flex;
   margin: 20px 0;
   .title {
-    width: 130px;
+    margin-bottom: 20px;
+    width: 220px;
     color: #707070;
     font-size: 20px;
     font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
 }
 
@@ -2001,7 +2380,7 @@
     }
 
     .item2 {
-      width: 350px;
+      width: 60%;
       margin-right: 20vw;
       div {
         color: #707070;
@@ -2118,9 +2497,18 @@
 <script>
 import { getRepairOrderDetail } from "@/api/user.js";
 import {
+  handleSubmitAcceptance,
+  handleEnterpriseCheck,
+  handleStartService,
+  handlePhotographPunch,
+  handleRemindStarted,
+  handleProxyConfirmQuotation,
+  handleProxyPayment,
+} from "@/api/proxy";
+import {
+  handleOrderDiscountFlag,
   markOrderCompletion,
   deleteOrderFaultItem,
-  handleSubmitAcceptance,
   editOrderServiceProgress,
   examineMasterQuotation,
   handleMasterPayment,
@@ -2140,32 +2528,78 @@ import {
   addOrderFaultItem,
   consultCost,
   handleSystemCreateOrder,
-  handleEnterpriseCheck,
   handleFaultCost,
+  handleOfflineImages,
+  synchronizationJdOrder,
 } from "@/api/order.js";
 import { UploadImg } from "@/api/system.js";
 export default {
   title: "maintenance_order_desc",
   data() {
     return {
+      // 代师傅操作
+      handlePhotographPunchParams: {
+        orderSn: null,
+        punchImages: null,
+        punchTime: null,
+      },
+      photographPunchDialogVisible: false,
+      punchImagesList: [],
+      handleRemindStartedParams: {
+        orderSn: null,
+        punchTime: null,
+      },
+      remindStartedDialogVisible: false,
+      handleSubmitAcceptanceParams: {
+        completeImages: "",
+        offlineImages: "",
+        orderSn: "",
+        time: "",
+      },
+      submitAcceptanceDialogVisible: false,
+      offlineImagesList: [],
+      completeImagesList: [],
+      // 代师傅操作
+
+      supplierInfoListTotal: null,
+      supplierInfoListParams: {
+        pageNo: 1,
+        pageSize: 10,
+        query: "",
+      },
+      orderDiscountVisible: false,
+      handleOrderDiscountFlagParams: {
+        orderSn: null,
+        flag: null,
+      },
       faultDeratePriceVisible: false,
       faultDeratePriceParams: {
         amount: null,
         orderSn: null,
+        remark: null,
+      },
+      faultDeratePriceParamsRules: {
+        amount: [
+          { required: true, message: "请输入故障减免费用", trigger: "blur" },
+        ],
+        remark: [
+          { required: true, message: "请输入减免费用备注", trigger: "blur" },
+        ],
       },
       consultCostRules: {
-        type: [
-          { required: true, message: "请选择活动资源", trigger: "change" },
-        ],
         amount: [
-          { required: true, message: "请选择活动区域", trigger: "change" },
+          { required: true, message: "请填写协商金额", trigger: "blur" },
+        ],
+        remarks: [{ required: true, message: "请填写备注", trigger: "blur" }],
+        flag: [
+          { required: true, message: "请选择是否纳入折扣", trigger: "change" },
         ],
       },
       consultCostParams: {
         orderSn: null,
         amount: null,
         remarks: null,
-        type: null,
+        flag: 1,
       },
       consultPriceVisible: false,
 
@@ -2199,7 +2633,6 @@ export default {
 
       supplierList: [],
       setLogisticsDialogShow: false,
-      maintenanceSupplierInfoQuery: null,
 
       uploadPartImgList: [],
       searchPartQuery: null,
@@ -2271,6 +2704,17 @@ export default {
         pageSize: 100,
         query: "",
       },
+
+      partInfoRules: {
+        model: [{ required: true, message: "请选择配件模式", trigger: "blur" }],
+        type: [{ required: true, message: "请选择采买角色", trigger: "blur" }],
+        name: [{ required: true, message: "请填写配件名称", trigger: "blur" }],
+        brand: [{ required: true, message: "请填写配件品牌", trigger: "blur" }],
+        parameter: [
+          { required: true, message: "请填写配件参数", trigger: "blur" },
+        ],
+        price: [{ required: true, message: "请填写配件单价", trigger: "blur" }],
+      },
     };
   },
   mounted() {
@@ -2282,15 +2726,275 @@ export default {
     this._getRepairOrderDetail();
   },
   methods: {
+    // 代企业操作 写这个需求 我得笑两年半
+    // 1.代企业确认签收
+    handleEnterpriseCheck(orderSn) {
+      this.$confirm("您确定要操作代企业确认验收?", "提示", {
+        confirmButtonText: "确认",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then(async () => {
+        const res = await handleEnterpriseCheck(orderSn);
+        if (res.message === "操作成功") {
+          this.$message({
+            message: res.message,
+            type: "success",
+          });
+          this._getRepairOrderDetail();
+        }
+      });
+    },
+    // 2.代企业确认师傅报价
+    handleProxyConfirmQuotation(orderSn) {
+      this.$confirm("您确定要操作代企业确认师傅报价?", "提示", {
+        confirmButtonText: "确认",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then(async () => {
+        const res = await handleProxyConfirmQuotation({
+          orderSn,
+        });
+        if (res.message === "操作成功") {
+          this.$message({
+            message: res.message,
+            type: "success",
+          });
+          this._getRepairOrderDetail();
+        }
+      });
+    },
+    // 3.代企业付款(手动后标记企业已付款)
+    handleProxyPayment(orderSn) {
+      this.$confirm("您确定要操作代企业付款(手动后标记企业已付款)?", "提示", {
+        confirmButtonText: "确认",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then(async () => {
+        const res = await handleProxyPayment(orderSn);
+        if (res.message === "操作成功") {
+          this.$message({
+            message: res.message,
+            type: "success",
+          });
+          this._getRepairOrderDetail();
+        }
+      });
+    },
+    // 代师傅操作
+    // 2、代师傅开始出发
+    async handleRemindStarted() {
+      const res = await handleRemindStarted(this.handleRemindStartedParams);
+      if (res.message == "操作成功") {
+        this._getRepairOrderDetail();
+        this.closeRemindStartedDialog();
+      }
+    },
+    // 打开代师傅开始出发弹框
+    openRemindStartedDialog(orderSn) {
+      this.handleRemindStartedParams.orderSn = orderSn;
+      this.remindStartedDialogVisible = true;
+    },
+    // 关闭代师傅开始出发弹框
+    closeRemindStartedDialog() {
+      this.handleRemindStartedParams = {
+        orderSn: null,
+        punchTime: null,
+      };
+      this.remindStartedDialogVisible = false;
+    },
+    // 3.代师傅拍照打卡
+    async handlePhotographPunch() {
+      const res = await handlePhotographPunch(this.handlePhotographPunchParams);
+      if (res.message == "操作成功") {
+        this._getRepairOrderDetail();
+        this.closeHandlePhotographPunchDialog();
+      }
+    },
+    // 打开代师傅拍照弹框
+    openHandlePhotographPunchDialog(orderSn) {
+      this.handlePhotographPunchParams.orderSn = orderSn;
+      this.photographPunchDialogVisible = true;
+    },
+    // 关闭代师傅拍照弹框
+    closeHandlePhotographPunchDialog() {
+      this.handlePhotographPunchParams = {
+        orderSn: null,
+        punchImages: null,
+        punchTime: null,
+      };
+      this.punchImagesList = [];
+      this.$refs.uploadPunchImagesRef.$children[1].$el.style.display = "";
+      this.photographPunchDialogVisible = false;
+    },
+    // 上传师傅打卡照片
+    async uploadPunchImages(fileData) {
+      let formData = new FormData();
+      formData.append("file", fileData.file);
+      const res = await UploadImg(formData);
+      if (res.message == "操作成功") {
+        this.handlePhotographPunchParams.punchImages = res.data;
+        this.punchImagesList = [{ url: res.data }];
+        this.$refs.uploadPunchImagesRef.$children[1].$el.style.display = "none";
+      }
+    },
+    // 删除师傅打卡照片
+    delPunchImages() {
+      this.handlePhotographPunchParams.punchImages = "";
+      this.$refs.uploadPunchImagesRef.$children[1].$el.style.display = "";
+    },
+    // 5.代师开始服务
+    handleStartService(orderSn) {
+      this.$confirm("您确定要操作代师傅开始服务?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then(async () => {
+        const res = await handleStartService(orderSn);
+        if (res.message === "操作成功") {
+          this.$message({
+            message: res.message,
+            type: "success",
+          });
+          this._getRepairOrderDetail();
+        }
+      });
+    },
+    // 6、代师傅提交验收
+    async handleSubmitAcceptance() {
+      const res = await handleSubmitAcceptance(
+        this.handleSubmitAcceptanceParams
+      );
+      if (res.message == "操作成功") {
+        this._getRepairOrderDetail();
+        this.closeSubmitAcceptanceDialog();
+      }
+    },
+    // 打开代师傅提交验收弹框
+    openSubmitAcceptanceDialog(orderSn) {
+      this.handleSubmitAcceptanceParams.orderSn = orderSn;
+      this.submitAcceptanceDialogVisible = true;
+    },
+    //  关闭代师傅提交验收弹框
+    closeSubmitAcceptanceDialog() {
+      this.handleSubmitAcceptanceParams = {
+        completeImages: "",
+        offlineImages: "",
+        orderSn: "",
+        time: "",
+      };
+      this.completeImagesList = [];
+      this.offlineImagesList = [];
+      this.submitAcceptanceDialogVisible = false;
+    },
+    // 上传线下工单
+    async uploadOfflineImages(fileData) {
+      let formData = new FormData();
+      formData.append("file", fileData.file);
+      const res = await UploadImg(formData);
+      if (res.message == "操作成功") {
+        this.handleSubmitAcceptanceParams.offlineImages = res.data;
+        this.offlineImagesList = [{ url: res.data }];
+        this.$refs.uploadOfflineImagesRef.$children[1].$el.style.display =
+          "none";
+      }
+    },
+    // 删除线下工单
+    delOfflineImages() {
+      this.handleSubmitAcceptanceParams.offlineImages = "";
+      this.$refs.uploadOfflineImagesRef.$children[1].$el.style.display = "";
+    },
+    // 上传完工照片
+    async uploadCompleteImages(fileData) {
+      let formData = new FormData();
+      formData.append("file", fileData.file);
+      const res = await UploadImg(formData);
+      if (res.message == "操作成功") {
+        this.completeImagesList.push({ url: res.data });
+        const imageList = [];
+        this.completeImagesList.forEach((item) => {
+          imageList.push(item.url);
+        });
+        this.handleSubmitAcceptanceParams.completeImages = imageList.join(",");
+        if (imageList.length >= 6) {
+          this.$refs.uploadCompleteImagesRef.$children[1].$el.style.display =
+            "none";
+        }
+      }
+    },
+    // 删除完工照片
+    delCompleteImages(e) {
+      const imageList = [];
+      this.completeImagesList.forEach((item) => {
+        imageList.push(item.url);
+      });
+      const delIndex = imageList.indexOf(e.url);
+      this.completeImagesList.splice(delIndex, 1);
+      imageList.splice(delIndex, 1);
+      this.handleSubmitAcceptanceParams.completeImages = imageList.join(",");
+      this.$refs.uploadCompleteImagesRef.$children[1].$el.style.display = "";
+    },
+    // 代师傅操作
+
+    // 修改上传工单照片
+    async handleOfflineImages(fileData) {
+      let formData = new FormData();
+      formData.append("file", fileData.file);
+      const res = await UploadImg(formData);
+      if (res.message == "操作成功") {
+        const result = await handleOfflineImages({
+          offlineImages: res.data,
+          orderSn: fileData.data.orderSn,
+        });
+        if (result.message == "操作成功") {
+          this._getRepairOrderDetail();
+        }
+      }
+    },
+    // 改变供应商页码
+    async changesupplierInfoListPage(page) {
+      this.supplierInfoListParams.pageNo = page;
+      const res = await queryMaintenanceSupplierInfo(
+        this.supplierInfoListParams
+      );
+      this.supplierList = res.data.records;
+      this.supplierInfoListTotal = res.data.total;
+    },
+    // 确定订单折扣
+    async confirmOrderDiscount() {
+      const { orderSn, flag } = this.handleOrderDiscountFlagParams;
+      const res = await handleOrderDiscountFlag(orderSn, flag);
+      if (res.message == "操作成功") {
+        this.$message({
+          message: res.message,
+          type: "success",
+        });
+        await this._getRepairOrderDetail();
+        await this.closeOrderDiscountDialog();
+      }
+    },
+    // 关闭订单折扣弹框
+    closeOrderDiscountDialog() {
+      this.handleOrderDiscountFlagParams = {
+        orderSn: null,
+        flag: null,
+      };
+      this.orderDiscountVisible = false;
+    },
+    // 打开订单折扣弹框
+    openOrderDiscountDialog(orderSn, flag) {
+      this.handleOrderDiscountFlagParams.orderSn = orderSn;
+      this.handleOrderDiscountFlagParams.flag = flag;
+      this.orderDiscountVisible = true;
+    },
+    changeType() {
+      this.$refs.partInfoRuleForm.validateField("type");
+    },
+    changeModel() {
+      this.$refs.partInfoRuleForm.validateField("model");
+    },
     // 确定故障减免费用
     async confirmSetFaultDeratePrice() {
-      if (!this.faultDeratePriceParams.amount) {
-        this.$message({
-          message: "请填写故障减免费用",
-          type: "warning",
-        });
-        return;
-      }
+      await this.$refs["faultDeratePriceParamsRef"].validate();
       const res = await handleFaultCost(this.faultDeratePriceParams);
       if (res.message == "操作成功") {
         this.$message({
@@ -2306,35 +3010,37 @@ export default {
       this.faultDeratePriceParams = {
         amount: null,
         orderSn: null,
+        remark: null,
       };
+      this.$refs["faultDeratePriceParamsRef"].resetFields();
       this.faultDeratePriceVisible = false;
     },
     // 打开设置故障减免费用
-    openFaultDeratePriceDialog(orderSn) {
+    openFaultDeratePriceDialog(orderSn, amount, remark) {
       this.faultDeratePriceParams.orderSn = orderSn;
+      this.faultDeratePriceParams.amount = amount;
+      this.faultDeratePriceParams.remark = remark;
       this.faultDeratePriceVisible = true;
     },
     // 查找供应商
     async searchMaintenanceSupplierInfo() {
+      this.supplierInfoListParams.pageNo = 1;
       const res = await queryMaintenanceSupplierInfo(
-        this.maintenanceSupplierInfoQuery
+        this.supplierInfoListParams
       );
-      this.supplierList = res.data;
-      this.setLogisticsDialogShow = true;
+      this.supplierList = res.data.records;
+      this.supplierInfoListTotal = res.data.total;
     },
-    // 企业待验收
-    handleEnterpriseCheck(orderSn) {
-      this.$confirm("您确定要操作代企业确认验收?", "提示", {
-        confirmButtonText: "确认",
+
+    // 同步金蝶单据
+    synchronizationJdOrder(orderSn) {
+      this.$confirm("您确定同步金蝶单据吗?", "提示", {
+        confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
       }).then(async () => {
-        const res = await handleEnterpriseCheck(orderSn);
+        const res = await synchronizationJdOrder({ orderSn });
         if (res.message === "操作成功") {
-          this.$message({
-            message: res.message,
-            type: "success",
-          });
           this._getRepairOrderDetail();
         }
       });
@@ -2392,8 +3098,10 @@ export default {
       }
     },
     // 打开协商价格框
-    openConsultPriceDialog(orderSn) {
+    openConsultPriceDialog(orderSn, doorAmount, partsAmount) {
       this.consultCostParams.orderSn = orderSn;
+      this.consultCostParams.amount =
+        (doorAmount ? +doorAmount : 0) + (partsAmount ? +partsAmount : 0);
       this.consultPriceVisible = true;
     },
     // 关闭协商价格框
@@ -2402,7 +3110,7 @@ export default {
         orderSn: null,
         amount: null,
         remarks: null,
-        type: null,
+        flag: 1,
       };
       this.$refs["consultCostForm"].resetFields();
       this.consultPriceVisible = false;
@@ -2555,9 +3263,16 @@ export default {
       });
     },
     // 删除配件图片
-    delUploadPartImg() {
-      this.partInfo.image = "";
-      this.uploadPartImgList = [];
+    delUploadPartImg(e) {
+      const delIndex = this.uploadPartImgList
+        .map((item) => item.url)
+        .indexOf(e.url);
+      this.uploadPartImgList.splice(delIndex, 1);
+      let imgStrArr = [];
+      this.uploadPartImgList.forEach((item) => {
+        imgStrArr.push(item.url);
+      });
+      this.partInfo.image = imgStrArr.join(",");
     },
     // 确定供应商
     async confirmSetLogistics() {
@@ -2577,7 +3292,11 @@ export default {
         supplierId: null,
         supplierName: null,
       };
-      this.maintenanceSupplierInfoQuery = null;
+      this.supplierInfoListParams = {
+        pageNo: 1,
+        pageSize: 10,
+        query: "",
+      };
       this.setLogisticsDialogShow = false;
     },
     // 供应商改变时
@@ -2597,12 +3316,16 @@ export default {
         this.setLogisticsData.supplierId = supplierId;
         this.setLogisticsData.supplierName = supplierName;
       }
-      const res = await queryMaintenanceSupplierInfo("");
-      this.supplierList = res.data;
+      const res = await queryMaintenanceSupplierInfo(
+        this.supplierInfoListParams
+      );
+      this.supplierList = res.data.records;
+      this.supplierInfoListTotal = res.data.total;
       this.setLogisticsDialogShow = true;
     },
     // 确定新增修改配件
     async confirmAddEditPart() {
+      await this.$refs["partInfoRuleForm"].validate();
       const data = { ...this.partInfo };
       // if (data.stashPartsWay == 1) {
       //   data.id = Math.floor(Math.random() * 10000);
@@ -2642,8 +3365,16 @@ export default {
       let formData = new FormData();
       formData.append("file", fileData.file);
       const res = await UploadImg(formData);
-      this.partInfo.image = res.data;
-      this.uploadPartImgList = [{ url: res.data }];
+      if (!this.uploadPartImgList) {
+        this.uploadPartImgList = [];
+      }
+      this.uploadPartImgList.push({ url: res.data });
+
+      let imgStrArr = [];
+      this.uploadPartImgList.forEach((item) => {
+        imgStrArr.push(item.url);
+      });
+      this.partInfo.image = imgStrArr.join(",");
       loading.close();
     },
     // 关闭配件新增修改框
@@ -2665,6 +3396,7 @@ export default {
       };
       this.uploadPartImgList = [];
       this.addEditPartDialogShow = false;
+      this.$refs["partInfoRuleForm"].resetFields();
     },
     // 确定选中的仓库配件
     comfirmWarehousePart() {
@@ -2701,8 +3433,16 @@ export default {
     // 打开新增修改配件
     openAddEditPart(row, index, orderSn) {
       if (index || index == 0) {
+        console.log(2799, row.image);
         this.partInfo = { ...row };
-        this.uploadPartImgList = [{ url: row.image }];
+        let imgArr = row.image.split(",");
+        this.uploadPartImgList = [];
+        imgArr.forEach((item) => {
+          this.uploadPartImgList.push({
+            url: item,
+          });
+        });
+        console.log(2808, this.uploadPartImgList);
         this.addEditPartTitle = "修改配件";
       } else {
         this.addEditPartTitle = "新增配件";
@@ -2749,17 +3489,25 @@ export default {
       this.examineFaults = false;
     },
     // 打开故障项目审核框
-    openExamineFaultsDialog(row, orderSn) {
-      row.enterpriseConsultAmount = row.annualAmount;
-      if (row.image) {
-        if (row.image[0]) {
-          this.examineFaultsFormPicList = [{ url: row.image[0] }];
+    openExamineFaultsDialog(row, orderSn, orderType) {
+      this.examineFaultsForm = { ...row };
+      // 默认赋值年报价 没有散单价这个东西
+      if (!this.examineFaultsForm.enterpriseConsultAmount) {
+        this.examineFaultsForm.enterpriseConsultAmount =
+          this.examineFaultsForm.annualAmount;
+      }
+      if (this.examineFaultsForm.image) {
+        if (this.examineFaultsForm.image[0]) {
+          this.examineFaultsFormPicList = [
+            { url: this.examineFaultsForm.image[0] },
+          ];
         }
-        if (row.image[1]) {
-          this.examineFaultsFormVideoList = [{ url: row.image[1] }];
+        if (this.examineFaultsForm.image[1]) {
+          this.examineFaultsFormVideoList = [
+            { url: this.examineFaultsForm.image[1] },
+          ];
         }
       }
-      this.examineFaultsForm = { ...row };
       if (Array.isArray(row.image) && row.image.length > 0) {
         this.examineFaultsForm.image = [...row.image];
       }
@@ -2872,23 +3620,6 @@ export default {
       this.$router.push({
         name: "logisticsDetails",
         query: { partId, model, orderSn },
-      });
-    },
-    // 代提交验收
-    submitForAcceptance(orderSn) {
-      this.$confirm("您确定要操作代提交验收?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      }).then(async () => {
-        const res = await handleSubmitAcceptance(orderSn);
-        if (res.message === "操作成功") {
-          this.$message({
-            message: res.message,
-            type: "success",
-          });
-          this._getRepairOrderDetail();
-        }
       });
     },
     // 确定添加回访信息
@@ -3176,27 +3907,27 @@ export default {
       this.$refs.checkForm.open();
     },
     // 确认验收的模态框确定的事件
-    sumbitCheck(fn) {
-      if (this.checkForm.status == "0" && !this.checkForm.rejectReason) {
-        this.$message.error("请输入驳回原因");
-        return;
-      }
-      this.$axios
-        .post(this.url.handleEnterpriseCheck, this.checkForm)
-        .then((data) => {
-          if (data.code == "000") {
-            this.$message({
-              showClose: true,
-              message: data.message,
-              type: "success",
-            });
-            this.resetCheckForm(fn);
-          }
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-    },
+    // sumbitCheck(fn) {
+    //   if (this.checkForm.status == "0" && !this.checkForm.rejectReason) {
+    //     this.$message.error("请输入驳回原因");
+    //     return;
+    //   }
+    //   this.$axios
+    //     .post(this.url.handleEnterpriseCheck, this.checkForm)
+    //     .then((data) => {
+    //       if (data.code == "000") {
+    //         this.$message({
+    //           showClose: true,
+    //           message: data.message,
+    //           type: "success",
+    //         });
+    //         this.resetCheckForm(fn);
+    //       }
+    //     })
+    //     .catch((err) => {
+    //       console.error(err);
+    //     });
+    // },
     // 确认验收的模态框关闭的事件
     resetCheckForm(fn) {
       this._getRepairOrderDetail();
@@ -3285,6 +4016,10 @@ export default {
               // 回显配件
               if (item.parts) {
                 item.parts = JSON.parse(item.parts);
+              }
+              // 回显完工照片
+              if (item.completeImages) {
+                item.completeImages = item.completeImages.split(",");
               }
             });
           }

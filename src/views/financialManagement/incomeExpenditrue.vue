@@ -12,7 +12,14 @@
 
       <el-input
         v-model="PaymentListData.realName"
-        placeholder="输入真实姓名"
+        placeholder="输入师傅名称"
+        class="toolInput"
+      >
+      </el-input>
+
+      <el-input
+        v-model="PaymentListData.enterpriseName"
+        placeholder="输入企业名称"
         class="toolInput"
       >
       </el-input>
@@ -33,7 +40,7 @@
         class="toolSelect"
         v-model="PaymentListData.serviceType"
       >
-        <el-option label="管家合同支付" :value="1"></el-option>
+        <!-- <el-option label="管家合同支付" :value="1"></el-option> -->
         <el-option label="维保企业支付" :value="2"></el-option>
         <el-option label="支付至维保师傅" :value="3"></el-option>
       </el-select>
@@ -46,12 +53,26 @@
         <el-option label="未支付" :value="0"> </el-option>
         <el-option label="已支付" :value="1"> </el-option>
       </el-select>
+      <el-select
+        placeholder="订单类型"
+        class="toolSelect"
+        v-model="PaymentListData.orderType"
+      >
+        <el-option label="散单" :value="1"></el-option>
+        <el-option label="年保" :value="2"></el-option>
+        <el-option label="年卡" :value="3"></el-option>
+      </el-select>
+    </div>
+
+    <div class="topTool">
+      <el-button class="toolBtn" @click="batchRenewalOrder"
+        >批量更新付款状态</el-button
+      >
       <el-button class="toolBtn" @click="searchBtn">查询</el-button>
       <el-button class="toolBtn" @click="resetBtn">重置</el-button>
       <el-button class="toolBtn" @click="exportBtn" style="margin-right: 10px"
         >导出</el-button
       >
-
       <el-upload
         class="upload-demo"
         action
@@ -71,12 +92,15 @@
             :cell-style="{ 'text-align': 'center' }"
             :data="ordersList"
             style="width: 100%"
+            tooltip-effect="dark"
             :header-cell-style="{
               background: '#f6f8fc',
               color: '#707070',
               'text-align': 'center',
             }"
+            @selection-change="chooseOrderSn"
           >
+            <el-table-column type="selection"> </el-table-column>
             <el-table-column width="150" label="企业订单号">
               <template slot-scope="{ row }">
                 <a
@@ -136,9 +160,7 @@
                 <div v-if="row.status === 1" style="color: green">已支付</div>
               </template>
             </el-table-column>
-            <el-table-column label="操作">
-              <template slot-scope="{ row }">
-                <!-- <a
+            <!-- <a
                   href="#"
                   style="color: #0b2059;margin-right: 10px;"
                   v-if="
@@ -147,6 +169,8 @@
                   @click.prevent="detailsOpen(row, true)"
                   >支付</a
                 > -->
+            <!-- <el-table-column label="操作">
+              <template slot-scope="{ row }">
                 <a
                   href="#"
                   style="color: #0b2059"
@@ -154,7 +178,7 @@
                   >详情</a
                 >
               </template>
-            </el-table-column>
+            </el-table-column> -->
           </el-table>
         </div>
         <div class="tableContent_footer">
@@ -230,12 +254,15 @@ import {
   queryPaymentList,
   handlePaymentListExport,
   handlePaymentListImport,
+  handleBatchPayment,
 } from "@/api/financialController";
 import payOrderDetails from "./components/payOrderDetails.vue";
+import { localStorageData } from "@/utils";
 
 export default {
   data() {
     return {
+      chooseOrderSnStr: null, //选择要批量的单
       dateValueArr: null, //时间段
       detailsShow: false, //详情
       payBtnShow: false, //支付按钮显示
@@ -249,6 +276,8 @@ export default {
         serviceType: null,
         status: null,
         realName: null,
+        enterpriseName: null,
+        orderType: null,
       },
       total: 0,
     };
@@ -257,6 +286,38 @@ export default {
     "PayOrder-Details": payOrderDetails,
   },
   methods: {
+    // 批量更新付款状态
+    async batchRenewalOrder() {
+      if (!this.chooseOrderSnStr) {
+        this.$message({
+          showClose: true,
+          message: "请选择你要更新状态的订单",
+          type: "warning",
+        });
+        return;
+      }
+      let handleBatchPaymentPrams = {
+        id: this.chooseOrderSnStr,
+        status: 1,
+      };
+      const res = await handleBatchPayment(handleBatchPaymentPrams);
+      if (res.message == "操作成功") {
+        this.$message({
+          showClose: true,
+          message: "操作成功",
+          type: "success",
+        });
+        this.getIncomeExpenditrueList();
+      }
+    },
+    // 选择要批量更新付款的单子
+    chooseOrderSn(val) {
+      let arr = [];
+      val.forEach((item) => {
+        arr.push(item.id);
+      });
+      this.chooseOrderSnStr = arr.join(",");
+    },
     // 导入
     async importBtn(data) {
       const formData = new FormData();
@@ -311,6 +372,8 @@ export default {
         serviceType: null,
         status: null,
         realName: null,
+        enterpriseName: null,
+        orderType: null,
       };
       this.getIncomeExpenditrueList();
     },
@@ -331,12 +394,18 @@ export default {
     },
     // 获取收支明细列表
     async getIncomeExpenditrueList() {
+      localStorageData("PaymentListData", JSON.stringify(this.PaymentListData));
       const res = await queryPaymentList(this.PaymentListData);
       this.total = res.data.total;
       this.ordersList = res.data.records;
     },
   },
   created() {
+    if (localStorage.getItem("PaymentListData")) {
+      this.PaymentListData = JSON.parse(
+        localStorage.getItem("PaymentListData")
+      );
+    }
     this.getIncomeExpenditrueList();
   },
 };

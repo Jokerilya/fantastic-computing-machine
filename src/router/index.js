@@ -8,6 +8,7 @@ import systemRouter from "./modules/system.js";
 import activityRouter from "./modules/activity.js";
 import maintenanceRouter from "./modules/maintenance.js";
 import financialManagement from "./modules/financialManagement"; // 财务管理
+import invoiceManagement from "./modules/invoiceManagement"; // 发票管理
 import serviceManagement from "./modules/serviceManagement";
 // import contentRouter from './modules/content.js';
 // import schoolRouter from './modules/school.js';
@@ -76,6 +77,7 @@ export const constantRoutes = [
   // },
   maintenanceRouter,
   financialManagement,
+  invoiceManagement,
   serviceManagement,
   systemRouter,
   activityRouter,

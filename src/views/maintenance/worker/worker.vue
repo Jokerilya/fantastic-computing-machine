@@ -309,9 +309,15 @@
           align="center"
           fixed="right"
         >
-          <template slot-scope="{ row }">{{
-            util.global.getLabel("checkStatus", row.status)
-          }}</template>
+          <template slot-scope="{ row }">
+            <div
+              :style="{
+                color: row.status == 3 ? 'red' : row.status == 2 ? 'green' : '',
+              }"
+            >
+              {{ util.global.getLabel("checkStatus", row.status) }}
+            </div>
+          </template>
         </el-table-column>
         <el-table-column label="操作" width="220" fixed="right" align="center">
           <template slot-scope="{ row }">

@@ -9,7 +9,7 @@
   >
     <div v-if="orderDetails">
       <div class="orderDetails">
-        <h2 style="text-align:center;">
+        <h2 style="text-align: center">
           {{
             rowList.serviceTypeName === "维保师傅支付" ? "支付详情" : "收款详情"
           }}
@@ -69,7 +69,7 @@
         </div>
       </div>
       <div class="moneyDetails">
-        <h2 style="padding-left: 20px;">金额明细</h2>
+        <h2 style="padding-left: 20px">金额明细</h2>
         <div class="content">
           <div class="line">
             <span class="title">上门费用</span>
@@ -101,7 +101,11 @@
             <span class="desc">{{ orderDetails.partsAmount }}元</span>
           </div>
           <div class="partsLine" v-if="partsDetailsShow">
-            <div class="item" v-for="item in orderDetails.partsList">
+            <div
+              class="item"
+              v-for="(item, index) in orderDetails.partsList"
+              :key="index"
+            >
               <div class="loginPurchase">
                 <img
                   src="@/assets/logo/masterPurchase.png"
@@ -128,19 +132,19 @@
             <span class="desc">{{ orderDetails.totalAmount }}元</span>
           </div>
           <div class="line">
-            <span class="title" style="color: red;">支付金额</span>
-            <span class="desc" style="color: red;"
+            <span class="title" style="color: red">支付金额</span>
+            <span class="desc" style="color: red"
               >{{ orderDetails.payAmount ? orderDetails.payAmount : 0 }}元</span
             >
             <span
-              style="margin-left: 20px;"
+              style="margin-left: 20px"
               v-if="rowList.serviceTypeName !== '维保企业支付'"
               >(不包含平台采购配件费)</span
             >
           </div>
         </div>
       </div>
-      <div style="display: flex;justify-content: flex-end;">
+      <div style="display: flex; justify-content: flex-end">
         <el-button @click="closeFn" class="closeBtn">关闭</el-button>
         <el-button class="comfirmBtn" v-if="payBtnShow" @click="comfirmFn"
           >确定付款</el-button

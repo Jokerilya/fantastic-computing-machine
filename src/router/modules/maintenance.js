@@ -33,12 +33,12 @@ const router = {
       component: () => import("@/views/maintenance/maintenance_order"),
       meta: { title: "维保工单" },
     },
-    {
-      path: "/maintenance/autoSendOrders",
-      name: "autoSendOrders",
-      component: () => import("@/views/maintenance/autoSendOrders"),
-      meta: { title: "自动派单" },
-    },
+    // {
+    //   path: "/maintenance/autoSendOrders",
+    //   name: "autoSendOrders",
+    //   component: () => import("@/views/maintenance/autoSendOrders"),
+    //   meta: { title: "自动派单" },
+    // },
     {
       path: "/maintenance/faultItemPricing",
       name: "faultItemPricing",
@@ -166,7 +166,31 @@ const router = {
       component: () => import("@/views/maintenance/examineRecord"),
       meta: { title: "师傅考核记录" },
       hidden:true
-    }
+    },
+
+    // 保险模块
+    {
+      path: "/maintenance/insuranceManage",
+      name: "insuranceManage",
+      component: () => import("@/views/maintenance/insuranceModule/index.vue"),
+      meta: { title: "保险管理" },
+    },
+
+     // 供应商管理
+     {
+      path: "/maintenance/supplierList",
+      name: "supplierList",
+      component: () => import("@/views/maintenance/supplierList.vue"),
+      meta: { title: "供应商管理" },
+    },
+
+    // 师傅订单折扣记录
+    {
+      path: "/maintenance/masterOrderDiscount",
+      name: "masterOrderDiscount",
+      component: () => import("@/views/maintenance/masterOrderDiscount.vue"),
+      meta: { title: "订单折扣记录" },
+    },
   ],
 };
 export default router;
