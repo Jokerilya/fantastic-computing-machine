@@ -58,12 +58,14 @@ service.interceptors.request.use(
 		}
 		// post 的数据加密  判断在测试环境下
 		if(config.method=="post"||config.method=="POST"){
-			loadingInstance = Loading.service({
-				lock: true,
-				text: '加载中...',
-				spinner: 'el-icon-loading',
-				background: 'rgba(0, 0, 0, 0.7)'
-			  });
+			if(config.url!=='/admin/maintenance/queryRepairMessgae'){
+				loadingInstance = Loading.service({
+					lock: true,
+					text: '加载中...',
+					spinner: 'el-icon-loading',
+					background: 'rgba(0, 0, 0, 0.7)'
+				  });
+			}
 			// 图片接口 导入的接口不需要
 			if(process.env.NODE_ENV != 'development'){
 				let pass = true
@@ -91,7 +93,9 @@ service.interceptors.request.use(
 service.interceptors.response.use(
 	response => {
 		if(response.config.method=='post' || response.config.method=='POST' ){
-		loadingInstance.close();
+			if(response.config.url!=='/admin/maintenance/queryRepairMessgae'){
+				loadingInstance.close();
+			}
 		}
 		if (response.config.responseType == 'blob') {
 			return response;

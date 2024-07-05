@@ -90,3 +90,12 @@ export function handleSubmitAcceptance(data) {
 	  data
     });
 }
+
+// 0、代年保企业下单
+export function handleProxyCreateOrder(data) {
+    return request({
+      url: "/admin/maintenance/proxy/handleProxyCreateOrder" ,
+      method: "post",
+	  data
+    });
+}

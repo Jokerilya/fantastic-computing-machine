@@ -107,6 +107,12 @@
             show-overflow-tooltip
             align="center"
           ></el-table-column>
+          <el-table-column
+            prop="remarks"
+            label="备注"
+            show-overflow-tooltip
+            align="center"
+          ></el-table-column>
           <!-- 
           <el-table-column
             prop="recommendPeople"

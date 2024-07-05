@@ -30,7 +30,7 @@ const router = {
       path: "message",
       name: "Message",
       component: () => import("@/views/activity/message"),
-      meta: { title: "盒子预约信息", icon: "el-icon-date" },
+      meta: { title: "产品咨询列表", icon: "el-icon-date" },
     },
     // {
     //   path: "coupon",

@@ -47,6 +47,13 @@
               </el-option>
             </el-select>
           </el-form-item>
+          <el-form-item label="审核状态">
+            <el-select placeholder="请选择审核状态" v-model="status">
+              <el-option label="审核中" :value="1"> </el-option>
+              <el-option label="审核通过" :value="2"> </el-option>
+              <el-option label="审核驳回" :value="3"> </el-option>
+            </el-select>
+          </el-form-item>
         </el-col>
         <el-col :span="7">
           <el-button plain type="primary" @click="resetFn">重置</el-button>
@@ -1334,6 +1341,8 @@ export default {
       colonelName: null,
       dialogVisible: false,
       referrerName: null, //推荐人名字
+      status: null,
+
       referrerOptions: [],
 
       masterTeamList: [],
@@ -1751,6 +1760,7 @@ export default {
       this.referrerName = null;
       this.colonelName = null;
       this.Name = null;
+      this.status = null;
       this._getMasterList();
     },
     // 搜索推荐人/团长
@@ -1819,6 +1829,7 @@ export default {
         pageSize: 10,
         realName: this.Name,
         phone: this.Phone,
+        status: this.status,
       };
       // 将团长推荐人名字 转化成 uid
       if (this.referrerName) {

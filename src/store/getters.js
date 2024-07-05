@@ -7,6 +7,7 @@ const getters = {
 	roleId: state => state.user.userInfo.roleId,
 	 visitedViews: state => state.tagsView.visitedViews, //这个是新增的
 	  cachedViews: state => state.tagsView.cachedViews,  //这个是新增的
+	  intervalId:state=>state.intervalId,
 
 	menuTreeList: state => state.user.menuTreeList,
 	menuRouteKList: state => {

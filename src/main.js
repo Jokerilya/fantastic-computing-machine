@@ -75,6 +75,15 @@ Vue.use(ElementUI);
 
 Vue.config.productionTip = false;
 
+// 创建一个响应式对象 为了做消息推送更新
+const messageList = Vue.observable({
+  intervalId:null,
+  repairMessgaeListTotal:null,
+  repairMessgaeList:null
+});
+Vue.prototype.$messageList = messageList;
+
+
 new Vue({
   el: "#app",
   router,

@@ -178,6 +178,14 @@ export function queryDeviceSystemList() {
   });
 }
 
+// 查询故障分类及故障部位
+export function queryFaultPosition(machineType) {
+  return request({
+    url: "/admin/maintenance/queryFaultPosition?machineType="+machineType,
+    method: "get",
+  });
+}
+
 // 查询设备部位
 export function queryDevicePositionList() {
   return request({
@@ -791,6 +799,32 @@ export function handleMergeMasterOrder(data) {
 export function deleteMasterDiscountLog(data) {
 	return request({
 		url: `/admin/maintenance/deleteMasterDiscountLog`,
+		method: 'post',
+    data
+	})
+}
+
+// 查询设备详情
+export function getDeviceInfoByNo(no) {
+	return request({
+		url: `/admin/maintenance/getDeviceInfoByNo?no=${no}`,
+		method: 'get'
+	})
+}
+
+// 查询产品咨询列表
+export function queryRegisterInfoList(data) {
+	return request({
+		url: `/admin/maintenance/queryRegisterInfoList`,
+		method: 'post',
+    data
+	})
+}
+
+// 查询平台未读消息
+export function queryRepairMessgae(data) {
+	return request({
+		url: `/admin/maintenance/queryRepairMessgae`,
 		method: 'post',
     data
 	})

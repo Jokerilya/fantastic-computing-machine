@@ -110,17 +110,19 @@
               @click="query_queryRepairOrderList"
               >查询</el-button
             >
-            <el-button
-              style="margin-right: 10px"
-              icon="el-icon-refresh"
-              plain
-              type="info"
-              @click="resetFn"
+            <el-button icon="el-icon-refresh" plain type="info" @click="resetFn"
               >重置</el-button
             >
             <el-button type="success" plain @click="exportList">
               导出
             </el-button>
+            <!-- <el-button
+              type="success"
+              plain
+              @click="openReplacePlaceOrderDialog"
+            >
+              代下单
+            </el-button> -->
           </el-col>
         </el-row>
         <!-- <el-row style="display: flex;">
@@ -595,6 +597,159 @@
         :total="pageCountMaster"
       ></el-pagination>
     </model> -->
+
+    <!-- 代下单弹框 -->
+    <el-dialog
+      title="代下单"
+      width="30%"
+      :visible="replacePlaceOrderVisible"
+      :close-on-click-modal="false"
+      :before-close="closeReplacePlaceOrderDialog"
+      center
+    >
+      <div>
+        <el-form
+          label-position="left"
+          label-width="120px"
+          :model="handleProxyCreateOrderParams"
+          :rules="handleProxyCreateOrderRules"
+          ref="handleProxyCreateOrderRef"
+        >
+          <el-form-item label="设备编码" prop="no">
+            <el-input
+              @blur="getDeviceInfoByNo"
+              v-model="handleProxyCreateOrderParams.no"
+              placeholder="请填写设备编码,例:粤Sxxxxxx"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="故障类型" prop="type">
+            <el-radio-group v-model="handleProxyCreateOrderParams.type">
+              <el-radio :label="1">电气故障</el-radio>
+              <el-radio :label="2">机械故障</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="设备类型" prop="deviceTypeId">
+            <el-cascader
+              :disabled="formItemDisabled"
+              @change="changeDeviceType"
+              v-model="handleProxyCreateOrderParams.deviceTypeId"
+              :options="deviceTypeListOptions"
+              :show-all-levels="false"
+              placeholder="请选择设备类型"
+            ></el-cascader>
+          </el-form-item>
+          <el-form-item label="设备品牌" prop="deviceBrand">
+            <el-input
+              :disabled="formItemDisabled"
+              v-model="handleProxyCreateOrderParams.deviceBrand"
+              placeholder="请填写设备品牌"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="设备型号" prop="deviceModel">
+            <el-input
+              :disabled="formItemDisabled"
+              v-model="handleProxyCreateOrderParams.deviceModel"
+              placeholder="请填写设备型号"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="设备系统" prop="deviceSystemId">
+            <el-cascader
+              :disabled="formItemDisabled"
+              @change="changeDeviceSystem"
+              v-model="handleProxyCreateOrderParams.deviceSystemId"
+              :options="deviceSystemListOptions"
+              :show-all-levels="false"
+              placeholder="请选择设备系统"
+            ></el-cascader>
+          </el-form-item>
+          <el-form-item label="设备产地" prop="devicePlace">
+            <el-select
+              :disabled="formItemDisabled"
+              placeholder="请选择设备产地"
+              v-model="handleProxyCreateOrderParams.devicePlace"
+            >
+              <el-option
+                v-for="item in devicePlaceOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              >
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="故障部位" prop="position">
+            <el-cascader
+              @change="changePosition"
+              v-model="handleProxyCreateOrderParams.position"
+              :options="positionOptions"
+              :show-all-levels="false"
+              placeholder="请选择故障部位"
+            ></el-cascader>
+          </el-form-item>
+          <el-form-item label="联系人" prop="contactsPeople">
+            <el-input
+              v-model="handleProxyCreateOrderParams.contactsPeople"
+              placeholder="请填写联系人"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="联系电话" prop="contactsPhone">
+            <el-input
+              v-model="handleProxyCreateOrderParams.contactsPhone"
+              placeholder="请填写联系电话"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="公司名称" prop="enterpriseName">
+            <el-input
+              :disabled="formItemDisabled"
+              v-model="handleProxyCreateOrderParams.enterpriseName"
+              placeholder="请填写公司名称"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="联系地址" prop="address">
+            <el-input
+              v-model="handleProxyCreateOrderParams.address"
+              placeholder="请填写联系地址"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="期望时间" prop="serviceTime">
+            <el-date-picker
+              v-model="handleProxyCreateOrderParams.serviceTime"
+              value-format="yyyy-MM-dd HH:mm:ss"
+              type="datetime"
+              placeholder="选择期望时间"
+            >
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item label="故障描述" prop="simpleDesc">
+            <el-input
+              v-model="handleProxyCreateOrderParams.simpleDesc"
+              placeholder="请填写故障描述"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="故障视图" prop="images">
+            <div v-if="handleProxyCreateOrderParams.images">
+              <el-button type="text" @click="openFaultImg">查看视图</el-button>
+              <el-button type="text" @click="delFaultImg">删除视图</el-button>
+            </div>
+            <div v-else>
+              <el-upload
+                accept=".jpg,.jpeg,.png,.mp4"
+                action="#"
+                :http-request="uploadFaultImg"
+              >
+                <el-button size="small" type="primary">点击上传</el-button>
+              </el-upload>
+            </div>
+          </el-form-item>
+        </el-form>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeReplacePlaceOrderDialog">取 消</el-button>
+        <el-button type="primary" @click="handleProxyCreateOrder"
+          >确 定</el-button
+        >
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -613,7 +768,13 @@ import {
   handleRepairOrderExport,
   handleRepairRemarks,
   convertToInsurance,
+  queryDeviceTypeList,
+  queryDeviceSystemList,
+  queryFaultPosition,
+  getDeviceInfoByNo,
 } from "@/api/order.js";
+import { handleProxyCreateOrder } from "@/api/proxy";
+import { UploadImg } from "@/api/system.js";
 // import tableMixin from "@/mixin/table";
 import { localStorageData } from "@/utils";
 export default {
@@ -621,6 +782,96 @@ export default {
   // mixins: [tableMixin],
   data() {
     return {
+      // 代下单模块 start
+      formItemDisabled: false,
+      handleProxyCreateOrderParams: {
+        no: null,
+        latitude: null,
+        longitude: null,
+        position: null,
+        serviceTime: null,
+        simpleDesc: null,
+        type: null,
+        images: null,
+        enterpriseName: null,
+        address: null,
+        contactsPeople: null,
+        areaId: null,
+        contactsPhone: null,
+        deviceBrand: null,
+        deviceModel: null,
+        devicePlace: null,
+        deviceSystemId: null,
+        deviceTypeId: null,
+      },
+      handleProxyCreateOrderRules: {
+        type: [
+          { required: true, message: "请选择故障类型", trigger: "change" },
+        ],
+        deviceTypeId: [
+          { required: true, message: "请选择设备类型", trigger: "change" },
+        ],
+        deviceBrand: [
+          { required: true, message: "请填写设备品牌", trigger: "blur" },
+        ],
+        deviceModel: [
+          { required: true, message: "请填写设备型号", trigger: "blur" },
+        ],
+        deviceSystemId: [
+          { required: true, message: "请选择设备系统", trigger: "change" },
+        ],
+        devicePlace: [
+          { required: true, message: "请选择设备产地", trigger: "change" },
+        ],
+        position: [
+          { required: true, message: "请选择故障部位", trigger: "change" },
+        ],
+        contactsPeople: [
+          { required: true, message: "请填写联系人", trigger: "blur" },
+        ],
+        address: [{ required: true, message: "请填写地址", trigger: "blur" }],
+        serviceTime: [
+          {
+            required: true,
+            message: "请选择日期",
+            trigger: "change",
+          },
+        ],
+        simpleDesc: [
+          { required: true, message: "请填写故障描述", trigger: "blur" },
+        ],
+        images: [
+          { required: true, message: "请上传故障视图", trigger: "blur" },
+        ],
+        enterpriseName: [
+          { required: true, message: "请填写公司名称", trigger: "blur" },
+        ],
+        contactsPhone: [
+          { required: true, message: "请填写联系电话", trigger: "blur" },
+          {
+            pattern: /^1[3-9]\d{9}$/,
+            message: "手机号码格式不正确",
+            trigger: "blur",
+          },
+        ],
+      },
+      replacePlaceOrderVisible: false,
+      deviceTypeListOptions: [],
+      deviceSystemListOptions: [],
+      positionOptions: [],
+      devicePlaceOptions: [
+        {
+          value: "国产",
+          label: "国产",
+        },
+        {
+          value: "进口",
+          label: "进口",
+        },
+      ],
+
+      // 代下单模块 end
+
       masterSearchList: [],
       remarksparams: {
         remarks: null,
@@ -663,7 +914,6 @@ export default {
       enterpriseOrderSn: "",
       url: {
         query: "/admin/maintenance/queryRepairOrderList",
-        queryType: "/admin/maintenance/queryDeviceTypeList",
         querySnatch: "/admin/maintenance/queryMasterGrabOrderList",
         assign: "/admin/maintenance/handleAssignMaster",
         handleMasterQuotation: "/admin/maintenance/handleMasterQuotation",
@@ -726,6 +976,185 @@ export default {
     this._queryRepairOrderList();
   },
   methods: {
+    // 代下单模块 start
+    async handleProxyCreateOrder() {
+      await this.$refs["handleProxyCreateOrderRef"].validate();
+      const res = await handleProxyCreateOrder(
+        this.handleProxyCreateOrderParams
+      );
+      if (res.message == "操作成功") {
+        this.closeReplacePlaceOrderDialog();
+        this._queryRepairOrderList();
+      }
+    },
+    // 通过编码查询设备信息和企业信息
+    async getDeviceInfoByNo() {
+      const res = await getDeviceInfoByNo(this.handleProxyCreateOrderParams.no);
+      if (res.data) {
+        // 回显
+        const {
+          deviceBrand,
+          deviceModel,
+          devicePlace,
+          deviceSystemId,
+          deviceTypeId,
+          enterpriseAddress,
+          enterpriseName,
+        } = res.data;
+        this.handleProxyCreateOrderParams.deviceBrand = deviceBrand;
+        this.handleProxyCreateOrderParams.deviceModel = deviceModel;
+        this.handleProxyCreateOrderParams.devicePlace = devicePlace;
+        this.handleProxyCreateOrderParams.deviceSystemId = deviceSystemId;
+        this.handleProxyCreateOrderParams.deviceTypeId = deviceTypeId;
+        this.handleProxyCreateOrderParams.address = enterpriseAddress;
+        this.handleProxyCreateOrderParams.enterpriseName = enterpriseName;
+        this.formItemDisabled = true;
+      } else {
+        this.handleProxyCreateOrderParams.deviceBrand = null;
+        this.handleProxyCreateOrderParams.deviceModel = null;
+        this.handleProxyCreateOrderParams.devicePlace = null;
+        this.handleProxyCreateOrderParams.deviceSystemId = null;
+        this.handleProxyCreateOrderParams.deviceTypeId = null;
+        this.handleProxyCreateOrderParams.address = null;
+        this.handleProxyCreateOrderParams.enterpriseName = null;
+        this.formItemDisabled = false;
+      }
+    },
+    // 打开代下单弹框
+    async openReplacePlaceOrderDialog() {
+      await this.queryDeviceTypeList();
+      await this.queryDeviceSystemList();
+      await this.queryFaultPosition();
+      this.replacePlaceOrderVisible = true;
+    },
+    // 关闭代下单弹框
+    closeReplacePlaceOrderDialog() {
+      this.$refs["handleProxyCreateOrderRef"].resetFields();
+      this.handleProxyCreateOrderParams = {
+        no: null,
+        latitude: null,
+        longitude: null,
+        position: null,
+        serviceTime: null,
+        simpleDesc: null,
+        type: null,
+        images: null,
+        enterpriseName: null,
+        address: null,
+        contactsPeople: null,
+        areaId: null,
+        contactsPhone: null,
+        deviceBrand: null,
+        deviceModel: null,
+        devicePlace: null,
+        deviceSystemId: null,
+        deviceTypeId: null,
+      };
+      this.replacePlaceOrderVisible = false;
+    },
+    // 切换故障部位
+    changePosition(val) {
+      this.handleProxyCreateOrderParams.position = val[val.length - 1];
+    },
+    // 切换设备系统
+    changeDeviceSystem(val) {
+      this.handleProxyCreateOrderParams.deviceSystemId = val[val.length - 1];
+    },
+    // 切换设备类型
+    changeDeviceType(val) {
+      this.handleProxyCreateOrderParams.deviceTypeId = val[val.length - 1];
+    },
+    // 查询故障部位
+    async queryFaultPositionOne(sum, str) {
+      const children = [];
+      const res = await queryFaultPosition(sum);
+      res.data.forEach((item) => {
+        children.push({
+          value: item,
+          label: item,
+        });
+      });
+      return {
+        value: str,
+        label: str,
+        children,
+      };
+    },
+    async queryFaultPosition() {
+      let jiaGongArr = await this.queryFaultPositionOne(1, "加工中心");
+      let shuKongArr = await this.queryFaultPositionOne(2, "数控车床");
+      this.positionOptions = [jiaGongArr, shuKongArr];
+    },
+    // 查询设备系统
+    async queryDeviceSystemList() {
+      const res = await queryDeviceSystemList();
+      if (res.data) {
+        let arr = [];
+        res.data.forEach((item) => {
+          let children = [];
+          if (item.list) {
+            item.list.forEach((i) => {
+              children.push({
+                value: i.id,
+                label: i.name,
+              });
+            });
+          }
+
+          arr.push({
+            value: item.id,
+            label: item.name,
+            children,
+          });
+        });
+        this.deviceSystemListOptions = arr;
+      }
+    },
+    // 查询设备类型
+    async queryDeviceTypeList() {
+      const res = await queryDeviceTypeList();
+      if (res.data) {
+        let arr = [];
+        res.data.forEach((item) => {
+          let children = [];
+          if (item.list) {
+            item.list.forEach((i) => {
+              children.push({
+                value: i.id,
+                label: i.name,
+              });
+            });
+          }
+
+          arr.push({
+            value: item.id,
+            label: item.name,
+            children,
+          });
+        });
+        this.deviceTypeListOptions = arr;
+      }
+    },
+    // 上传故障视图
+    async uploadFaultImg(fileData) {
+      let formData = new FormData();
+      formData.append("file", fileData.file);
+      const res = await UploadImg(formData);
+      if (res.message == "操作成功") {
+        this.handleProxyCreateOrderParams.images = res.data;
+      }
+    },
+    // 删除故障视图
+    delFaultImg() {
+      this.handleProxyCreateOrderParams.images = "";
+    },
+    // 查看视图
+    openFaultImg() {
+      window.open(this.handleProxyCreateOrderParams.images, "_blank");
+    },
+
+    // 代下单模块 end
+
     // 确认散单转年保
     async convertToInsurance() {
       const res = await convertToInsurance(this.convertToInsuranceparams);
@@ -996,18 +1425,6 @@ export default {
           return item;
         }
       })[0].name;
-    },
-    querySelectData() {
-      this.loading = true;
-      this.$axios
-        .post(this.url.queryType)
-        .then(({ data }) => {
-          this.typeData = data;
-        })
-        .catch(function (error) {
-          console.info(error);
-        });
-      this.loading = false;
     },
     _handleAssignMaster(row) {
       console.log(row);
