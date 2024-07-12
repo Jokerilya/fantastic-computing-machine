@@ -55,7 +55,9 @@
     <!-- 表格 -->
     <el-card style="padding: 20px">
       <el-table :data="repairMessgaeList" style="width: 100%">
-        <el-table-column prop="createTime" label="添加时间" align="center">
+        <el-table-column prop="createTime" label="创建时间" align="center">
+        </el-table-column>
+        <el-table-column prop="operationTime" label="操作时间" align="center">
         </el-table-column>
         <el-table-column prop="operationPeople" label="操作人" align="center">
         </el-table-column>
@@ -139,6 +141,10 @@ export default {
           text: "产品咨询",
           value: "product_consult",
         },
+        {
+          text: "年保过期",
+          value: "butler_order",
+        },
       ],
     };
   },
@@ -190,6 +196,9 @@ export default {
       }
       if (row.module == "product_consult") {
         this.$router.push("/activity/message");
+      }
+      if (row.module == "butler_order") {
+        this.$router.push("/maintenance/customerDetail?orderSn=" + row.orderSn);
       }
       this.queryRepairMessgae();
     },

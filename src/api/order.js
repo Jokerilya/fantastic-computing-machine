@@ -148,7 +148,7 @@ export function getButlerOrderDetail(data) {
   return request({
     url: "/admin/maintenance/getButlerOrderDetail",
     method: "get",
-    params: data,
+    params:data,
   });
 }
 //查询管家订单列表
@@ -825,6 +825,15 @@ export function queryRegisterInfoList(data) {
 export function queryRepairMessgae(data) {
 	return request({
 		url: `/admin/maintenance/queryRepairMessgae`,
+		method: 'post',
+    data
+	})
+}
+
+// 处理产品咨询
+export function handleRegisterInfo(data) {
+	return request({
+		url: `/admin/maintenance/handleRegisterInfo`,
 		method: 'post',
     data
 	})

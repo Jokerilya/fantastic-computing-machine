@@ -123,10 +123,10 @@ export default {
         row.module == "order" ||
         row.module == "enterprise" ||
         row.module == "master" ||
-        row.module == "product_consult"
+        row.module == "product_consult" ||
+        row.module == "butler_order"
       ) {
         if (row.module == "order") {
-          console.log(129);
           this.$router.push({
             name: "maintenance_order_desc",
             query: {
@@ -148,6 +148,13 @@ export default {
         }
         if (row.module == "product_consult") {
           this.$router.push("/activity/message");
+        }
+        if (row.module == "butler_order") {
+          this.$router.push(
+            `/maintenance/customerDetail?orderSn=${row.orderSn}&id=${
+              Math.floor(Math.random() * (999 - 100 + 1)) + 100
+            }`
+          );
         }
         const res = await handleUnReadMessage(row.id);
         if (res.message == "操作成功") {

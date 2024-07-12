@@ -6,8 +6,8 @@
       <el-card>
         <div class="statusTop">
           <div class="statusTop_statu">
-            <div v-if="orderMsg.status === 0" style="color:red">未支付</div>
-            <div v-if="orderMsg.status === 1" style="color:green">已支付</div>
+            <div v-if="orderMsg.status === 0" style="color: red">未支付</div>
+            <div v-if="orderMsg.status === 1" style="color: green">已支付</div>
           </div>
           <div class="statusTop_code">
             <span>订单号: </span>
@@ -21,7 +21,7 @@
             <div class="itemLine">
               <div class="item">
                 <span class="itemTitle">客户名称: </span>
-                <span style="font-size: 18px;">{{
+                <span style="font-size: 18px">{{
                   orderMsg.enterpriseName
                 }}</span>
               </div>
@@ -29,7 +29,7 @@
             <div class="itemLine">
               <div class="item">
                 <span class="itemTitle">客户负责人: </span>
-                <span style="font-size: 18px;">
+                <span style="font-size: 18px">
                   {{ orderMsg.contactsPeople }}</span
                 >
               </div>
@@ -37,7 +37,7 @@
             <div class="itemLine">
               <div class="item">
                 <span class="itemTitle">客户电话: </span>
-                <span style="font-size: 18px;">
+                <span style="font-size: 18px">
                   {{ orderMsg.contactsPhone }}</span
                 >
               </div>
@@ -48,7 +48,7 @@
     </div>
 
     <!-- 空行 -->
-    <div style="height: 16px;"></div>
+    <div style="height: 16px"></div>
 
     <!-- 列表表格部分 -->
     <el-card>
@@ -58,7 +58,7 @@
         element-loading-text="拼命加载中"
         element-loading-spinner="el-icon-loading"
         :data="orderDetail"
-        style="width: 100%;"
+        style="width: 100%"
         height="80vh"
       >
         <el-table-column type="expand">
@@ -87,14 +87,14 @@
                 <template slot-scope="{ row }">
                   <a
                     href="#"
-                    style="color:#0b2059;"
+                    style="color: #0b2059"
                     @click.prevent="editAccessoriesFn(row)"
                   >
                     编辑
                   </a>
                   <a
                     href="#"
-                    style="color:#0b2059;"
+                    style="color: #0b2059"
                     @click.prevent="delAccessoriesFn(row.id)"
                   >
                     删除</a
@@ -173,13 +173,13 @@
         ></el-table-column>
         <el-table-column label="操作" align="center" width="120">
           <template slot-scope="{ row }">
-            <a style="color:#0b2059;" @click.prevent="addAccessoriesFn(row.id)"
+            <a style="color: #0b2059" @click.prevent="addAccessoriesFn(row.id)"
               >添加
             </a>
             <!-- <a href="#" style="color:#0b2059;">
             编辑
           </a> -->
-            <a style="color:#0b2059;" @click.prevent="deleteDeviceInfo(row.id)">
+            <a style="color: #0b2059" @click.prevent="deleteDeviceInfo(row.id)">
               删除</a
             >
           </template>
@@ -273,7 +273,7 @@ export default {
       dislogTitle: "",
 
       orderMsg: [],
-      id: "",
+      orderSn: "",
       People: "",
       Name: "",
       Phone: "",
@@ -322,8 +322,18 @@ export default {
   components: {
     addEditDialog: addEditDialog,
   },
+  watch: {
+    //拿到消息跳转的时候 有id就刷新
+    $route(to, from) {
+      if (to.query.id) {
+        this.orderSn = to.query.orderSn;
+        this._getButlerOrderDetail();
+      }
+    },
+  },
   created() {
-    this.id = this.$route.query.id;
+    console.log(326, this.$route.query.orderSn);
+    this.orderSn = this.$route.query.orderSn;
     this._getButlerOrderDetail();
   },
   methods: {
@@ -358,7 +368,7 @@ export default {
     // 获取年保订单的信息
     _getButlerOrderDetail() {
       let data = {
-        id: this.id,
+        orderSn: this.orderSn,
       };
       getButlerOrderDetail(data).then((res) => {
         if (res) {
@@ -485,7 +495,7 @@ export default {
         .then(({ data }) => {
           this.typeData = data;
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.info(error);
         });
       this.loading = false;

@@ -145,7 +145,7 @@
                 <a
                   href="#"
                   style="color: #2e4c9e"
-                  @click.prevent="jump2Detail(row.id)"
+                  @click.prevent="jump2Detail(row.orderSn)"
                   >详情</a
                 >
                 <a
@@ -835,8 +835,8 @@ export default {
       });
     },
     // 点击详情 携带参数跳转详情页面
-    jump2Detail(id) {
-      this.$router.push("/maintenance/customerDetail?id=" + id);
+    jump2Detail(orderSn) {
+      this.$router.push("/maintenance/customerDetail?orderSn=" + orderSn);
     },
     // 拿到师傅列表 不知道干嘛
     _getMasterList() {
