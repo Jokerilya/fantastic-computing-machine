@@ -124,7 +124,8 @@ export default {
         row.module == "enterprise" ||
         row.module == "master" ||
         row.module == "product_consult" ||
-        row.module == "butler_order"
+        row.module == "butler_order" ||
+        row.module == "invoice"
       ) {
         if (row.module == "order") {
           this.$router.push({
@@ -155,6 +156,9 @@ export default {
               Math.floor(Math.random() * (999 - 100 + 1)) + 100
             }`
           );
+        }
+        if (row.module == "invoice") {
+          this.$router.push("/invoiceManagement/invoiceList");
         }
         const res = await handleUnReadMessage(row.id);
         if (res.message == "操作成功") {

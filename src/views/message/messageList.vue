@@ -145,6 +145,10 @@ export default {
           text: "年保过期",
           value: "butler_order",
         },
+        {
+          text: "发票操作",
+          value: "invoice",
+        },
       ],
     };
   },
@@ -199,6 +203,9 @@ export default {
       }
       if (row.module == "butler_order") {
         this.$router.push("/maintenance/customerDetail?orderSn=" + row.orderSn);
+      }
+      if (row.module == "invoice") {
+        this.$router.push("/invoiceManagement/invoiceList");
       }
       this.queryRepairMessgae();
     },

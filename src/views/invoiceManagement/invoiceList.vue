@@ -34,15 +34,15 @@
         <el-table-column label="订单编号" prop="relationOrderSn">
         </el-table-column>
         <el-table-column label="公司" prop="enterpriseName"> </el-table-column>
-        <el-table-column label="联系电话" prop="phone"> </el-table-column>
+        <!-- <el-table-column label="联系电话" prop="phone"> </el-table-column>
         <el-table-column label="地址" prop="enterpriseAddress">
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column label="税号" prop="taxpayerNo"> </el-table-column>
         <el-table-column label="税率">
           <template slot-scope="{ row }"> {{ row.taxPoints * 100 }}% </template>
         </el-table-column>
-        <el-table-column label="开户银行" prop="bankName"> </el-table-column>
-        <el-table-column label="银行卡号" prop="bankCode"> </el-table-column>
+        <!-- <el-table-column label="开户银行" prop="bankName"> </el-table-column>
+        <el-table-column label="银行卡号" prop="bankCode"> </el-table-column> -->
         <el-table-column label="状态">
           <template slot-scope="{ row }">
             <div
