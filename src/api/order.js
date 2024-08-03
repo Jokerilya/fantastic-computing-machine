@@ -135,6 +135,16 @@ export function handleRepairOrderExport(data) {
   });
 }
 
+// 编辑订单维修进度记录
+export function handleRepairOrderExportV2(data) {
+  return request({
+    url: "/admin/maintenance/handleRepairOrderExportV2",
+    method: "POST",
+    data,
+    responseType: "blob",
+  });
+}
+
 //平台审核报价
 export function examineMasterQuotation(data) {
   return request({
@@ -834,6 +844,15 @@ export function queryRepairMessgae(data) {
 export function handleRegisterInfo(data) {
 	return request({
 		url: `/admin/maintenance/handleRegisterInfo`,
+		method: 'post',
+    data
+	})
+}
+
+// 师傅订单排行数据
+export function queryMasterOrderRankData(data) {
+	return request({
+		url: `/admin/maintenance/queryMasterOrderRankData`,
 		method: 'post',
     data
 	})

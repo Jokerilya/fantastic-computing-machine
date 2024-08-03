@@ -22,6 +22,7 @@ import talentRouter from "./modules/talent.js";
 import bossRouter from "./modules/boss.js";
 import storeController from "./modules/storeController";
 import messageRouter from "./modules/message";
+import statisticsStatementRouter from "./modules/statisticsStatement";
 
 export const constantRoutes = [
   {
@@ -77,6 +78,7 @@ export const constantRoutes = [
   //   ]
   // },
   messageRouter,
+  statisticsStatementRouter,
   maintenanceRouter,
   financialManagement,
   invoiceManagement,

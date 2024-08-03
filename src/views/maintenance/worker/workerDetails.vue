@@ -36,7 +36,7 @@
             </div>
             <div class="content">
               <div class="item" style="line-height: 25px;">
-                <span>服务信息:</span>{{ workerDetailList.serviceTypesName }}
+                <span>服务类型:</span>{{ workerDetailList.serviceTypesName }}
               </div>
               <div class="item">
                 <span>服务区域:</span>{{ workerDetailList.serviceAreasName }}

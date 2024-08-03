@@ -20,7 +20,8 @@ import service from './utils/request-axios'
 import { Image, Model, Upload } from './components'
 import uploadImg from "@/components/uploadImg/upload-img.vue";
 import util from './utils'
-// import echarts from 'echarts'   
+// 图视化
+import echarts from 'echarts'   
 
 // Vue.use(echarts)
 
@@ -82,6 +83,9 @@ const messageList = Vue.observable({
   repairMessgaeList:null
 });
 Vue.prototype.$messageList = messageList;
+
+// 图视化挂到vue上
+Vue.prototype.$echarts = echarts;
 
 
 new Vue({
