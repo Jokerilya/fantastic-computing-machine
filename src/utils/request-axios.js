@@ -36,7 +36,7 @@ var loadingInstance
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
-  timeout: 10000 // request timeout
+  timeout: 10000000 // request timeout
 })
 
 // 图片接口 导入的接口不需要
@@ -52,7 +52,10 @@ const forbiddenUrl = [
 	'/admin/maintenance/handleButlerOrderExport',
 	'/admin/maintenance/handleRepairOrderExport',
 	'/admin/maintenance/uploadDeviceKeepOrder',
-	'/admin/financial/handlePaymentListExport']
+	'/admin/financial/handlePaymentListExport',
+	'/admin/maintenance/handleRepairOrderExportV2',
+	'/admin/maintenance/handleRepairOrderExportByFaults'
+]
 
 
 service.interceptors.request.use(

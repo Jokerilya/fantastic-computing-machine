@@ -48,7 +48,11 @@
       </el-table-column>
       <el-table-column label="类型" align="center" header-align="center">
         <template slot-scope="scope">
-          <span>{{ typeList[scope.row.type - 1] }}</span>
+          <span>{{
+            typeList[scope.row.type - 1]
+              ? typeList[scope.row.type - 1]
+              : "初次保养"
+          }}</span>
         </template>
       </el-table-column>
       <!-- <el-table-column
@@ -71,26 +75,38 @@
           <span>{{ scope.row.phone }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        label="详情描述"
-        prop="simpleContent"
-        align="center"
-        header-align="center"
-      >
+      <el-table-column label="公司名称" align="center" header-align="center">
+        <template slot-scope="scope">
+          <span>{{
+            scope.row.enterpriseName ? scope.row.enterpriseName : "/"
+          }}</span>
+        </template>
       </el-table-column>
-      <el-table-column
-        label="备注"
-        prop="feedback"
-        align="center"
-        header-align="center"
-      >
+      <el-table-column label="企业地址" align="center" header-align="center">
+        <template slot-scope="scope">
+          <span>{{
+            scope.row.enterpriseAddress ? scope.row.enterpriseAddress : "/"
+          }}</span>
+        </template>
       </el-table-column>
-      <el-table-column
-        label="操作人"
-        prop="operationPeople"
-        align="center"
-        header-align="center"
-      >
+      <el-table-column label="详情描述" align="center" header-align="center">
+        <template slot-scope="scope">
+          <span>{{
+            scope.row.simpleContent ? scope.row.simpleContent : "/"
+          }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="备注" align="center" header-align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.feedback ? scope.row.feedback : "/" }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作人" align="center" header-align="center">
+        <template slot-scope="scope">
+          <span>{{
+            scope.row.operationPeople ? scope.row.operationPeople : "/"
+          }}</span>
+        </template>
       </el-table-column>
       <el-table-column
         label="状态"

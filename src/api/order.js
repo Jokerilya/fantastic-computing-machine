@@ -145,6 +145,16 @@ export function handleRepairOrderExportV2(data) {
   });
 }
 
+// 维保订单列表数据导出(故障项目)
+export function handleRepairOrderExportByFaults(data){
+  return request({
+    url: "/admin/maintenance/handleRepairOrderExportByFaults",
+    method: "POST",
+    data,
+    responseType: "blob",
+  });
+}
+
 //平台审核报价
 export function examineMasterQuotation(data) {
   return request({
@@ -153,6 +163,7 @@ export function examineMasterQuotation(data) {
     data,
   });
 }
+
 //查询管家订单详情
 export function getButlerOrderDetail(data) {
   return request({

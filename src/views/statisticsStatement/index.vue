@@ -16,6 +16,9 @@
         <el-button style="margin-left: 20px" @click="exportListV2">
           导出
         </el-button>
+        <el-button style="margin-left: 20px" @click="exportByFaults">
+          导出(故障项目)
+        </el-button>
       </div>
       <div class="chartBox">
         <div class="chartLeft">
@@ -100,6 +103,7 @@
 <script>
 import {
   handleRepairOrderExportV2,
+  handleRepairOrderExportByFaults,
   queryMasterOrderRankData,
 } from "@/api/order.js";
 export default {
@@ -189,6 +193,35 @@ export default {
         await this.queryMasterOrderRankData();
         this.drawChartLeft();
         this.drawChartRight();
+      } else {
+        this.handleRepairOrderExportV2Params.query = null;
+        await this.queryMasterOrderRankData();
+        this.drawChartLeft();
+        this.drawChartRight();
+      }
+    },
+    // 维保订单列表数据导出
+    async exportByFaults() {
+      const loading = this.$loading({
+        lock: true,
+        text: "数据传输中",
+        spinner: "el-icon-loading",
+      });
+      const res = await handleRepairOrderExportByFaults(
+        this.handleRepairOrderExportV2Params
+      );
+      if (res) {
+        const link = document.createElement("a");
+        const blob = new Blob([res.data], {
+          type: "application/vnd.ms-excel",
+        });
+        link.style.display = "none";
+        link.href = URL.createObjectURL(blob);
+        link.download = "维保列表新版"; //下载的文件名
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        loading.close();
       }
     },
     // 导出新版

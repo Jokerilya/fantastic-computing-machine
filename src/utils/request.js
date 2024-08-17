@@ -32,7 +32,7 @@ var loadingInstance
 
 const service = axios.create({
 	baseURL: process.env.VUE_APP_BASE_API,
-	timeout: 3000000,
+	timeout: 10000000,
 });
 
 // 图片接口 导入的接口不需要
@@ -49,7 +49,9 @@ const forbiddenUrl = [
 	'/admin/maintenance/handleButlerOrderExport',
 	'/admin/maintenance/handleRepairOrderExport',
 	'/admin/maintenance/uploadDeviceKeepOrder',
-	'/admin/financial/handlePaymentListExport']
+	'/admin/financial/handlePaymentListExport',
+	'/admin/maintenance/handleRepairOrderExportV2',
+	'/admin/maintenance/handleRepairOrderExportByFaults']
 
 service.interceptors.request.use(
 	config => {
