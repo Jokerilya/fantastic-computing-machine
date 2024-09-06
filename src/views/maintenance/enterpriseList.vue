@@ -77,6 +77,13 @@
         height="65vh"
       >
         <el-table-column
+          prop="createTime"
+          label="入驻时间"
+          show-overflow-tooltip
+          align="center"
+          width="140"
+        ></el-table-column>
+        <el-table-column
           prop="enterpriseName"
           label="企业名称"
           show-overflow-tooltip

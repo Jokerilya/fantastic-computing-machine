@@ -869,3 +869,48 @@ export function queryMasterOrderRankData(data) {
 	})
 }
 
+// 编辑产品咨询记录
+export function editRegisterInfo(data) {
+	return request({
+		url: `/admin/maintenance/editRegisterInfo`,
+		method: 'post',
+    data
+	})
+}
+
+// 产品咨询转保养订单
+export function handleConvertKeepOrder(data) {
+	return request({
+		url: `/admin/maintenance/handleConvertKeepOrder`,
+		method: 'post',
+    data
+	})
+}
+
+// 保养订单指派师傅
+export function deviceKeepOrderAssign(data) {
+	return request({
+		url: `/admin/maintenance/deviceKeepOrderAssign`,
+		method: 'post',
+    data
+	})
+}
+
+// 编辑保养列表信息
+export function editDeviceKeepOrder(data) {
+	return request({
+		url: `/admin/maintenance/editDeviceKeepOrder`,
+		method: 'post',
+    data
+	})
+}
+
+// 保养订单标记已完成
+export function deviceKeepOrderMarkComplete(data) {
+	return request({
+		url: `/admin/maintenance/deviceKeepOrderMarkComplete`,
+		method: 'post',
+    data
+	})
+}
+

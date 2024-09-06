@@ -33,6 +33,7 @@
         </el-date-picker>
       </div>
       <div class="topTool">
+        <el-button @click="openConsultDialog(null)">新增</el-button>
         <el-button @click="searchBtn">搜索</el-button>
         <el-button @click="resetBtn">重置</el-button>
       </div>
@@ -46,12 +47,17 @@
         header-align="center"
       >
       </el-table-column>
+      <el-table-column label="来源渠道" align="center" header-align="center">
+        <template slot-scope="{ row }">
+          <span>{{ channelList[row.channel - 1].label }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="类型" align="center" header-align="center">
         <template slot-scope="scope">
           <span>{{
             typeList[scope.row.type - 1]
-              ? typeList[scope.row.type - 1]
-              : "初次保养"
+              ? typeList[scope.row.type - 1].label
+              : "其他"
           }}</span>
         </template>
       </el-table-column>
@@ -109,24 +115,42 @@
         </template>
       </el-table-column>
       <el-table-column
-        label="状态"
+        label="咨询状态"
         prop="operationPeople"
         align="center"
         header-align="center"
       >
         <template slot-scope="{ row }">
           <div :style="{ color: row.completeFlag == 0 ? 'red' : '' }">
-            {{ row.completeFlag == 0 ? "未完结" : "已完结" }}
+            {{ row.completeFlag == 0 ? "未处理" : "已处理" }}
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" header-align="center">
-        <template slot-scope="scope">
+      <el-table-column
+        width="150"
+        label="操作"
+        align="center"
+        header-align="center"
+      >
+        <template slot-scope="{ row }">
           <el-button
-            :disabled="scope.row.completeFlag == 1"
+            :disabled="row.completeFlag == 1"
             type="text"
-            @click="openFeedbackDialog(scope.row)"
+            @click="openFeedbackDialog(row)"
             >备注</el-button
+          >
+          <el-button
+            :disabled="row.completeFlag == 1"
+            type="text"
+            @click="openConsultDialog(row)"
+            >编辑</el-button
+          >
+          <el-button
+            v-if="row.type == 4"
+            type="text"
+            @click="turnUpkeep(row.id)"
+            :disabled="row.completeFlag == 1"
+            >转保养</el-button
           >
         </template>
       </el-table-column>
@@ -179,13 +203,106 @@
         <el-button type="primary" @click="confirmRegisterInfo">确 定</el-button>
       </span>
     </el-dialog>
+
+    <!-- 新增编辑新闻资讯框 -->
+    <el-dialog
+      center
+      :title="consultDialogTitle"
+      :visible="consultDialogVisible"
+      width="30%"
+      :show-close="false"
+      :close-on-click-modal="false"
+    >
+      <el-form
+        :model="consultInfoForm"
+        :rules="consultInfoRules"
+        ref="consultInfoRef"
+        label-position="left"
+        label-width="80px"
+      >
+        <el-form-item label="咨询来源" prop="channel">
+          <el-select
+            v-model="consultInfoForm.channel"
+            placeholder="请选择咨询来源"
+          >
+            <el-option
+              v-for="item in channelList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            >
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="咨询类型" prop="type">
+          <el-select
+            v-model="consultInfoForm.type"
+            placeholder="请选择咨询类型"
+          >
+            <el-option
+              v-for="item in typeList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            >
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="咨询人" prop="name">
+          <el-input v-model="consultInfoForm.name"></el-input>
+        </el-form-item>
+        <el-form-item label="电话号码" prop="phone">
+          <el-input v-model="consultInfoForm.phone"></el-input>
+        </el-form-item>
+        <el-form-item label="公司名称" prop="enterpriseName">
+          <el-input v-model="consultInfoForm.enterpriseName"></el-input>
+        </el-form-item>
+        <el-form-item label="公司地址" prop="enterpriseAddress">
+          <el-input v-model="consultInfoForm.enterpriseAddress"></el-input>
+        </el-form-item>
+        <el-form-item label="内容" prop="simpleContent">
+          <el-input v-model="consultInfoForm.simpleContent"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeConsultDialog">取 消</el-button>
+        <el-button type="primary" @click="confirmConsult">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script>
 // import { queryBoxMessage } from "@/api/activity";
-import { queryRegisterInfoList, handleRegisterInfo } from "@/api/order";
+import {
+  queryRegisterInfoList,
+  handleRegisterInfo,
+  editRegisterInfo,
+  handleConvertKeepOrder,
+} from "@/api/order";
 export default {
   data() {
+    let isMobileNumber = (rule, value, callback) => {
+      if (!value) {
+        return new Error("请输入电话号码");
+      } else {
+        const reg = /^1[3|4|5|7|8][0-9]\d{8}$/;
+        const isPhone = reg.test(value);
+        value = Number(value); //转换为数字
+        if (typeof value === "number" && !isNaN(value)) {
+          //判断是否为数字
+          value = value.toString(); //转换成字符串
+          if (value.length < 0 || value.length > 12 || !isPhone) {
+            //判断是否为11位手机号
+            callback(new Error("手机号码格式如:138xxxx8754"));
+          } else {
+            callback();
+          }
+        } else {
+          callback(new Error("请输入电话号码"));
+        }
+      }
+    };
+
     return {
       queryTime: null,
       dataList: [],
@@ -197,7 +314,6 @@ export default {
         queryTime: null,
       },
       queryRegisterInfoListParamsTotal: null,
-      typeList: ["投保咨询", "单次维修咨询", "维修培训", "其他"],
       feedbackdialogVisible: false,
       handleRegisterInfoParams: {
         id: null,
@@ -210,12 +326,161 @@ export default {
           { required: true, message: "请选择是否完结", trigger: "change" },
         ],
       },
+
+      consultDialogTitle: "新增新闻资讯",
+      consultDialogVisible: false,
+      consultInfoForm: {
+        id: "",
+        enterpriseAddress: "",
+        enterpriseName: "",
+        name: "",
+        phone: "",
+        simpleContent: "",
+        channel: 2,
+        type: 4, //暂时只有初次保养
+      },
+      consultInfoRules: {
+        name: [{ required: true, message: "请输入姓名", trigger: "blur" }],
+        phone: [
+          { required: true, message: "请输入电话号码", trigger: "blur" },
+          { validator: isMobileNumber, trigger: "blur" },
+        ],
+        enterpriseName: [
+          { required: true, message: "请输入公司名称", trigger: "blur" },
+        ],
+        enterpriseAddress: [
+          { required: true, message: "请输入公司地址", trigger: "blur" },
+        ],
+        simpleContent: [
+          { required: true, message: "请输入内容", trigger: "blur" },
+        ],
+        channel: [
+          { required: true, message: "请选择咨询来源", trigger: "change" },
+        ],
+        type: [
+          { required: true, message: "请选择咨询类型", trigger: "change" },
+        ],
+      },
+      channelList: [
+        {
+          value: 1,
+          label: "小程序",
+        },
+        {
+          value: 2,
+          label: "抖音",
+        },
+        {
+          value: 3,
+          label: "小红书",
+        },
+        {
+          value: 4,
+          label: "视频号",
+        },
+        {
+          value: 5,
+          label: "快手",
+        },
+      ],
+      typeList: [
+        {
+          value: 1,
+          label: "投保咨询",
+        },
+        {
+          value: 2,
+          label: "单次维修咨询",
+        },
+        {
+          value: 3,
+          label: "维修培训",
+        },
+        {
+          value: 4,
+          label: "初次保养",
+        },
+      ],
     };
   },
   beforeMount() {
     this.queryRegisterInfoList();
   },
   methods: {
+    // 咨询转保养
+    turnUpkeep(id) {
+      this.$confirm("您是否要将该记录转保养订单?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then(async () => {
+        const res = await handleConvertKeepOrder({
+          id,
+        });
+        if (res.message == "操作成功") {
+          this.$message({
+            message: "操作成功",
+            type: "success",
+          });
+          this.queryRegisterInfoList();
+        }
+      });
+    },
+    // 确定新增编辑新闻资讯
+    async confirmConsult() {
+      await this.$refs["consultInfoRef"].validate();
+      const res = await editRegisterInfo(this.consultInfoForm);
+      if (res.message == "操作成功") {
+        this.$message({
+          message: "操作成功",
+          type: "success",
+        });
+        this.queryRegisterInfoList();
+        this.closeConsultDialog();
+      }
+    },
+    // 关闭产品咨询框
+    closeConsultDialog() {
+      this.consultInfoForm = {
+        id: "",
+        enterpriseAddress: "",
+        enterpriseName: "",
+        name: "",
+        phone: "",
+        simpleContent: "",
+        channel: 2,
+        type: 4, //暂时只有初次保养
+      };
+      this.$refs["consultInfoRef"].resetFields();
+      this.consultDialogVisible = false;
+    },
+    // 打开产品咨询框
+    openConsultDialog(row) {
+      if (row) {
+        // 编辑回显
+        this.consultDialogTitle = "编辑新闻资讯";
+        const {
+          name,
+          phone,
+          channel,
+          enterpriseName,
+          enterpriseAddress,
+          simpleContent,
+          id,
+        } = row;
+        this.consultInfoForm.id = id;
+        this.consultInfoForm.name = name;
+        this.consultInfoForm.phone = phone;
+        this.consultInfoForm.channel = channel;
+        this.consultInfoForm.enterpriseName = enterpriseName;
+        this.consultInfoForm.enterpriseAddress = enterpriseAddress;
+        this.consultInfoForm.simpleContent = simpleContent;
+      } else {
+        this.consultDialogTitle = "新增新闻资讯";
+      }
+      this.consultDialogVisible = true;
+    },
+
     changeQueryTime(val) {
       // 为了满足能查一天的
       const one = val[0] + " 00:00:00";

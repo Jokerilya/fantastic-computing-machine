@@ -144,6 +144,14 @@ const router = {
       meta: { title: "保养记录" },
     },
 
+    
+    {
+      path: "/activity/message",
+      name: "Message",
+      component: () => import("@/views/activity/message"),
+      meta: { title: "产品咨询列表"},
+    },
+
     // 物流详情
 		{
 			path:'/maintenance/logisticsDetails',
@@ -190,7 +198,7 @@ const router = {
       name: "masterOrderDiscount",
       component: () => import("@/views/maintenance/masterOrderDiscount.vue"),
       meta: { title: "订单折扣记录" },
-    },
+    }
   ],
 };
 export default router;

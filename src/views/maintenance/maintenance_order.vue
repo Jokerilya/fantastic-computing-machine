@@ -215,7 +215,7 @@
           width="80"
           align="center"
         >
-          <template slot-scope="{ row }"> ￥{{ row.totalAmount }} </template>
+          <template slot-scope="{ row }"> ￥{{ row.totalAmount?row.totalAmount:'0' }} </template>
         </el-table-column> -->
         <el-table-column
           prop="enterpriseName"
@@ -226,11 +226,33 @@
         ></el-table-column>
         <el-table-column
           prop="no"
-          label="设备编码"
+          label="机台码"
           show-overflow-tooltip
           width="150"
           align="center"
         ></el-table-column>
+        <el-table-column
+          label="设备编号"
+          show-overflow-tooltip
+          width="80"
+          align="center"
+        >
+          <template slot-scope="{ row }">
+            {{ row.enterpriseDeviceNo ? row.enterpriseDeviceNo : "/" }}
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="设备位置"
+          show-overflow-tooltip
+          width="80"
+          align="center"
+        >
+          <template slot-scope="{ row }">
+            {{
+              row.enterpriseDevicePosition ? row.enterpriseDevicePosition : "/"
+            }}
+          </template>
+        </el-table-column>
         <el-table-column
           prop="devicePlace"
           label="设备产地"
@@ -259,8 +281,9 @@
           width="80"
           align="center"
         >
-          <template slot-scope="{ row }"> {{ row.num }}台 </template>
+          <template slot-scope="{ row }"> {{ row.num?row.num:'0' }}台 </template>
         </el-table-column> -->
+
         <el-table-column
           prop="deviceSystemName"
           label="设备系统"

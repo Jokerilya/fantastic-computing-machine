@@ -25,13 +25,7 @@ const router = {
       name: "Partner",
       component: () => import("@/views/activity/partner"),
       meta: { title: "合作伙伴", icon: "el-icon-s-custom" },
-    },
-    {
-      path: "message",
-      name: "Message",
-      component: () => import("@/views/activity/message"),
-      meta: { title: "产品咨询列表", icon: "el-icon-date" },
-    },
+    }
     // {
     //   path: "coupon",
     //   name: "Coupon",

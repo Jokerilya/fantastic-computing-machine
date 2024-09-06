@@ -40,7 +40,7 @@
                     ? row.realPortrait
                     : 'https://snk-1305456087.cos.ap-guangzhou.myqcloud.com/user/20230317/EA03777079.jpg'
                 "
-                style="height: 100px;width: 100px;"
+                style="height: 100px; width: 100px"
               ></el-image>
             </template>
           </el-table-column>
@@ -54,12 +54,10 @@
             <template slot-scope="{ row }">
               <el-image
                 :src="row.programUrl"
-                style="height: 100px;width: 100px;"
+                style="height: 100px; width: 100px"
                 v-if="row.programUrl"
               ></el-image>
-              <div v-else>
-                \
-              </div>
+              <div v-else>\</div>
             </template>
           </el-table-column>
           <el-table-column
@@ -82,6 +80,20 @@
             label="推荐奖励金额"
             prop="recommendFee"
           ></el-table-column>
+          <el-table-column label="操作" width="150">
+            <template slot-scope="{ row }">
+              <el-button
+                type="text"
+                @click="goToPromotionTeam(row.invitationCode)"
+                >推广团队</el-button
+              >
+              <el-button
+                type="text"
+                @click="goToGiveawayRewards(row.invitationCode)"
+                >佣金奖励</el-button
+              >
+            </template>
+          </el-table-column>
         </el-table>
       </div>
 
@@ -118,6 +130,20 @@ export default {
     this.querySalesmanList();
   },
   methods: {
+    // 跳转佣金奖励列表
+    goToGiveawayRewards(invitationCode) {
+      this.$router.push({
+        name: "giveawayRewards",
+        query: { invitationCode },
+      });
+    },
+    // 跳转推广团队
+    goToPromotionTeam(invitationCode) {
+      this.$router.push({
+        name: "promotionTeam",
+        query: { invitationCode },
+      });
+    },
     // 查询业务人员列表
     async querySalesmanList(id) {
       if (id === 1) {

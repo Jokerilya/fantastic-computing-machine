@@ -4,6 +4,12 @@
     <!-- 顶部工具栏 -->
     <div class="topTool">
       <el-input
+        v-model="queryUpkeepListParameter.orderSn"
+        placeholder="输入订单编号"
+        class="toolInput"
+      >
+      </el-input>
+      <el-input
         v-model="queryUpkeepListParameter.no"
         placeholder="输入设备编号"
         class="toolInput"
@@ -65,24 +71,62 @@
               label="保养类型"
             ></el-table-column>
             <el-table-column prop="person" label="保养人"></el-table-column>
-            <el-table-column label="保养内容" prop="content"> </el-table-column>
+            <el-table-column label="保养内容" prop="content">
+              <template slot-scope="{ row }">
+                {{ row.content ? row.content : "/" }}
+              </template>
+            </el-table-column>
             <el-table-column prop="fault" label="排除故障"></el-table-column>
             <el-table-column
               prop="totalCostFee"
               label="总成本"
             ></el-table-column>
-            <el-table-column label="操作">
+            <el-table-column prop="status" label="状态">
               <template slot-scope="{ row }">
-                <a
-                  style="color: #0b2059; margin-right: 10px"
+                {{
+                  row.status == 0
+                    ? "未指派"
+                    : row.status == 1
+                    ? "进行中"
+                    : "已完成"
+                }}
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" width="170">
+              <template slot-scope="{ row }">
+                <el-button
+                  type="text"
                   @click.prevent="openUpkeepDetailsDialogFn(row)"
-                  >详情</a
                 >
-                <a
-                  style="color: #0b2059"
+                  详情
+                </el-button>
+                <!-- <el-button
+                  type="text"
                   @click.prevent="delUpkeepDetails(row.id)"
-                  >删除</a
                 >
+                  删除
+                </el-button> -->
+                <el-button
+                  v-if="row.status == 1"
+                  type="text"
+                  @click.prevent="openEditUpkeepDialog(row)"
+                >
+                  编辑
+                </el-button>
+                <el-button
+                  v-if="row.status == 1"
+                  type="text"
+                  @click.prevent="markersCompleted(row)"
+                >
+                  标记已完成
+                </el-button>
+                <el-button
+                  v-if="row.status == 0"
+                  type="text"
+                  @click.prevent="openDesignateMasterDialog(row.id)"
+                >
+                  指派师傅
+                </el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -115,20 +159,28 @@
           <div class="content">
             <div class="line">
               <div class="item">
-                <span class="title">设备编号</span>
-                <span class="desc">{{ upkeepDetails.no }}</span>
+                <span class="title">姓名</span>
+                <span class="desc">{{ upkeepDetails.name }}</span>
               </div>
               <div class="item">
-                <span class="title">保养日期</span>
-                <span class="desc">{{
-                  upkeepDetails.keepTime && upkeepDetails.keepTime.substr(0, 10)
-                }}</span>
+                <span class="title">电话</span>
+                <span class="desc">{{ upkeepDetails.phone }}</span>
               </div>
             </div>
             <div class="line">
               <div class="item">
-                <span class="title">保养类型</span>
-                <span class="desc">{{ upkeepDetails.type }}</span>
+                <span class="title">公司名称</span>
+                <span class="desc">{{ upkeepDetails.enterpriseName }}</span>
+              </div>
+              <div class="item">
+                <span class="title">公司地址</span>
+                <span class="desc">{{ upkeepDetails.enterpriseAddress }}</span>
+              </div>
+            </div>
+            <div class="line">
+              <div class="item">
+                <span class="title">设备编号</span>
+                <span class="desc">{{ upkeepDetails.no }}</span>
               </div>
               <div class="item">
                 <span class="title">保养人</span>
@@ -137,33 +189,50 @@
             </div>
             <div class="line">
               <div class="item">
-                <span class="title">保养内容</span>
-                <span class="desc">{{ upkeepDetails.content }}</span>
+                <span class="title">更换配件名</span>
+                <span class="desc">{{ upkeepDetails.partsNames }}</span>
               </div>
               <div class="item">
-                <span class="title">排除故障</span>
+                <span class="title">故障问题</span>
+                <span class="desc">{{ upkeepDetails.problem }}</span>
+              </div>
+            </div>
+            <div class="line">
+              <div class="item">
+                <span class="title">保养内容</span>
+                <span class="desc">{{ upkeepDetails.simpleContent }}</span>
+              </div>
+              <div class="item">
+                <span class="title">排除保障</span>
                 <span class="desc">{{ upkeepDetails.fault }}</span>
               </div>
             </div>
             <div class="line">
               <div class="item">
-                <span class="title">配件名称</span>
-                <span class="desc">{{ upkeepDetails.partsNames }}</span>
+                <span class="title">总数量</span>
+                <span class="desc">{{ upkeepDetails.totalNum }}</span>
               </div>
               <div class="item">
-                <span class="title">配件费用</span>
+                <span class="title">保养人工费用</span>
+                <span class="desc">{{ upkeepDetails.totalArtificialFee }}</span>
+              </div>
+            </div>
+            <div class="line">
+              <div class="item">
+                <span class="title">总成本</span>
+                <span class="desc">{{ upkeepDetails.totalCostFee }}</span>
+              </div>
+              <div class="item">
+                <span class="title">总配件费用</span>
                 <span class="desc">{{ upkeepDetails.totalPartsFee }}</span>
               </div>
             </div>
             <div class="line">
               <div class="item">
-                <span class="title">人工费用</span>
-                <span class="desc">{{ upkeepDetails.totalArtificialFee }}</span>
+                <span class="title">保养时间</span>
+                <span class="desc">{{ upkeepDetails.keepTime }}</span>
               </div>
-              <div class="item">
-                <span class="title">总成本</span>
-                <span class="desc">{{ upkeepDetails.totalCostFee }}</span>
-              </div>
+              <div class="item"></div>
             </div>
           </div>
         </div>
@@ -174,6 +243,209 @@
         </div>
       </div>
     </el-dialog>
+
+    <!-- 指派师傅 -->
+    <el-dialog
+      center
+      title="指派师傅"
+      :visible="designateMasterVisible"
+      :close-on-press-escape="false"
+      :show-close="false"
+      :close-on-click-modal="false"
+      width="30%"
+    >
+      <el-form
+        :model="designateMasterForms"
+        :rules="designateMasterRules"
+        ref="designateMasterFef"
+        label-position="left"
+        label-width="80px"
+      >
+        <el-form-item label="师傅姓名" prop="person">
+          <el-input
+            placeholder="请填写师傅姓名"
+            v-model="designateMasterForms.person"
+          ></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeDesignateMasterDialog">取 消</el-button>
+        <el-button type="primary" @click="confirmDesignateMaster"
+          >确 定</el-button
+        >
+      </span>
+    </el-dialog>
+
+    <!-- 编辑保养记录 -->
+    <el-dialog
+      center
+      title="编辑保养记录"
+      :visible="editUpkeepVisible"
+      :close-on-press-escape="false"
+      :show-close="false"
+      :close-on-click-modal="false"
+      width="50%"
+    >
+      <el-form
+        label-position="left"
+        label-width="100px"
+        :model="editUpkeepForms"
+        :rules="editUpkeepRules"
+        ref="editUpkeepRef"
+      >
+        <div style="display: flex">
+          <el-form-item
+            label="姓名"
+            prop="name"
+            style="flex: 1; margin-right: 30px"
+          >
+            <el-input
+              placeholder="请填写姓名"
+              v-model="editUpkeepForms.name"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="电话" prop="phone" style="flex: 1">
+            <el-input
+              placeholder="请填写电话"
+              v-model="editUpkeepForms.phone"
+            ></el-input>
+          </el-form-item>
+        </div>
+        <div style="display: flex">
+          <el-form-item
+            label="公司名称"
+            prop="enterpriseName"
+            style="flex: 1; margin-right: 30px"
+          >
+            <el-input
+              placeholder="请填写公司名称"
+              v-model="editUpkeepForms.enterpriseName"
+            ></el-input>
+          </el-form-item>
+          <el-form-item
+            label="公司地址"
+            prop="enterpriseAddress"
+            style="flex: 1"
+          >
+            <el-input
+              placeholder="请填写公司地址"
+              v-model="editUpkeepForms.enterpriseAddress"
+            ></el-input>
+          </el-form-item>
+        </div>
+        <div style="display: flex">
+          <el-form-item
+            label="设备编号"
+            prop="no"
+            style="flex: 1; margin-right: 30px"
+          >
+            <el-input
+              placeholder="请填写设备编号"
+              v-model="editUpkeepForms.no"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="保养人" prop="person" style="flex: 1">
+            <el-input
+              placeholder="请填写保养人"
+              v-model="editUpkeepForms.person"
+            ></el-input>
+          </el-form-item>
+        </div>
+        <div style="display: flex">
+          <el-form-item
+            label="更换配件名"
+            prop="partsNames"
+            style="flex: 1; margin-right: 30px"
+          >
+            <el-input
+              placeholder="请填写更换配件名"
+              v-model="editUpkeepForms.partsNames"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="故障问题" prop="problem" style="flex: 1">
+            <el-input
+              placeholder="请填写故障问题"
+              v-model="editUpkeepForms.problem"
+            ></el-input>
+          </el-form-item>
+        </div>
+        <div style="display: flex">
+          <el-form-item
+            label="保养内容"
+            prop="simpleContent"
+            style="flex: 1; margin-right: 30px"
+          >
+            <el-input
+              placeholder="请填写保养内容"
+              v-model="editUpkeepForms.simpleContent"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="排除故障" prop="fault" style="flex: 1">
+            <el-input
+              placeholder="请填写排除故障"
+              v-model="editUpkeepForms.fault"
+            ></el-input>
+          </el-form-item>
+        </div>
+        <div style="display: flex">
+          <el-form-item
+            label="总数量"
+            prop="totalNum"
+            style="flex: 1; margin-right: 30px"
+          >
+            <el-input
+              placeholder="请填写总数量"
+              type="number"
+              v-model.number="editUpkeepForms.totalNum"
+            ></el-input>
+          </el-form-item>
+          <el-form-item
+            label="保养人工费"
+            prop="totalArtificialFee"
+            style="flex: 1"
+          >
+            <el-input
+              placeholder="请填写保养人工费用"
+              type="number"
+              v-model.number="editUpkeepForms.totalArtificialFee"
+            ></el-input>
+          </el-form-item>
+        </div>
+        <div style="display: flex">
+          <el-form-item
+            label="总成本"
+            prop="totalCostFee"
+            style="flex: 1; margin-right: 30px"
+          >
+            <el-input
+              placeholder="请填写总成本"
+              type="number"
+              v-model.number="editUpkeepForms.totalCostFee"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="总配件费" prop="totalPartsFee" style="flex: 1">
+            <el-input
+              placeholder="请填写总配件费用"
+              type="number"
+              v-model.number="editUpkeepForms.totalPartsFee"
+            ></el-input>
+          </el-form-item>
+        </div>
+        <el-form-item label="保养时间" prop="keepTime">
+          <el-date-picker
+            v-model="editUpkeepForms.keepTime"
+            type="date"
+            value-format="yyyy-MM-dd"
+            placeholder="请选择保养日期"
+          >
+          </el-date-picker>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeEditUpkeepDialog">取 消</el-button>
+        <el-button type="primary" @click="confirmEditUpkeep">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -183,8 +455,36 @@ import {
   deleteDeviceKeepOrder,
   uploadDeviceKeepOrder,
 } from "../../api/upkeep.js";
+import {
+  deviceKeepOrderAssign,
+  editDeviceKeepOrder,
+  deviceKeepOrderMarkComplete,
+} from "../../api/order.js";
 export default {
   data() {
+    // 校验手机号
+    let isMobileNumber = (rule, value, callback) => {
+      if (!value) {
+        return new Error("请输入电话号码");
+      } else {
+        const reg = /^1[3|4|5|7|8][0-9]\d{8}$/;
+        const isPhone = reg.test(value);
+        value = Number(value); //转换为数字
+        if (typeof value === "number" && !isNaN(value)) {
+          //判断是否为数字
+          value = value.toString(); //转换成字符串
+          if (value.length < 0 || value.length > 12 || !isPhone) {
+            //判断是否为11位手机号
+            callback(new Error("手机号码格式如:138xxxx8754"));
+          } else {
+            callback();
+          }
+        } else {
+          callback(new Error("请输入电话号码"));
+        }
+      }
+    };
+
     return {
       queryUpkeepListParameter: {
         no: null,
@@ -192,20 +492,223 @@ export default {
         pageNo: 1,
         startTime: null,
         endTime: null,
+        orderSn: null,
       },
       date: null,
-      upkeepList: [
-        {
-          transCode: 200,
-        },
-      ],
+      upkeepList: [],
       total: null,
       upkeepDetails: [],
 
       upkeepDetailsDialog: false,
+
+      designateMasterVisible: false,
+      designateMasterForms: {
+        id: null,
+        person: null,
+      },
+      designateMasterRules: {
+        person: { required: true, message: "请填写指派师傅", trigger: "blur" },
+      },
+
+      editUpkeepVisible: false,
+      editUpkeepForms: {
+        id: null,
+        enterpriseName: null,
+        enterpriseAddress: null,
+        name: null,
+        phone: null,
+        fault: null,
+        keepTime: null,
+        no: null,
+        partsNames: null,
+        person: null,
+        problem: null,
+        simpleContent: null,
+        totalArtificialFee: null,
+        totalCostFee: null,
+        totalNum: null,
+        totalPartsFee: null,
+        type: "保养类",
+      },
+      editUpkeepRules: {
+        enterpriseName: [
+          { required: true, message: "请填写公司名称", trigger: "blur" },
+        ],
+        enterpriseAddress: [
+          { required: true, message: "请填写企业地址", trigger: "blur" },
+        ],
+        name: [{ required: true, message: "请填写姓名", trigger: "blur" }],
+        phone: [
+          { required: true, message: "请填写电话", trigger: "blur" },
+          { validator: isMobileNumber, trigger: "blur" },
+        ],
+        fault: [{ required: true, message: "请填写排除故障", trigger: "blur" }],
+        keepTime: [
+          { required: true, message: "请选择保养时间", trigger: "change" },
+        ],
+        no: [{ required: true, message: "请填写设备编号", trigger: "blur" }],
+        partsNames: [
+          { required: true, message: "请填写更换配件名", trigger: "blur" },
+        ],
+        person: [{ required: true, message: "请填写保养人", trigger: "blur" }],
+        problem: [
+          { required: true, message: "请填写故障问题", trigger: "blur" },
+        ],
+        simpleContent: [
+          { required: true, message: "请填写保养内容", trigger: "blur" },
+        ],
+        totalArtificialFee: [
+          { required: true, message: "请填写保养人工费用", trigger: "blur" },
+        ],
+        totalCostFee: [
+          { required: true, message: "请填写总成本 ", trigger: "blur" },
+        ],
+        totalNum: [
+          { required: true, message: "请填写总数量", trigger: "blur" },
+        ],
+        totalPartsFee: [
+          { required: true, message: "请填写总配件费用", trigger: "blur" },
+        ],
+      },
     };
   },
   methods: {
+    // 保养订单标记已完成
+    markersCompleted(row) {
+      if (!row.no) {
+        this.$message({
+          message: "请编辑填写完善订单信息",
+          type: "warning",
+        });
+        return;
+      }
+      this.$confirm("您是否要将该订单标记已完成?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then(async () => {
+        const res = await deviceKeepOrderMarkComplete({
+          id: row.id,
+        });
+        if (res.message == "操作成功") {
+          this.$message({
+            message: "操作成功",
+            type: "success",
+          });
+          this.queryUpkeepListFn();
+        }
+      });
+    },
+    // 确定编辑保养
+    async confirmEditUpkeep() {
+      await this.$refs["editUpkeepRef"].validate();
+      const res = await editDeviceKeepOrder(this.editUpkeepForms);
+      if (res.message == "操作成功") {
+        this.$message({
+          message: "操作成功",
+          type: "success",
+        });
+        this.queryUpkeepListFn();
+        this.closeEditUpkeepDialog();
+      }
+    },
+    // 关闭编辑保养框
+    closeEditUpkeepDialog() {
+      this.editUpkeepForms = {
+        id: null,
+        enterpriseName: null,
+        enterpriseAddress: null,
+        name: null,
+        phone: null,
+        fault: null,
+        keepTime: null,
+        no: null,
+        partsNames: null,
+        person: null,
+        problem: null,
+        simpleContent: null,
+        totalArtificialFee: null,
+        totalCostFee: null,
+        totalNum: null,
+        totalPartsFee: null,
+        type: "保养类",
+      };
+      this.$refs["editUpkeepRef"].resetFields();
+      this.editUpkeepVisible = false;
+    },
+    // 打开编辑保养框
+    openEditUpkeepDialog(row) {
+      if (row) {
+        const {
+          enterpriseAddress,
+          enterpriseName,
+          fault,
+          keepTime,
+          name,
+          no,
+          partsNames,
+          person,
+          phone,
+          totalArtificialFee,
+          totalCostFee,
+          totalNum,
+          totalPartsFee,
+          simpleContent,
+          problem,
+          id,
+        } = row;
+        Object.assign(this.editUpkeepForms, {
+          enterpriseAddress,
+          enterpriseName,
+          fault,
+          keepTime,
+          name,
+          no,
+          partsNames,
+          person,
+          phone,
+          totalArtificialFee,
+          totalCostFee,
+          totalNum,
+          totalPartsFee,
+          simpleContent,
+          problem,
+          id,
+        });
+      }
+      this.editUpkeepVisible = true;
+    },
+
+    // 确定指派师傅
+    async confirmDesignateMaster() {
+      await this.$refs["designateMasterFef"].validate();
+      const res = await deviceKeepOrderAssign(this.designateMasterForms);
+      if (res.message == "操作成功") {
+        this.$message({
+          message: "操作成功",
+          type: "success",
+        });
+        this.queryUpkeepListFn();
+        this.closeDesignateMasterDialog();
+      }
+    },
+
+    // 关闭指派师傅框
+    closeDesignateMasterDialog() {
+      this.designateMasterForms = {
+        id: null,
+        person: null,
+      };
+      this.$refs["designateMasterFef"].resetFields();
+      this.designateMasterVisible = false;
+    },
+
+    // 打开指派师傅框
+    openDesignateMasterDialog(id) {
+      this.designateMasterForms.id = id;
+      this.designateMasterVisible = true;
+    },
+
     // 改变时间格式
     changeData() {
       this.queryUpkeepListParameter.startTime = this.date[0] + " 00:00:00";
@@ -232,6 +735,7 @@ export default {
         pageNo: 1,
         startTime: null,
         endTime: null,
+        orderSn: null,
       };
       this.queryUpkeepListFn();
     },
@@ -239,7 +743,7 @@ export default {
     // 模板导出
     exportBtn() {
       window.location.replace(
-        "https://snk-1305456087.cos.ap-guangzhou.myqcloud.com/user/20230225/IE75181320.xlsx"
+        "https://snk-1305456087.cos.ap-guangzhou.myqcloud.com/%E4%BF%9D%E5%85%BB%E8%AE%A2%E5%8D%95%E6%A8%A1%E7%89%88%EF%BC%88%E5%86%85%E5%90%AB%E7%A4%BA%E4%BE%8B%E5%8F%82%E8%80%83%EF%BC%89.xlsx"
       );
     },
 

@@ -1560,10 +1560,10 @@
               style="display: flex; align-items: center; padding: 8px"
               :label="index"
             >
-              <p>商品名称:{{ item.name }}</p>
+              <p>商品名称:{{ item.name }}({{ item.number }})</p>
               <p style="margin: 5px 0">商品品牌:{{ item.brandName }}</p>
               <p>商品型号:{{ item.model }}</p>
-              <p style="margin: 5px 0">物料编码:{{ item.number }}</p>
+              <p style="margin: 5px 0">库存:{{ item.num }}</p>
             </el-radio>
           </el-radio-group>
         </div>
@@ -3367,6 +3367,12 @@ export default {
     // 确定新增修改配件
     async confirmAddEditPart() {
       await this.$refs["partInfoRuleForm"].validate();
+      // 新增需要随机生成一个id
+      if (!this.partInfo.id) {
+        let id = Date.now();
+        id = id.toString().slice(-4);
+        this.partInfo.id = "undefined-" + Number(id);
+      }
       const data = { ...this.partInfo };
       // if (data.stashPartsWay == 1) {
       //   data.id = Math.floor(Math.random() * 10000);

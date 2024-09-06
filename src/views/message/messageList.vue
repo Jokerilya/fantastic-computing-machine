@@ -111,7 +111,7 @@
 </template>
 
 <script>
-import { queryRepairMessgae } from "@/api/order";
+import { queryRepairMessgae, handleUnReadMessage } from "@/api/order";
 export default {
   data() {
     return {
@@ -149,6 +149,10 @@ export default {
           text: "发票操作",
           value: "invoice",
         },
+        {
+          text: "保养操作",
+          value: "keepOrder",
+        },
       ],
     };
   },
@@ -181,7 +185,7 @@ export default {
       this.queryRepairMessgae();
     },
     // 前往操作
-    goToControls(row) {
+    async goToControls(row) {
       if (row.module == "order") {
         this.$router.push({
           name: "maintenance_order_desc",
@@ -207,7 +211,13 @@ export default {
       if (row.module == "invoice") {
         this.$router.push("/invoiceManagement/invoiceList");
       }
-      this.queryRepairMessgae();
+      if (row.module == "keepOrder") {
+        this.$router.push("/maintenance/upkeepDetailModule");
+      }
+      const res = await handleUnReadMessage(row.id);
+      if (res.message == "操作成功") {
+        this.queryRepairMessgae();
+      }
     },
   },
   created() {

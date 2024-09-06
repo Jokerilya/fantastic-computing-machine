@@ -125,7 +125,8 @@ export default {
         row.module == "master" ||
         row.module == "product_consult" ||
         row.module == "butler_order" ||
-        row.module == "invoice"
+        row.module == "invoice" ||
+        row.module == "keepOrder"
       ) {
         if (row.module == "order") {
           this.$router.push({
@@ -159,6 +160,9 @@ export default {
         }
         if (row.module == "invoice") {
           this.$router.push("/invoiceManagement/invoiceList");
+        }
+        if (row.module == "keepOrder") {
+          this.$router.push("/maintenance/upkeepDetailModule");
         }
         const res = await handleUnReadMessage(row.id);
         if (res.message == "操作成功") {
