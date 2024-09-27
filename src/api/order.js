@@ -674,7 +674,6 @@ export function queryMasterAssessmentRecords(id) {
 
 // 编辑师傅考核项目
 export function editMasterAssessmentItem(data,montageData) {
-  console.log(656,`/admin/maintenance/editMasterAssessmentItem`+montageData);
 	return request({
 		url: `/admin/maintenance/editMasterAssessmentItem`+montageData,
 		method: 'post',

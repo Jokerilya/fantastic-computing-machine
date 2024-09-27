@@ -25,7 +25,7 @@
           <div
             v-if="chartLeftData.data.length > 0"
             id="chartLeft"
-            :style="{ width: '800px', height: '600px' }"
+            :style="{ width: '700px', height: '600px' }"
           ></div>
           <div class="orderRank">
             <div>
@@ -61,7 +61,7 @@
           <div
             v-if="chartLeftData.data.length > 0"
             id="chartRight"
-            :style="{ width: '800px', height: '600px' }"
+            :style="{ width: '700px', height: '600px' }"
           ></div>
           <div class="orderRank">
             <div>

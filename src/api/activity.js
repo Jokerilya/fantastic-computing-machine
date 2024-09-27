@@ -124,3 +124,55 @@ export function deletePartner(params) {
     params,
   });
 }
+
+// 编辑活动产品
+export function editActivityProduct(data) {
+  return request({
+    url: "/admin/activity/editActivityProduct",
+    method: "post",
+    data,
+  });
+}
+
+// 查询活动产品列表
+export function queryActivityProductList() {
+  return request({
+    url: "/admin/activity/queryActivityProductList",
+    method: "get"
+  });
+}
+
+// 上/下架活动产品
+export function shelvesActivityProduct(data) {
+  return request({
+    url: "/admin/activity/shelvesActivityProduct",
+    method: "post",
+    data
+  });
+}
+
+// 查询活动订单列表
+export function queryActivityOrderList(data) {
+  return request({
+    url: "/admin/activity/queryActivityOrderList",
+    method: "post",
+    data
+  });
+}
+
+// 查看活动订单详情
+export function queryActivityOrderDetail(relationOrderSn) {
+  return request({
+    url: `/admin/activity/queryActivityOrderDetail?relationOrderSn=${relationOrderSn}`,
+    method: "get"
+  });
+}
+
+// 活动订单指派
+export function handleActivityOrderAssign(data) {
+  return request({
+    url: "/admin/activity/handleActivityOrderAssign",
+    method: "post",
+    data
+  });
+}

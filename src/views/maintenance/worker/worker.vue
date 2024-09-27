@@ -2,15 +2,35 @@
 <template>
   <div class="app-container">
     <el-form label-width="88px" class="rule-form" label-position="right">
-      <el-row :gutter="20">
-        <el-col :span="17" style="display: flex">
+      <el-row :gutter="24">
+        <!-- <el-form-item label="推荐人名称">
+            <el-select
+              clearable
+              filterable
+              :remote-method="remoteMethod"
+              remote
+              v-model="referrerName"
+              placeholder="请选择"
+            >
+              <el-option
+                v-for="item in referrerOptions"
+                :key="item.value"
+                :label="item.realName"
+                :value="item.realName"
+              >
+              </el-option>
+            </el-select>
+          </el-form-item> -->
+        <el-col :span="5">
           <el-form-item label="师傅名称">
             <el-input
               placeholder="请输入师傅名称"
               clearable
-              v-model="Name"
+              v-model="queryMasterListParams.realName"
             ></el-input>
           </el-form-item>
+        </el-col>
+        <el-col :span="5">
           <el-form-item label="团长名称">
             <el-select
               filterable
@@ -29,44 +49,51 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="推荐人名称">
-            <el-select
-              clearable
-              filterable
-              :remote-method="remoteMethod"
-              remote
-              v-model="referrerName"
-              placeholder="请选择"
-            >
-              <el-option
-                v-for="item in referrerOptions"
-                :key="item.value"
-                :label="item.realName"
-                :value="item.realName"
-              >
-              </el-option>
-            </el-select>
-          </el-form-item>
+        </el-col>
+        <el-col :span="5">
           <el-form-item label="审核状态">
-            <el-select placeholder="请选择审核状态" v-model="status">
+            <el-select
+              placeholder="请选择审核状态"
+              v-model="queryMasterListParams.status"
+            >
               <el-option label="审核中" :value="1"> </el-option>
               <el-option label="审核通过" :value="2"> </el-option>
               <el-option label="审核驳回" :value="3"> </el-option>
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="7">
-          <el-button plain type="primary" @click="resetFn">重置</el-button>
-          <el-button plain type="primary" @click="_getMasterList(1)"
-            >查询</el-button
-          >
-          <el-button plain type="primary" @click="_handleMasterInfoExport()"
-            >导出师傅</el-button
-          >
-          <!-- <el-button plain type="primary" @click="addSigningMaster"
+        <el-col :span="6">
+          <el-form-item label="创建时间">
+            <el-date-picker
+              @change="changeQueryTimeCopy"
+              v-model="queryTimeCopy"
+              value-format="yyyy-MM-dd"
+              type="daterange"
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+            >
+            </el-date-picker>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row :gutter="24" style="margin-bottom: 15px; text-align: right">
+        <el-button
+          icon="el-icon-zoom-in"
+          plain
+          type="primary"
+          @click="_getMasterList(1)"
+          >查询</el-button
+        >
+        <el-button icon="el-icon-refresh" plain type="info" @click="resetFn"
+          >重置</el-button
+        >
+        <el-button type="success" plain @click="_handleMasterInfoExport">
+          导出
+        </el-button>
+        <!-- <el-button plain type="primary" @click="addSigningMaster"
             >新增签约师傅</el-button
           > -->
-        </el-col>
       </el-row>
     </el-form>
 
@@ -91,18 +118,43 @@
           label="真实头像"
           show-overflow-tooltip
           align="center"
+          width="120"
         >
           <template slot-scope="{ row }">
-            <y-image
-              :src="row.realPortrait ? row.realPortrait.split(',')[0] : ''"
-              :srcList="row.realPortrait ? row.realPortrait.split(',') : ''"
-            />
+            <div style="position: relative; width: 70px; height: 70px">
+              <el-image
+                style="width: 100%; height: 100%"
+                :src="row.realPortrait ? row.realPortrait.split(',')[0] : ''"
+              >
+              </el-image>
+              <!-- <y-image
+                style="width: 100%; height: 100%"
+                :src="row.realPortrait ? row.realPortrait.split(',')[0] : ''"
+                :srcList="row.realPortrait ? row.realPortrait.split(',') : ''"
+              /> -->
+              <el-image
+                v-if="
+                  row.number &&
+                  (row.number.includes('V') || row.number.includes('v'))
+                "
+                src="https://snk-1305456087.cos.ap-guangzhou.myqcloud.com/user/20240927/AU04149909.png"
+                style="
+                  width: 70px;
+                  height: 70px;
+                  position: absolute;
+                  left: 0;
+                  top: 0;
+                  z-index: 3;
+                "
+              >
+              </el-image>
+            </div>
           </template>
         </el-table-column>
         <el-table-column
-          label="是否活跃"
+          label="活跃"
           show-overflow-tooltip
-          width="150"
+          width="80"
           align="center"
         >
           <template slot-scope="{ row }">
@@ -113,7 +165,7 @@
           prop="phone"
           label="联系电话"
           show-overflow-tooltip
-          width="150"
+          width="120"
           align="center"
         ></el-table-column>
         <!-- <el-table-column
@@ -147,19 +199,26 @@
           align="center"
         ></el-table-column>
         <el-table-column
+          prop="promotionPeople"
+          label="推广人"
+          show-overflow-tooltip
+          width="150"
+          align="center"
+        ></el-table-column>
+        <el-table-column
           prop="recommendMasterName"
-          label="推荐人"
+          label="推荐人(旧版)"
           show-overflow-tooltip
           width="110"
           align="center"
         ></el-table-column>
-        <el-table-column
+        <!-- <el-table-column
           prop="identity"
           label="角色"
           show-overflow-tooltip
           width="100"
           align="center"
-        ></el-table-column>
+        ></el-table-column> -->
         <el-table-column
           prop="identityFrontImage"
           label="身份证正面照"
@@ -209,7 +268,7 @@
           prop="industryExperience"
           label="行业经验"
           show-overflow-tooltip
-          width="150"
+          width="200"
           align="center"
         ></el-table-column>
         <el-table-column
@@ -398,17 +457,16 @@
           </template>
         </el-table-column>
       </el-table>
-
       <!-- 分页部分 -->
       <div style="margin-top: 20px; display: flex; justify-content: center">
         <el-pagination
           background
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-          :current-page="currentPage"
-          :page-size="10"
+          :current-page="queryMasterListParams.pageNo"
+          :page-size="queryMasterListParams.pageSize"
           layout="total, prev, pager, next, jumper"
-          :total="pageCount"
+          :total="queryMasterListTotal"
         ></el-pagination>
       </div>
     </el-card>
@@ -1338,19 +1396,29 @@ export default {
       addSigningMasterDialogShow: false, //新增签约师傅弹框
       params: null,
 
-      colonelName: null,
       dialogVisible: false,
-      referrerName: null, //推荐人名字
+
       status: null,
 
       referrerOptions: [],
 
       masterTeamList: [],
-      pageCount: 0,
-      currentPage: 1,
+      queryMasterListTotal: 0,
       masterList: [],
-      Name: "",
-      Phone: "",
+
+      colonelName: null, //团长名字
+      referrerName: null, //推荐人名字
+      queryTimeCopy: null, //存储时间数组
+      queryMasterListParams: {
+        pageNo: 1,
+        pageSize: 10,
+        realName: null,
+        status: null,
+        superiorMasterUid: null,
+        recommendMasterUid: null,
+        queryTime: null,
+      },
+
       loading: false,
       queryMethod: "get",
       typeData: [],
@@ -1398,6 +1466,11 @@ export default {
     this._getMasterList();
   },
   methods: {
+    // 切换创建时间
+    changeQueryTimeCopy() {
+      this.queryMasterListParams.queryTime =
+        this.queryTimeCopy[0] + "~" + this.queryTimeCopy[1];
+    },
     // 确定设置活跃师傅
     async confirmSetActive() {
       const res = await handleActiveMaster(this.setActiveParmas);
@@ -1464,12 +1537,12 @@ export default {
     },
     // 关闭分值框
     score_handleClose() {
-      (this.scoreForm = {
+      this.scoreForm = {
         uid: "",
         pageNo: 1,
         pageSize: 5,
-      }),
-        (this.score_dialogVisible = false);
+      };
+      this.score_dialogVisible = false;
     },
     // 关闭积分框
     integral_handleClose() {
@@ -1757,10 +1830,18 @@ export default {
     },
     // 重置按钮
     resetFn() {
-      this.referrerName = null;
       this.colonelName = null;
-      this.Name = null;
-      this.status = null;
+      this.referrerName = null;
+      this.queryTimeCopy = null;
+      this.queryMasterListParams = {
+        pageNo: 1,
+        pageSize: 10,
+        realName: null,
+        status: null,
+        superiorMasterUid: null,
+        recommendMasterUid: null,
+        queryTime: null,
+      };
       this._getMasterList();
     },
     // 搜索推荐人/团长
@@ -1777,7 +1858,7 @@ export default {
         text: "数据传输中",
         spinner: "el-icon-loading",
       });
-      const data = this.params;
+      const data = this.queryMasterListParams;
       data.pageSize = 1000;
       handleMasterInfoExport(data).then((res) => {
         if (res) {
@@ -1813,39 +1894,34 @@ export default {
         }
       });
     },
-
     // 切换页码触发的事件
     handleCurrentChange(page) {
-      this.currentPage = page;
+      this.queryMasterListParams.pageNo = page;
       this._getMasterList();
     },
     // 查询师傅列表
     async _getMasterList(id) {
+      // id=1 说明是重置
       if (id === 1) {
-        this.currentPage = 1;
+        this.queryMasterListParams.pageNo = 1;
       }
-      this.params = {
-        pageNo: this.currentPage,
-        pageSize: 10,
-        realName: this.Name,
-        phone: this.Phone,
-        status: this.status,
-      };
+
       // 将团长推荐人名字 转化成 uid
       if (this.referrerName) {
         const res = await queryMasterName(this.referrerName);
-        this.params.recommendMasterUid = res.data[0] && res.data[0].uid;
+        this.queryMasterListParams.recommendMasterUid =
+          res.data[0] && res.data[0].uid;
       }
       if (this.colonelName) {
         const res = await queryMasterName(this.colonelName);
-        this.params.superiorMasterUid = res.data[0] && res.data[0].uid;
+        this.queryMasterListParams.superiorMasterUid =
+          res.data[0] && res.data[0].uid;
       }
-      const res = await getMasterList(this.params);
+
+      const res = await getMasterList(this.queryMasterListParams);
       if (res.message === "操作成功") {
-        console.log(1375, res.data.records);
         this.masterList = res.data.records;
-        this.pageCount = res.data.total;
-        this.currentPage = res.data.current;
+        this.queryMasterListTotal = res.data.total;
       }
     },
     querySelectData() {
@@ -2000,7 +2076,7 @@ export default {
     resetEditForm(fn) {
       this.masterTeamList = null;
       fn(false);
-      this.query();
+      // this.query();
     },
   },
 };

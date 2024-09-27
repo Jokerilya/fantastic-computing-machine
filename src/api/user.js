@@ -201,17 +201,19 @@ export function queryWithdrawalFn(data) {
   return request({
     url: "/admin/userInfo/queryWithdrawal",
     method: "post",
-    data: data,
+    data,
   });
 }
+
 // 用户提现审核
 export function handleWithdrawalExamineFn(data) {
   return request({
     url: "/admin/userInfo/handleWithdrawalExamine",
     method: "post",
-    data: data,
+    data,
   });
 }
+
 // 用户提现导出
 export function handleWithdrawalExportFn(data) {
   return request({

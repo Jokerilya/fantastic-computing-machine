@@ -11,7 +11,7 @@
         label-position="right"
       >
         <el-row :gutter="20">
-          <el-col :span="4">
+          <el-col :span="5">
             <el-form-item label="师傅名称">
               <el-select
                 v-model="searchForm.masterUid"
@@ -29,7 +29,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="4">
+          <el-col :span="5">
             <el-form-item label="订单状态">
               <el-select v-model="searchForm.status" placeholder="请选择">
                 <el-option
@@ -41,7 +41,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="4">
+          <el-col :span="5">
             <el-form-item label="订单类型">
               <el-select v-model="searchForm.orderType" placeholder="请选择">
                 <el-option label="散单" :value="1">散单</el-option>
@@ -49,7 +49,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="4">
+          <el-col :span="5">
             <el-form-item label="平台状态">
               <el-select
                 v-model="searchForm.platformStatus"
@@ -77,7 +77,9 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+        </el-row>
+        <el-row>
+          <el-col :span="5">
             <el-form-item label="企业名称">
               <el-input
                 v-model="searchForm.enterpriseName"
@@ -85,7 +87,7 @@
               ></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="5">
             <el-form-item label="设备编码">
               <el-input
                 v-model="searchForm.no"
@@ -93,7 +95,7 @@
               ></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="5">
             <el-form-item label="订单编号">
               <el-input
                 v-model="searchForm.orderSn"
@@ -101,8 +103,23 @@
               ></el-input>
             </el-form-item>
           </el-col>
-
-          <el-col :span="6">
+          <el-col :span="5">
+            <el-form-item label="创建时间">
+              <el-date-picker
+                @change="changeQueryTimeCopy"
+                v-model="queryTimeCopy"
+                type="daterange"
+                value-format="yyyy-MM-dd"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+              >
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row style="text-align: right">
+          <el-col :span="24">
             <el-button
               icon="el-icon-zoom-in"
               plain
@@ -919,7 +936,9 @@ export default {
         platformStatus: "",
         orderSn: "",
         finalExamineStatus: null,
+        queryTime: null,
       },
+      queryTimeCopy: null,
       dataList: [],
       pageCount: null,
       pageCountMaster: "",
@@ -999,6 +1018,11 @@ export default {
     this._queryRepairOrderList();
   },
   methods: {
+    //  切换创建时间
+    changeQueryTimeCopy() {
+      this.searchForm.queryTime =
+        this.queryTimeCopy[0] + "~" + this.queryTimeCopy[1];
+    },
     // 代下单模块 start
     async handleProxyCreateOrder() {
       await this.$refs["handleProxyCreateOrderRef"].validate();
@@ -1264,6 +1288,7 @@ export default {
     // 重置
     resetFn() {
       this.currentPage = 1;
+      this.queryTimeCopy = null;
       this.searchForm = {
         deviceTypeId: "",
         status: "",
@@ -1273,6 +1298,7 @@ export default {
         platformStatus: "",
         orderSn: "",
         finalExamineStatus: null,
+        queryTime: "",
       };
       this._queryRepairOrderList();
     },

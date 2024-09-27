@@ -149,7 +149,6 @@
             v-if="row.type == 4"
             type="text"
             @click="turnUpkeep(row.id)"
-            :disabled="row.completeFlag == 1"
             >转保养</el-button
           >
         </template>
@@ -337,7 +336,7 @@ export default {
         phone: "",
         simpleContent: "",
         channel: 2,
-        type: 4, //暂时只有初次保养
+        type: null,
       },
       consultInfoRules: {
         name: [{ required: true, message: "请输入姓名", trigger: "blur" }],
@@ -381,6 +380,10 @@ export default {
         {
           value: 5,
           label: "快手",
+        },
+        {
+          value: 6,
+          label: "58同城",
         },
       ],
       typeList: [
@@ -449,7 +452,7 @@ export default {
         phone: "",
         simpleContent: "",
         channel: 2,
-        type: 4, //暂时只有初次保养
+        type: null, //暂时只有初次保养
       };
       this.$refs["consultInfoRef"].resetFields();
       this.consultDialogVisible = false;
@@ -467,6 +470,7 @@ export default {
           enterpriseAddress,
           simpleContent,
           id,
+          type,
         } = row;
         this.consultInfoForm.id = id;
         this.consultInfoForm.name = name;
@@ -475,6 +479,7 @@ export default {
         this.consultInfoForm.enterpriseName = enterpriseName;
         this.consultInfoForm.enterpriseAddress = enterpriseAddress;
         this.consultInfoForm.simpleContent = simpleContent;
+        this.consultInfoForm.type = type;
       } else {
         this.consultDialogTitle = "新增新闻资讯";
       }

@@ -46,8 +46,27 @@
               </el-option>
             </el-select>
           </div>
+          <!-- <div class="item">
+            <span class="label">推广人</span>
+            <el-select
+              filterable
+              :remote-method="remoteMethod"
+              remote
+              disabled
+              v-model="dialogForm.promotionPeople"
+              placeholder="请选择"
+            >
+              <el-option
+                v-for="item in options"
+                :key="item.value"
+                :label="item.realName"
+                :value="item.realName"
+              >
+              </el-option>
+            </el-select>
+          </div> -->
           <div class="item">
-            <span class="label" style="margin-right: 20px;">服务部位</span>
+            <span class="label" style="margin-right: 20px">服务部位</span>
             <el-tooltip
               class="item"
               effect="dark"
@@ -55,7 +74,7 @@
               placement="top"
             >
               <el-input
-                style="width: 200px;"
+                style="width: 200px"
                 class="inp"
                 v-if="servePositionShow"
                 :disabled="true"
@@ -81,14 +100,14 @@
             >
               <el-option
                 v-for="item in PartsList"
-                :key="PartsList.name"
+                :key="item.name"
                 :label="item.name"
                 :value="item.name"
               ></el-option>
             </el-select>
           </div>
           <div class="item">
-            <span class="label" style="margin-right: 20px;">服务地区</span>
+            <span class="label" style="margin-right: 20px">服务地区</span>
             <el-tooltip
               class="item"
               effect="dark"
@@ -96,7 +115,7 @@
               placement="top"
             >
               <el-input
-                style="width: 200px;"
+                style="width: 200px"
                 v-if="serviceAreasShow"
                 class="inp"
                 :disabled="true"
@@ -123,7 +142,7 @@
         </div>
         <div class="oneLine">
           <div class="item">
-            <div class="label" style="width: 100px;">服务类型</div>
+            <div class="label" style="width: 100px">服务类型</div>
             <el-tooltip
               class="item"
               effect="dark"
@@ -131,7 +150,7 @@
               placement="top"
             >
               <el-input
-                style="width: 200px;"
+                style="width: 200px"
                 :disabled="true"
                 v-model="dialogForm.serviceTypesName"
                 v-if="serviceTypesNameShow"
@@ -163,7 +182,7 @@
             ></el-cascader>
           </div>
           <div class="item">
-            <div class="label" style="width: 100px;">师傅编号</div>
+            <div class="label" style="width: 100px">师傅编号</div>
             <el-input
               class="inp"
               v-model="dialogForm.number"
@@ -171,10 +190,11 @@
             ></el-input>
           </div>
           <div class="item">
-            <div class="label" style="width: 100px;">虚拟服务数量</div>
+            <div class="label" style="width: 100px">推广人</div>
             <el-input
+              disabled
               class="inp"
-              v-model="dialogForm.virtualServiceNum"
+              v-model="dialogForm.promotionPeople"
             ></el-input>
           </div>
         </div>
@@ -182,7 +202,7 @@
           <div class="imgItem">
             <div class="title">真实头像</div>
             <el-upload
-              style="width: 50%;"
+              style="width: 50%"
               :file-list="avatarFileList"
               :limit="1"
               action="#"
@@ -196,7 +216,7 @@
           <div class="imgItem">
             <div class="title">身份证正面照</div>
             <el-upload
-              style="width: 50%;"
+              style="width: 50%"
               :file-list="idJustFileList"
               :limit="1"
               action="#"
@@ -210,7 +230,7 @@
           <div class="imgItem">
             <div class="title">身份证反面照</div>
             <el-upload
-              style="width: 50%;"
+              style="width: 50%"
               :file-list="idBackFileList"
               :http-request="idBackUploadFn"
               accept=".jpg,.png"

@@ -5,29 +5,29 @@
     <div class="manage-top">
       <el-form label-width="88px" class="rule-form" label-position="right">
         <el-row :gutter="25">
-          <el-col :span="5" style="padding: 0">
+          <el-col :span="5">
             <el-form-item label="公司名称">
               <el-input
                 placeholder="请输入公司名称"
-                v-model="enterpriseName"
+                v-model="queryEnterpriseListParms.name"
               ></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="5" style="padding: 0">
+          <el-col :span="5">
             <el-form-item label="联系电话">
               <el-input
                 placeholder="请输入联系电话"
-                v-model="enterprisePhone"
+                v-model="queryEnterpriseListParms.phone"
               ></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="5" style="padding: 0">
+          <el-col :span="5">
             <el-form-item label="业务员">
               <el-select
                 filterable
                 :remote-method="remoteMethod"
                 remote
-                v-model="referencePerson"
+                v-model="queryEnterpriseListParms.salesmanId"
                 placeholder="请输入业务员"
               >
                 <el-option
@@ -40,7 +40,23 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="9">
+            <el-form-item label="创建时间">
+              <el-date-picker
+                @change="changeQueryTimeCopy"
+                v-model="queryTimeCopy"
+                type="daterange"
+                value-format="yyyy-MM-dd"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+              >
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="25" style="margin-bottom: 15px; text-align: right">
+          <el-col>
             <el-button
               icon="el-icon-zoom-in"
               plain
@@ -52,12 +68,12 @@
               >重置</el-button
             >
             <el-button
-              icon="el-icon-refresh"
+              type="success"
               plain
-              type="primary"
-              @click="_handleEnterpriseInfoExport()"
-              >导出</el-button
+              @click="_handleEnterpriseInfoExport"
             >
+              导出
+            </el-button>
           </el-col>
         </el-row>
       </el-form>
@@ -105,10 +121,17 @@
           align="center"
         ></el-table-column>
         <el-table-column
-          prop="salesman"
-          label="业务员"
+          prop="promotionPeople"
+          label="推广人"
           show-overflow-tooltip
-          width="70"
+          width="140"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="salesman"
+          label="业务员(旧版)"
+          show-overflow-tooltip
+          width="110"
           align="center"
         ></el-table-column>
         <!-- <el-table-column
@@ -182,27 +205,6 @@
           width="120"
           align="center"
         ></el-table-column> -->
-        <el-table-column
-          label="认证状态"
-          show-overflow-tooltip
-          width="150"
-          align="center"
-        >
-          <template slot-scope="{ row }">
-            <div v-if="row.enterpriseFlag === 0" style="color: #ccc">
-              未认证
-            </div>
-            <div v-if="row.enterpriseFlag === 1" style="color: blue">
-              审核中
-            </div>
-            <div v-if="row.enterpriseFlag === 2" style="color: green">
-              审核成功
-            </div>
-            <div v-if="row.enterpriseFlag === 3" style="color: red">
-              审核失败
-            </div>
-          </template>
-        </el-table-column>
 
         <!-- <el-table-column
           prop="settledTime"
@@ -250,6 +252,28 @@
           align="center"
         ></el-table-column>
         <el-table-column
+          label="认证状态"
+          show-overflow-tooltip
+          width="120"
+          fixed="right"
+          align="center"
+        >
+          <template slot-scope="{ row }">
+            <div v-if="row.enterpriseFlag === 0" style="color: #ccc">
+              未认证
+            </div>
+            <div v-if="row.enterpriseFlag === 1" style="color: blue">
+              审核中
+            </div>
+            <div v-if="row.enterpriseFlag === 2" style="color: green">
+              审核成功
+            </div>
+            <div v-if="row.enterpriseFlag === 3" style="color: red">
+              审核失败
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column
           label="操作"
           width="220px"
           fixed="right"
@@ -265,13 +289,13 @@
                 v-if="row.enterpriseFlag !== 2 && row.enterpriseFlag !== 3"
                 >审核</el-button
               >
-              <el-button
+              <!-- <el-button
                 type="warning"
                 size="mini"
                 plain
                 @click="openInvitationCode(row.id)"
                 >邀请码</el-button
-              >
+              > -->
               <el-button type="warning" size="mini" plain @click="openTeam(row)"
                 >成员</el-button
               >
@@ -387,12 +411,11 @@
       <div style="margin-top: 20px; display: flex; justify-content: center">
         <el-pagination
           background
-          @size-change="handleSizeChange"
           @current-change="updatePageNo"
-          :current-page="currentPage"
-          :page-size="20"
+          :current-page="queryEnterpriseListParms.pageNo"
+          :page-size="queryEnterpriseListParms.pageSize"
           layout="total,  prev, pager, next, jumper"
-          :total="total"
+          :total="getEnterpriseListTotal"
         ></el-pagination>
       </div>
     </el-card>
@@ -672,18 +695,15 @@ export default {
       auditDialog: false, //审核弹窗默认
       auditSelect: "", //审核状态
       auditUid: "", //审核需要的uid
-      referencePerson: null, //查询推荐人框
 
       typeList: null,
-      masterOptions: [],
-      VALE: "",
       recommendMaster: "",
 
       editEnterprise: false,
       dialogVisible: false,
       editForm: null,
 
-      total: 0,
+      getEnterpriseListTotal: 0,
       currentPage: 1,
       enpTeamList: null,
       dataSumNum: "",
@@ -708,6 +728,17 @@ export default {
         payAmount: 0,
       },
       param: {},
+
+      masterOptions: [],
+      queryTimeCopy: null,
+      queryEnterpriseListParms: {
+        name: null,
+        pageNo: 1,
+        pageSize: 10,
+        phone: null,
+        salesmanId: null,
+        queryTime: null,
+      },
     };
   },
   async created() {
@@ -716,6 +747,12 @@ export default {
     this.typeList = res.data;
   },
   methods: {
+    // 切换创建时间
+    changeQueryTimeCopy() {
+      this.queryEnterpriseListParms.queryTime =
+        this.queryTimeCopy[0] + "~" + this.queryTimeCopy[1];
+    },
+    // 切换的时候 把审核原因清空
     cleanReason() {
       this.reason = "";
     },
@@ -761,9 +798,16 @@ export default {
     },
     // 重置事件
     resetFn() {
-      this.enterpriseName = "";
-      this.enterprisePhone = "";
-      this.referencePerson = "";
+      this.queryTimeCopy = null;
+      this.masterOptions = [];
+      this.queryEnterpriseListParms = {
+        name: null,
+        pageNo: 1,
+        pageSize: 10,
+        phone: null,
+        salesmanId: null,
+        queryTime: null,
+      };
       this._getEnterpriseList();
     },
     // 推荐人搜索
@@ -832,7 +876,7 @@ export default {
     },
     // 页码发生变化触发的事件
     updatePageNo(val) {
-      this.currentPage = val;
+      this.queryEnterpriseListParms.pageNo = val;
       this._getEnterpriseList();
     },
     // 关闭查看团队弹窗
@@ -862,16 +906,10 @@ export default {
         text: "数据传输中",
         spinner: "el-icon-loading",
       });
-      let data = {
-        name: this.enterpriseName,
-        pageNo: 1,
-        pageSize: 20,
-        query: "",
-        phone: this.enterprisePhone,
-      };
+      const data = this.queryEnterpriseListParms;
+      data.pageSize = 1000;
       handleEnterpriseInfoExport(data).then((res) => {
         if (res) {
-          console.log("导出", res);
           const link = document.createElement("a");
           const blob = new Blob([res.data], {
             type: "application/vnd.ms-excel",
@@ -926,24 +964,13 @@ export default {
     //获取企业列表
     async _getEnterpriseList(id) {
       if (id === 1) {
-        this.currentPage = 1;
+        this.queryEnterpriseListParms.pageNo = 1;
       }
-      let params = {
-        pageNo: this.currentPage,
-        pageSize: 20,
-        name: this.enterpriseName,
-        phone: this.enterprisePhone,
-        salesmanId: this.referencePerson,
-      };
-      getEnterpriseList(params).then((res) => {
-        if (res) {
-          console.log(res);
-          const { records, total, current } = res.data;
-          this.enterpriseList = records;
-          this.total = total;
-          this.currentPage = current;
-        }
-      });
+      const res = await getEnterpriseList(this.queryEnterpriseListParms);
+      if (res.code == "000") {
+        this.enterpriseList = res.data.records;
+        this.getEnterpriseListTotal = res.data.total;
+      }
     },
   },
 };

@@ -561,9 +561,7 @@
           <div class="peijian" style="margin-top: 30px">
             <div class="peijianTitle">配件明细:</div>
             <!-- 确认报价前都可新增 -->
-            <el-button
-              type="primary"
-              @click="openAddEditPart(null, null, item.orderSn)"
+            <el-button type="primary" @click="openAddEditPart(null, null, item)"
               >新增配件</el-button
             >
             <el-button type="primary" v-if="false" @click="oneClickSendrepairFn"
@@ -684,7 +682,7 @@
                   </el-button>
                   <el-button
                     type="text"
-                    @click="openAddEditPart(row, $index, item.orderSn)"
+                    @click="openAddEditPart(row, $index, item)"
                     >修改</el-button
                   >
                   <!-- <el-button
@@ -2647,6 +2645,7 @@ export default {
         type: "",
         id: "",
         partId: "",
+        operationType: "add",
       },
       addEditPartDialogShow: false,
 
@@ -3367,12 +3366,6 @@ export default {
     // 确定新增修改配件
     async confirmAddEditPart() {
       await this.$refs["partInfoRuleForm"].validate();
-      // 新增需要随机生成一个id
-      if (!this.partInfo.id) {
-        let id = Date.now();
-        id = id.toString().slice(-4);
-        this.partInfo.id = "undefined-" + Number(id);
-      }
       const data = { ...this.partInfo };
       // if (data.stashPartsWay == 1) {
       //   data.id = Math.floor(Math.random() * 10000);
@@ -3440,6 +3433,8 @@ export default {
         type: "",
         id: "", //配件项id
         partId: "", //配件id
+        operationType: "add",
+        index: null,
       };
       this.uploadPartImgList = [];
       this.addEditPartDialogShow = false;
@@ -3478,8 +3473,9 @@ export default {
       this.queryJdProductList();
     },
     // 打开新增修改配件
-    openAddEditPart(row, index, orderSn) {
+    openAddEditPart(row, index, item) {
       if (index || index == 0) {
+        this.partInfo.operationType = "edit";
         this.partInfo = { ...row };
         if (row.image) {
           let imgArr = row.image.split(",");
@@ -3493,8 +3489,32 @@ export default {
         this.addEditPartTitle = "修改配件";
       } else {
         this.addEditPartTitle = "新增配件";
+        this.partInfo.operationType = "add";
+
+        // 需要随机生成一个id
+        let id = Date.now();
+        id = id.toString().slice(-4);
+        this.partInfo.id = "undefined-" + Number(id);
+
+        // 需要加一个index 金蝶需要
+        let indexArr = [];
+        if (item.parts) {
+          item.parts.forEach((i) => {
+            if (i.index) {
+              indexArr.push(i.index);
+            }
+          });
+        }
+        if (indexArr.length > 0) {
+          // 取最大值
+          let max = Math.max(...indexArr);
+          this.partInfo.index = max + 1;
+        } else {
+          // 默认赋值1
+          this.partInfo.index = 1;
+        }
       }
-      this.partInfo.orderSn = orderSn;
+      this.partInfo.orderSn = item.orderSn;
       this.addEditPartDialogShow = true;
     },
 
@@ -4062,7 +4082,6 @@ export default {
               }
               // 回显配件
               if (item.parts) {
-                console.log(4050, item.parts);
                 item.parts = JSON.parse(item.parts);
               }
               // 回显完工照片

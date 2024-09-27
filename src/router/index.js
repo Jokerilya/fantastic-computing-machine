@@ -24,6 +24,8 @@ import storeController from "./modules/storeController";
 import messageRouter from "./modules/message";
 import statisticsStatementRouter from "./modules/statisticsStatement";
 import stashSetoutHandleRouter from "./modules/stashSetoutHandle";
+import withdrawalManagementRouter from "./modules/withdrawalManagement";
+import activityManageRouter from "./modules/activityManage.js";
 
 export const constantRoutes = [
   {
@@ -83,10 +85,13 @@ export const constantRoutes = [
   statisticsStatementRouter,
   maintenanceRouter,
   financialManagement,
+  withdrawalManagementRouter,
+
   invoiceManagement,
   serviceManagement,
   systemRouter,
   activityRouter,
+  activityManageRouter,
 
   // userListRouter,
   // storeController,

@@ -39,7 +39,7 @@ const service = axios.create({
   timeout: 10000000 // request timeout
 })
 
-// 图片接口 导入的接口不需要
+//  接口不需要加密
 const forbiddenUrl = [
 	'/admin/base/uploadImg',
 	'/admin/financial/handlePaymentListImport',
@@ -54,9 +54,9 @@ const forbiddenUrl = [
 	'/admin/maintenance/uploadDeviceKeepOrder',
 	'/admin/financial/handlePaymentListExport',
 	'/admin/maintenance/handleRepairOrderExportV2',
-	'/admin/maintenance/handleRepairOrderExportByFaults'
+	'/admin/maintenance/handleRepairOrderExportByFaults',
+	"/admin/maintenance/editMasterAssessmentItem"
 ]
-
 
 service.interceptors.request.use(
   request => {
