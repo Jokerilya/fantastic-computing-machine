@@ -102,7 +102,7 @@ export default {
     },
     editDataFn(scope) {
       baseEditFn({
-        configKey:scope.row.configKey,
+        configKey: scope.row.configKey,
         configVal: scope.row.configVal,
         id: scope.row.id,
         remark: scope.row.remark,
@@ -134,6 +134,7 @@ export default {
     baseInfoFn() {
       baseInfoFn().then((res) => {
         const resData = this.resDataFn(res);
+        console.log(137, resData);
         this.dataList = resData;
       });
     },

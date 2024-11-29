@@ -251,7 +251,10 @@ export default {
         res = await editMasterAssessmentItem(this.examFile, "?" + montageData);
       }
       if (res.message == "操作成功") {
-        console.log(254);
+        this.$message({
+          message: "操作成功",
+          type: "success",
+        });
         await this.queryMasterAssessmentItemList();
         this.closeExamineVisible();
       }

@@ -16,7 +16,7 @@
                 ? "保养服务"
                 : row.type == 2
                 ? "检测服务"
-                : "其他产品"
+                : "维保服务"
             }}
           </template>
         </el-table-column>
@@ -107,7 +107,7 @@
         </el-form-item>
         <el-form-item label="排序">
           <div style="color: #999; font-size: 26px">
-            Tip:数字越高,排序越靠前
+            Tip:数字越低,排序越靠前
           </div>
           <el-input
             type="number"

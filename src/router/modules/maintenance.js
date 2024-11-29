@@ -198,6 +198,14 @@ const router = {
       name: "masterOrderDiscount",
       component: () => import("@/views/maintenance/masterOrderDiscount.vue"),
       meta: { title: "订单折扣记录" },
+    },
+
+    //钱包模块
+    {
+      path: "/maintenance/purse/purseDetails",
+      name: "purseDetails",
+      component: () => import("@/views/maintenance/purse/purseDetails.vue"),
+      meta: { title: "钱包详情" , noShow: "true"},
     }
   ],
 };

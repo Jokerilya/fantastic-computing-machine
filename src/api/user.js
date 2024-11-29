@@ -318,3 +318,29 @@ export function handleCustomerApplyVisit(data) {
     data,
   });
 }
+
+// 获取用户钱包详情
+export function getAccountMoney(uid) {
+  return request({
+    url: "/admin/userInfo/getAccountMoney?uid="+uid,
+    method: "get",
+  });
+}
+
+// 用户金额明细
+export function queryMoneyList(data) {
+  return request({
+    url: "/admin/userInfo/queryMoneyList",
+    method: "post",
+    data
+  });
+}
+
+// 修改余额信息
+export function handleAccountEdit(data) {
+  return request({
+    url: "/admin/userInfo/handleAccountEdit",
+    method: "post",
+    data
+  });
+}

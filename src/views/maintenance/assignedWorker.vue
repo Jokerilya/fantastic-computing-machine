@@ -13,15 +13,11 @@
         </div>
         <h4 style="color: #999; width: 90px; margin-left: 20px">指派的师傅:</h4>
         <div class="assignedWorkerList">
-          <span
-            v-for="(item, index) in masterNameList"
-            :key="item"
-            class="item"
-            @click="delAssignedWorker(index)"
-          >
+          <!--  @click="delAssignedWorker(index)" -->
+          <span v-for="item in masterNameList" :key="item" class="item">
             {{ item }}
           </span>
-          <div class="notiveText">( 注:点击姓名即可删除！)</div>
+          <!-- <div class="notiveText">( 注:点击姓名即可删除！)</div> -->
         </div>
       </div>
       <div class="operationBtnList">
@@ -58,7 +54,7 @@
     <div class="workerTable">
       <el-card>
         <el-table
-          v-show="tableShow"
+          ref="masterListRef"
           height="70vh"
           :header-cell-style="{
             background: '#f6f8fc',
@@ -66,8 +62,17 @@
           }"
           :data="masterList"
           style="width: 100%"
+          @selection-change="handleChangeWorker"
+          :row-key="getRowKeys"
         >
-          <el-table-column label="多选" align="center" width="100px">
+          <el-table-column
+            label="多选"
+            type="selection"
+            :reserve-selection="true"
+            width="55"
+          >
+          </el-table-column>
+          <!-- <el-table-column label="多选" align="center" width="100px">
             <template slot-scope="{ row }">
               <input
                 type="checkbox"
@@ -76,10 +81,32 @@
                 v-model="row.show"
               />
             </template>
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column label="师傅头像" align="center" width="100px">
             <template slot-scope="{ row }">
-              <img :src="row.realPortrait" width="75px" height="75px" />
+              <div style="position: relative; width: 70px; height: 70px">
+                <el-image
+                  style="width: 100%; height: 100%"
+                  :src="row.realPortrait ? row.realPortrait.split(',')[0] : ''"
+                >
+                </el-image>
+                <el-image
+                  v-if="
+                    row.number &&
+                    (row.number.includes('V') || row.number.includes('v'))
+                  "
+                  src="https://snk-1305456087.cos.ap-guangzhou.myqcloud.com/user/20240927/AU04149909.png"
+                  style="
+                    width: 70px;
+                    height: 70px;
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                    z-index: 3;
+                  "
+                >
+                </el-image>
+              </div>
             </template>
           </el-table-column>
           <el-table-column prop="realName" label="师傅" align="center">
@@ -190,10 +217,23 @@ export default {
 
       masterUidList: [], //要指派师傅pdi的列表
       masterNameList: [], //要指派师傅姓名的列表
-      tableShow: true,
     };
   },
   methods: {
+    getRowKeys: function (row) {
+      return row.id; // 指定table id
+    },
+    // 修改选择的师傅
+    handleChangeWorker(val) {
+      let uidList = [];
+      let nameList = [];
+      val.forEach((item) => {
+        uidList.push(item.uid);
+        nameList.push(item.realName);
+      });
+      this.masterUidList = uidList;
+      this.masterNameList = nameList;
+    },
     async handleTakeOrder() {
       if (!(this.masterUidList.length > 0 && this.masterUidList.length < 2)) {
         this.$message({
@@ -264,22 +304,21 @@ export default {
       });
     },
     // 勾选指派多选框
-    manyPeopleAssigned(show, uid, name) {
-      if (!show) {
-        if (this.masterUidList.indexOf(uid) === -1) {
-          this.masterUidList.push(uid);
-        }
-        if (this.masterNameList.indexOf(name) === -1) {
-          this.masterNameList.push(name);
-        }
-      } else {
-        const uidIndex = this.masterUidList.indexOf(uid);
-        this.masterUidList.splice(uidIndex, 1);
-        const nameIndex = this.masterNameList.indexOf(name);
-        this.masterNameList.splice(nameIndex, 1);
-        console.log(this.masterUidList);
-      }
-    },
+    // manyPeopleAssigned(show, uid, name, row) {
+    //   if (!show) {
+    //     if (this.masterUidList.indexOf(uid) === -1) {
+    //       this.masterUidList.push(uid);
+    //     }
+    //     if (this.masterNameList.indexOf(name) === -1) {
+    //       this.masterNameList.push(name);
+    //     }
+    //   } else {
+    //     const uidIndex = this.masterUidList.indexOf(uid);
+    //     this.masterUidList.splice(uidIndex, 1);
+    //     const nameIndex = this.masterNameList.indexOf(name);
+    //     this.masterNameList.splice(nameIndex, 1);
+    //   }
+    // },
     // 指派按钮
     async assignedBtn(judge) {
       let params = {
@@ -315,29 +354,27 @@ export default {
     // 获取可指派师傅列表
     async getMasterList() {
       const loading = this.$loading();
-      this.tableShow = false;
       const res = await queryAssignableMasterList(this.params);
       this.masterList = res.data.records;
-      this.masterList.forEach((item) => {
-        item.show = false;
-      });
       this.total = res.data.total;
-      this.tableShow = true;
+      // 回显已选师傅
       loading.close();
     },
   },
   async created() {
-    const { masterNameList, masterUidList, orderSn } = this.$route.query;
-    if (masterNameList) {
-      masterNameList.forEach((item) => {
-        this.masterNameList.push(item);
-      });
+    let { masterNameList, masterUidList, orderSn } = this.$route.query;
+    if (!masterNameList) {
+      masterNameList = [];
     }
-    if (masterUidList) {
-      masterUidList.forEach((item) => {
-        this.masterUidList.push(item);
-      });
+    if (!masterUidList) {
+      masterUidList = [];
     }
+    masterNameList.forEach((item) => {
+      this.masterNameList.push(item);
+    });
+    masterUidList.forEach((item) => {
+      this.masterUidList.push(item);
+    });
     // 获取广东省的市
     const cityList = await addressFn(440000);
     this.cityList = cityList.data;

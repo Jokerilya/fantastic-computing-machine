@@ -107,7 +107,7 @@ service.interceptors.response.use(
 			if(process.env.NODE_ENV != 'development'){
 				let pass = true
 				forbiddenUrl.forEach(item=>{
-					if(response.config.url == item){
+					if(response.config.url.indexOf(item) != -1){
 						pass = false
 					}
 				})

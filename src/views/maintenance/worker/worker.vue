@@ -107,6 +107,13 @@
         height="65vh"
       >
         <el-table-column
+          prop="number"
+          label="师傅编号"
+          show-overflow-tooltip
+          width="150"
+          align="center"
+        ></el-table-column>
+        <el-table-column
           prop="realName"
           label="真实姓名"
           show-overflow-tooltip
@@ -420,7 +427,7 @@
                     <el-button size="mini" @click="open(row)">审核</el-button>
                   </el-option>
                   <el-option>
-                    <el-button type="info" size="mini" @click="checkTeam(row)"
+                    <el-button size="mini" @click="checkTeam(row)"
                       >成员</el-button
                     >
                   </el-option>
@@ -449,6 +456,11 @@
                       size="mini"
                       @click="openSetActiveDialog(row.uid, row.activeFlag)"
                       >活跃</el-button
+                    >
+                  </el-option>
+                  <el-option>
+                    <el-button size="mini" @click="goToPursePage(row)"
+                      >钱包</el-button
                     >
                   </el-option>
                 </el-select>
@@ -1466,6 +1478,14 @@ export default {
     this._getMasterList();
   },
   methods: {
+    // 跳转钱包页面
+    goToPursePage(row) {
+      this.$router.push({
+        name: "purseDetails",
+        // query: { realName: row.realName, uid: row.uid },
+        query: { row },
+      });
+    },
     // 切换创建时间
     changeQueryTimeCopy() {
       this.queryMasterListParams.queryTime =
@@ -1475,6 +1495,10 @@ export default {
     async confirmSetActive() {
       const res = await handleActiveMaster(this.setActiveParmas);
       if (res.message == "操作成功") {
+        this.$message({
+          message: "操作成功",
+          type: "success",
+        });
         this.closeSetActiveDialog();
         this._getMasterList();
       }

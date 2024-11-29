@@ -913,3 +913,29 @@ export function deviceKeepOrderMarkComplete(data) {
 	})
 }
 
+
+// 转移订单配件商品
+export function transferPartProduct(data) {
+	return request({
+		url: `/admin/maintenance/transferPartProduct`,
+		method: 'post',
+    data
+	})
+}
+
+// 修改师傅订单
+export function editEnrollRepairOrder(data) {
+	return request({
+		url: `/admin/maintenance/editEnrollRepairOrder`,
+		method: 'post',
+    data
+	})
+}
+
+// jdTest管理模块
+export function testData(orderSns) {
+	return request({
+		url: `/admin/jdTest/testData?orderSns=${orderSns}`,
+		method: 'get'
+	})
+}

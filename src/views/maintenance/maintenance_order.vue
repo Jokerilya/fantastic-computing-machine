@@ -120,16 +120,13 @@
         </el-row>
         <el-row style="text-align: right">
           <el-col :span="24">
-            <el-button
-              icon="el-icon-zoom-in"
-              plain
-              type="primary"
-              @click="query_queryRepairOrderList"
+            <el-button type="warning" plain @click="openSyncDialog">
+              同步
+            </el-button>
+            <el-button plain type="primary" @click="query_queryRepairOrderList"
               >查询</el-button
             >
-            <el-button icon="el-icon-refresh" plain type="info" @click="resetFn"
-              >重置</el-button
-            >
+            <el-button plain type="info" @click="resetFn">重置</el-button>
             <el-button type="success" plain @click="exportList">
               导出
             </el-button>
@@ -346,6 +343,13 @@
         <el-table-column
           prop="masterPhone"
           label="师傅联系电话"
+          show-overflow-tooltip
+          width="160"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="promoterPeople"
+          label="推广人"
           show-overflow-tooltip
           width="160"
           align="center"
@@ -790,6 +794,28 @@
         >
       </span>
     </el-dialog>
+
+    <!-- 同步金蝶 -->
+    <el-dialog
+      title="同步"
+      width="35%"
+      :visible="syncDialogVisible"
+      :close-on-click-modal="false"
+      :before-close="closeSyncDialog"
+      center
+    >
+      <el-input
+        v-model="testDataOrderSns"
+        placeholder="填写同步的订单号,多个订单号逗号隔开,例:WBLPxxxxxxx,WBLPxxxxxxx"
+      ></el-input>
+      <div v-if="testDataTip" style="padding-top: 20px; color: red">
+        {{ testDataTip }}
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeSyncDialog">取 消</el-button>
+        <el-button type="primary" @click="testData">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -812,6 +838,7 @@ import {
   queryDeviceSystemList,
   queryFaultPosition,
   getDeviceInfoByNo,
+  testData,
 } from "@/api/order.js";
 import { handleProxyCreateOrder } from "@/api/proxy";
 import { UploadImg } from "@/api/system.js";
@@ -822,6 +849,10 @@ export default {
   // mixins: [tableMixin],
   data() {
     return {
+      // 同步
+      testDataTip: null,
+      testDataOrderSns: null,
+      syncDialogVisible: false,
       // 代下单模块 start
       formItemDisabled: false,
       handleProxyCreateOrderParams: {
@@ -1018,6 +1049,46 @@ export default {
     this._queryRepairOrderList();
   },
   methods: {
+    // 确定同步
+    async testData() {
+      if (!this.testDataOrderSns) {
+        this.$message({
+          message: "请填写要同步的订单号",
+          type: "warning",
+        });
+        return;
+      }
+      this.testDataTip = null;
+      const loading = this.$loading({
+        lock: true,
+        text: "Loading",
+        spinner: "el-icon-loading",
+        background: "rgba(0, 0, 0, 0.7)",
+      });
+      const res = await testData(this.testDataOrderSns);
+      loading.close();
+      if (res.code == "000" && res.data == "") {
+        this.$message({
+          message: res.message,
+          type: "success",
+        });
+        this.closeSyncDialog();
+      } else {
+        this.testDataOrderSns = null;
+        this.testDataTip = res.data;
+      }
+    },
+    // 关闭同步框
+    closeSyncDialog() {
+      this.testDataTip = null;
+      this.testDataOrderSns = null;
+      this.syncDialogVisible = false;
+    },
+    // 打开同步框
+    openSyncDialog() {
+      this.syncDialogVisible = true;
+    },
+
     //  切换创建时间
     changeQueryTimeCopy() {
       this.searchForm.queryTime =

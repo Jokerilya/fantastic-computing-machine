@@ -2,23 +2,36 @@
   <div class="statisticsStatement">
     <el-card>
       <h1>订单统计报表</h1>
-      <div>
-        <el-date-picker
-          type="daterange"
-          range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          v-model="handleRepairOrderExportV2ParamsQuery"
-          value-format="yyyy-MM-dd"
-          @change="timeChangeChart"
-        >
-        </el-date-picker>
-        <el-button style="margin-left: 20px" @click="exportListV2">
-          导出
-        </el-button>
-        <el-button style="margin-left: 20px" @click="exportByFaults">
-          导出(故障项目)
-        </el-button>
+      <div
+        style="
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        "
+      >
+        <div>
+          <el-date-picker
+            type="daterange"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            v-model="handleRepairOrderExportV2ParamsQuery"
+            value-format="yyyy-MM-dd"
+            @change="timeChangeChart"
+          >
+          </el-date-picker>
+          <span style="margin-left: 10px; font-size: 20px; color: red"
+            >ps:请选择三个月内</span
+          >
+        </div>
+        <div>
+          <el-button style="margin-left: 20px" @click="exportListV2">
+            导出
+          </el-button>
+          <el-button style="margin-left: 20px" @click="exportByFaults">
+            导出(故障项目)
+          </el-button>
+        </div>
       </div>
       <div class="chartBox">
         <div class="chartLeft">
@@ -123,7 +136,7 @@ export default {
       },
       handleRepairOrderExportV2ParamsQuery: null,
       handleRepairOrderExportV2Params: {
-        query: "",
+        queryTime: "",
       },
       totalOrderAmount: null,
       totalOrderNum: null,
@@ -166,35 +179,61 @@ export default {
       this.totalOrderAmount = res.data.totalOrderAmount;
       this.totalOrderNum = res.data.totalOrderNum;
     },
+    /**
+     * 计算前多少天的日子
+     * @param dateString 要往前推的日子 例:"2023-05-10"
+     * @param days  计算几天  例:90
+     */
+    subtractDays(dateString, days) {
+      const date = new Date(dateString);
+      date.setDate(date.getDate() - days);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0"); // 月份从0开始计数
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    },
+
     // 获取今天的日期 拿到本月的
     getNowDate() {
       const today = new Date();
+
       const year = today.getFullYear();
       const month = String(today.getMonth() + 1).padStart(2, "0");
       const day = String(today.getDate()).padStart(2, "0");
-      if (today.getMonth() + 1 >= 7) {
-        this.handleRepairOrderExportV2ParamsQuery = [
-          `${year}-07-01`,
-          `${year}-${month}-${day}`,
-        ];
-        this.handleRepairOrderExportV2Params.query = `${year}-07-01~${year}-${month}-${day}`;
-      } else {
-        this.handleRepairOrderExportV2ParamsQuery = [
-          `${year}-01-01`,
-          `${year}-${month}-${day}`,
-        ];
-        this.handleRepairOrderExportV2Params.query = `${year}-01-01~${year}-${month}-${day}`;
-      }
+      const subtractDay = this.subtractDays(`${year}-${month}-${day}`, 90);
+      this.handleRepairOrderExportV2ParamsQuery = [
+        subtractDay,
+        `${year}-${month}-${day}`,
+      ];
+      this.handleRepairOrderExportV2Params.queryTime = `${subtractDay}~${year}-${month}-${day}`;
+    },
+
+    // 计算时间段中间时间
+    daysBetween(date1, date2) {
+      const d1 = new Date(date1);
+      const d2 = new Date(date2);
+      const diffInTime = Math.abs(d2 - d1);
+      const diffInDays = Math.ceil(diffInTime / (1000 * 60 * 60 * 24));
+      return diffInDays;
     },
     // 选择时间后获取新数据刷新页面图形
     async timeChangeChart(val) {
+      const days = this.daysBetween(val[0], val[1]);
+      this.days = days;
+      if (days > 95) {
+        this.$message({
+          message: "请选择三个月内",
+          type: "warning",
+        });
+        return;
+      }
       if (val) {
-        this.handleRepairOrderExportV2Params.query = val[0] + "~" + val[1];
+        this.handleRepairOrderExportV2Params.queryTime = val[0] + "~" + val[1];
         await this.queryMasterOrderRankData();
         this.drawChartLeft();
         this.drawChartRight();
       } else {
-        this.handleRepairOrderExportV2Params.query = null;
+        this.handleRepairOrderExportV2Params.queryTime = null;
         await this.queryMasterOrderRankData();
         this.drawChartLeft();
         this.drawChartRight();
@@ -202,6 +241,13 @@ export default {
     },
     // 维保订单列表数据导出
     async exportByFaults() {
+      if (this.days > 95) {
+        this.$message({
+          message: "请选择三个月内",
+          type: "warning",
+        });
+        return;
+      }
       const loading = this.$loading({
         lock: true,
         text: "数据传输中",
@@ -226,6 +272,13 @@ export default {
     },
     // 导出新版
     async exportListV2() {
+      if (this.days > 95) {
+        this.$message({
+          message: "请选择三个月内",
+          type: "warning",
+        });
+        return;
+      }
       const loading = this.$loading({
         lock: true,
         text: "数据传输中",

@@ -75,7 +75,7 @@ service.interceptors.request.use(
 			if(process.env.NODE_ENV != 'development'){ 
 				let pass = true
 			forbiddenUrl.forEach(item=>{
-				if(request.url == item){
+				if(request.url.indexOf(item) != -1){
 					pass = false
 				}
 			})
@@ -114,7 +114,7 @@ service.interceptors.response.use(
 			if(process.env.NODE_ENV != 'development'){
 				let pass = true
 				forbiddenUrl.forEach(item=>{
-					if(response.config.url == item){
+					if(response.config.url.indexOf(item) != -1){
 						pass = false
 					}
 				})
