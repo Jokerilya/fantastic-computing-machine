@@ -26,7 +26,9 @@
         </el-date-picker>
       </div>
       <div>
-        <!-- <el-button class="toolBtn">导出</el-button> -->
+        <el-button class="toolBtn" @click="handleWithdrawalExport"
+          >导出</el-button
+        >
         <el-button class="toolBtn" @click="searchwithdrawalList"
           >查询</el-button
         >
@@ -49,10 +51,12 @@
       >
         <el-table-column label="创建时间" prop="createTime" width="140">
         </el-table-column>
-        <el-table-column label="用户昵称" prop="nickName"> </el-table-column>
+        <!-- <el-table-column label="用户昵称" prop="nickName"> </el-table-column>
         <el-table-column label="用户电话" prop="phone" width="110">
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column label="提现金额" prop="quota"> </el-table-column>
+        <el-table-column label="实际到账" prop="actualArrival">
+        </el-table-column>
         <el-table-column label="收款人姓名" prop="payeeName"> </el-table-column>
         <el-table-column label="银行名称">
           <template slot-scope="{ row }">
@@ -82,7 +86,12 @@
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="{ row }">
-            <el-button type="text" :disabled="row.status != 0">审核</el-button>
+            <el-button
+              type="text"
+              :disabled="row.status != 0"
+              @click="openExamineWithdrawDialog(row.id)"
+              >审核</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -98,11 +107,52 @@
         </el-pagination>
       </div>
     </el-card>
+
+    <!-- 审核提现 -->
+    <el-dialog
+      title="审核"
+      center
+      :visible="examineWithdrawDialogVisible"
+      width="30%"
+      :show-close="false"
+      :close-on-click-modal="false"
+    >
+      <el-form
+        :model="handleWithdrawalExamineParams"
+        :rules="handleWithdrawalExamineRules"
+        ref="handleWithdrawalExamineRef"
+        label-width="100px"
+        label-position="left"
+      >
+        <el-form-item label="审核状态" prop="status">
+          <el-radio-group v-model="handleWithdrawalExamineParams.status">
+            <el-radio :label="2">通过并打款</el-radio>
+            <el-radio :label="-1">未通过</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input
+            v-model="handleWithdrawalExamineParams.remark"
+            placeholder="请填写备注"
+          ></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeExamineWithdrawDialog">取 消</el-button>
+        <el-button type="primary" @click="handleWithdrawalExamine"
+          >确 定</el-button
+        >
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { queryWithdrawalFn, handleWithdrawalExamineFn } from "@/api/user";
+import {
+  queryWithdrawal,
+  handleWithdrawalExamine,
+  handleWithdrawalExport,
+} from "@/api/user";
 export default {
   data() {
     return {
@@ -117,13 +167,81 @@ export default {
       },
       queryWithdrawalParamsQueryTime: null, //没格式化之前的值
       statusList: ["审核失败", "审核中", "审核通过/待打款", "已打款"],
+
+      examineWithdrawDialogVisible: false,
+      handleWithdrawalExamineParams: {
+        id: null,
+        remark: null,
+        status: null,
+      },
+      handleWithdrawalExamineRules: {
+        remark: [
+          {
+            required: true,
+            message: "请填写备注,如果不需要填无",
+            trigger: "blur",
+          },
+        ],
+        status: [
+          { required: true, message: "请选择审核状态", trigger: "change" },
+        ],
+      },
     };
   },
   methods: {
+    // 导出
+    handleWithdrawalExport() {
+      const loading = this.$loading({
+        lock: true,
+        text: "数据传输中",
+        spinner: "el-icon-loading",
+      });
+      handleWithdrawalExport(this.queryWithdrawalParams).then((res) => {
+        if (res) {
+          const link = document.createElement("a");
+          const blob = new Blob([res.data], {
+            type: "application/vnd.ms-excel",
+          });
+          link.style.display = "none";
+          link.href = URL.createObjectURL(blob);
+          link.download = "提现记录"; //下载的文件名
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          loading.close();
+        }
+      });
+    },
+    // 审核确定
+    async handleWithdrawalExamine() {
+      this.$refs["handleWithdrawalExamineRef"].validate();
+      const res = await handleWithdrawalExamine(
+        this.handleWithdrawalExamineParams
+      );
+      if (res.code == "000") {
+        this.queryWithdrawal();
+        this.closeExamineWithdrawDialog();
+      }
+    },
+    // 关闭提现审核框
+    closeExamineWithdrawDialog() {
+      this.handleWithdrawalExamineParams = {
+        id: null,
+        remark: null,
+        status: null,
+      };
+      this.$refs["handleWithdrawalExamineRef"].resetFields();
+      this.examineWithdrawDialogVisible = false;
+    },
+    // 打开提现审核框
+    openExamineWithdrawDialog(id) {
+      this.handleWithdrawalExamineParams.id = id;
+      this.examineWithdrawDialogVisible = true;
+    },
     // 切换页码
     changePage(page) {
       this.queryWithdrawalParams.pageNo = page;
-      this.queryWithdrawalFn();
+      this.queryWithdrawal();
     },
     // 重置搜索信息
     resetQueryWithdrawalParams() {
@@ -134,26 +252,27 @@ export default {
         phone: null,
         queryTime: null,
       };
-      this.queryWithdrawalFn();
+      this.queryWithdrawalParamsQueryTime = null;
+      this.queryWithdrawal();
     },
     // 点击搜索
     searchwithdrawalList() {
       this.queryWithdrawalParams.pageNo = 1;
-      this.queryWithdrawalFn();
+      this.queryWithdrawal();
     },
     // 修改日期
     changeQueryWithdrawalParamsQueryTime(val) {
       this.queryWithdrawalParams.queryTime = val[0] + "/" + val[1];
     },
     // 查询提现记录
-    async queryWithdrawalFn() {
-      const res = await queryWithdrawalFn(this.queryWithdrawalParams);
+    async queryWithdrawal() {
+      const res = await queryWithdrawal(this.queryWithdrawalParams);
       this.withdrawalList = res.data.data.records;
       this.withdrawalListTotal = res.data.data.total;
     },
   },
   created() {
-    this.queryWithdrawalFn();
+    this.queryWithdrawal();
   },
 };
 </script>

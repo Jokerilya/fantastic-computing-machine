@@ -197,7 +197,7 @@ export function editUserInfoFn(data) {
   });
 }
 // 用户提现记录
-export function queryWithdrawalFn(data) {
+export function queryWithdrawal(data) {
   return request({
     url: "/admin/userInfo/queryWithdrawal",
     method: "post",
@@ -206,7 +206,7 @@ export function queryWithdrawalFn(data) {
 }
 
 // 用户提现审核
-export function handleWithdrawalExamineFn(data) {
+export function handleWithdrawalExamine(data) {
   return request({
     url: "/admin/userInfo/handleWithdrawalExamine",
     method: "post",
@@ -215,12 +215,12 @@ export function handleWithdrawalExamineFn(data) {
 }
 
 // 用户提现导出
-export function handleWithdrawalExportFn(data) {
+export function handleWithdrawalExport(data) {
   return request({
     url: "/admin/userInfo/handleWithdrawalExport",
     method: "post",
     responseType: "blob",
-    data: data,
+    data,
   });
 }
 // 用户设置为合伙人

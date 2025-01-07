@@ -120,6 +120,9 @@
         </el-row>
         <el-row style="text-align: right">
           <el-col :span="24">
+            <!-- <el-button type="warning" plain @click="downloadFn">
+              下载
+            </el-button> -->
             <el-button type="warning" plain @click="openSyncDialog">
               同步
             </el-button>
@@ -216,11 +219,20 @@
           <template slot-scope="{ row }">
             {{
               row.orderType === 1
-                ? "普通"
+                ? "散单"
                 : row.orderType === 2
                 ? "年保"
                 : "年卡"
             }}
+          </template>
+        </el-table-column>
+        <el-table-column label="标签" show-overflow-tooltip align="center">
+          <template slot-scope="{ row }">
+            <div v-for="item in lablelList" :key="item.value">
+              <el-tag v-if="row.label == item.value" :type="item.type">{{
+                item.value
+              }}</el-tag>
+            </div>
           </template>
         </el-table-column>
         <!-- <el-table-column
@@ -422,6 +434,9 @@
                 plain
                 @click="openRemarksDialog(row)"
                 >备注</el-button
+              >
+              <el-button type="info" size="mini" plain @click="setOrderTag(row)"
+                >设置</el-button
               >
               <!-- <el-button
                 v-if="
@@ -816,6 +831,29 @@
         <el-button type="primary" @click="testData">确 定</el-button>
       </span>
     </el-dialog>
+
+    <!-- 设置标签 -->
+    <el-dialog
+      title="选择标签"
+      width="35%"
+      :visible="setOrderTagDialogVisible"
+      :close-on-click-modal="false"
+      :before-close="closeSetOrderTagDialog"
+      center
+    >
+      <el-radio-group v-model="handleOrderLabelParams.label">
+        <el-radio
+          v-for="item in lablelList"
+          :key="item.value"
+          :label="item.value"
+          ><el-tag :type="item.type">{{ item.value }}</el-tag></el-radio
+        >
+      </el-radio-group>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeSetOrderTagDialog">取 消</el-button>
+        <el-button type="primary" @click="handleOrderLabel">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -828,6 +866,7 @@ import {
   queryAssignableMasterList,
 } from "@/api/user.js";
 import {
+  handleOrderLabel,
   uploadBatchRepairOrder,
   queryRepairOrderList,
   downloadBatchRepairOrderTemplate,
@@ -849,6 +888,26 @@ export default {
   // mixins: [tableMixin],
   data() {
     return {
+      // 设置标签
+      setOrderTagDialogVisible: false,
+      handleOrderLabelParams: {
+        label: null,
+        orderSn: null,
+      },
+      lablelList: [
+        {
+          value: "普通",
+          type: "",
+        },
+        {
+          value: "199",
+          type: "success",
+        },
+        {
+          value: "299",
+          type: "warning",
+        },
+      ],
       // 同步
       testDataTip: null,
       testDataOrderSns: null,
@@ -1049,6 +1108,45 @@ export default {
     this._queryRepairOrderList();
   },
   methods: {
+    //
+    downloadFn() {},
+    // 确定设置标签
+    async handleOrderLabel() {
+      if (!this.handleOrderLabelParams.label) {
+        this.$message({
+          message: "请填写标签内容",
+          type: "warning",
+        });
+        return;
+      }
+      const res = await handleOrderLabel(this.handleOrderLabelParams);
+      if (res.code == "000") {
+        this.$message({
+          message: res.message,
+          type: "success",
+        });
+        this.closeSetOrderTagDialog();
+        this._queryRepairOrderList();
+      }
+    },
+    // 关闭订单标签框
+    closeSetOrderTagDialog() {
+      this.handleOrderLabelParams = {
+        label: null,
+        orderSn: null,
+      };
+      this.setOrderTagDialogVisible = false;
+    },
+    // 设置订单标签 ps:199套餐
+    setOrderTag(row) {
+      this.handleOrderLabelParams.orderSn = row.orderSn;
+      if (row.label) {
+        this.handleOrderLabelParams.label = row.label;
+      } else {
+        this.handleOrderLabelParams.label = "普通";
+      }
+      this.setOrderTagDialogVisible = true;
+    },
     // 确定同步
     async testData() {
       if (!this.testDataOrderSns) {
@@ -1420,6 +1518,12 @@ export default {
       queryRepairOrderList(data)
         .then((res) => {
           if (res) {
+            // 初始化标签
+            res.data.records.forEach((item) => {
+              if (!item.label) {
+                item.label = "普通";
+              }
+            });
             this.dataList = res.data.records;
             this.pageCount = res.data.total;
           }

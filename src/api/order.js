@@ -939,3 +939,12 @@ export function testData(orderSns) {
 		method: 'get'
 	})
 }
+
+// 设置订单标签
+export function handleOrderLabel(data) {
+	return request({
+		url: `/admin/maintenance/handleOrderLabel`,
+		method: 'post',
+    data
+	})
+}

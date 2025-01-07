@@ -69,15 +69,26 @@
           <div class="oneline">
             <div class="item1">需求信息:</div>
             <div class="item2">
-              <div v-if="data.no">
+              <div style="display: flex; align-items: center">
                 订单类型:
-                <span>{{
-                  data.orderType == 1
-                    ? "散单"
-                    : data.orderType == 2
-                    ? "年保"
-                    : "年卡"
-                }}</span>
+                <span>
+                  {{
+                    data.orderType == 1
+                      ? "散单"
+                      : data.orderType == 2
+                      ? "年保"
+                      : "年卡"
+                  }}
+                </span>
+                <div
+                  style="margin-bottom: 0"
+                  v-for="item in lablelList"
+                  :key="item.value"
+                >
+                  <el-tag v-if="data.label == item.value" :type="item.type">{{
+                    item.value
+                  }}</el-tag>
+                </div>
               </div>
               <div v-if="data.no">
                 设备编码: <span>{{ data.no }}</span>
@@ -96,6 +107,9 @@
               </div>
               <div>
                 设备系统: <span>{{ data.deviceSystemName }}</span>
+              </div>
+              <div v-if="data.deviceRemark">
+                设备备注: <span>{{ data.deviceRemark }}</span>
               </div>
               <div>
                 期望时间: <span>{{ data.serviceTime }}</span>
@@ -317,11 +331,11 @@
                     代企业确认师傅报价
                   </div></el-dropdown-item
                 >
-                <el-dropdown-item
+                <!-- <el-dropdown-item
                   ><div @click="handleEnterpriseCheck(item.orderSn)">
                     代企业确认验收
                   </div></el-dropdown-item
-                >
+                > -->
                 <el-dropdown-item
                   ><div @click="handleProxyPayment(item.orderSn)">
                     代企业付款
@@ -730,7 +744,7 @@
 
               <el-table-column align="center" label="配件总金额" width="100">
                 <template slot-scope="{ row }">
-                  <div style="color: red">￥{{ row.num * row.price }}</div>
+                  <div style="color: red">￥{{ row.totalMoney }}</div>
                 </template>
               </el-table-column>
               <el-table-column align="center" label="快递公司" width="100">
@@ -1458,6 +1472,7 @@
           <el-input
             placeholder="请输入师傅协商价格"
             type="number"
+            :disabled="data.label == '普通'"
             @mousewheel.native.prevent
             v-model.number="examineFaultsForm.masterConsultAmount"
           ></el-input>
@@ -1467,6 +1482,7 @@
             placeholder="请输入企业协商价格"
             type="number"
             @mousewheel.native.prevent
+            @input="changeEnterpriseConsultAmount"
             v-model.number="examineFaultsForm.enterpriseConsultAmount"
           ></el-input>
         </el-form-item>
@@ -2064,7 +2080,7 @@
             >
             </el-date-picker>
           </el-form-item>
-          <el-form-item label="工单照片" prop="offlineImages">
+          <!-- <el-form-item label="工单照片" prop="offlineImages">
             <el-upload
               :file-list="offlineImagesList"
               ref="uploadOfflineImagesRef"
@@ -2076,7 +2092,7 @@
             >
               <i class="el-icon-plus"></i>
             </el-upload>
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item label="完工照片" prop="completeImages">
             <div>
               <el-upload
@@ -2730,6 +2746,21 @@ export default {
   title: "maintenance_order_desc",
   data() {
     return {
+      // 标签类型
+      lablelList: [
+        {
+          value: "普通",
+          type: "",
+        },
+        {
+          value: "199",
+          type: "success",
+        },
+        {
+          value: "299",
+          type: "warning",
+        },
+      ],
       // 质保金扣款
       deductQualityMoneyDialogVisible: false,
       handleDeductQualityMoneyParams: {
@@ -2774,7 +2805,6 @@ export default {
       remindStartedDialogVisible: false,
       handleSubmitAcceptanceParams: {
         completeImages: "",
-        offlineImages: "",
         orderSn: "",
         time: "",
       },
@@ -2799,11 +2829,11 @@ export default {
         time: [
           { required: true, message: "请选择验收时间", trigger: "change" },
         ],
-        offlineImages: [
-          { required: true, message: "请上传线下工单", trigger: "change" },
-        ],
+        // offlineImages: [
+        //   { required: true, message: "请上传线下工单", trigger: "change" },
+        // ],
         completeImages: [
-          { required: true, message: "请上传线下工单", trigger: "change" },
+          { required: true, message: "请上传完工照片", trigger: "change" },
         ],
       },
       // 代师傅操作
@@ -2985,6 +3015,11 @@ export default {
     },
   },
   methods: {
+    // 修改企业协商价格
+    changeEnterpriseConsultAmount() {
+      this.examineFaultsForm.masterConsultAmount =
+        this.examineFaultsForm.enterpriseConsultAmount;
+    },
     // 确定质保金扣款
     async handleDeductQualityMoney() {
       await this.$refs["handleDeductQualityMoneyRef"].validate();
@@ -3235,7 +3270,7 @@ export default {
       };
       this.completeImagesList = [];
       this.offlineImagesList = [];
-      this.$refs.uploadOfflineImagesRef.$children[1].$el.style.display = "";
+      // this.$refs.uploadOfflineImagesRef.$children[1].$el.style.display = "";
       this.$refs.uploadCompleteImagesRef.$children[1].$el.style.display = "";
       this.submitAcceptanceDialogVisible = false;
     },
@@ -3462,11 +3497,6 @@ export default {
     // 打开协商价格框
     openConsultPriceDialog(orderSn, doorAmount, remarks, consultDoorAmount) {
       this.consultCostParams.orderSn = orderSn;
-      if (consultDoorAmount) {
-        this.consultCostParams.amount = consultDoorAmount;
-      } else {
-        this.consultCostParams.amount = doorAmount ? +doorAmount : 0;
-      }
       this.consultCostParams.remarks = remarks ? remarks : "无";
       this.consultPriceVisible = true;
     },
@@ -3906,6 +3936,11 @@ export default {
     // 打开故障项目审核框
     openExamineFaultsDialog(row, orderSn, orderType) {
       this.examineFaultsForm = { ...row };
+      // 普通订单 企业协商价==师傅协商价
+      if (this.data.label == "普通") {
+        this.examineFaultsForm.masterConsultAmount =
+          this.examineFaultsForm.enterpriseConsultAmount;
+      }
       // 默认赋值年报价 没有散单价这个东西
       if (!this.examineFaultsForm.enterpriseConsultAmount) {
         this.examineFaultsForm.enterpriseConsultAmount =
@@ -4441,7 +4476,9 @@ export default {
               // 回显配件
               if (item.parts) {
                 item.parts = JSON.parse(item.parts);
-                console.log(4097, item.parts);
+                item.parts.forEach((item) => {
+                  item.totalMoney = (item.num * item.price).toFixed(2);
+                });
               }
               // 回显完工照片
               if (item.completeImages) {
@@ -4467,6 +4504,10 @@ export default {
                 this.partItemSend = true;
               }
             });
+          }
+
+          if (!res.data.label) {
+            res.data.label = "普通";
           }
 
           this.data = res.data;

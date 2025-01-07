@@ -74,9 +74,9 @@
       <el-table :data="moneyList" border style="width: 100%">
         <el-table-column align="center" prop="createTime" label="操作时间">
         </el-table-column>
-        <el-table-column align="center" prop="accountType" label="类型">
+        <el-table-column align="center" prop="accountTypeName" label="类型名称">
         </el-table-column>
-        <el-table-column align="center" prop="accountDesc" label="类型名称">
+        <el-table-column align="center" prop="accountDesc" label="描述">
         </el-table-column>
         <el-table-column align="center" prop="serialNumber" label="交易单号">
         </el-table-column>
@@ -111,7 +111,7 @@ export default {
       accountMoneyList: null,
       queryMoneyListParams: {
         isOut: "",
-        moneyType: 1,
+        moneyType: "",
         pageNo: 1,
         pageSize: 10,
         queryTime: null,
@@ -135,12 +135,20 @@ export default {
       ],
       moneyTypeList: [
         {
+          value: "",
+          label: "全部",
+        },
+        {
           value: 1,
           label: "用户余额",
         },
         {
           value: 3,
           label: "质保金",
+        },
+        {
+          value: 4,
+          label: "冻结余额",
         },
       ],
       queryTimeData: null,
@@ -156,7 +164,7 @@ export default {
     resetQueryMoneyListFn() {
       this.queryMoneyListParams = {
         isOut: "",
-        moneyType: 1,
+        moneyType: "",
         pageNo: 1,
         pageSize: 10,
         queryTime: null,
