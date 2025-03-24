@@ -28,9 +28,9 @@ export function queryEnterpriseList(data) {
 
 //
 // 查询企业名称
-export function queryEnterpriseName(data) {
+export function queryEnterpriseName(query) {
   return request({
-    url: "/admin/maintenance/queryEnterpriseName?query=" + data,
+    url: "/admin/maintenance/queryEnterpriseName?query=" + query,
     method: "get",
   });
 }

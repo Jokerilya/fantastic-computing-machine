@@ -843,6 +843,7 @@ export default {
       this.editForm.id = this.editId;
       this.editForm.address = this.editForm.enterpriseAddress;
       const res1 = await editEnterpriseInfo(this.editForm);
+      console.log(846, this.editForm);
       if (res1.message === "操作成功") {
         this.$message({
           message: "编辑成功!",

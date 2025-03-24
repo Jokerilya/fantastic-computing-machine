@@ -70,29 +70,39 @@
             }"
           >
             <el-table-column
+              width="150"
               prop="enterpriseName"
               label="客户名称"
             ></el-table-column>
-            <el-table-column label="类型">
+            <el-table-column label="类型" width="70">
               <template slot-scope="{ row }">
                 {{ row.type === 1 ? "普通" : row.type === 2 ? "年保" : "年卡" }}
               </template>
             </el-table-column>
-            <el-table-column prop="no" label="设备编号"></el-table-column>
+            <el-table-column
+              prop="no"
+              label="设备编号"
+              width="120"
+            ></el-table-column>
             <!-- <el-table-column prop="nameplateImg" label="设备铭牌">
             </el-table-column> -->
-            <el-table-column label="设备状态">
+            <el-table-column label="设备状态" width="80">
               <template slot-scope="{ row }">
                 <div v-if="row.status === 0" style="color: #4093ff">进行中</div>
                 <div v-if="row.status === 1" style="color: #04d372">报修中</div>
                 <!-- 数据暂时没有提供 <div style="color:#ff4b4b;">已停保</div> -->
               </template>
             </el-table-column>
-            <el-table-column prop="deviceTypeName" label="设备类型">
-            </el-table-column>
-            <el-table-column prop="enterpriseDeviceNo" label="企业设备编码">
+            <el-table-column prop="deviceTypeName" label="设备类型" width="120">
             </el-table-column>
             <el-table-column
+              prop="enterpriseDeviceNo"
+              label="企业设备编码"
+              width="120"
+            >
+            </el-table-column>
+            <el-table-column
+              width="120"
               prop="enterpriseDevicePosition"
               label="企业设备位置"
             >
@@ -111,14 +121,14 @@
             </el-table-column>
             <el-table-column prop="createTime" label="创建时间" width="140">
             </el-table-column>
-            <el-table-column label="维保时间">
+            <el-table-column label="维保时间" width="120">
               <template slot-scope="{ row }">
                 {{ row.startTime }}
                 <div>—</div>
                 {{ row.endTime }}
               </template>
             </el-table-column>
-            <el-table-column label="操作">
+            <el-table-column label="操作" width="180">
               <template slot-scope="{ row }">
                 <div style="color: #0b2059">
                   <a
@@ -126,7 +136,12 @@
                     @click.prevent="goEquipmentDetails(row.id)"
                     >详情</a
                   >
-                  <a @click.prevent="editEquipmentPage(row.id)">编辑</a>
+                  <a
+                    style="margin-right: 10px"
+                    @click.prevent="editEquipmentPage(row.id)"
+                    >编辑</a
+                  >
+                  <a @click.prevent="goToDevicecode(row.no)">查看设备码</a>
                 </div>
               </template>
             </el-table-column>
@@ -151,7 +166,7 @@
 </template>
 
 <script>
-import { getEquipmentList } from "@/api/equipmentManagement";
+import { getEquipmentList, getDeviceInfoCode } from "@/api/equipmentManagement";
 import { queryDeviceTypeList } from "@/api/order";
 export default {
   data() {
@@ -182,6 +197,22 @@ export default {
     };
   },
   methods: {
+    // 前往设备码页面
+    async goToDevicecode(no) {
+      const loading = this.$loading({
+        lock: true,
+        text: "正在获取设备码",
+        spinner: "el-icon-loading",
+        background: "rgba(0, 0, 0, 0.7)",
+      });
+      const res = await getDeviceInfoCode(no);
+      if (res.code == "000") {
+        loading.close();
+        window.open(res.data);
+      } else {
+        loading.close();
+      }
+    },
     // 跳转新增
     addEquipmentPage() {
       this.$router.push(

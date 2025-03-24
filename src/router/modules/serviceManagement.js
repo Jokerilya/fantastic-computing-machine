@@ -18,7 +18,7 @@ const router = {
       path: "/serviceManagement/customerManagement",
       name: "customerManagement",
       component: () => import("@/views/maintenance/customerManagement"),
-      meta: { title: "客户管理" },
+      meta: { title: "客户明细" },
     },
     {
       path: "/serviceManagement/giveawayRewards",

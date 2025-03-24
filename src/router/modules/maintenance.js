@@ -9,29 +9,11 @@ const router = {
   meta: { title: "维保管理", icon: "el-icon-mouse" },
   children: [
     {
-      path: "/maintenance/system",
-      name: "System",
-      component: () => import("@/views/maintenance/system"),
-      meta: { title: "设备系统" },
-    },
-    {
-      path: "/maintenance/type",
-      name: "Type",
-      component: () => import("@/views/maintenance/type"),
-      meta: { title: "设备类型" },
-    },
-    {
       path: "/maintenance/programme_order",
       name: "programme_order",
       component: () => import("@/views/maintenance/programme_order"),
       meta: { title: "编程订单" },
       hidden: true,
-    },
-    {
-      path: "/maintenance/maintenance_order",
-      name: "maintenance_order",
-      component: () => import("@/views/maintenance/maintenance_order"),
-      meta: { title: "维保工单" },
     },
     // {
     //   path: "/maintenance/autoSendOrders",
@@ -39,89 +21,6 @@ const router = {
     //   component: () => import("@/views/maintenance/autoSendOrders"),
     //   meta: { title: "自动派单" },
     // },
-    {
-      path: "/maintenance/faultItemPricing",
-      name: "faultItemPricing",
-      component: () => import("@/views/maintenance/faultItemPricing"),
-      meta: { title: "故障定价" },
-    },
-    {
-      path: "/maintenance/maintenance_order_desc",
-      name: "maintenance_order_desc",
-      component: () => import("@/views/maintenance/maintenance_order_desc"),
-      meta: { title: "维保订单详情", noShow: "true" },
-    },
-    {
-      path: "/maintenance/worker",
-      name: "worker",
-      component: () => import("@/views/maintenance/worker/worker.vue"),
-      meta: { title: "师傅列表" },
-    },
-    {
-      path: "/maintenance/enterpriseList",
-      name: "enterpriseList",
-      component: () => import("@/views/maintenance/enterpriseList"),
-      meta: { title: "企业列表" },
-    },
-    {
-      path: "/maintenance/checkPricing",
-      name: "checkPricing",
-      component: () => import("@/views/maintenance/checkPricing"),
-      meta: { title: "检测定价", noShow: "true" },
-    },
-    {
-      path: "/maintenance/amendPricing",
-      name: "amendPricing",
-      component: () => import("@/views/maintenance/amendPricing"),
-      meta: { title: "修改定价", noShow: "true" },
-    },
-
-    {
-      path: "/maintenance/customer",
-      name: "customer",
-      component: () => import("@/views/maintenance/customer"),
-      meta: { title: "年保合同" },
-    },
-    {
-      path: "/maintenance/customerDetail",
-      name: "customerDetail",
-      component: () => import("@/views/maintenance/customerDetail"),
-      meta: { title: "年保订单详情", noShow: "true" },
-    },
-    {
-      path: "/maintenance/equipmentManagement",
-      name: "equipmentManagement",
-      component: () =>
-        import("@/views/maintenance/equipmentManagement/equipmentManagement"),
-      meta: { title: "设备管理" },
-    },
-    {
-      path: "/maintenance/equipmentManagement/equipmentDetails",
-      name: "equipmentDetails",
-      component: () =>
-        import("@/views/maintenance/equipmentManagement/equipmentDetails"),
-      meta: { title: "设备详情", noShow: "true" },
-    },
-    {
-      path: "/maintenance/agentOrder",
-      name: "agentOrder",
-      component: () => import("@/views/maintenance/agentOrder"),
-      meta: { title: "设备详情", noShow: "true" },
-    },
-    {
-      path: "/maintenance/worker/workerDetails",
-      name: "workerDetails",
-      component: () => import("@/views/maintenance/worker/workerDetails"),
-      meta: { title: "师傅详情", noShow: "true" },
-    },
-    {
-      path: "/maintenance/assignedWorker",
-      name: "assignedWorker",
-      component: () => import("@/views/maintenance/assignedWorker"),
-      meta: { title: "指派师傅", noShow: "true" },
-    },
-
-    // 暂时 不用这个功能 后续看情况补上
     {
       path: "/maintenance/maintenance",
       name: "maintenance",
@@ -135,78 +34,6 @@ const router = {
         import("@/views/maintenance/equipmentManagement/addEquipment.vue"),
       meta: { title: "新增设备管理", noShow: "true" },
     },
-
-    // 保养明细模块
-    {
-      path: "/maintenance/upkeepDetailModule",
-      name: "upkeepDetailModule",
-      component: () => import("@/views/maintenance/upkeepDetailModule"),
-      meta: { title: "保养记录" },
-    },
-
-    
-    {
-      path: "/activity/message",
-      name: "Message",
-      component: () => import("@/views/activity/message"),
-      meta: { title: "产品咨询列表"},
-    },
-
-    // 物流详情
-		{
-			path:'/maintenance/logisticsDetails',
-			name:'logisticsDetails',
-			component: () => import('@/views/maintenance/logisticsDetails'),
-			meta: { title: '物流详情'},
-			hidden:true
-		},
-
-    // 师傅考核列表
-    {
-      path: "/maintenance/examineItem",
-      name: "examineItem",
-      component: () => import("@/views/maintenance/examineItem"),
-      meta: { title: "师傅考核" },
-    },
-    {
-      path: "/maintenance/examineRecord",
-      name: "examineRecord",
-      component: () => import("@/views/maintenance/examineRecord"),
-      meta: { title: "师傅考核记录" },
-      hidden:true
-    },
-
-    // 保险模块
-    {
-      path: "/maintenance/insuranceManage",
-      name: "insuranceManage",
-      component: () => import("@/views/maintenance/insuranceModule/index.vue"),
-      meta: { title: "保险管理" },
-    },
-
-     // 供应商管理
-     {
-      path: "/maintenance/supplierList",
-      name: "supplierList",
-      component: () => import("@/views/maintenance/supplierList.vue"),
-      meta: { title: "供应商管理" },
-    },
-
-    // 师傅订单折扣记录
-    {
-      path: "/maintenance/masterOrderDiscount",
-      name: "masterOrderDiscount",
-      component: () => import("@/views/maintenance/masterOrderDiscount.vue"),
-      meta: { title: "订单折扣记录" },
-    },
-
-    //钱包模块
-    {
-      path: "/maintenance/purse/purseDetails",
-      name: "purseDetails",
-      component: () => import("@/views/maintenance/purse/purseDetails.vue"),
-      meta: { title: "钱包详情" , noShow: "true"},
-    }
   ],
 };
 export default router;

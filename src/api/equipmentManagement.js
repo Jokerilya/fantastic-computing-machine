@@ -52,3 +52,11 @@ export function editDeviceInfo(data) {
     data,
   });
 }
+
+// 展示设备码
+export function getDeviceInfoCode(no) {
+	return request({
+		url: `/admin/maintenance/getDeviceInfoCode?no=${no}`,
+		method: 'get'
+	})
+}

@@ -377,6 +377,15 @@ export function handleMasterIdentity(data) {
   });
 }
 
+// 设置师傅身份 (1 兼职  2 签约  3 全职 )
+export function handleMasterType(data) {
+  return request({
+    url: "/admin/maintenance/handleMasterType",
+    method: "post",
+    data,
+  });
+}
+
 // 批量下单导入
 export function uploadBatchRepairOrder(data) {
   return request({

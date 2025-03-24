@@ -431,14 +431,14 @@
                       >成员</el-button
                     >
                   </el-option>
-                  <el-option v-if="row.identity === '普通师傅'">
+                  <!-- <el-option v-if="row.identity === '普通师傅'">
                     <el-button
                       size="mini"
                       type="success"
                       @click="openChooseRoseDialog(row.uid)"
                       >角色</el-button
                     >
-                  </el-option>
+                  </el-option> -->
                   <el-option>
                     <el-button
                       size="mini"
@@ -459,8 +459,8 @@
                     >
                   </el-option>
                   <el-option>
-                    <el-button size="mini" @click="goToPursePage(row)"
-                      >钱包</el-button
+                    <el-button size="mini" @click="openEditWorkerIdDialog(row)"
+                      >身份</el-button
                     >
                   </el-option>
                 </el-select>
@@ -1112,6 +1112,31 @@
         <el-button type="primary" @click="confirmSetActive">确 定</el-button>
       </span>
     </el-dialog>
+
+    <!-- 设置师傅身份 -->
+    <el-dialog
+      title="设置师傅身份"
+      :visible="setWorkerIdDialog"
+      width="30%"
+      center
+      :before-close="closeEditWorkerIdDialog"
+    >
+      <div class="setActiveDialog">
+        <el-form label-width="20%">
+          <el-form-item label="师傅身份:  ">
+            <el-radio-group v-model="submitSetWorkerIdParams.type">
+              <el-radio :label="1">兼职师傅</el-radio>
+              <el-radio :label="2">签约师傅</el-radio>
+              <el-radio :label="3">全职师傅</el-radio>
+            </el-radio-group>
+          </el-form-item>
+        </el-form>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeEditWorkerIdDialog">取 消</el-button>
+        <el-button type="primary" @click="confirmEditWorkerId">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -1194,12 +1219,19 @@ import {
   handleMasterIntegral,
   queryMasterIntegralList,
   handleActiveMaster,
+  handleMasterType,
 } from "@/api/order.js";
 export default {
   title: "course",
   mixins: [tableMixin],
   data() {
     return {
+      setWorkerIdDialog: false,
+      submitSetWorkerIdParams: {
+        uid: null,
+        type: null,
+      },
+
       setActiveParmas: {
         uid: "",
         flag: "",
@@ -1478,14 +1510,33 @@ export default {
     this._getMasterList();
   },
   methods: {
-    // 跳转钱包页面
-    goToPursePage(row) {
-      this.$router.push({
-        name: "purseDetails",
-        // query: { realName: row.realName, uid: row.uid },
-        query: { row },
-      });
+    // 确定更改师傅身份
+    async confirmEditWorkerId() {
+      const res = await handleMasterType(this.submitSetWorkerIdParams);
+      if (res.code == "000") {
+        this.$message({
+          message: res.message,
+          type: "success",
+        });
+        this._getMasterList();
+        this.closeEditWorkerIdDialog();
+      }
     },
+    // 关闭更改师傅身份框
+    closeEditWorkerIdDialog() {
+      this.submitSetWorkerIdParams = {
+        uid: null,
+        type: null,
+      };
+      this.setWorkerIdDialog = false;
+    },
+    // 打开更改师傅身份框
+    openEditWorkerIdDialog(row) {
+      this.submitSetWorkerIdParams.uid = row.uid;
+      this.submitSetWorkerIdParams.type = row.type;
+      this.setWorkerIdDialog = true;
+    },
+
     // 切换创建时间
     changeQueryTimeCopy() {
       this.queryMasterListParams.queryTime =

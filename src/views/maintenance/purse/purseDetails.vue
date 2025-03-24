@@ -1,67 +1,67 @@
 <template>
   <div class="purseDetails">
     <el-card>
-      <el-descriptions title="钱包信息" :column="4">
-        <el-descriptions-item label="姓名">{{
-          masterInfo.realName
-        }}</el-descriptions-item>
-        <el-descriptions-item label="余额"
-          >￥{{
-            accountMoneyList.balanceAmount ? accountMoneyList.balanceAmount : 0
-          }}</el-descriptions-item
-        >
-        <el-descriptions-item label="冻结余额"
-          >￥{{
-            accountMoneyList.freezeBalanceAmount
-              ? accountMoneyList.freezeBalanceAmount
-              : 0
-          }}</el-descriptions-item
-        >
-        <el-descriptions-item label=" 质保金额"
-          >￥{{
-            accountMoneyList.retentionMoney
-              ? accountMoneyList.retentionMoney
-              : 0
-          }}</el-descriptions-item
-        >
-      </el-descriptions>
+      <div class="master">
+        <div class="masterTitle">
+          钱包信息
+        </div>
+        <div class="masterInfo">
+          <div class="masterInfoItem">
+            <div class="masterInfoItem_label">
+              师傅姓名：
+            </div>
+            <div class="masterInfoItem_value">
+              <el-select v-model="masterInfoRealName" filterable remote reserve-keyword placeholder="请输入师傅名称"
+                :remote-method="querySearchRealName" @change="confirmMasterRealName">
+                <el-option v-for="item in searchMasterList" :key="item.uid" :label="item.realName" :value="item.uid">
+                </el-option>
+              </el-select>
+            </div>
+          </div>
+          <div class="masterInfoItem">
+            <div class="masterInfoItem_label">
+              余额：
+            </div>
+            <div class="masterInfoItem_value">
+              ￥{{
+                accountMoneyList.balanceAmount
+              }}
+            </div>
+          </div>
+          <div class="masterInfoItem">
+            <div class="masterInfoItem_label">
+              冻结余额：
+            </div>
+            <div class="masterInfoItem_value">
+              ￥{{
+                accountMoneyList.freezeBalanceAmount
+              }}
+            </div>
+          </div>
+          <div class="masterInfoItem">
+            <div class="masterInfoItem_label">
+              质保金额：
+            </div>
+            <div class="masterInfoItem_value">
+              ￥{{
+                accountMoneyList.retentionMoney
+              }}
+            </div>
+          </div>
+        </div>
+      </div>
     </el-card>
     <div class="searchBox">
       <div class="leftSearchData">
-        <el-date-picker
-          @change="changeQueryTimeData"
-          v-model="queryTimeData"
-          value-format="yyyy-MM-dd"
-          type="daterange"
-          range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          style="margin: 10px"
-        >
+        <el-date-picker @change="changeQueryTimeData" v-model="queryTimeData" value-format="yyyy-MM-dd" type="daterange"
+          range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" style="margin: 10px">
         </el-date-picker>
-        <el-select
-          style="margin: 10px"
-          v-model="queryMoneyListParams.isOut"
-          placeholder="请选择"
-        >
-          <el-option
-            v-for="item in isOutList"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          >
+        <el-select style="margin: 10px" v-model="queryMoneyListParams.isOut" placeholder="请选择">
+          <el-option v-for="item in isOutList" :key="item.value" :label="item.label" :value="item.value">
           </el-option>
         </el-select>
-        <el-select
-          v-model="queryMoneyListParams.moneyType"
-          placeholder="请选择"
-        >
-          <el-option
-            v-for="item in moneyTypeList"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          >
+        <el-select v-model="queryMoneyListParams.moneyType" placeholder="请选择">
+          <el-option v-for="item in moneyTypeList" :key="item.value" :label="item.label" :value="item.value">
           </el-option>
         </el-select>
       </div>
@@ -89,13 +89,8 @@
         </el-table-column>
       </el-table>
       <div style="text-align: center; margin-top: 20px">
-        <el-pagination
-          :page-size="queryMoneyListParams.pageSize"
-          background
-          layout="prev, pager, next"
-          :total="moneyListTotal"
-          @current-change="changePageNo"
-        >
+        <el-pagination :page-size="queryMoneyListParams.pageSize" background layout="prev, pager, next"
+          :total="moneyListTotal" @current-change="changePageNo">
         </el-pagination>
       </div>
     </el-card>
@@ -104,11 +99,18 @@
 
 <script>
 import { getAccountMoney, queryMoneyList } from "@/api/user";
+import { queryMasterName } from "@/api/order";
 export default {
   data() {
     return {
+      masterInfoRealName: null,
+      searchMasterList: [],
       masterInfo: null,
-      accountMoneyList: null,
+      accountMoneyList: {
+        retentionMoney: 0,
+        freezeBalanceAmount: 0,
+        balanceAmount: 0
+      },
       queryMoneyListParams: {
         isOut: "",
         moneyType: "",
@@ -155,6 +157,19 @@ export default {
     };
   },
   methods: {
+    // 确定师傅名称
+    confirmMasterRealName(uid) {
+      this.queryMoneyListParams.uid = uid
+      this.getAccountMoney();
+      this.queryMoneyList();
+    },
+    // 查找师傅名称
+    async querySearchRealName(e) {
+      const res = await queryMasterName(e)
+      if (res.code == '000') {
+        this.searchMasterList = res.data
+      }
+    },
     // 切换页码
     changePageNo(page) {
       this.queryMoneyListParams.pageNo = page;
@@ -199,22 +214,50 @@ export default {
     },
   },
   created() {
-    this.masterInfo = this.$route.query.row;
-    this.queryMoneyListParams.uid = this.masterInfo.uid;
-    this.getAccountMoney();
-    this.queryMoneyList();
+    // this.masterInfo = this.$route.query.row;
+    // this.queryMoneyListParams.uid = this.masterInfo.uid;
+    // this.getAccountMoney();
+    // this.queryMoneyList();
   },
 };
 </script>
 
 <style scoped lang="scss">
+.master {
+  .masterTitle {
+    font-weight: 700;
+    margin-bottom: 20px;
+  }
+
+  .masterInfo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+
+    .masterInfoItem {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      .masterInfoItem_label {
+        margin-right: 5px;
+      }
+      .masterInfoItem_value{
+
+      }
+    }
+  }
+}
+
 .purseDetails {
   padding: 20px;
+
   .searchBox {
     margin: 20px 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
+
     .leftSearchData {
       display: flex;
       align-items: center;

@@ -46,6 +46,7 @@
               <el-select v-model="searchForm.orderType" placeholder="请选择">
                 <el-option label="散单" :value="1">散单</el-option>
                 <el-option label="年保" :value="2">年保</el-option>
+                <el-option label="年卡" :value="3">年卡</el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -435,7 +436,12 @@
                 @click="openRemarksDialog(row)"
                 >备注</el-button
               >
-              <el-button type="info" size="mini" plain @click="setOrderTag(row)"
+              <el-button
+                v-if="row.orderType == 1"
+                type="info"
+                size="mini"
+                plain
+                @click="setOrderTag(row)"
                 >设置</el-button
               >
               <!-- <el-button
@@ -489,8 +495,6 @@
           align="center"
         ></el-table-column> -->
       </el-table>
-
-      <!-- 分页 -->
 
       <!-- @size-change="handleSizeChange" -->
       <div style="text-align: center; margin-top: 20px">
@@ -1090,6 +1094,7 @@ export default {
         no,
         orderSn,
         platformStatus,
+        queryTime,
       } = queryRepairDataStr;
       this.currentPage = pageNo;
       this.pageSize = pageSize;
@@ -1099,6 +1104,10 @@ export default {
       this.searchForm.no = no;
       this.searchForm.orderSn = orderSn;
       this.searchForm.platformStatus = platformStatus;
+      this.searchForm.queryTime = queryTime;
+      if (this.searchForm.queryTime) {
+        this.queryTimeCopy = this.searchForm.queryTime.split("~");
+      }
     } else {
       this.currentPage = 1;
       this.pageSize = 10;
@@ -1118,6 +1127,9 @@ export default {
           type: "warning",
         });
         return;
+      }
+      if (this.handleOrderLabelParams.label == "普通") {
+        this.handleOrderLabelParams.label = "";
       }
       const res = await handleOrderLabel(this.handleOrderLabelParams);
       if (res.code == "000") {

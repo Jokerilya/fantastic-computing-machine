@@ -50,3 +50,28 @@ export function queryStatistics(params) {
 		params,
 	});
 }
+
+// 查询企业-微信群映射关系
+export function queryEnterpriseWechatList(data) {
+	return request({
+		url: '/admin/base/queryEnterpriseWechatList',
+		method: 'post',
+		data,
+	});
+}
+// 保存企业-微信群映射关系
+export function saveEnterpriseWechat(data) {
+	return request({
+		url: '/admin/base/saveEnterpriseWechat',
+		method: 'post',
+		data,
+	});
+}
+//  删除企业-微信群映射关系
+export function deleteEnterpriseWechat(id) {
+	return request({
+		url: `/admin/base/deleteEnterpriseWechat?id=${id}`,
+		method: 'get',
+	});
+}
+

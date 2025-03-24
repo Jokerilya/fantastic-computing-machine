@@ -99,3 +99,11 @@ export function handleProxyCreateOrder(data) {
 	  data
     });
 }
+
+// 生成线上工单
+export function handleOnlineOrder(orderSn) {
+    return request({
+      url: "/admin/maintenance/proxy/handleOnlineOrder?orderSn="+orderSn ,
+      method: "get",
+    });
+}

@@ -7,25 +7,26 @@ import Layout from "@/layout";
 import systemRouter from "./modules/system.js";
 import activityRouter from "./modules/activity.js";
 import maintenanceRouter from "./modules/maintenance.js";
-import financialManagement from "./modules/financialManagement"; // 财务管理
-import invoiceManagement from "./modules/invoiceManagement"; // 发票管理
 import serviceManagement from "./modules/serviceManagement";
-// import contentRouter from './modules/content.js';
-// import schoolRouter from './modules/school.js';
-import orderRouter from "./modules/order.js";
-import installRouter from "./modules/install.js";
-import productRouter from "./modules/product.js";
-// import userRouter from './modules/user.js';
-import userListRouter from "./modules/userList.js";
-import newsRouter from "./modules/news.js";
-import talentRouter from "./modules/talent.js";
-import bossRouter from "./modules/boss.js";
-import storeController from "./modules/storeController";
 import messageRouter from "./modules/message";
 import statisticsStatementRouter from "./modules/statisticsStatement";
-import stashSetoutHandleRouter from "./modules/stashSetoutHandle";
-import withdrawalManagementRouter from "./modules/withdrawalManagement";
-import activityManageRouter from "./modules/activityManage.js";
+
+import orderManagement from "./modules/orderManagement"
+import masterManagement from "./modules/masterManagement";
+import enterpriseManagement  from "./modules/enterpriseManagement"
+
+// import orderRouter from "./modules/order.js";
+// import installRouter from "./modules/install.js";
+// import productRouter from "./modules/product.js";
+// import contentRouter from './modules/content.js';
+// import schoolRouter from './modules/school.js';
+// import userRouter from './modules/user.js';
+// import userListRouter from "./modules/userList.js";
+// import talentRouter from "./modules/talent.js";
+// import bossRouter from "./modules/boss.js";
+// import storeController from "./modules/storeController";
+// import stashSetoutHandleRouter from "./modules/stashSetoutHandle";
+
 
 export const constantRoutes = [
   {
@@ -80,25 +81,23 @@ export const constantRoutes = [
   //     }
   //   ]
   // },
-  stashSetoutHandleRouter,
-  messageRouter,
-  statisticsStatementRouter,
-  maintenanceRouter,
-  financialManagement,
-  withdrawalManagementRouter,
 
-  invoiceManagement,
+  messageRouter, // 消息列表
+  statisticsStatementRouter, // 统计报表
+  orderManagement, // 订单管理
+  masterManagement, // 师傅管理
+  enterpriseManagement, // 企业管理
   serviceManagement,
   systemRouter,
-  activityRouter,
-  activityManageRouter,
+  activityRouter, // 运营管理
 
+  // maintenanceRouter,
+  // stashSetoutHandleRouter,  // 仓库代处理
   // userListRouter,
   // storeController,
   // productRouter,
   // orderRouter,
   // installRouter,
-  newsRouter,
   // talentRouter,
   // bossRouter,
   // contentRouter,

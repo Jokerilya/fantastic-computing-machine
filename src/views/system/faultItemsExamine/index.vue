@@ -57,7 +57,7 @@
           <el-table-column label="故障项目" prop="simpleDesc" align="center">
           </el-table-column>
 
-          <el-table-column
+          <!-- <el-table-column
             label="师傅价格"
             prop="masterAmount"
             width="100"
@@ -77,8 +77,23 @@
             align="center"
             width="110"
           >
+          </el-table-column> -->
+          <el-table-column
+            label="锚定价"
+            prop="platAmount"
+            width="150"
+            align="center"
+          >
           </el-table-column>
-          <el-table-column label="操作" align="center">
+          <el-table-column
+            label="区间浮动价"
+            prop="intervalPrice"
+            width="150"
+            align="center"
+          >
+          </el-table-column>
+
+          <el-table-column label="操作" align="center" width="120">
             <template slot-scope="{ row }">
               <el-button type="text" @click="openExamineFaultItemsDialog(row)"
                 >修改</el-button
@@ -159,7 +174,7 @@
               placeholder="请输入故障编码"
             ></el-input>
           </el-form-item>
-          <el-form-item label="师傅价格:" prop="masterAmount">
+          <!-- <el-form-item label="师傅价格:" prop="masterAmount">
             <el-input
               v-model.number="examineFaultItemsParams.masterAmount"
               type="number"
@@ -178,6 +193,21 @@
               v-model.number="examineFaultItemsParams.generalAmount"
               type="number"
               placeholder="请输入散单企业价格"
+            ></el-input>
+          </el-form-item> -->
+          <el-form-item label="区间浮动价:" prop="intervalPrice">
+            <el-input
+              v-model="examineFaultItemsParams.intervalPrice"
+              placeholder="请输入区间浮动价"
+              disabled
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="锚定价:" prop="platAmount">
+            <el-input
+              v-model.number="examineFaultItemsParams.platAmount"
+              placeholder="请输入锚定价"
+              type="number"
+              @change="changePlatAmount"
             ></el-input>
           </el-form-item>
         </el-form>
@@ -231,25 +261,8 @@ export default {
         code: null,
       },
       examineFaultItemsRules: {
-        annualAmount: [
-          {
-            required: true,
-            message: "请输入年保企业展示价格",
-            trigger: "change",
-          },
-        ],
-        generalAmount: [
-          {
-            required: true,
-            message: "请输入散单企业展示价格",
-            trigger: "change",
-          },
-        ],
         machineType: [
           { required: true, message: "请选择机床类型", trigger: "change" },
-        ],
-        masterAmount: [
-          { required: true, message: "请输入师傅展示价格", trigger: "change" },
         ],
         position: [
           { required: true, message: "请选择故障部位", trigger: "change" },
@@ -260,10 +273,25 @@ export default {
         code: [
           { required: true, message: "请输入故障编码", trigger: "change" },
         ],
+        platAmount: [
+          { required: true, message: "请输入锚定价", trigger: "change" },
+        ],
+        intervalPrice: [
+          { required: true, message: "请输入区间浮动价", trigger: "change" },
+        ],
       },
     };
   },
   methods: {
+    // 修改锚定价
+    changePlatAmount(e) {
+      this.examineFaultItemsParams.generalAmount = Number(e) * 0.8;
+      this.examineFaultItemsParams.annualAmount = Number(e) * 1.2;
+      this.examineFaultItemsParams.intervalPrice =
+        this.examineFaultItemsParams.generalAmount +
+        "~" +
+        this.examineFaultItemsParams.annualAmount;
+    },
     // 通过故障描述查询故障项目列表
     async searchFaultList() {
       this.queryFaultItemsParams.pageNo = 1;
@@ -322,8 +350,12 @@ export default {
     async queryFaultItems() {
       const res = await queryFaultItems(this.queryFaultItemsParams);
       this.queryFaultItemsList = res.data.records;
+
+      res.data.records.forEach((item) => {
+        item.intervalPrice = item.generalAmount + "~" + item.annualAmount;
+      });
+
       this.total = res.data.total;
-      console.log(326, this.queryFaultItemsList);
     },
   },
   created() {
