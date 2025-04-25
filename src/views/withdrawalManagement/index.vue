@@ -54,13 +54,22 @@
         <!-- <el-table-column label="用户昵称" prop="nickName"> </el-table-column>
         <el-table-column label="用户电话" prop="phone" width="110">
         </el-table-column> -->
-        <el-table-column label="提现金额" prop="quota"> </el-table-column>
-        <el-table-column label="实际到账" prop="actualArrival">
+        <el-table-column label="提现金额" prop="quota">
+          <template slot-scope="{ row }">
+            {{ row.quota ? "￥" + row.quota : "/" }}
+          </template>
         </el-table-column>
+        <!-- <el-table-column label="实际到账" prop="actualArrival">
+        </el-table-column> -->
         <el-table-column label="收款人姓名" prop="payeeName"> </el-table-column>
         <el-table-column label="银行名称">
           <template slot-scope="{ row }">
             {{ row.bankName ? row.bankName : "/" }}
+          </template>
+        </el-table-column>
+        <el-table-column label="支行名称">
+          <template slot-scope="{ row }">
+            {{ row.bankBranchName ? row.bankBranchName : "/" }}
           </template>
         </el-table-column>
         <el-table-column label="银行卡号">
@@ -74,6 +83,18 @@
           </template>
         </el-table-column>
         <el-table-column label="流水号" prop="serialNumber"> </el-table-column>
+        <el-table-column label="关联单号">
+          <template slot-scope="{ row }">
+            <div
+              v-for="item in row.relationOrderSns"
+              :key="item"
+              @click="goToOrderDetails(item)"
+              style="color: #409eff; cursor: pointer"
+            >
+              {{ item }}
+            </div>
+          </template>
+        </el-table-column>
         <el-table-column label="审核时间">
           <template slot-scope="{ row }">
             {{ row.reviewTime ? row.reviewTime : "/" }}
@@ -91,6 +112,9 @@
               :disabled="row.status != 0"
               @click="openExamineWithdrawDialog(row.id)"
               >审核</el-button
+            >
+            <el-button type="text" v-if="row.status == 1" @click="remitFn(row)"
+              >打款</el-button
             >
           </template>
         </el-table-column>
@@ -126,7 +150,7 @@
       >
         <el-form-item label="审核状态" prop="status">
           <el-radio-group v-model="handleWithdrawalExamineParams.status">
-            <el-radio :label="2">通过并打款</el-radio>
+            <el-radio :label="1">通过</el-radio>
             <el-radio :label="-1">未通过</el-radio>
           </el-radio-group>
         </el-form-item>
@@ -189,6 +213,39 @@ export default {
     };
   },
   methods: {
+    // 打款
+    remitFn(item) {
+      this.$confirm(
+        `您是否要给【${item.payeeName}】打款 【￥${item.quota}】`,
+        "提示",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        }
+      ).then(async () => {
+        let params = {
+          id: item.id,
+          status: 2,
+        };
+        const res = await handleWithdrawalExamine(params);
+        if (res.code == "000") {
+          this.$message({
+            message: "打款成功",
+            type: "success",
+          });
+          this.queryWithdrawal();
+        }
+      });
+    },
+    // 跳转订单详情
+    goToOrderDetails(orderSn) {
+      const targetRoute = this.$router.resolve({
+        name: "maintenance_order_desc",
+        query: { orderSn },
+      });
+      window.open(targetRoute.href, "_blank");
+    },
     // 导出
     handleWithdrawalExport() {
       const loading = this.$loading({
@@ -214,7 +271,7 @@ export default {
     },
     // 审核确定
     async handleWithdrawalExamine() {
-      this.$refs["handleWithdrawalExamineRef"].validate();
+      await this.$refs["handleWithdrawalExamineRef"].validate();
       const res = await handleWithdrawalExamine(
         this.handleWithdrawalExamineParams
       );
@@ -269,6 +326,11 @@ export default {
       const res = await queryWithdrawal(this.queryWithdrawalParams);
       this.withdrawalList = res.data.data.records;
       this.withdrawalListTotal = res.data.data.total;
+      if (res.data.data.total > 0) {
+        res.data.data.records.forEach((item) => {
+          item.relationOrderSns = item.relationOrderSns.split(",");
+        });
+      }
     },
   },
   created() {

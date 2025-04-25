@@ -50,6 +50,12 @@ const router = {
       component: () => import("@/views/activity/message"),
       meta: { title: "产品咨询列表" },
     },
+    {
+      path: "/activity/systemNotice",
+      name: "SystemNotice",
+      component: () => import("@/views/activity/systemNotice"),
+      meta: { title: "系统消息" },
+    },
     // {
     //   path: "coupon",
     //   name: "Coupon",

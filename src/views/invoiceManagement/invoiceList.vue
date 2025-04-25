@@ -33,13 +33,29 @@
         <el-table-column label="发票单号" prop="orderSn"> </el-table-column>
         <el-table-column label="订单编号" prop="relationOrderSn">
         </el-table-column>
-        <el-table-column label="公司" prop="enterpriseName"> </el-table-column>
+        <el-table-column label="抬头名称" prop="enterpriseName">
+        </el-table-column>
         <!-- <el-table-column label="联系电话" prop="phone"> </el-table-column>
         <el-table-column label="地址" prop="enterpriseAddress">
         </el-table-column> -->
-        <el-table-column label="税号" prop="taxpayerNo"> </el-table-column>
+        <el-table-column label="单位税号" prop="taxpayerNo"> </el-table-column>
+        <el-table-column label="发票类型">
+          <template slot-scope="{ row }">
+            {{ row.type == 1 ? "普票" : "专票" }}
+          </template>
+        </el-table-column>
         <el-table-column label="税率">
           <template slot-scope="{ row }"> {{ row.taxPoints * 100 }}% </template>
+        </el-table-column>
+        <el-table-column label="联系电话">
+          <template slot-scope="{ row }">
+            {{ row.phone ? row.phone : "/" }}
+          </template>
+        </el-table-column>
+        <el-table-column label="电子邮箱">
+          <template slot-scope="{ row }">
+            {{ row.email ? row.email : "/" }}
+          </template>
         </el-table-column>
         <!-- <el-table-column label="开户银行" prop="bankName"> </el-table-column>
         <el-table-column label="银行卡号" prop="bankCode"> </el-table-column> -->

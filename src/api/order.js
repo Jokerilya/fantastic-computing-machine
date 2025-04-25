@@ -932,6 +932,15 @@ export function transferPartProduct(data) {
 	})
 }
 
+// 转移订单故障项目
+export function transferOrderFaultItem(data) {
+	return request({
+		url: `/admin/maintenance/transferOrderFaultItem`,
+		method: 'post',
+    data
+	})
+}
+
 // 修改师傅订单
 export function editEnrollRepairOrder(data) {
 	return request({

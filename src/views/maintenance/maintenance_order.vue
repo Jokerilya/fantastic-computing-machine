@@ -19,6 +19,7 @@
                 placeholder="请选择"
                 :remote-method="searchMaster"
                 remote
+                @change="changeInquireMasterFn"
               >
                 <el-option
                   v-for="item in masterSearchList"
@@ -1031,6 +1032,7 @@ export default {
         orderSn: "",
         finalExamineStatus: null,
         queryTime: null,
+        masterName: null,
       },
       queryTimeCopy: null,
       dataList: [],
@@ -1077,7 +1079,7 @@ export default {
       quotationForm: {},
     };
   },
-  created() {
+  async created() {
     // 获取本地存储
     let queryRepairDataStr;
     if (localStorage.getItem("queryRepairData")) {
@@ -1095,6 +1097,7 @@ export default {
         orderSn,
         platformStatus,
         queryTime,
+        masterName,
       } = queryRepairDataStr;
       this.currentPage = pageNo;
       this.pageSize = pageSize;
@@ -1108,6 +1111,13 @@ export default {
       if (this.searchForm.queryTime) {
         this.queryTimeCopy = this.searchForm.queryTime.split("~");
       }
+      if (masterName) {
+        const res = await getMasterList({
+          realName: masterName,
+        });
+        this.masterSearchList = res.data.records;
+        this.searchForm.masterUid = res.data.records[0].uid;
+      }
     } else {
       this.currentPage = 1;
       this.pageSize = 10;
@@ -1117,7 +1127,11 @@ export default {
     this._queryRepairOrderList();
   },
   methods: {
-    //
+    // 修改查询师傅
+    changeInquireMasterFn(uid) {
+      const index = this.masterSearchList.findIndex((item) => item.uid == uid);
+      this.searchForm.masterName = this.masterSearchList[index].realName;
+    },
     downloadFn() {},
     // 确定设置标签
     async handleOrderLabel() {
@@ -1414,7 +1428,6 @@ export default {
         realName: val,
       });
       this.masterSearchList = res.data.records;
-      console.log(625, this.masterSearchList);
     },
     // 确定添加备注
     async comfirmRemarks() {
@@ -1663,7 +1676,6 @@ export default {
       })[0].name;
     },
     _handleAssignMaster(row) {
-      console.log(row);
       let params = {
         enterpriseOrderSn: this.enterpriseOrderSn,
         masterUid: row.uid,

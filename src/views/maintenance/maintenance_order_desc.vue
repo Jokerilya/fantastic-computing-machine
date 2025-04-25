@@ -336,11 +336,11 @@
                     代企业确认验收
                   </div></el-dropdown-item
                 > -->
-                <!-- <el-dropdown-item
+                <el-dropdown-item
                   ><div @click="handleProxyPayment(item.orderSn)">
                     代企业付款
                   </div></el-dropdown-item
-                > -->
+                >
                 <el-dropdown-item
                   ><div @click="handleOnlineOrder(data.orderSn)">
                     生成线上工单
@@ -496,7 +496,9 @@
               <div>故障项目方案:</div>
               <el-button
                 type="primary"
-                @click="openAddFaultDialog(item.orderSn)"
+                @click="
+                  openAddFaultDialog(item.orderSn, item.isDateAfter20250301Val)
+                "
               >
                 新增故障项目</el-button
               >
@@ -527,16 +529,21 @@
               </el-table-column>
               <el-table-column label="故障部位" prop="position" align="center">
               </el-table-column>
-              <el-table-column
-                label="故障描述"
-                prop="simpleDesc"
-                align="center"
-              ></el-table-column>
-
+              <el-table-column label="故障描述" align="center">
+                <template slot-scope="{ row }">
+                  <div>{{ row.simpleDesc }}</div>
+                  <div
+                    v-if="row.previousMasterFlag && transferPartsShow"
+                    style="color: red"
+                  >
+                    (前师傅转移)
+                  </div>
+                </template>
+              </el-table-column>
               <el-table-column
                 label="区间浮动价"
                 align="center"
-                v-if="item.isDateAfter20250319Val"
+                v-if="item.isDateAfter20250301Val"
                 key="区间浮动价"
               >
                 <template slot-scope="{ row }">
@@ -546,7 +553,7 @@
               <el-table-column
                 label="师傅提交价格"
                 align="center"
-                v-if="item.isDateAfter20250319Val"
+                v-if="item.isDateAfter20250301Val"
                 key="师傅提交价格"
               >
                 <template slot-scope="{ row }">
@@ -558,7 +565,7 @@
                 label="师傅价格"
                 align="center"
                 key="师傅价格"
-                v-if="!item.isDateAfter20250319Val"
+                v-if="!item.isDateAfter20250301Val"
               >
                 <template slot-scope="{ row }">
                   {{ row.masterAmount ? row.masterAmount : "0" }}
@@ -568,7 +575,7 @@
                 label="年保企业价格"
                 align="center"
                 key="年保企业价格"
-                v-if="data.orderType != 1 && !item.isDateAfter20250319Val"
+                v-if="data.orderType != 1 && !item.isDateAfter20250301Val"
               >
                 <template slot-scope="{ row }">
                   {{ row.annualAmount }}
@@ -578,7 +585,7 @@
                 label="散单企业价格"
                 align="center"
                 key="散单企业价格"
-                v-if="data.orderType == 1 && !item.isDateAfter20250319Val"
+                v-if="data.orderType == 1 && !item.isDateAfter20250301Val"
               >
                 <template slot-scope="{ row }">
                   {{ row.generalAmount }}
@@ -588,7 +595,7 @@
                 label="师傅协商价格"
                 align="center"
                 key="师傅协商价格"
-                v-if="!item.isDateAfter20250319Val"
+                v-if="!item.isDateAfter20250301Val"
               >
                 <template slot-scope="{ row }">
                   {{ row.masterConsultAmount ? row.masterConsultAmount : 0 }}
@@ -598,7 +605,7 @@
                 label="企业协商价格"
                 align="center"
                 key="企业协商价格"
-                v-if="!item.isDateAfter20250319Val"
+                v-if="!item.isDateAfter20250301Val"
               >
                 <template slot-scope="{ row }">
                   {{
@@ -638,7 +645,7 @@
                       openExamineFaultsDialog(
                         row,
                         item.orderSn,
-                        item.isDateAfter20250319Val
+                        item.isDateAfter20250301Val
                       )
                     "
                     >修改</el-button
@@ -648,6 +655,17 @@
                     @click="delSolvePlan(row, item.orderSn)"
                     >删除</el-button
                   >
+                  <el-button
+                    v-if="
+                      index !== data.enrollRepairOrderOutList.length - 1 &&
+                      row.transFlag != 1 &&
+                      transferPartsShow
+                    "
+                    type="text"
+                    @click="transferOrderFaultItem(row, item.orderSn)"
+                  >
+                    转故障项
+                  </el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -1476,7 +1494,7 @@
         <!-- ps:3.19之前 -->
         <el-form-item
           label="师傅展示价格"
-          v-if="!examineFaultsForm.isDateAfter20250319Val"
+          v-if="!examineFaultsForm.isDateAfter20250301Val"
         >
           <el-input
             placeholder="请输入师傅展示价格"
@@ -1488,7 +1506,7 @@
         </el-form-item>
         <el-form-item
           label="年保企业价格"
-          v-if="!examineFaultsForm.isDateAfter20250319Val"
+          v-if="!examineFaultsForm.isDateAfter20250301Val"
         >
           <el-input
             placeholder="请输入年保企业价格"
@@ -1500,7 +1518,7 @@
         </el-form-item>
         <el-form-item
           label="散单企业价格"
-          v-if="!examineFaultsForm.isDateAfter20250319Val"
+          v-if="!examineFaultsForm.isDateAfter20250301Val"
         >
           <el-input
             placeholder="请输入散单企业价格"
@@ -1512,7 +1530,7 @@
         </el-form-item>
         <el-form-item
           label="师傅协商价格"
-          v-if="!examineFaultsForm.isDateAfter20250319Val"
+          v-if="!examineFaultsForm.isDateAfter20250301Val"
         >
           <el-input
             placeholder="请输入师傅协商价格"
@@ -1523,7 +1541,7 @@
         </el-form-item>
         <el-form-item
           label="企业协商价格"
-          v-if="!examineFaultsForm.isDateAfter20250319Val"
+          v-if="!examineFaultsForm.isDateAfter20250301Val"
         >
           <el-input
             placeholder="请输入企业协商价格"
@@ -1536,7 +1554,7 @@
         <!-- ps:3.19之后 -->
         <el-form-item
           label="区间浮动价"
-          v-if="examineFaultsForm.isDateAfter20250319Val"
+          v-if="examineFaultsForm.isDateAfter20250301Val"
         >
           <el-input
             placeholder="请输入区间浮动价"
@@ -1546,7 +1564,7 @@
         </el-form-item>
         <el-form-item
           label="师傅提交价格"
-          v-if="examineFaultsForm.isDateAfter20250319Val"
+          v-if="examineFaultsForm.isDateAfter20250301Val"
         >
           <el-input
             placeholder="请输入师傅提交价格"
@@ -1949,7 +1967,7 @@
             <el-table-column
               label="区间浮动价"
               align="center"
-              v-if="isDateAfter20250319Val"
+              v-if="chooseFaultItemVal.isDateAfter20250301Val"
             >
               <template slot-scope="{ row }">
                 {{ row.generalAmount + "~" + row.annualAmount }}
@@ -2817,6 +2835,7 @@ import {
   synchronizationJdOrder,
   transferPartProduct,
   editEnrollRepairOrder,
+  transferOrderFaultItem,
 } from "@/api/order.js";
 import { UploadImg } from "@/api/system.js";
 export default {
@@ -3073,9 +3092,6 @@ export default {
 
       // 2024金蝶执行时间 2024.10.01 00:00:00
       transferPartsShow: false,
-
-      // 2025故障项新版时间 2025.03.19
-      isDateAfter20250319Val: false,
     };
   },
   mounted() {
@@ -3095,12 +3111,10 @@ export default {
     },
   },
   methods: {
-    // 判断下单时间是不是大于20250319
-    isDateAfter20250319(inputDate) {
-      console.log(3049, inputDate);
-
+    // 判断下单时间是不是大于20250301
+    isDateAfter20250301(inputDate) {
       const date = new Date(inputDate.replace(" ", "T"));
-      return date >= new Date(2025, 2, 19);
+      return date >= new Date(2025, 2, 1);
     },
 
     // 修改企业协商价格
@@ -3147,7 +3161,32 @@ export default {
       this.editEnrollRepairOrderParams.orderSn = item.orderSn;
       this.editEnrollRepairShow = true;
     },
-    // 转移定点杆配件商品
+    //转移订单故障项目
+    transferOrderFaultItem(row, orderSn) {
+      this.$confirm(
+        `您确定要将此故障项[${row.position}]转移至最后一个师傅,该操作只能执行一次`,
+        "提示",
+        {
+          confirmButtonText: "确认",
+          cancelButtonText: "取消",
+          type: "warning",
+        }
+      ).then(async () => {
+        const transferOrderFaultItemParams = {
+          id: row.id,
+          orderSn,
+        };
+        const res = await transferOrderFaultItem(transferOrderFaultItemParams);
+        if (res.code == "000") {
+          this.$message({
+            message: res.message,
+            type: "success",
+          });
+          this._getRepairOrderDetail();
+        }
+      });
+    },
+    // 转移订单配件商品
     transferPartProduct(row, orderSn) {
       this.$confirm(
         `您确定要将此配件[${row.name}]转移至最后一个师傅,该操作只能执行一次`,
@@ -3718,7 +3757,8 @@ export default {
       this.faultItemTotal = res.data.total;
     },
     // 打开新增项目框
-    async openAddFaultDialog(orderSn) {
+    async openAddFaultDialog(orderSn, isDateAfter20250301Val) {
+      this.chooseFaultItemVal.isDateAfter20250301Val = isDateAfter20250301Val;
       await this.queryFaultItems();
       this.chooseFaultItemVal.orderSn = orderSn;
       this.addFaultVisible = true;
@@ -4039,9 +4079,9 @@ export default {
       this.examineFaults = false;
     },
     // 打开故障项目审核框
-    openExamineFaultsDialog(row, orderSn, isDateAfter20250319Val) {
+    openExamineFaultsDialog(row, orderSn, isDateAfter20250301Val) {
       this.examineFaultsForm = { ...row };
-      this.examineFaultsForm.isDateAfter20250319Val = isDateAfter20250319Val;
+      this.examineFaultsForm.isDateAfter20250301Val = isDateAfter20250301Val;
       // 区间价格回显
       this.examineFaultsForm.intervalPrice =
         this.examineFaultsForm.generalAmount +
@@ -4569,7 +4609,7 @@ export default {
           if (res.data.enrollRepairOrderOutList) {
             // 判断下单时间是不是20250319之后
             res.data.enrollRepairOrderOutList.forEach((item) => {
-              item.isDateAfter20250319Val = this.isDateAfter20250319(
+              item.isDateAfter20250301Val = this.isDateAfter20250301(
                 item.createTime
               );
 
@@ -4582,7 +4622,7 @@ export default {
                 item.faults = JSON.parse(item.faults);
                 if (item.faults?.length > 0) {
                   item.faults.forEach((item1) => {
-                    if (typeof item1.image == "string") {
+                    if (typeof item1.image == "string" && item1.image != "") {
                       item1.image = JSON.parse(item1.image);
                     }
                   });
