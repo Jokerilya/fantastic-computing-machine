@@ -14,6 +14,7 @@
           <el-col :span="5">
             <el-form-item label="师傅名称">
               <el-select
+                style="width: 250px"
                 v-model="searchForm.masterUid"
                 filterable
                 placeholder="请选择"
@@ -30,7 +31,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="5">
+          <!-- <el-col :span="5">
             <el-form-item label="订单状态">
               <el-select v-model="searchForm.status" placeholder="请选择">
                 <el-option
@@ -41,10 +42,14 @@
                 ></el-option>
               </el-select>
             </el-form-item>
-          </el-col>
+          </el-col> -->
           <el-col :span="5">
             <el-form-item label="订单类型">
-              <el-select v-model="searchForm.orderType" placeholder="请选择">
+              <el-select
+                v-model="searchForm.orderType"
+                placeholder="请选择"
+                style="width: 250px"
+              >
                 <el-option label="散单" :value="1">散单</el-option>
                 <el-option label="年保" :value="2">年保</el-option>
                 <el-option label="年卡" :value="3">年卡</el-option>
@@ -52,22 +57,15 @@
             </el-form-item>
           </el-col>
           <el-col :span="5">
-            <el-form-item label="平台状态">
-              <el-select
-                v-model="searchForm.platformStatus"
-                placeholder="请选择"
-              >
-                <el-option label="师傅取消" :value="-1">师傅取消</el-option>
-                <el-option label="待检测定价" :value="0">待检测定价</el-option>
-                <el-option label="待派发" :value="1">待派发</el-option>
-                <el-option label="待审核定价" :value="2">待审核定价</el-option>
-                <el-option label="待打款至师傅" :value="3"
-                  >待打款至师傅</el-option
-                >
-              </el-select>
+            <el-form-item label="订单编号">
+              <el-input
+                style="width: 250px"
+                v-model="searchForm.orderSn"
+                placeholder="订单编号"
+              ></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="4">
+          <!-- <el-col :span="4">
             <el-form-item label="审核状态">
               <el-select
                 v-model="searchForm.finalExamineStatus"
@@ -78,34 +76,8 @@
                 <el-option label="已审核" :value="2">已审核</el-option>
               </el-select>
             </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="5">
-            <el-form-item label="企业名称">
-              <el-input
-                v-model="searchForm.enterpriseName"
-                placeholder="企业名称"
-              ></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="5">
-            <el-form-item label="设备编码">
-              <el-input
-                v-model="searchForm.no"
-                placeholder="设备编码"
-              ></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="5">
-            <el-form-item label="订单编号">
-              <el-input
-                v-model="searchForm.orderSn"
-                placeholder="订单编号"
-              ></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="5">
+          </el-col> -->
+          <el-col :span="9">
             <el-form-item label="创建时间">
               <el-date-picker
                 @change="changeQueryTimeCopy"
@@ -120,11 +92,26 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row style="text-align: right">
-          <el-col :span="24">
-            <!-- <el-button type="warning" plain @click="downloadFn">
-              下载
-            </el-button> -->
+        <el-row :gutter="20">
+          <el-col :span="5">
+            <el-form-item label="企业名称">
+              <el-input
+                style="width: 250px"
+                v-model="searchForm.enterpriseName"
+                placeholder="企业名称"
+              ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="5">
+            <el-form-item label="设备编码">
+              <el-input
+                style="width: 250px"
+                v-model="searchForm.no"
+                placeholder="设备编码"
+              ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="14" style="text-align: right">
             <el-button type="warning" plain @click="openSyncDialog">
               同步
             </el-button>
@@ -135,15 +122,9 @@
             <el-button type="success" plain @click="exportList">
               导出
             </el-button>
-            <!-- <el-button
-              type="success"
-              plain
-              @click="openReplacePlaceOrderDialog"
-            >
-              代下单
-            </el-button> -->
           </el-col>
         </el-row>
+        <el-row> </el-row>
         <!-- <el-row style="display: flex;">
           <el-button
             icon="el-icon-zoom-in"
@@ -192,8 +173,20 @@
       </el-form>
     </div>
 
+    <el-radio-group
+      v-model="searchForm.status"
+      style="margin-bottom: 30px"
+      @input="changeOrderState"
+    >
+      <el-radio-button
+        :label="item.num"
+        v-for="item in statusObjList"
+        :key="item.num"
+        >{{ item.desc }}({{ orderSubscript[item.str] }})</el-radio-button
+      >
+    </el-radio-group>
     <!-- 空行 -->
-    <div style="height: 16px"></div>
+    <!-- <div style="height: 16px"></div> -->
 
     <el-card>
       <!-- 维保订单列表表格部分 -->
@@ -203,7 +196,6 @@
         element-loading-text="拼命加载中"
         element-loading-spinner="el-icon-loading"
         :data="dataList"
-        height="65vh"
       >
         <el-table-column
           prop="orderSn"
@@ -883,6 +875,7 @@ import {
   queryFaultPosition,
   getDeviceInfoByNo,
   testData,
+  getOrderSubscript,
 } from "@/api/order.js";
 import { handleProxyCreateOrder } from "@/api/proxy";
 import { UploadImg } from "@/api/system.js";
@@ -893,6 +886,61 @@ export default {
   // mixins: [tableMixin],
   data() {
     return {
+      // 状态
+      orderSubscript: {},
+      statusObjList: [
+        {
+          str: "totalNum",
+          num: "",
+          desc: "全部",
+        },
+        {
+          str: "discardNum",
+          num: -2,
+          desc: "已废弃",
+        },
+        {
+          str: "cancelNum",
+          num: -1,
+          desc: "已取消",
+        },
+        {
+          str: "waitAssignNum",
+          num: 0,
+          desc: "待指派",
+        },
+        {
+          str: "waitReceiveNum",
+          num: 1,
+          desc: "待接单",
+        },
+        {
+          str: "waitServiceNum",
+          num: 2,
+          desc: "待服务",
+        },
+        {
+          str: "serviceNum",
+          num: 3,
+          desc: "服务中",
+        },
+        {
+          str: "waitCheckNum",
+          num: 4,
+          desc: "待验收",
+        },
+        {
+          str: "waitCollectionNum",
+          num: 5,
+          desc: "待收/付款",
+        },
+        {
+          str: "completeNum",
+          num: 6,
+          desc: "已完成",
+        },
+      ],
+
       // 设置标签
       setOrderTagDialogVisible: false,
       handleOrderLabelParams: {
@@ -1125,8 +1173,14 @@ export default {
 
     // this._queryAssignableMasterList();
     this._queryRepairOrderList();
+    this.getOrderSubscript();
   },
   methods: {
+    // 修改订单状态 然后查询
+    changeOrderState() {
+      this._queryRepairOrderList();
+      // this.getOrderSubscript();
+    },
     // 修改查询师傅
     changeInquireMasterFn(uid) {
       const index = this.masterSearchList.findIndex((item) => item.uid == uid);
@@ -1455,6 +1509,7 @@ export default {
     query_queryRepairOrderList() {
       this.currentPage = 1;
       this._queryRepairOrderList();
+      this.getOrderSubscript();
     },
     // 导出
     async exportList() {
@@ -1495,6 +1550,7 @@ export default {
         queryTime: "",
       };
       this._queryRepairOrderList();
+      this.getOrderSubscript();
     },
     // 批量下单模板下载
     async templateDownload() {
@@ -1530,6 +1586,20 @@ export default {
         }
       });
     },
+    // 查询维保订单列表角标
+    async getOrderSubscript() {
+      let data = {
+        pageNo: this.currentPage,
+        pageSize: 10,
+        ...this.searchForm,
+      };
+
+      const res = await getOrderSubscript(data);
+      if (res.code == "000") {
+        this.orderSubscript = res.data;
+      }
+    },
+
     // 获取维保订单列表
     _queryRepairOrderList() {
       // const loading = this.$loading({ text: "加载中.." });
@@ -1632,10 +1702,11 @@ export default {
     },
     //  点击查看详情触发的事件
     queryDesc(row) {
-      this.$router.push({
+      const routeData = this.$router.resolve({
         name: "maintenance_order_desc",
         query: { orderSn: row.orderSn },
       });
+      window.open(routeData.href, "_blank");
     },
     // 点击指派列表触发的事件
     // querySnatchList({ orderSn: enterpriseOrderSn }) {

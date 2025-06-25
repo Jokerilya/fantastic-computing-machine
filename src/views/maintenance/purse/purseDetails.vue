@@ -1,98 +1,101 @@
 <template>
   <div class="purseDetails">
-    <el-card>
-      <div class="master">
-        <div class="masterTitle">钱包信息</div>
-        <div class="masterInfo">
-          <div class="masterInfoItem">
-            <div class="masterInfoItem_label">师傅姓名：</div>
-            <div class="masterInfoItem_value">
-              <el-select
-                v-model="masterInfoRealName"
-                filterable
-                remote
-                reserve-keyword
-                placeholder="请输入师傅名称"
-                :remote-method="querySearchRealName"
-                @change="confirmMasterRealName"
+    <el-form label-width="80px" class="rule-form" label-position="right">
+      <el-row :gutter="20" style="margin-bottom: 15px">
+        <el-col :span="5">
+          <el-form-item label="师傅名称">
+            <el-select
+              v-model="masterInfoRealName"
+              filterable
+              remote
+              reserve-keyword
+              placeholder="请输入师傅名称"
+              :remote-method="querySearchRealName"
+              @change="confirmMasterRealName"
+            >
+              <el-option
+                v-for="item in searchMasterList"
+                :key="item.uid"
+                :label="item.realName"
+                :value="item.uid"
               >
-                <el-option
-                  v-for="item in searchMasterList"
-                  :key="item.uid"
-                  :label="item.realName"
-                  :value="item.uid"
-                >
-                </el-option>
-              </el-select>
-            </div>
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="5">
+          <el-form-item label="账户类型">
+            <el-select
+              v-model="queryMoneyListParams.moneyType"
+              placeholder="请选择"
+            >
+              <el-option
+                v-for="item in moneyTypeList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              >
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="5">
+          <el-form-item label="进/出账">
+            <el-select
+              v-model="queryMoneyListParams.isOut"
+              placeholder="请选择"
+            >
+              <el-option
+                v-for="item in isOutList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              >
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="5">
+          <el-date-picker
+            @change="changeQueryTimeData"
+            v-model="queryTimeData"
+            value-format="yyyy-MM-dd"
+            type="daterange"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+          >
+          </el-date-picker>
+        </el-col>
+        <el-col :span="4" style="text-align: right">
+          <el-button @click="handleUserMoneyExport">导出</el-button>
+          <el-button @click="searchQueryMoneyListFn">搜索</el-button>
+          <el-button @click="resetQueryMoneyListFn">重置</el-button>
+        </el-col>
+      </el-row>
+    </el-form>
+    <el-card>
+      <div class="masterInfo">
+        <div class="masterInfoItem">
+          <div class="masterInfoItem_label">可提现余额：</div>
+          <div class="masterInfoItem_value">
+            ￥{{ accountMoneyList.balanceAmount }}
           </div>
-          <div class="masterInfoItem">
-            <div class="masterInfoItem_label">余额：</div>
-            <div class="masterInfoItem_value">
-              ￥{{ accountMoneyList.balanceAmount }}
-            </div>
+        </div>
+        <div class="masterInfoItem">
+          <div class="masterInfoItem_label">冻结余额：</div>
+          <div class="masterInfoItem_value">
+            ￥{{ accountMoneyList.freezeBalanceAmount }}
           </div>
-          <div class="masterInfoItem">
-            <div class="masterInfoItem_label">冻结余额：</div>
-            <div class="masterInfoItem_value">
-              ￥{{ accountMoneyList.freezeBalanceAmount }}
-            </div>
-          </div>
-          <div class="masterInfoItem">
-            <div class="masterInfoItem_label">质保金额：</div>
-            <div class="masterInfoItem_value">
-              ￥{{ accountMoneyList.retentionMoney }}
-            </div>
+        </div>
+        <div class="masterInfoItem">
+          <div class="masterInfoItem_label">质保金额：</div>
+          <div class="masterInfoItem_value">
+            ￥{{ accountMoneyList.retentionMoney }}
           </div>
         </div>
       </div>
-    </el-card>
-    <div class="searchBox">
-      <div class="leftSearchData">
-        <el-date-picker
-          @change="changeQueryTimeData"
-          v-model="queryTimeData"
-          value-format="yyyy-MM-dd"
-          type="daterange"
-          range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          style="margin: 10px"
-        >
-        </el-date-picker>
-        <el-select
-          style="margin: 10px"
-          v-model="queryMoneyListParams.isOut"
-          placeholder="请选择"
-        >
-          <el-option
-            v-for="item in isOutList"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          >
-          </el-option>
-        </el-select>
-        <el-select
-          v-model="queryMoneyListParams.moneyType"
-          placeholder="请选择"
-        >
-          <el-option
-            v-for="item in moneyTypeList"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          >
-          </el-option>
-        </el-select>
-      </div>
-      <div>
-        <el-button @click="searchQueryMoneyListFn">搜索</el-button>
-        <el-button @click="resetQueryMoneyListFn">重置</el-button>
-      </div>
-    </div>
-    <el-card>
-      <el-table :data="moneyList" border style="width: 100%">
+      <el-table :data="moneyList" border style="width: 100%" height="65vh">
         <el-table-column align="center" prop="createTime" label="操作时间">
         </el-table-column>
         <el-table-column align="center" prop="accountTypeName" label="类型名称">
@@ -100,6 +103,11 @@
         <el-table-column align="center" prop="accountDesc" label="描述">
         </el-table-column>
         <el-table-column align="center" prop="serialNumber" label="交易单号">
+        </el-table-column>
+        <el-table-column align="center" label="账户类型">
+          <template slot-scope="{ row }">
+            {{ moneyTypeLabel(row.moneyType) }}
+          </template>
         </el-table-column>
         <el-table-column align="center" label="收支金额">
           <template slot-scope="{ row }">
@@ -125,13 +133,12 @@
 
 <script>
 import { getAccountMoney, queryMoneyList } from "@/api/user";
-import { queryMasterName } from "@/api/order";
+import { queryMasterName, handleUserMoneyExport } from "@/api/order";
 export default {
   data() {
     return {
       masterInfoRealName: null,
       searchMasterList: [],
-      masterInfo: null,
       accountMoneyList: {
         retentionMoney: 0,
         freezeBalanceAmount: 0,
@@ -141,7 +148,7 @@ export default {
         isOut: "",
         moneyType: "",
         pageNo: 1,
-        pageSize: 10,
+        pageSize: 50,
         queryTime: null,
         uid: null,
       },
@@ -183,6 +190,53 @@ export default {
     };
   },
   methods: {
+    // 点击导出触发的事件
+    handleUserMoneyExport() {
+      if (!this.queryMoneyListParams.uid) {
+        this.$message({
+          dangerouslyUseHTMLString: true,
+          message: "<strong>请先填写选择师傅</strong>",
+        });
+        return;
+      }
+      const index = this.searchMasterList.findIndex(
+        (e) => e.uid == this.queryMoneyListParams.uid
+      );
+      const realName = this.searchMasterList[index].realName;
+
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, "0"); // 月份从0开始，要+1
+      const day = String(now.getDate()).padStart(2, "0");
+
+      const loading = this.$loading({
+        lock: true,
+        text: "数据传输中",
+        spinner: "el-icon-loading",
+      });
+      const data = this.queryMoneyListParams;
+      data.pageSize = 1000;
+      handleUserMoneyExport(data).then((res) => {
+        if (res) {
+          const link = document.createElement("a");
+          const blob = new Blob([res.data], {
+            type: "application/vnd.ms-excel",
+          });
+          link.style.display = "none";
+          link.href = URL.createObjectURL(blob);
+          link.download = `${realName}_钱包明细_${year}${month}${day}`; //下载的文件名
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          loading.close();
+        }
+      });
+    },
+    // 类型转含义
+    moneyTypeLabel(value) {
+      const index = this.moneyTypeList.findIndex((e) => e.value == value);
+      return this.moneyTypeList[index].label;
+    },
     // 确定师傅名称
     confirmMasterRealName(uid) {
       this.queryMoneyListParams.uid = uid;
@@ -207,15 +261,22 @@ export default {
         isOut: "",
         moneyType: "",
         pageNo: 1,
-        pageSize: 10,
+        pageSize: 50,
         queryTime: null,
       };
-      this.queryMoneyListParams.uid = this.masterInfo.uid;
+      this.queryMoneyListParams.uid = null;
       this.queryTimeData = null;
       this.queryMoneyList();
     },
     // 点击搜索触发
     searchQueryMoneyListFn() {
+      if (!this.queryMoneyListParams.uid) {
+        this.$message({
+          dangerouslyUseHTMLString: true,
+          message: "<strong>请先填写选择师傅</strong>",
+        });
+        return;
+      }
       this.queryMoneyListParams.pageNo = 1;
       this.queryMoneyList();
     },
@@ -233,52 +294,44 @@ export default {
     },
     // 获取用户钱包详情
     async getAccountMoney() {
-      const res = await getAccountMoney(this.masterInfo.uid);
+      const res = await getAccountMoney(this.queryMoneyListParams.uid);
       if (res.code == "000") {
         this.accountMoneyList = res.data;
       }
     },
   },
-  created() {
-    // this.masterInfo = this.$route.query.row;
-    // this.queryMoneyListParams.uid = this.masterInfo.uid;
-    // this.getAccountMoney();
-    // this.queryMoneyList();
-  },
+  created() {},
 };
 </script>
 
 <style scoped lang="scss">
-.master {
-  .masterTitle {
-    font-weight: 700;
-    margin-bottom: 20px;
-  }
+.masterTitle {
+  font-weight: 700;
+  margin-bottom: 20px;
+}
 
-  .masterInfo {
+.masterInfo {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  width: 100%;
+
+  .masterInfoItem {
+    margin-right: 30px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    width: 100%;
-
-    .masterInfoItem {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      .masterInfoItem_label {
-        margin-right: 5px;
-      }
-      .masterInfoItem_value {
-      }
+    .masterInfoItem_label {
+    }
+    .masterInfoItem_value {
+      color: red;
     }
   }
 }
 
 .purseDetails {
-  padding: 20px;
+  padding: 30px 20px 20px 20px;
 
   .searchBox {
-    margin: 20px 0;
     display: flex;
     justify-content: space-between;
     align-items: center;

@@ -25,11 +25,7 @@
       </el-table-column>
       <el-table-column label="配置值" align="center" header-align="center">
         <template slot-scope="scope">
-          <el-input
-            v-model="scope.row.configVal"
-            type="number"
-            placeholder="请输入内容"
-          />
+          <el-input v-model="scope.row.configVal" placeholder="请输入内容" />
         </template>
       </el-table-column>
       <el-table-column label="备注" align="center" header-align="center">

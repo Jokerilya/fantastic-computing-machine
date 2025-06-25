@@ -11,9 +11,9 @@ export function queryDeviceKeepOrder(data) {
 }
 
 // 删除保养信息
-export function deleteDeviceKeepOrder(id) {
+export function deleteDeviceKeepOrder(orderSn) {
   return request({
-    url: "/admin/maintenance/deleteDeviceKeepOrder?id=" + id,
+    url: "/admin/maintenance/deleteDeviceKeepOrder?orderSn=" + orderSn,
     method: "get",
   });
 }

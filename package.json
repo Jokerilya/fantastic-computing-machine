@@ -31,7 +31,7 @@
     "qiniu-js": "^3.1.2",
     "sortablejs": "^1.8.4",
     "style-resources-loader": "^1.5.0",
-    "tinymce-all-in-one": "^ 4.9.5",
+    "tinymce-all-in-one": "^4.9.5",
     "uuidv4": "^6.2.13",
     "vue": "2.6.10",
     "vue-amap": "^0.5.10",

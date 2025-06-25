@@ -100,12 +100,12 @@
                 >
                   详情
                 </el-button>
-                <!-- <el-button
+                <el-button
                   type="text"
-                  @click.prevent="delUpkeepDetails(row.id)"
+                  @click.prevent="delUpkeepDetails(row.orderSn)"
                 >
                   删除
-                </el-button> -->
+                </el-button>
                 <el-button
                   v-if="row.status == 1"
                   type="text"
@@ -779,14 +779,14 @@ export default {
     },
 
     // 删除保养详情
-    async delUpkeepDetails(id) {
+    async delUpkeepDetails(orderSn) {
       const confirm = await this.$confirm("您确定删除该保养记录?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
       });
       if (confirm == "confirm") {
-        const res = await deleteDeviceKeepOrder(id);
+        const res = await deleteDeviceKeepOrder(orderSn);
         if (res.message === "操作成功") {
           this.queryUpkeepListFn();
         }

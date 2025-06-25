@@ -72,7 +72,7 @@
             {{ row.bankBranchName ? row.bankBranchName : "/" }}
           </template>
         </el-table-column>
-        <el-table-column label="银行卡号">
+        <el-table-column label="银行卡号" width="180">
           <template slot-scope="{ row }">
             {{ row.bankCode ? row.bankCode : "/" }}
           </template>

@@ -36,6 +36,16 @@ export function handleEnterpriseInfoExport(data) {
   });
 }
 
+//用户金额导出
+export function handleUserMoneyExport(data) {
+  return request({
+    url: "/admin/userInfo/handleUserMoneyExport",
+    method: "POST",
+    data,
+    responseType: "blob",
+  });
+}
+
 //师傅列表导出
 export function handleMasterInfoExport(data) {
   return request({
@@ -962,6 +972,41 @@ export function testData(orderSns) {
 export function handleOrderLabel(data) {
 	return request({
 		url: `/admin/maintenance/handleOrderLabel`,
+		method: 'post',
+    data
+	})
+}
+
+// 查询维保订单列表角标
+export function getOrderSubscript(data) {
+	return request({
+		url: `/admin/maintenance/getOrderSubscript`,
+		method: 'post',
+    data
+	})
+}
+
+// 设置订单配件商品到达信息
+export function handlePartProductArriveInfo(data) {
+	return request({
+		url: `/admin/maintenance/handlePartProductArriveInfo`,
+		method: 'post',
+    data
+	})
+}
+
+//  驳回师傅提交验收 
+export function rejectOrderCheck(orderSn) {
+	return request({
+		url: `/admin/maintenance/rejectOrderCheck?orderSn=${orderSn}`,
+		method: 'get',
+	})
+}
+
+// 订单退款审核 
+export function handleOrderRefund(data) {
+	return request({
+		url: `/admin/maintenance/handleOrderRefund`,
 		method: 'post',
     data
 	})

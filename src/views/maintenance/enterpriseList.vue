@@ -107,6 +107,18 @@
           align="center"
         ></el-table-column>
         <el-table-column
+          label="企业身份"
+          show-overflow-tooltip
+          width="110"
+          align="center"
+        >
+          <template slot-scope="{ row }">
+            <el-tag :type="row.vipFlag == 1 ? '' : 'info'">
+              {{ row.vipFlag == 1 ? "年保客户" : "普通客户" }}</el-tag
+            >
+          </template>
+        </el-table-column>
+        <el-table-column
           prop="maintenancePhone"
           label="联系电话"
           show-overflow-tooltip
@@ -121,19 +133,32 @@
           align="center"
         ></el-table-column>
         <el-table-column
-          prop="promotionPeople"
+          prop="enterpriseAddress"
+          label="企业地址"
+          show-overflow-tooltip
+          width="350"
+          align="center"
+        ></el-table-column>
+        <el-table-column
           label="推广人"
           show-overflow-tooltip
           width="140"
           align="center"
-        ></el-table-column>
+        >
+          <template slot-scope="{ row }">
+            {{ row.promotionPeople ? row.promotionPeople : "/" }}
+          </template>
+        </el-table-column>
         <el-table-column
-          prop="salesman"
           label="业务员(旧版)"
           show-overflow-tooltip
           width="110"
           align="center"
-        ></el-table-column>
+        >
+          <template slot-scope="{ row }">
+            {{ row.salesman ? row.salesman : "/" }}
+          </template>
+        </el-table-column>
         <!-- <el-table-column
         prop="salesmanId"
         label="业务员"
@@ -142,12 +167,15 @@
         align="center"
       ></el-table-column> -->
         <el-table-column
-          prop="frname"
           label="法人代表"
           show-overflow-tooltip
           width="100"
           align="center"
-        ></el-table-column>
+        >
+          <template slot-scope="{ row }">
+            {{ row.frname ? row.frname : "/" }}
+          </template>
+        </el-table-column>
         <!-- <el-table-column
           prop="superiorEnterpriseName"
           label="团队长"
@@ -187,16 +215,9 @@
                 :src="scope.row.businessLicense"
               ></el-image>
             </a>
-            <div v-else style="font-size: 25px">/</div>
+            <div v-else>/</div>
           </template>
         </el-table-column>
-        <el-table-column
-          prop="enterpriseAddress"
-          label="企业地址"
-          show-overflow-tooltip
-          width="350"
-          align="center"
-        ></el-table-column>
 
         <!-- <el-table-column
           prop="phone"
@@ -273,15 +294,10 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column
-          label="操作"
-          width="220px"
-          fixed="right"
-          align="center"
-        >
+        <el-table-column label="操作" width="100" fixed="right" align="center">
           <template slot-scope="{ row }">
             <div class="settings">
-              <el-button
+              <!-- <el-button
                 type="warning"
                 size="mini"
                 plain
@@ -289,19 +305,54 @@
                 v-if="row.enterpriseFlag !== 2 && row.enterpriseFlag !== 3"
                 >审核</el-button
               >
-              <!-- <el-button
+              <el-button
                 type="warning"
                 size="mini"
                 plain
                 @click="openInvitationCode(row.id)"
                 >邀请码</el-button
-              > -->
+              >
               <el-button type="warning" size="mini" plain @click="openTeam(row)"
                 >成员</el-button
               >
               <el-button type="warning" size="mini" plain @click="editTeam(row)"
                 >编辑</el-button
               >
+              <el-button type="warning" size="mini" plain @click="editTeam(row)"
+                >大屏</el-button
+              > -->
+
+              <el-dropdown trigger="click">
+                <span class="el-dropdown-link">
+                  <el-button type="text"
+                    >更多<i class="el-icon-arrow-down el-icon--right"></i
+                  ></el-button>
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item
+                    v-if="row.enterpriseFlag !== 2 && row.enterpriseFlag !== 3"
+                  >
+                    <el-button type="text" @click="auditFn(row)"
+                      >审核</el-button
+                    >
+                  </el-dropdown-item>
+                  <el-dropdown-item>
+                    <el-button type="text" @click="openTeam(row)"
+                      >成员</el-button
+                    >
+                  </el-dropdown-item>
+                  <el-dropdown-item>
+                    <el-button type="text" @click="editTeam(row)"
+                      >编辑</el-button
+                    >
+                  </el-dropdown-item>
+                  <el-dropdown-item v-if="row.vipFlag == 1">
+                    <el-button type="text" @click="openDataUrl(row.dataUrl)"
+                      >大屏</el-button
+                    >
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
             </div>
           </template>
 
@@ -351,28 +402,24 @@
                 prop="realName"
                 label="真实姓名"
                 show-overflow-tooltip
-                width="200"
                 align="center"
               ></el-table-column>
               <el-table-column
                 prop="phone"
                 label="联系电话"
                 show-overflow-tooltip
-                width="100"
                 align="center"
               ></el-table-column>
               <el-table-column
                 prop="postName"
                 label="岗位"
                 show-overflow-tooltip
-                width="100"
                 align="center"
               ></el-table-column>
               <el-table-column
                 prop="workStatus"
                 label="状态"
                 show-overflow-tooltip
-                width="100"
                 align="center"
               >
                 <template slot-scope="{ row }">
@@ -388,7 +435,6 @@
               <el-table-column
                 label="权限"
                 show-overflow-tooltip
-                width="100"
                 align="center"
               >
                 <template slot-scope="{ row }">
@@ -747,6 +793,10 @@ export default {
     this.typeList = res.data;
   },
   methods: {
+    // 复制大屏链接
+    openDataUrl(url) {
+      window.open(url, "_blank");
+    },
     // 切换创建时间
     changeQueryTimeCopy() {
       this.queryEnterpriseListParms.queryTime =
@@ -894,9 +944,8 @@ export default {
         id: row.id,
       };
       queryEnterpriseMemberList(data).then((res) => {
-        if (res) {
+        if (res.code == "000") {
           this.enpTeamList = res.data.records;
-          console.log("企业团队列表", res);
         }
       });
     },
@@ -926,9 +975,8 @@ export default {
       });
     },
     // 点击查看团队的事件
-    openTeam(row) {
-      console.log("团队参数", row);
-      this._queryEnterpriseMemberList(row);
+    async openTeam(row) {
+      await this._queryEnterpriseMemberList(row);
       this.$refs.enterpriseTeamList.open();
     },
     // 不清楚!!!!
