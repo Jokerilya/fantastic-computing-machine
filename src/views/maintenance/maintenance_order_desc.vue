@@ -61,7 +61,7 @@
       <!-- 订单和企业信息 -->
       <el-card style="flex: 1; margin-right: 10px">
         <el-tabs v-model="leftTabActiveName">
-          <el-tab-pane label="工单信息" name="工单信息">
+          <el-tab-pane label="企业信息" name="企业信息">
             <div class="mainOrderInfo">
               <!-- 订单信息 -->
               <div class="mainOrderInfo_item">
@@ -74,15 +74,39 @@
                     align-items: center;
                   "
                 >
-                  <div>
+                  <div
+                    :style="{
+                      color: orderDetail.orderSn.includes('-F-')
+                        ? '#f56c6c'
+                        : '#000',
+                    }"
+                  >
                     {{ orderDetail.orderSn }}
                   </div>
                   <div
                     style="color: #409eff; cursor: pointer"
                     @click="copyOrderInfo"
                   >
-                    复制工单信息
+                    复制
                   </div>
+                </div>
+              </div>
+              <div
+                class="mainOrderInfo_item"
+                style="color: red"
+                v-if="orderDetail.timeoutFlag"
+              >
+                <div class="label">超时状态</div>
+                <div class="value">
+                  {{
+                    orderDetail.timeoutFlag == 2001
+                      ? "指派超时"
+                      : orderDetail.timeoutFlag == 2101
+                      ? "接单超时"
+                      : orderDetail.timeoutFlag == 2201
+                      ? "打卡超时"
+                      : "服务中超时"
+                  }}
                 </div>
               </div>
               <div class="mainOrderInfo_item">
@@ -141,6 +165,16 @@
                 </div>
               </div>
               <div class="mainOrderInfo_item">
+                <div class="label">业务员</div>
+                <div class="value">
+                  {{
+                    orderDetail.salesmanName
+                      ? orderDetail.salesmanName
+                      : "未绑定"
+                  }}
+                </div>
+              </div>
+              <div class="mainOrderInfo_item">
                 <div class="label">期望时间</div>
                 <div class="value">{{ orderDetail.serviceTime }}</div>
               </div>
@@ -165,7 +199,10 @@
                 >
                   查看视图
                   <el-image
-                    v-if="orderDetail.pictureList.length > 0"
+                    v-if="
+                      orderDetail.pictureList &&
+                      orderDetail.pictureList.length > 0
+                    "
                     class="previewImg"
                     :src="orderDetail.pictureList[0]"
                     :preview-src-list="orderDetail.pictureList"
@@ -185,6 +222,44 @@
                   "
                 >
                   查看凭证
+                </div>
+              </div>
+              <div
+                class="mainOrderInfo_item"
+                v-if="orderDetail.enterpriseSubStatus == '2602'"
+              >
+                <div class="label">企业评价</div>
+                <div class="value">
+                  {{
+                    orderDetail.enrollRepairOrderOutList[0].repairComment
+                      .content
+                  }}
+                </div>
+              </div>
+              <div
+                class="mainOrderInfo_item"
+                v-if="
+                  orderDetail.enterpriseSubStatus == '2602' &&
+                  orderDetail.enrollRepairOrderOutList[0] &&
+                  orderDetail.enrollRepairOrderOutList[0].repairComment &&
+                  orderDetail.enrollRepairOrderOutList[0].repairComment.images
+                "
+              >
+                <div class="label">评价图片</div>
+                <div class="value" style="color: #409eff; cursor: pointer">
+                  查看图片
+                  <el-image
+                    class="previewImg"
+                    :src="
+                      orderDetail.enrollRepairOrderOutList[0].repairComment
+                        .images[0]
+                    "
+                    :preview-src-list="
+                      orderDetail.enrollRepairOrderOutList[0].repairComment
+                        .images
+                    "
+                  >
+                  </el-image>
                 </div>
               </div>
 
@@ -303,22 +378,49 @@
               <div class="mainOrderInfo_item"></div>
 
               <!-- 企业付款 -->
-              <div class="mainOrderInfo_item" style="font-weight: 700">
-                <div class="label">企业应付</div>
-                <div class="value">
-                  {{ orderDetail.payAmount ? orderDetail.payAmount : 0 }}元
-                </div>
-              </div>
+
               <div class="mainOrderInfo_item">
                 <div class="label">人工费</div>
                 <div class="value">
                   {{ orderDetail.doorAmount ? orderDetail.doorAmount : 0 }}元
+                  <span v-if="orderDetail.orderType == 3"
+                    >(年卡订单包人工不包配件)</span
+                  >
                 </div>
               </div>
               <div class="mainOrderInfo_item">
                 <div class="label">配件费</div>
                 <div class="value">
                   {{ orderDetail.partsAmount ? orderDetail.partsAmount : 0 }}元
+                </div>
+              </div>
+              <div
+                class="mainOrderInfo_item"
+                v-if="orderDetail.invoiceAmount > 0"
+              >
+                <div class="label">含税金额</div>
+                <div class="value">
+                  +{{
+                    orderDetail.invoiceAmount ? orderDetail.invoiceAmount : 0
+                  }}元
+                </div>
+              </div>
+              <div
+                class="mainOrderInfo_item"
+                style="color: red"
+                v-if="orderDetail.discountAmount > 0"
+              >
+                <div class="label">优惠减免</div>
+                <div class="value">
+                  -{{
+                    orderDetail.discountAmount ? orderDetail.discountAmount : 0
+                  }}元 [{{ orderDetail.couponName }}]
+                </div>
+              </div>
+              <div class="mainOrderInfo_item" style="font-weight: 700">
+                <div class="label">企业应付</div>
+                <div class="value">
+                  {{ orderDetail.payAmount ? orderDetail.payAmount : 0 }}元
                 </div>
               </div>
             </div>
@@ -351,7 +453,7 @@
             >
             <div class="masterOrderInfo">
               <div class="mainOrderInfo_item">
-                <div class="label">师傅订单号</div>
+                <div class="label" style="margin-top: 3px">师傅订单号</div>
                 <div class="value">
                   {{ item.orderSn
                   }}<el-tag
@@ -419,6 +521,26 @@
                     :preview-src-list="item.completeImages"
                   >
                   </el-image>
+                </div>
+              </div>
+              <div class="mainOrderInfo_item">
+                <div class="label">有效单量</div>
+                <div class="value">
+                  {{ item.validOrderNum ? item.validOrderNum : 1 }}单
+                </div>
+              </div>
+              <div class="mainOrderInfo_item" v-if="item.evaluationGrade">
+                <div class="label">企业评分:</div>
+                <div class="value">
+                  <el-rate
+                    :max="3"
+                    v-model="item.evaluationGrade"
+                    disabled
+                    text-color="#ff9900"
+                    show-text
+                    :texts="['差评', '一般', '好评']"
+                  >
+                  </el-rate>
                 </div>
               </div>
               <!-- 空行 -->
@@ -738,13 +860,11 @@
                       label="配件参数"
                     >
                     </el-table-column>
-                    <!-- <el-table-column
-                      align="center"
-                      prop="number"
-                      label="物料编码"
-                      width="120"
-                    >
-                    </el-table-column> -->
+                    <el-table-column align="center" label="供应商">
+                      <template slot-scope="{ row }">
+                        {{ row.supplierName ? row.supplierName : "无" }}
+                      </template>
+                    </el-table-column>
                     <el-table-column
                       align="center"
                       label="预计到达时间"
@@ -815,6 +935,14 @@
                           @click="delPartsList(row, item.orderSn)"
                           >删除</el-button
                         >
+                        <!-- v-if="row.status == 1 && row.model == 1" -->
+                        <el-button
+                          v-if="row.type === 2"
+                          type="text"
+                          @click="openSetLogistics(row, item.orderSn)"
+                        >
+                          选供应商
+                        </el-button>
                         <el-button
                           v-if="
                             !row.isReturn &&
@@ -1017,6 +1145,17 @@
               <el-button
                 size="mini"
                 type="primary"
+                v-if="
+                  orderDetail.enterpriseSubStatus == 2601 &&
+                  orderDetail.enrollRepairOrderOutList.length == index + 1
+                "
+                @click="openEnterpriseEvaluateDialog(item.orderSn)"
+              >
+                代企业评价
+              </el-button>
+              <el-button
+                size="mini"
+                type="primary"
                 v-if="item.subStatus >= 3301"
                 @click="handleOnlineOrder(orderDetail.orderSn)"
               >
@@ -1026,7 +1165,7 @@
                 type="primary"
                 size="mini"
                 @click="sumbitQuotation(item.orderSn)"
-                v-if="['2202'].includes(orderDetail.enterpriseSubStatus)"
+                v-if="['3202'].includes(item.subStatus)"
                 >确认报价</el-button
               >
               <el-button
@@ -1034,15 +1173,16 @@
                 type="primary"
                 @click="goAssignedMasterPage"
                 v-if="
-                  orderDetail.enterpriseSubStatus == 2001 ||
-                  orderDetail.enterpriseSubStatus == 2101 ||
-                  item.consultDoorAmount != null
+                  (orderDetail.enterpriseSubStatus == 2001 ||
+                    orderDetail.enterpriseSubStatus == 2101 ||
+                    item.consultDoorAmount != null) &&
+                  orderDetail.enrollRepairOrderOutList.length == index + 1
                 "
               >
                 指派师傅
               </el-button>
               <el-button
-                v-if="item.subStatus < 3502"
+                v-if="item.subStatus <= 3502"
                 type="primary"
                 size="mini"
                 @click="
@@ -1050,7 +1190,8 @@
                     item.orderSn,
                     item.doorAmount,
                     item.consultRemarks,
-                    item.consultDoorAmount
+                    item.consultDoorAmount,
+                    item.masterTypeName
                   )
                 "
                 >协商人工费</el-button
@@ -1067,11 +1208,48 @@
               >
               <el-button
                 v-if="item.subStatus >= 3502 && nodeEnv == 'development'"
-                type="primary"
+                type="danger"
                 size="mini"
                 @click="handleOrderRefund(item.orderSn)"
                 >订单退款</el-button
               >
+              <el-button
+                size="mini"
+                type="danger"
+                v-if="
+                  orderDetail.timeoutFlag != 2301 &&
+                  item.subStatus == 3301 &&
+                  orderDetail.enrollRepairOrderOutList.length == index + 1
+                "
+                @click="
+                  handleMasterOrderServiceTimeout(item.orderSn, item.realName)
+                "
+              >
+                标记服务超时
+              </el-button>
+              <el-button
+                size="mini"
+                type="danger"
+                @click="handleMarkValidOrder(item.orderSn)"
+              >
+                标记师傅有效单
+              </el-button>
+              <el-button
+                size="mini"
+                type="danger"
+                @click="openMarkRepairOrderDialog(orderDetail.orderSn)"
+                v-if="!orderDetail.orderSn.includes('-F-')"
+              >
+                标记返修单
+              </el-button>
+              <el-button
+                size="mini"
+                type="danger"
+                @click="openComplaintDialog(item)"
+                v-if="item.subStatus > 3201"
+              >
+                投诉
+              </el-button>
             </div>
           </el-tab-pane>
           <el-tab-pane label="全流程跟踪" name="全流程跟踪">
@@ -1680,6 +1858,7 @@
           <el-form-item label="协商质保金" prop="retentionMoney">
             <el-input
               type="number"
+              :disabled="masterTypeNameChoose == '全职'"
               v-model.number="consultCostParams.retentionMoney"
               placeholder="请输入协商质保金"
             ></el-input>
@@ -1774,6 +1953,188 @@
         >
       </div>
     </el-dialog>
+
+    <!-- 投诉弹窗 -->
+    <el-dialog
+      :visible="complaintDialogVisible"
+      width="50%"
+      :before-close="closeComplaintDialog"
+      :close-on-click-modal="false"
+    >
+      <div style="text-align: center; padding: 0 70px">
+        <div style="color: #707070; font-size: 20px; font-weight: 700">
+          投诉师傅【{{ complaintWorkerName }}】
+        </div>
+        <el-input
+          type="textarea"
+          resize="none"
+          :rows="10"
+          v-model="saveRepairOrderComplaintParams.content"
+          style="margin-top: 20px"
+          placeholder="请输入投诉该师傅的原因"
+        ></el-input>
+      </div>
+      <div slot="footer" class="dialog-footer" style="text-align: center">
+        <el-button
+          style="width: 150px; background-color: #ffffff; color: #2e4c9e"
+          @click="closeComplaintDialog"
+          >取 消</el-button
+        >
+        <el-button
+          style="width: 150px; background-color: #2e4c9e"
+          @click="saveRepairOrderComplaint"
+          type="primary"
+          >确 定</el-button
+        >
+      </div>
+    </el-dialog>
+
+    <!-- 物流设置 -->
+    <el-dialog
+      title="选择供应商"
+      width="40%"
+      top="5vh"
+      :visible="setLogisticsDialogShow"
+    >
+      <div class="setLogisticsDialog">
+        <div class="setLogisticsDialogSearch">
+          <el-input
+            style="margin-right: 20px"
+            placeholder="输入供应商名字搜索"
+            v-model="supplierInfoListParams.query"
+          ></el-input>
+          <el-button type="primary" @click="searchMaintenanceSupplierInfo"
+            >搜索</el-button
+          >
+        </div>
+        <div class="supplierList">
+          <el-radio-group
+            v-model="setLogisticsData.supplierName"
+            @change="changeSupplier"
+          >
+            <el-radio
+              v-for="(item, index) in supplierList"
+              :key="index"
+              style="display: flex; align-items: center; padding: 8px"
+              :label="item.supplierName"
+            >
+              <div>供应商名称:{{ item.supplierName }}</div>
+              <div style="margin: 5px 0">地址 :{{ item.supplierAddress }}</div>
+              <div>范围:{{ item.businessScope }}</div>
+            </el-radio>
+          </el-radio-group>
+        </div>
+        <div class="tabelPagination">
+          <el-pagination
+            background
+            layout="prev, pager, next"
+            :total="supplierInfoListTotal"
+            :page-size="10"
+            :current-page="supplierInfoListParams.pageNo"
+            @current-change="changesupplierInfoListPage"
+          >
+          </el-pagination>
+        </div>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeSetLogistics">取 消</el-button>
+        <el-button type="primary" @click="confirmSetLogistics">确 定</el-button>
+      </span>
+    </el-dialog>
+
+    <!-- 标记返修单对话框 -->
+    <el-dialog
+      title="标记返修单"
+      width="40%"
+      :visible="markRepairOrderDialogShow"
+      :close-on-click-modal="false"
+      :before-close="closeMarkRepairOrderDialog"
+    >
+      <div class="markRepairOrderDialog">
+        <el-form
+          ref="markRepairOrderForm"
+          :model="handleOrderReworkParams"
+          :rules="handleOrderReworkParamsRules"
+          label-width="120px"
+          label-position="left"
+        >
+          <el-form-item label="返修原因" prop="reason">
+            <el-input
+              v-model="handleOrderReworkParams.reason"
+              placeholder="请输入返修原因"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="原企业订单号" prop="sourceRelationOrderSn">
+            <el-input
+              v-model="handleOrderReworkParams.sourceRelationOrderSn"
+              placeholder="请输入原企业订单号"
+            ></el-input>
+          </el-form-item>
+        </el-form>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeMarkRepairOrderDialog">取 消</el-button>
+        <el-button type="primary" @click="handleOrderRework">确 定</el-button>
+      </span>
+    </el-dialog>
+
+    <!-- 代企业评价 -->
+    <el-dialog
+      title="代企业评价"
+      :visible.sync="evaluateDialogVisible"
+      width="40%"
+      :close-on-click-modal="false"
+      :before-close="closeEnterpriseEvaluateDialog"
+      center
+    >
+      <div class="evaluateDiv">
+        <div class="title">师傅评价</div>
+        <div
+          class="block"
+          v-for="item in handleReleaseCommentParams.masterInfoEvaluationGrade"
+          :key="item.uid"
+        >
+          <span class="demonstration">对{{ item.realName }}评价:</span>
+          <el-rate
+            :max="3"
+            show-text
+            :texts="['差评', '一般', '好评']"
+            v-model="item.evaluationGrade"
+          ></el-rate>
+        </div>
+        <div class="title">订单服务描述</div>
+        <div class="block">
+          <el-input
+            v-model="handleReleaseCommentParams.content"
+            type="textarea"
+            :rows="3"
+            placeholder="请联系客户了解订单情况后进行描述,尽量从多角度评价本服务"
+          >
+          </el-input>
+        </div>
+        <div class="title">
+          <div>上传图片说明</div>
+        </div>
+        <div class="block">
+          <el-upload
+            action="#"
+            list-type="picture-card"
+            multiple
+            :file-list="evaluateImgFileList"
+            :http-request="updataEvaluateImg"
+            :on-remove="removeEvaluateImg"
+          >
+            <i class="el-icon-plus"></i>
+          </el-upload>
+        </div>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeEnterpriseEvaluateDialog">取 消</el-button>
+        <el-button type="primary" @click="handleReleaseComment"
+          >确 定</el-button
+        >
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -1795,6 +2156,12 @@ import {
   rejectOrderCheck,
   cancelRepairOrder,
   handleOrderRefund,
+  queryMaintenanceSupplierInfo,
+  fillLogisticsInformation,
+  handleOrderRework,
+  handleMasterOrderValidOrderNum,
+  handleMasterOrderServiceTimeout,
+  saveRepairOrderComplaint,
 } from "@/api/order.js";
 import { UploadImg } from "@/api/system.js";
 import {
@@ -1807,6 +2174,7 @@ import {
   handleEnterpriseCheck,
   handleOnlineOrder,
   handleProxyPayment,
+  handleReleaseComment,
 } from "@/api/proxy";
 export default {
   data() {
@@ -1818,7 +2186,7 @@ export default {
       masterOrderTrackList: [], //多个师傅订单轨迹数组
       chooseMaster: 0, // 点击了哪个师傅 回显订单轨迹
 
-      leftTabActiveName: "工单信息",
+      leftTabActiveName: "企业信息",
       rightTabActiveName: "全流程跟踪",
 
       // 标签类型
@@ -1977,25 +2345,357 @@ export default {
         ],
       },
 
+      // 取消订单
       cancelOrderDialog: false,
       delOrderinpValue: null,
+
+      // 投诉
+      complaintDialogVisible: false,
+      complaintWorkerName: "",
+
+      // 供应商
+      setLogisticsDialogShow: false,
+      supplierInfoListTotal: null,
+      supplierInfoListParams: {
+        pageNo: 1,
+        pageSize: 10,
+        query: "",
+      },
+      setLogisticsData: {
+        supplierId: null,
+        supplierName: null,
+      },
+      supplierList: [],
+
+      // 标记返修单
+      markRepairOrderDialogShow: false,
+      handleOrderReworkParams: {
+        currentRelationOrderSn: null, //现企业订单号
+        reason: null, //返修原因
+        sourceRelationOrderSn: null, //原企业订单号
+      },
+      handleOrderReworkParamsRules: {
+        reason: [
+          { required: true, message: "请输入返修原因", trigger: "blur" },
+        ],
+        sourceRelationOrderSn: [
+          { required: true, message: "请输入原企业订单号", trigger: "blur" },
+        ],
+      },
+
+      // 投诉
+      saveRepairOrderComplaintParams: {
+        content: null,
+        masterUid: null,
+        orderSn: null,
+        relationOrderSn: null,
+      },
+
+      // 评价
+      evaluateDialogVisible: false,
+      handleReleaseCommentParams: {
+        content: null,
+        images: null,
+        masterInfoEvaluationGrade: null,
+        orderSn: null,
+        serviceScore: 0,
+      },
+      evaluateImgFileList: [],
+
+      masterTypeNameChoose: null,
     };
   },
   computed: {
     laborCostTxt: function () {
-      const { amount, serviceAmount, retentionMoney } = this.consultCostParams;
-      if (amount && serviceAmount && retentionMoney) {
+      let { amount, serviceAmount, retentionMoney } = this.consultCostParams;
+      amount = Number(amount);
+      serviceAmount = Number(serviceAmount);
+      retentionMoney = Number(retentionMoney);
+      const isNumberAndNotEmpty = (value) => {
         return (
-          Number(this.consultCostParams.amount) -
-          Number(this.consultCostParams.serviceAmount) -
-          Number(this.consultCostParams.retentionMoney)
+          value != null && value !== "" && !isNaN(value) && isFinite(value)
         );
+      };
+      if (
+        isNumberAndNotEmpty(amount) &&
+        isNumberAndNotEmpty(serviceAmount) &&
+        isNumberAndNotEmpty(retentionMoney)
+      ) {
+        return (amount - serviceAmount - retentionMoney).toFixed(2);
       } else {
         return null;
       }
     },
   },
   methods: {
+    // 确定代企业评价
+    async handleReleaseComment() {
+      if (!this.handleReleaseCommentParams.content) {
+        this.$message({
+          message: "请填写订单服务描述",
+          type: "warning",
+        });
+        return;
+      }
+      this.handleReleaseCommentParams.masterInfoEvaluationGrade.forEach(
+        (item) => {
+          if (!item.evaluationGrade) {
+            this.$message({
+              message: "请对全部师傅进行评价",
+              type: "warning",
+            });
+          }
+          return;
+        }
+      );
+      if (this.evaluateImgFileList.length > 0) {
+        this.handleReleaseCommentParams.images = this.evaluateImgFileList
+          .map((item) => item.url)
+          .join(",");
+      }
+      const res = await handleReleaseComment(this.handleReleaseCommentParams);
+      if (res.code == "000") {
+        this.$message({
+          type: "success",
+          message: "操作成功!",
+        });
+        this.getRepairOrderDetail();
+        this.closeEnterpriseEvaluateDialog();
+      }
+    },
+    // 删除评价图片
+    removeEvaluateImg(e) {
+      const index = this.evaluateImgFileList.findIndex(
+        (item) => item.url === e.url
+      );
+      this.evaluateImgFileList.splice(index, 1);
+    },
+    // 上传评价图片
+    async updataEvaluateImg(fileData) {
+      const loading = this.$loading({
+        lock: true,
+        text: "上传评价图片...",
+        spinner: "el-icon-loading",
+        background: "rgba(0, 0, 0, 0.7)",
+      });
+      let formData = new FormData();
+      formData.append("file", fileData.file);
+      const res = await UploadImg(formData);
+      if (res) {
+        loading.close();
+        if (res.code == "000") {
+          this.evaluateImgFileList.push({
+            url: res.data,
+          });
+        }
+      }
+    },
+    // 关闭代企业评价
+    closeEnterpriseEvaluateDialog() {
+      this.handleReleaseCommentParams = {
+        content: null,
+        images: null,
+        masterInfoEvaluationGrade: null,
+        orderSn: null,
+        serviceScore: 0,
+      };
+      this.evaluateImgFileList = [];
+      this.evaluateDialogVisible = false;
+    },
+    // 打开代企业评价
+    openEnterpriseEvaluateDialog(orderSn) {
+      this.handleReleaseCommentParams.orderSn = orderSn;
+      this.handleReleaseCommentParams.masterInfoEvaluationGrade =
+        this.orderDetail.serviceMasterInfoList;
+      this.evaluateDialogVisible = true;
+    },
+    // 设置订单为返修单
+    async handleOrderRework() {
+      if (this.handleOrderReworkParams.sourceRelationOrderSn.includes("-F-")) {
+        this.$message({
+          type: "warning",
+          message: "原企业订单号不能是返修单!",
+        });
+        return;
+      }
+      await this.$refs["markRepairOrderForm"].validate();
+      const res = await handleOrderRework(this.handleOrderReworkParams);
+      if (res.code == "000") {
+        this.$message({
+          type: "success",
+          message: "操作成功!",
+        });
+        this.closeMarkRepairOrderDialog();
+        this.orderSn = res.data;
+        this.getRepairOrderDetail();
+      }
+    },
+    // 关闭标记返修单对话框
+    closeMarkRepairOrderDialog() {
+      this.$refs["markRepairOrderForm"].resetFields();
+      this.markRepairOrderDialogShow = false;
+      this.handleOrderReworkParams = {
+        currentRelationOrderSn: null,
+        reason: null,
+        sourceRelationOrderSn: null,
+      };
+    },
+    // 打开标记返修单对话框
+    openMarkRepairOrderDialog(orderSn) {
+      this.markRepairOrderDialogShow = true;
+      this.handleOrderReworkParams.currentRelationOrderSn = orderSn;
+    },
+    // 供应商改变时
+    changeSupplier(e) {
+      const index = this.supplierList.findIndex(
+        (item) => item.supplierName == e
+      );
+      this.setLogisticsData.supplierId = this.supplierList[index].id;
+    },
+    // 确定供应商
+    async confirmSetLogistics() {
+      const res = await fillLogisticsInformation(this.setLogisticsData);
+      if (res.message == "操作成功") {
+        this.$message({
+          type: "success",
+          message: "操作成功!",
+        });
+        this.getRepairOrderDetail();
+        this.closeSetLogistics();
+      }
+    },
+    // 关闭选择供应商框
+    closeSetLogistics() {
+      this.setLogisticsData = {
+        supplierId: null,
+        supplierName: null,
+      };
+      this.supplierInfoListParams = {
+        pageNo: 1,
+        pageSize: 10,
+        query: "",
+      };
+      this.setLogisticsDialogShow = false;
+    },
+    // 打开选择供应商框
+    async openSetLogistics(row, orderSn) {
+      this.setLogisticsData.orderSn = orderSn;
+      this.setLogisticsData.id = row.id;
+      this.setLogisticsData.model = row.model;
+      if (row.supplierId) {
+        const { supplierId, supplierName } = row;
+        this.setLogisticsData.supplierId = supplierId;
+        this.setLogisticsData.supplierName = supplierName;
+      }
+      const res = await queryMaintenanceSupplierInfo(
+        this.supplierInfoListParams
+      );
+      this.supplierList = res.data.records;
+      this.supplierInfoListTotal = res.data.total;
+      this.setLogisticsDialogShow = true;
+    },
+    // 改变供应商页码
+    async changesupplierInfoListPage(page) {
+      this.supplierInfoListParams.pageNo = page;
+      const res = await queryMaintenanceSupplierInfo(
+        this.supplierInfoListParams
+      );
+      this.supplierList = res.data.records;
+      this.supplierInfoListTotal = res.data.total;
+    },
+    // 查找供应商
+    async searchMaintenanceSupplierInfo() {
+      this.supplierInfoListParams.pageNo = 1;
+      const res = await queryMaintenanceSupplierInfo(
+        this.supplierInfoListParams
+      );
+      this.supplierList = res.data.records;
+      this.supplierInfoListTotal = res.data.total;
+    },
+    // 标记师傅有效单
+    handleMarkValidOrder(orderSn) {
+      this.$prompt("请输入师傅有效单量", "标记师傅有效单量", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        inputPattern: /^\d+$/,
+        inputErrorMessage: "请输入正确的数字",
+        closeOnClickModal: false,
+      }).then(async ({ value }) => {
+        const res = await handleMasterOrderValidOrderNum({
+          validOrderNum: value,
+          orderSn,
+        });
+        if (res.code == "000") {
+          this.$message({
+            type: "success",
+            message: res.message,
+          });
+          this.getRepairOrderDetail();
+        }
+      });
+    },
+    // 标记服务超时
+    handleMasterOrderServiceTimeout(orderSn, realName) {
+      this.$confirm(
+        `您确定要标记该师傅【${realName}】订单服务超时吗?`,
+        "标记服务超时",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        }
+      ).then(async () => {
+        const res = await handleMasterOrderServiceTimeout(orderSn);
+        if (res.code == "000") {
+          this.$message({
+            type: "success",
+            message: res.message,
+          });
+          this.getRepairOrderDetail();
+        }
+      });
+    },
+    // 确定投诉
+    async saveRepairOrderComplaint() {
+      if (!this.saveRepairOrderComplaintParams.content) {
+        this.$message({
+          type: "warning",
+          message: "请填写投诉原因",
+        });
+        return;
+      }
+      const res = await saveRepairOrderComplaint(
+        this.saveRepairOrderComplaintParams
+      );
+      if (res.code == "000") {
+        this.$message({
+          type: "success",
+          message: res.message,
+        });
+        this.getRepairOrderDetail();
+        this.closeComplaintDialog();
+      }
+    },
+    // 关闭投诉框
+    closeComplaintDialog() {
+      this.complaintDialogVisible = false;
+      this.saveRepairOrderComplaintParams = {
+        content: null,
+        masterUid: null,
+        orderSn: null,
+        relationOrderSn: null,
+      };
+      this.complaintWorkerName = "";
+    },
+    // 打开投诉框
+    openComplaintDialog(item) {
+      this.complaintWorkerName = item.realName;
+      this.saveRepairOrderComplaintParams.masterUid = item.uid;
+      this.saveRepairOrderComplaintParams.orderSn = item.orderSn;
+      this.saveRepairOrderComplaintParams.relationOrderSn =
+        item.relationOrderSn;
+      this.complaintDialogVisible = true;
+    },
     // 订单退款
     async handleOrderRefund(orderSn) {
       const x = await this.$confirm(`您确定将订单退款吗?`, "订单退款", {
@@ -2021,7 +2721,7 @@ export default {
         cancelReason: this.delOrderinpValue,
       };
       cancelRepairOrder(params).then((res) => {
-        if (res) {
+        if (res.code == "000") {
           this.$message({
             showClose: true,
             message: res.message,
@@ -2112,13 +2812,17 @@ export default {
       this.partsTimeDialogVisible = false;
     },
     // 修改协商人工费计算一下平台抽成和质保金
-    blurAmount(e) {
+    blurAmount() {
       this.consultCostParams.serviceAmount = (
         this.consultCostParams.amount * 0.25
       ).toFixed(2);
-      this.consultCostParams.retentionMoney = (
-        this.consultCostParams.amount * 0.1
-      ).toFixed(2);
+      if (this.masterTypeNameChoose == "全职") {
+        this.consultCostParams.retentionMoney = 0;
+      } else {
+        this.consultCostParams.retentionMoney = (
+          this.consultCostParams.amount * 0.1
+        ).toFixed(2);
+      }
     },
     // 复制信息
     async copyOrderInfo() {
@@ -2159,6 +2863,13 @@ export default {
     },
     // 确定协商费用
     async confirmConsultPrice() {
+      if (this.laborCostTxt < 0) {
+        this.$message({
+          message: "协商到手人工费不能小于0",
+          type: "warning",
+        });
+        return;
+      }
       await this.$refs["consultCostForm"].validate();
       const res = await consultCost(this.consultCostParams);
       if (res.message === "操作成功") {
@@ -2177,15 +2888,47 @@ export default {
         amount: null,
         remarks: null,
         flag: 1,
+        serviceAmount: null,
+        retentionMoney: null,
       };
+      this.laborCostTxt = null;
       this.$refs["consultCostForm"].resetFields();
       this.consultPriceVisible = false;
     },
     // 打开协商价格框
-    openConsultPriceDialog(orderSn, doorAmount, remarks, consultDoorAmount) {
-      this.consultCostParams.orderSn = orderSn;
-      this.consultCostParams.remarks = remarks ? remarks : "无";
-      this.consultPriceVisible = true;
+    openConsultPriceDialog(
+      orderSn,
+      doorAmount,
+      remarks,
+      consultDoorAmount,
+      masterTypeName
+    ) {
+      const h = this.$createElement;
+      this.$msgbox({
+        title: "绩效",
+        message: h("p", null, [
+          h(
+            "span",
+            { style: "color: red" },
+            "协商人工费前请删除该师傅无效故障项目及配件"
+          ),
+        ]),
+        showCancelButton: true,
+        confirmButtonText: "我已知晓",
+        cancelButtonText: "取消",
+        beforeClose: (action, instance, done) => {
+          if (action === "confirm") {
+            done();
+            this.consultCostParams.orderSn = orderSn;
+            this.consultCostParams.remarks = remarks ? remarks : "无";
+            this.masterTypeNameChoose = masterTypeName;
+            this.consultPriceVisible = true;
+          } else {
+            done();
+            console.log(2921);
+          }
+        },
+      });
     },
     // 标记企业付款(手动后标记企业已付款)
     handleProxyPayment(orderSn) {
@@ -3004,6 +3747,12 @@ export default {
         ) {
           this.masterOrderTrackList = [];
           res.data.enrollRepairOrderOutList.forEach((item) => {
+            console.log(3671, item);
+            // 评价图片
+            if (item.repairComment && item.repairComment.images) {
+              item.repairComment.images = imgStrTurn(item.repairComment.images);
+            }
+
             // 将多个师傅状态列表存储
             if (item.orderTrackList) {
               item.statusListData = [
@@ -3096,7 +3845,6 @@ export default {
                 });
               }
             }
-
             // 回显配件
             if (item.parts) {
               item.parts = JSON.parse(item.parts);
@@ -3122,7 +3870,6 @@ export default {
           let container = this.$refs.statusListFlex;
           container.scrollLeft += 1000; // 每次左移100px
         }, 1000);
-
         this.orderDetail = res.data;
       }
     },
@@ -3229,7 +3976,7 @@ export default {
     display: flex;
     justify-content: space-between;
     margin-top: 10px;
-    // 工单信息
+    // 企业信息
     .mainOrderInfo,
     .masterOrderInfo {
       font-size: 13px;
@@ -3310,6 +4057,42 @@ export default {
       padding: 10px 0;
       height: 70vh;
       overflow: auto;
+    }
+  }
+}
+
+.setLogisticsDialog {
+  .setLogisticsDialogSearch {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .supplierList {
+    padding: 20px 0;
+    height: 550px;
+    overflow: auto;
+  }
+
+  .tabelPagination {
+    margin-top: 20px;
+    text-align: center;
+  }
+}
+
+// 评价弹框
+.evaluateDiv {
+  .title {
+    font-size: 18px;
+    font-weight: 700;
+    padding-bottom: 10px;
+  }
+  .block {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    .demonstration {
+      padding-right: 10px;
     }
   }
 }

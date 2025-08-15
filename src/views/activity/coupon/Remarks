@@ -1,0 +1,103 @@
+  <!-- 
+    <el-select
+        v-model="queryCouponParams.isExpired"
+        style="width: 200px"
+        class="mg_r15 mg_t10"
+        placeholder="请选择优惠券状态"
+      >
+        <el-option
+          v-for="item in isExpired"
+          :key="item.val"
+          :label="item.name"
+          :value="item.val"
+        />
+    </el-select>
+   -->
+  <!-- 
+    <el-table-column fixed label="ID" align="center" header-align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.id }}</span>
+          <span
+            v-if="!scope.row.id"
+            class="delete_icon"
+            @click="deleteAddFn(scope.$index)"
+            ><i class="el-icon-delete"
+          /></span>
+        </template>
+    </el-table-column>
+    <el-table-column label="图片" align="center" width="140px">
+        <template slot-scope="scope">
+          <img style="width: 100px; height: 100px" :src="scope.row.imgUrl" />
+        </template>
+    </el-table-column>
+    <el-table-column
+        label="是否已过期"
+        align="center"
+        header-align="center"
+        width="120px"
+      >
+        <template slot-scope="scope">
+          <span>{{
+            scope.row.isExpired === 1 ? "已过期/结束" : "未过期"
+          }}</span>
+        </template>
+    </el-table-column>
+    <el-table-column
+        label="每人限领张数"
+        align="center"
+        header-align="center"
+        width="120px"
+      >
+        <template slot-scope="scope">
+          <span>{{ scope.row.limitPerPerson || "不限制" }}</span>
+        </template>
+    </el-table-column>
+    <el-table-column
+        label="有效时间说明"
+        align="center"
+        header-align="center"
+        width="180px"
+      >
+        <template slot-scope="scope">
+          <span>{{ scope.row.expiryTime }}</span>
+        </template>
+    </el-table-column>
+   -->
+  <!-- 
+    <el-form-item label="已使用数量" v-if="defDdata.id">
+        <span>{{ defDdata.useCount }}</span>
+    </el-form-item>
+    <el-form-item label="已领取数量" v-if="defDdata.id">
+        <span>{{ defDdata.receiveCount }}</span>
+    </el-form-item>
+    <el-form-item label="有效时间说明">
+        <el-input v-model="defDdata.expiryTime" />
+    </el-form-item>
+    <el-form-item label="每人限领张数">
+        <el-input v-model="defDdata.limitPerPerson"
+          placeholder="（0或为空，则不限制）"
+        />
+    </el-form-item> 
+    <el-form-item label="是否已过期">
+        <el-select v-model="defDdata.isExpired" placeholder="请选择">
+          <el-option
+            v-for="item in isExpired"
+            :key="item.val"
+            :label="item.name"
+            :value="item.val"
+          />
+        </el-select>
+    </el-form-item>
+    <el-form-item label="封面图">
+        <upload-img
+          width="100px"
+          height="100px"
+          margin="auto"
+          :img="defDdata.imgUrl"
+          @uploadSuc="uploadSuccess"
+        />
+    </el-form-item>
+    <el-form-item label="ID">
+        <el-input v-model="defDdata.id" disabled="disabled" />
+    </el-form-item>
+   -->

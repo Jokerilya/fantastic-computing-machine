@@ -327,24 +327,25 @@
     <!-- 绑定业务员弹框 -->
     <el-dialog
       :visible="dialogVisible"
-      width="30%"
+      width="25%"
+      title="绑定业务员"
       :before-close="closeSalesmanFn"
+      center
     >
-      <div class="bindingSalesmanTitle">绑定业务员</div>
       <div style="text-align: center">
         <el-select
           filterable
           remote
           v-model="salesmanSelect"
           :remote-method="salesmanRemoteMethod"
-          placeholder="请选择业务员"
+          placeholder="请输入业务员名字"
           style="width: 200px"
         >
           <el-option
             v-for="item in salesmanOptions"
             :key="item.id"
             :label="item.realName"
-            :value="item.uid"
+            :value="item.id"
           >
           </el-option>
         </el-select>
@@ -656,13 +657,13 @@ export default {
     async salesmanConfirm() {
       if (!this.salesmanSelect) {
         this.$message({
-          message: "业务员名字不能为空",
+          message: "业务员不能为空",
           type: "warning",
         });
         return;
       } else {
         const res = await bindSalesmanAccount({
-          uid: this.salesmanSelect,
+          salesmanId: this.salesmanSelect,
           orderSn: this.salesmanOrderSn,
         });
         if (res.message === "操作成功") {
@@ -687,7 +688,7 @@ export default {
     // 点击绑定业务员触发的事件
     bindingSalesmanFn(orderSn) {
       this.salesmanOrderSn = orderSn;
-      this.salesmanRemoteMethod("");
+      // this.salesmanRemoteMethod("");
       this.dialogVisible = true;
     },
     // 重置功能

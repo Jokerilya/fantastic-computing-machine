@@ -6,7 +6,7 @@
       <el-form
         v-model="searchForm"
         ref="ruleForm"
-        label-width="80px"
+        label-width="100px"
         class="rule-form"
         label-position="right"
       >
@@ -111,7 +111,17 @@
               ></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="14" style="text-align: right">
+          <el-col :span="5">
+            <el-form-item label="选中是否超时">
+              <el-switch
+                v-model="searchForm.timeoutFlag"
+                active-color="#409eff"
+                inactive-color="#909399"
+              >
+              </el-switch>
+            </el-form-item>
+          </el-col>
+          <el-col :span="9" style="text-align: right">
             <el-button type="warning" plain @click="openSyncDialog">
               同步
             </el-button>
@@ -205,6 +215,37 @@
           align="center"
         ></el-table-column>
         <el-table-column
+          label="超时状态"
+          show-overflow-tooltip
+          width="80"
+          align="center"
+        >
+          <template slot-scope="{ row }">
+            <div :style="{ color: row.timeoutFlag ? 'red' : '' }">
+              {{
+                row.timeoutFlag == "2001"
+                  ? "指派超时"
+                  : row.timeoutFlag == "2101"
+                  ? "接单超时"
+                  : row.timeoutFlag == "2201"
+                  ? "打卡超时"
+                  : row.timeoutFlag == "2301"
+                  ? "服务中超时"
+                  : row.timeoutFlag == "3001"
+                  ? "派发->接单超时 "
+                  : "/"
+              }}
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="simpleDesc"
+          label="故障描述"
+          show-overflow-tooltip
+          width="200"
+          align="center"
+        ></el-table-column>
+        <el-table-column
           label="工单类型"
           show-overflow-tooltip
           width="80"
@@ -245,12 +286,15 @@
           align="center"
         ></el-table-column>
         <el-table-column
-          prop="no"
           label="机台码"
           show-overflow-tooltip
           width="150"
           align="center"
-        ></el-table-column>
+        >
+          <template slot-scope="{ row }">
+            {{ row.no ? row.no : "/" }}
+          </template>
+        </el-table-column>
         <el-table-column
           label="设备编号"
           show-overflow-tooltip
@@ -318,13 +362,7 @@
           width="150"
           align="center"
         ></el-table-column>
-        <el-table-column
-          prop="simpleDesc"
-          label="故障描述"
-          show-overflow-tooltip
-          width="200"
-          align="center"
-        ></el-table-column>
+
         <el-table-column
           prop="contactsPeople"
           label="联系人"
@@ -345,47 +383,78 @@
           show-overflow-tooltip
           width="100"
           align="center"
-        ></el-table-column>
+        >
+          <template slot-scope="{ row }">
+            {{ row.masterRealName ? row.masterRealName : "/" }}
+          </template>
+        </el-table-column>
         <el-table-column
-          prop="masterPhone"
           label="师傅联系电话"
           show-overflow-tooltip
           width="160"
           align="center"
-        ></el-table-column>
-        <el-table-column
+        >
+          <template slot-scope="{ row }">
+            {{ row.masterPhone ? row.masterPhone : "/" }}
+          </template>
+        </el-table-column>
+        <!-- <el-table-column
           prop="promoterPeople"
           label="推广人"
           show-overflow-tooltip
           width="160"
           align="center"
-        ></el-table-column>
-        <el-table-column
+        ></el-table-column> -->
+        <!-- <el-table-column
           prop="comprehensiveScore"
           label="客户综合评分"
           show-overflow-tooltip
           width="120"
           align="center"
-        ></el-table-column>
+        ></el-table-column> -->
         <el-table-column
-          prop="remarks"
+          label="业务员"
+          show-overflow-tooltip
+          width="120"
+          align="center"
+        >
+          <template slot-scope="{ row }">
+            <div v-if="row.salesmanName">
+              {{ row.salesmanName }}
+            </div>
+            <el-button
+              v-else
+              type="text"
+              @click="openBindSalesmanDialog(row.orderSn)"
+              >未绑定</el-button
+            >
+          </template>
+        </el-table-column>
+        <el-table-column
           label="备注"
           show-overflow-tooltip
           width="120"
           align="center"
-        ></el-table-column>
+        >
+          <template slot-scope="{ row }">
+            {{ row.remarks ? row.remarks : "/" }}
+          </template>
+        </el-table-column>
         <el-table-column
-          prop="platformVisitMessage"
           label="平台回访结果"
           show-overflow-tooltip
           width="120"
           align="center"
-        ></el-table-column>
+        >
+          <template slot-scope="{ row }">
+            {{ row.platformVisitMessage ? row.platformVisitMessage : "/" }}
+          </template>
+        </el-table-column>
         <el-table-column
           prop="orderStatusName"
           label="状态"
           show-overflow-tooltip
-          width="120"
+          width="90"
           fixed="right"
           align="center"
         >
@@ -393,13 +462,12 @@
         <el-table-column
           prop="createTime"
           label="创建时间"
-          show-overflow-tooltip
           width="120"
-          fixed="right"
+          show-overflow-tooltip
           align="center"
         >
         </el-table-column>
-        <el-table-column
+        <!-- <el-table-column
           prop="finalExamineStatusName"
           label="审核状态"
           show-overflow-tooltip
@@ -407,14 +475,46 @@
           fixed="right"
           align="center"
         >
-        </el-table-column>
-        <el-table-column label="操作" width="300" fixed="right" align="center">
+        </el-table-column> -->
+        <el-table-column label="操作" width="120" fixed="right" align="center">
           <template slot-scope="{ row }">
             <div class="settings">
-              <el-button type="info" size="mini" plain @click="queryDesc(row)"
+              <el-button
+                type="text"
+                style="font-size: 14px; margin-right: 10px; font-weight: 400"
+                plain
+                @click="queryDesc(row)"
                 >详情</el-button
               >
-              <el-button
+              <el-dropdown trigger="click">
+                <span class="el-dropdown-link" style="color: #409eff">
+                  其他<i class="el-icon-arrow-down el-icon--right"></i>
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item
+                    ><el-button
+                      type="text"
+                      v-if="row.orderType == 1"
+                      @click="openConvertToInsurance(row.orderSn)"
+                      >转类型</el-button
+                    ></el-dropdown-item
+                  >
+                  <el-dropdown-item
+                    ><el-button type="text" @click="openRemarksDialog(row)"
+                      >备注</el-button
+                    ></el-dropdown-item
+                  >
+                  <el-dropdown-item
+                    ><el-button
+                      v-if="row.orderType == 1"
+                      type="text"
+                      @click="setOrderTag(row)"
+                      >设置</el-button
+                    ></el-dropdown-item
+                  >
+                </el-dropdown-menu>
+              </el-dropdown>
+              <!-- <el-button
                 type="info"
                 size="mini"
                 plain
@@ -436,7 +536,7 @@
                 plain
                 @click="setOrderTag(row)"
                 >设置</el-button
-              >
+              > -->
               <!-- <el-button
                 v-if="
                   row.orderStatusName === '待平台指派' ||
@@ -851,6 +951,36 @@
         <el-button type="primary" @click="handleOrderLabel">确 定</el-button>
       </span>
     </el-dialog>
+
+    <!-- 绑定业务员 -->
+    <el-dialog
+      title="绑定业务员"
+      width="25%"
+      :visible="bindSalesmanDialogVisible"
+      :close-on-click-modal="false"
+      :before-close="closeBindSalesmanDialog"
+      center
+    >
+      <el-select
+        v-model="bindSalesmanParams.salesmanId"
+        filterable
+        remote
+        placeholder="请输入业务员名字"
+        :remote-method="searchSalesman"
+      >
+        <el-option
+          v-for="item in salesmanOptions"
+          :key="item.id"
+          :label="item.realName"
+          :value="item.id"
+        >
+        </el-option>
+      </el-select>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeBindSalesmanDialog">取 消</el-button>
+        <el-button type="primary" @click="bindSalesman">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -861,6 +991,7 @@ import {
   getMasterList,
   handleAssignMaster,
   queryAssignableMasterList,
+  querySalesmanList,
 } from "@/api/user.js";
 import {
   handleOrderLabel,
@@ -876,6 +1007,7 @@ import {
   getDeviceInfoByNo,
   testData,
   getOrderSubscript,
+  bindSalesman,
 } from "@/api/order.js";
 import { handleProxyCreateOrder } from "@/api/proxy";
 import { UploadImg } from "@/api/system.js";
@@ -1081,6 +1213,7 @@ export default {
         finalExamineStatus: null,
         queryTime: null,
         masterName: null,
+        timeoutFlag: false,
       },
       queryTimeCopy: null,
       dataList: [],
@@ -1125,6 +1258,14 @@ export default {
       },
       param: {},
       quotationForm: {},
+
+      // 绑定业务员
+      bindSalesmanParams: {
+        salesmanId: null,
+        orderSn: null,
+      },
+      salesmanOptions: [],
+      bindSalesmanDialogVisible: false,
     };
   },
   async created() {
@@ -1176,6 +1317,38 @@ export default {
     this.getOrderSubscript();
   },
   methods: {
+    // 绑定业务员
+    async bindSalesman() {
+      const res = await bindSalesman(this.bindSalesmanParams);
+      if (res.code == "000") {
+        await this._queryRepairOrderList();
+        this.closeBindSalesmanDialog();
+      }
+    },
+    // 搜索业务员
+    async searchSalesman(e) {
+      const res = await querySalesmanList({
+        pageNo: 1,
+        pageSize: 100,
+        realName: e,
+        recommendName: null,
+      });
+      if (res.code == "000") {
+        this.salesmanOptions = res.data.records;
+      }
+    },
+    // 关闭绑定业务员框
+    closeBindSalesmanDialog() {
+      this.bindSalesmanParams.salesmanId = null;
+      this.bindSalesmanParams.orderSn = null;
+      this.salesmanOptions = [];
+      this.bindSalesmanDialogVisible = false;
+    },
+    // 打开绑定业务员框
+    openBindSalesmanDialog(orderSn) {
+      this.bindSalesmanParams.orderSn = orderSn;
+      this.bindSalesmanDialogVisible = true;
+    },
     // 修改订单状态 然后查询
     changeOrderState() {
       this._queryRepairOrderList();
@@ -1509,7 +1682,7 @@ export default {
     query_queryRepairOrderList() {
       this.currentPage = 1;
       this._queryRepairOrderList();
-      this.getOrderSubscript();
+      // this.getOrderSubscript();
     },
     // 导出
     async exportList() {
@@ -1548,6 +1721,7 @@ export default {
         orderSn: "",
         finalExamineStatus: null,
         queryTime: "",
+        timeoutFlag: false,
       };
       this._queryRepairOrderList();
       this.getOrderSubscript();

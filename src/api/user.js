@@ -32,7 +32,7 @@ export function queryUserInfoFn(data) {
   return request({
     url: "/admin/userInfo/queryUserInfo",
     method: "post",
-    data: data,
+    data,
   });
 }
 
@@ -322,7 +322,7 @@ export function handleCustomerApplyVisit(data) {
 // 获取用户钱包详情
 export function getAccountMoney(uid) {
   return request({
-    url: "/admin/userInfo/getAccountMoney?uid="+uid,
+    url: "/admin/userInfo/getAccountMoney?uid=" + uid,
     method: "get",
   });
 }
@@ -332,7 +332,7 @@ export function queryMoneyList(data) {
   return request({
     url: "/admin/userInfo/queryMoneyList",
     method: "post",
-    data
+    data,
   });
 }
 
@@ -341,6 +341,6 @@ export function handleAccountEdit(data) {
   return request({
     url: "/admin/userInfo/handleAccountEdit",
     method: "post",
-    data
+    data,
   });
 }

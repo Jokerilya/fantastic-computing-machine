@@ -30,7 +30,7 @@ const router = {
       path: "news",
       name: "NewsList",
       component: () => import("@/views/news"),
-      meta: { title: "新闻资讯" }
+      meta: { title: "新闻资讯" },
     },
     {
       path: "activityProductList",
@@ -41,7 +41,8 @@ const router = {
     {
       path: "activityProductOrderList",
       name: "activityProductOrderList",
-      component: () => import("@/views/activityManage/activityProductOrderList"),
+      component: () =>
+        import("@/views/activityManage/activityProductOrderList"),
       meta: { title: "产品订单列表" },
     },
     {
@@ -56,12 +57,6 @@ const router = {
       component: () => import("@/views/activity/systemNotice"),
       meta: { title: "系统消息" },
     },
-    // {
-    //   path: "coupon",
-    //   name: "Coupon",
-    //   component: () => import("@/views/activity/coupon"),
-    //   meta: { title: "优惠券", icon: "el-icon-money" }
-    // }
   ],
 };
 export default router;

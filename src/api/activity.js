@@ -74,7 +74,7 @@ export function editCoupon(data) {
   });
 }
 // 优惠券领取记录
-export function couponRecords(data) {
+export function receiveRecords(data) {
   return request({
     url: "/admin/coupon/receiveRecords",
     method: "post",
@@ -82,11 +82,10 @@ export function couponRecords(data) {
   });
 }
 // 删除优惠券
-export function delCoupon(data) {
+export function delCoupon(couponId) {
   return request({
-    url: "/admin/coupon/delete",
+    url: "/admin/coupon/delete?couponId=" + couponId,
     method: "get",
-    params: data,
   });
 }
 // 优惠券详情
@@ -95,6 +94,15 @@ export function couponDetail(data) {
     url: "/admin/coupon/detail",
     method: "get",
     params: data,
+  });
+}
+
+//  发放优惠券
+export function giveCoupon(data) {
+  return request({
+    url: "/admin/coupon/give",
+    method: "post",
+    data,
   });
 }
 
@@ -138,7 +146,7 @@ export function editActivityProduct(data) {
 export function queryActivityProductList() {
   return request({
     url: "/admin/activity/queryActivityProductList",
-    method: "get"
+    method: "get",
   });
 }
 
@@ -147,7 +155,7 @@ export function shelvesActivityProduct(data) {
   return request({
     url: "/admin/activity/shelvesActivityProduct",
     method: "post",
-    data
+    data,
   });
 }
 
@@ -156,7 +164,7 @@ export function queryActivityOrderList(data) {
   return request({
     url: "/admin/activity/queryActivityOrderList",
     method: "post",
-    data
+    data,
   });
 }
 
@@ -164,7 +172,7 @@ export function queryActivityOrderList(data) {
 export function queryActivityOrderDetail(relationOrderSn) {
   return request({
     url: `/admin/activity/queryActivityOrderDetail?relationOrderSn=${relationOrderSn}`,
-    method: "get"
+    method: "get",
   });
 }
 
@@ -173,6 +181,6 @@ export function handleActivityOrderAssign(data) {
   return request({
     url: "/admin/activity/handleActivityOrderAssign",
     method: "post",
-    data
+    data,
   });
 }

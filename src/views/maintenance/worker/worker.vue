@@ -121,6 +121,16 @@
           align="center"
         ></el-table-column>
         <el-table-column
+          label="身份"
+          show-overflow-tooltip
+          width="100"
+          align="center"
+        >
+          <template slot-scope="{ row }">
+            {{ row.type == 1 ? "兼职" : row.type == 2 ? "签约" : "全职" }}
+          </template>
+        </el-table-column>
+        <el-table-column
           prop="realPortrait"
           label="真实头像"
           show-overflow-tooltip

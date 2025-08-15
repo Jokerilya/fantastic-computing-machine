@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import { queryEnterpriseType,editEnterpriseType } from "@/api/boss";
+import { queryEnterpriseType, editEnterpriseType } from "@/api/boss";
 import uploadImg from "@/components/uploadImg/upload-img.vue";
 export default {
   name: "GoodsClass",
@@ -117,7 +117,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 /deep/ .el-table .cell {
   display: flex;
   justify-content: center;

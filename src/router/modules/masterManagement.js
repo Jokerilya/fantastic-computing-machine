@@ -1,13 +1,13 @@
 // 师傅管理
-import Layout from '@/layout';
+import Layout from "@/layout";
 
 const router = {
-	path: '/masterManagement',
-	component: Layout,
-	redirect: '/masterManagement',
-	name: 'masterManagement',
-	meta: { title: '师傅管理', icon: 'el-icon-user' },
-	children: [
+  path: "/masterManagement",
+  component: Layout,
+  redirect: "/masterManagement",
+  name: "masterManagement",
+  meta: { title: "师傅管理", icon: "el-icon-user" },
+  children: [
     {
       path: "/maintenance/worker",
       name: "worker",
@@ -32,9 +32,9 @@ const router = {
       name: "examineRecord",
       component: () => import("@/views/maintenance/examineRecord"),
       meta: { title: "师傅考核记录" },
-      hidden:true
+      hidden: true,
     },
-     {
+    {
       path: "/maintenance/purse/purseDetails",
       name: "purseDetails",
       component: () => import("@/views/maintenance/purse/purseDetails.vue"),
@@ -46,12 +46,24 @@ const router = {
       component: () => import("@/views/withdrawalManagement/index"),
       meta: { title: "提现明细" },
     },
-     {
+    {
       path: "/maintenance/insuranceManage",
       name: "insuranceManage",
       component: () => import("@/views/maintenance/insuranceModule/index.vue"),
       meta: { title: "保险明细" },
     },
-	],
+    {
+      path: "/maintenance/largeScreenData",
+      name: "largeScreenData",
+      component: () => import("@/views/maintenance/largeScreenData/index.vue"),
+      meta: { title: "大屏数据" },
+    },
+    {
+      path: "/maintenance/complaintList",
+      name: "complaintList",
+      component: () => import("@/views/maintenance/complaintList/index.vue"),
+      meta: { title: "投诉列表" },
+    },
+  ],
 };
 export default router;

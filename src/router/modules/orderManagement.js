@@ -1,12 +1,12 @@
 // 订单管理
-import Layout from '@/layout';
+import Layout from "@/layout";
 
 const router = {
-  path: '/orderManagement',
+  path: "/orderManagement",
   component: Layout,
-  redirect: '/orderManagement',
-  name: 'orderManagement',
-  meta: { title: '订单管理', icon: 'el-icon-tickets' },
+  redirect: "/orderManagement",
+  name: "orderManagement",
+  meta: { title: "订单管理", icon: "el-icon-tickets" },
   children: [
     {
       path: "/maintenance/maintenance_order",
@@ -32,7 +32,7 @@ const router = {
       component: () => import("@/views/maintenance/customerDetail"),
       meta: { title: "年保订单详情", noShow: "true" },
     },
-    
+
     {
       path: "/financialManagement/incomeExpenditrue",
       name: "workerDetails",
@@ -85,11 +85,23 @@ const router = {
     },
     // 物流
     {
-      path: '/maintenance/logisticsDetails',
-      name: 'logisticsDetails',
-      component: () => import('@/views/maintenance/logisticsDetails'),
-      meta: { title: '物流详情' },
-      hidden: true
+      path: "/maintenance/logisticsDetails",
+      name: "logisticsDetails",
+      component: () => import("@/views/maintenance/logisticsDetails"),
+      meta: { title: "物流详情" },
+      hidden: true,
+    },
+    {
+      path: "/coupon",
+      name: "Coupon",
+      component: () => import("@/views/activity/coupon"),
+      meta: { title: "优惠券管理" },
+    },
+    {
+      path: "/receiveRecords",
+      name: "ReceiveRecords",
+      component: () => import("@/views/activity/coupon/receiveRecords"),
+      meta: { title: "领取记录" },
     },
   ],
 };

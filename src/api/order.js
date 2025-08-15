@@ -156,7 +156,7 @@ export function handleRepairOrderExportV2(data) {
 }
 
 // 维保订单列表数据导出(故障项目)
-export function handleRepairOrderExportByFaults(data){
+export function handleRepairOrderExportByFaults(data) {
   return request({
     url: "/admin/maintenance/handleRepairOrderExportByFaults",
     method: "POST",
@@ -179,7 +179,7 @@ export function getButlerOrderDetail(data) {
   return request({
     url: "/admin/maintenance/getButlerOrderDetail",
     method: "get",
-    params:data,
+    params: data,
   });
 }
 //查询管家订单列表
@@ -212,7 +212,7 @@ export function queryDeviceSystemList() {
 // 查询故障分类及故障部位
 export function queryFaultPosition(machineType) {
   return request({
-    url: "/admin/maintenance/queryFaultPosition?machineType="+machineType,
+    url: "/admin/maintenance/queryFaultPosition?machineType=" + machineType,
     method: "get",
   });
 }
@@ -505,7 +505,7 @@ export function convertToInsurance(data) {
 // 标记散单完成
 export function markOrderCompletion(orderSn) {
   return request({
-    url: "/admin/maintenance/markOrderCompletion?orderSn=" +orderSn,
+    url: "/admin/maintenance/markOrderCompletion?orderSn=" + orderSn,
     method: "get",
   });
 }
@@ -567,7 +567,7 @@ export function queryFaultItems(data) {
   return request({
     url: "/admin/maintenance/queryFaultItems",
     method: "post",
-    data
+    data,
   });
 }
 
@@ -576,7 +576,7 @@ export function saveFaultItems(data) {
   return request({
     url: "/admin/maintenance/saveFaultItems",
     method: "post",
-    data
+    data,
   });
 }
 
@@ -585,7 +585,7 @@ export function queryMasterFaultPriceList(data) {
   return request({
     url: "/admin/maintenance/queryMasterFaultPriceList",
     method: "post",
-    data
+    data,
   });
 }
 
@@ -594,420 +594,473 @@ export function examineMasterFaultPrice(data) {
   return request({
     url: "/admin/maintenance/examineMasterFaultPrice",
     method: "post",
-    data
+    data,
   });
 }
 
 // 寄修
 export function sendRepair(orderSn) {
-	return request({
-		url: '/admin/maintenance/sendRepair?orderSn=' + orderSn,
-		method: 'get',
-	})
+  return request({
+    url: "/admin/maintenance/sendRepair?orderSn=" + orderSn,
+    method: "get",
+  });
 }
 
 // 新增/编辑配件商品
 export function editPartProduct(data) {
-	return request({
-		url: '/admin/maintenance/editPartProduct',
-		method: 'post',
-    data
-	})
+  return request({
+    url: "/admin/maintenance/editPartProduct",
+    method: "post",
+    data,
+  });
 }
 
 // 删除配件商品
 export function deletePartProduct(data) {
-	return request({
-		url: '/admin/maintenance/deletePartProduct',
-		method: 'post',
-    data
-	})
+  return request({
+    url: "/admin/maintenance/deletePartProduct",
+    method: "post",
+    data,
+  });
 }
 
 // 查询维保供应商信息
 export function queryMaintenanceSupplierInfo(data) {
-	return request({
-		url: '/admin/maintenance/queryMaintenanceSupplierInfo',
-		method: 'post',
-    data
-	})
+  return request({
+    url: "/admin/maintenance/queryMaintenanceSupplierInfo",
+    method: "post",
+    data,
+  });
 }
 
 // 填写物流信息
 export function fillLogisticsInformation(data) {
-	return request({
-		url: '/admin/maintenance/fillLogisticsInformation',
-		method: 'post',
-    data
-	})
+  return request({
+    url: "/admin/maintenance/fillLogisticsInformation",
+    method: "post",
+    data,
+  });
 }
 
 // 故障项定价申请列表
 export function queryFaultItemApplyList() {
-	return request({
-		url: '/admin/maintenance/queryFaultItemApplyList',
-		method: 'get'
-	})
+  return request({
+    url: "/admin/maintenance/queryFaultItemApplyList",
+    method: "get",
+  });
 }
 
 // 故障项定价申请明细
 export function queryFaultItemApplyDetails(faultItemId) {
-	return request({
-		url: '/admin/maintenance/queryFaultItemApplyDetails?faultItemId='+faultItemId,
-		method: 'get'
-	})
+  return request({
+    url:
+      "/admin/maintenance/queryFaultItemApplyDetails?faultItemId=" +
+      faultItemId,
+    method: "get",
+  });
 }
 
 // 申诉操作师傅金额
 export function handleMasterAmount(data) {
-	return request({
-		url: '/admin/maintenance/handleMasterAmount',
-		method: 'POST',
-    data
-	})
+  return request({
+    url: "/admin/maintenance/handleMasterAmount",
+    method: "POST",
+    data,
+  });
 }
 
 // 标记为活跃师傅
-export function handleActiveMaster({uid,flag}) {
-	return request({
-		url: `/admin/maintenance/handleActiveMaster?uid=${uid}&flag=${flag}`,
-		method: 'get',
-	})
+export function handleActiveMaster({ uid, flag }) {
+  return request({
+    url: `/admin/maintenance/handleActiveMaster?uid=${uid}&flag=${flag}`,
+    method: "get",
+  });
 }
 
 // 查询考核项目列表
 export function queryMasterAssessmentItemList() {
-	return request({
-		url: `/admin/maintenance/queryMasterAssessmentItemList`,
-		method: 'get',
-	})
+  return request({
+    url: `/admin/maintenance/queryMasterAssessmentItemList`,
+    method: "get",
+  });
 }
 
 // 查询师傅考核记录列表
 export function queryMasterAssessmentRecords(id) {
-	return request({
-		url: `/admin/maintenance/queryMasterAssessmentRecords?id=${id}`,
-		method: 'get',
-	})
+  return request({
+    url: `/admin/maintenance/queryMasterAssessmentRecords?id=${id}`,
+    method: "get",
+  });
 }
 
 // 编辑师傅考核项目
-export function editMasterAssessmentItem(data,montageData) {
-	return request({
-		url: `/admin/maintenance/editMasterAssessmentItem`+montageData,
-		method: 'post',
-    data
-	})
+export function editMasterAssessmentItem(data, montageData) {
+  return request({
+    url: `/admin/maintenance/editMasterAssessmentItem` + montageData,
+    method: "post",
+    data,
+  });
 }
 
 // 删除配件商品
 export function deleteOrderFaultItem(data) {
-	return request({
-		url: '/admin/maintenance/deleteOrderFaultItem',
-		method: 'post',
-    data
-	})
+  return request({
+    url: "/admin/maintenance/deleteOrderFaultItem",
+    method: "post",
+    data,
+  });
 }
 
 // 新增订单故障项目
 export function addOrderFaultItem(data) {
-	return request({
-		url: '/admin/maintenance/addOrderFaultItem',
-		method: 'post',
-    data
-	})
+  return request({
+    url: "/admin/maintenance/addOrderFaultItem",
+    method: "post",
+    data,
+  });
 }
 
 // 协商费用
 export function consultCost(data) {
-	return request({
-		url: '/admin/maintenance/consultCost',
-		method: 'post',
-    data
-	})
+  return request({
+    url: "/admin/maintenance/consultCost",
+    method: "post",
+    data,
+  });
 }
 
 // 机将大师傅接单
 export function handleSystemCreateOrder(orderSn) {
-	return request({
-		url: '/admin/maintenance/handleSystemCreateOrder?orderSn='+orderSn,
-		method: 'get'
-	})
+  return request({
+    url: "/admin/maintenance/handleSystemCreateOrder?orderSn=" + orderSn,
+    method: "get",
+  });
 }
-
 
 // 故障减免费用
 export function handleFaultCost(data) {
-	return request({
-		url: '/admin/maintenance/handleFaultCost',
-		method: 'post',
-    data
-	})
+  return request({
+    url: "/admin/maintenance/handleFaultCost",
+    method: "post",
+    data,
+  });
 }
 
 // 查询师傅保险列表
 export function queryMasterInsuranceList(data) {
-	return request({
-		url: '/admin/maintenance/queryMasterInsuranceList',
-		method: 'post',
-    data
-	})
+  return request({
+    url: "/admin/maintenance/queryMasterInsuranceList",
+    method: "post",
+    data,
+  });
 }
 
 // 新增编辑师傅保险信息
 export function editMasterInsurance(data) {
-	return request({
-		url: '/admin/maintenance/editMasterInsurance',
-		method: 'post',
-    data
-	})
+  return request({
+    url: "/admin/maintenance/editMasterInsurance",
+    method: "post",
+    data,
+  });
 }
 
-// 查询开票列表 
+// 查询开票列表
 export function queryRepairInvoiceOrderList(data) {
-	return request({
-		url: '/admin/maintenance/queryRepairInvoiceOrderList',
-		method: 'post',
-    data
-	})
+  return request({
+    url: "/admin/maintenance/queryRepairInvoiceOrderList",
+    method: "post",
+    data,
+  });
 }
 
 // 上传发票
 export function uploadRepairInvoice(data) {
-	return request({
-		url: '/admin/maintenance/uploadRepairInvoice',
-		method: 'post',
-    data
-	})
+  return request({
+    url: "/admin/maintenance/uploadRepairInvoice",
+    method: "post",
+    data,
+  });
 }
 
 // 订单抵扣标识
-export function handleOrderDiscountFlag(orderSn,flag) {
-	return request({
-		url: `/admin/maintenance/handleOrderDiscountFlag?orderSn=${orderSn}&flag=${flag}`,
-		method: 'get'
-	})
+export function handleOrderDiscountFlag(orderSn, flag) {
+  return request({
+    url: `/admin/maintenance/handleOrderDiscountFlag?orderSn=${orderSn}&flag=${flag}`,
+    method: "get",
+  });
 }
 
 // 上传线下工单
 export function handleOfflineImages(data) {
-	return request({
-		url: `/admin/maintenance/handleOfflineImages`,
-		method: 'post',
-    data
-	})
+  return request({
+    url: `/admin/maintenance/handleOfflineImages`,
+    method: "post",
+    data,
+  });
 }
 
 // 同步金蝶单据
 export function synchronizationJdOrder(data) {
-	return request({
-		url: `/admin/maintenance/synchronizationJdOrder`,
-		method: 'post',
-    data
-	})
+  return request({
+    url: `/admin/maintenance/synchronizationJdOrder`,
+    method: "post",
+    data,
+  });
 }
 
 // 编辑维保供应商信息
 export function editMaintenanceSupplierInfo(data) {
-	return request({
-		url: `/admin/maintenance/editMaintenanceSupplierInfo`,
-		method: 'post',
-    data
-	})
+  return request({
+    url: `/admin/maintenance/editMaintenanceSupplierInfo`,
+    method: "post",
+    data,
+  });
 }
 
 // 师傅订单折扣记录列表
 export function queryMasterOrderDiscountList(data) {
-	return request({
-		url: `/admin/maintenance/queryMasterOrderDiscountList`,
-		method: 'post',
-    data
-	})
+  return request({
+    url: `/admin/maintenance/queryMasterOrderDiscountList`,
+    method: "post",
+    data,
+  });
 }
 
 // 手动合并师傅折扣
 export function handleMergeMasterOrder(data) {
-	return request({
-		url: `/admin/maintenance/handleMergeMasterOrder`,
-		method: 'post',
-    data
-	})
+  return request({
+    url: `/admin/maintenance/handleMergeMasterOrder`,
+    method: "post",
+    data,
+  });
 }
 
 // 删除师傅折扣记录
 export function deleteMasterDiscountLog(data) {
-	return request({
-		url: `/admin/maintenance/deleteMasterDiscountLog`,
-		method: 'post',
-    data
-	})
+  return request({
+    url: `/admin/maintenance/deleteMasterDiscountLog`,
+    method: "post",
+    data,
+  });
 }
 
 // 查询设备详情
 export function getDeviceInfoByNo(no) {
-	return request({
-		url: `/admin/maintenance/getDeviceInfoByNo?no=${no}`,
-		method: 'get'
-	})
+  return request({
+    url: `/admin/maintenance/getDeviceInfoByNo?no=${no}`,
+    method: "get",
+  });
 }
 
 // 查询产品咨询列表
 export function queryRegisterInfoList(data) {
-	return request({
-		url: `/admin/maintenance/queryRegisterInfoList`,
-		method: 'post',
-    data
-	})
+  return request({
+    url: `/admin/maintenance/queryRegisterInfoList`,
+    method: "post",
+    data,
+  });
 }
 
 // 查询平台未读消息
 export function queryRepairMessgae(data) {
-	return request({
-		url: `/admin/maintenance/queryRepairMessgae`,
-		method: 'post',
-    data
-	})
+  return request({
+    url: `/admin/maintenance/queryRepairMessgae`,
+    method: "post",
+    data,
+  });
 }
 
 // 处理产品咨询
 export function handleRegisterInfo(data) {
-	return request({
-		url: `/admin/maintenance/handleRegisterInfo`,
-		method: 'post',
-    data
-	})
+  return request({
+    url: `/admin/maintenance/handleRegisterInfo`,
+    method: "post",
+    data,
+  });
 }
 
 // 师傅订单排行数据
 export function queryMasterOrderRankData(data) {
-	return request({
-		url: `/admin/maintenance/queryMasterOrderRankData`,
-		method: 'post',
-    data
-	})
+  return request({
+    url: `/admin/maintenance/queryMasterOrderRankData`,
+    method: "post",
+    data,
+  });
 }
 
 // 编辑产品咨询记录
 export function editRegisterInfo(data) {
-	return request({
-		url: `/admin/maintenance/editRegisterInfo`,
-		method: 'post',
-    data
-	})
+  return request({
+    url: `/admin/maintenance/editRegisterInfo`,
+    method: "post",
+    data,
+  });
 }
 
 // 产品咨询转保养订单
 export function handleConvertKeepOrder(data) {
-	return request({
-		url: `/admin/maintenance/handleConvertKeepOrder`,
-		method: 'post',
-    data
-	})
+  return request({
+    url: `/admin/maintenance/handleConvertKeepOrder`,
+    method: "post",
+    data,
+  });
 }
 
 // 保养订单指派师傅
 export function deviceKeepOrderAssign(data) {
-	return request({
-		url: `/admin/maintenance/deviceKeepOrderAssign`,
-		method: 'post',
-    data
-	})
+  return request({
+    url: `/admin/maintenance/deviceKeepOrderAssign`,
+    method: "post",
+    data,
+  });
 }
 
 // 编辑保养列表信息
 export function editDeviceKeepOrder(data) {
-	return request({
-		url: `/admin/maintenance/editDeviceKeepOrder`,
-		method: 'post',
-    data
-	})
+  return request({
+    url: `/admin/maintenance/editDeviceKeepOrder`,
+    method: "post",
+    data,
+  });
 }
 
 // 保养订单标记已完成
 export function deviceKeepOrderMarkComplete(data) {
-	return request({
-		url: `/admin/maintenance/deviceKeepOrderMarkComplete`,
-		method: 'post',
-    data
-	})
+  return request({
+    url: `/admin/maintenance/deviceKeepOrderMarkComplete`,
+    method: "post",
+    data,
+  });
 }
-
 
 // 转移订单配件商品
 export function transferPartProduct(data) {
-	return request({
-		url: `/admin/maintenance/transferPartProduct`,
-		method: 'post',
-    data
-	})
+  return request({
+    url: `/admin/maintenance/transferPartProduct`,
+    method: "post",
+    data,
+  });
 }
 
 // 转移订单故障项目
 export function transferOrderFaultItem(data) {
-	return request({
-		url: `/admin/maintenance/transferOrderFaultItem`,
-		method: 'post',
-    data
-	})
+  return request({
+    url: `/admin/maintenance/transferOrderFaultItem`,
+    method: "post",
+    data,
+  });
 }
 
 // 修改师傅订单
 export function editEnrollRepairOrder(data) {
-	return request({
-		url: `/admin/maintenance/editEnrollRepairOrder`,
-		method: 'post',
-    data
-	})
+  return request({
+    url: `/admin/maintenance/editEnrollRepairOrder`,
+    method: "post",
+    data,
+  });
 }
 
 // jdTest管理模块
 export function testData(orderSns) {
-	return request({
-		url: `/admin/jdTest/testData?orderSns=${orderSns}`,
-		method: 'get'
-	})
+  return request({
+    url: `/admin/jdTest/testData?orderSns=${orderSns}`,
+    method: "get",
+  });
 }
 
 // 设置订单标签
 export function handleOrderLabel(data) {
-	return request({
-		url: `/admin/maintenance/handleOrderLabel`,
-		method: 'post',
-    data
-	})
+  return request({
+    url: `/admin/maintenance/handleOrderLabel`,
+    method: "post",
+    data,
+  });
 }
 
 // 查询维保订单列表角标
 export function getOrderSubscript(data) {
-	return request({
-		url: `/admin/maintenance/getOrderSubscript`,
-		method: 'post',
-    data
-	})
+  return request({
+    url: `/admin/maintenance/getOrderSubscript`,
+    method: "post",
+    data,
+  });
 }
 
 // 设置订单配件商品到达信息
 export function handlePartProductArriveInfo(data) {
-	return request({
-		url: `/admin/maintenance/handlePartProductArriveInfo`,
-		method: 'post',
-    data
-	})
+  return request({
+    url: `/admin/maintenance/handlePartProductArriveInfo`,
+    method: "post",
+    data,
+  });
 }
 
-//  驳回师傅提交验收 
+//  驳回师傅提交验收
 export function rejectOrderCheck(orderSn) {
-	return request({
-		url: `/admin/maintenance/rejectOrderCheck?orderSn=${orderSn}`,
-		method: 'get',
-	})
+  return request({
+    url: `/admin/maintenance/rejectOrderCheck?orderSn=${orderSn}`,
+    method: "get",
+  });
 }
 
-// 订单退款审核 
+// 订单退款审核
 export function handleOrderRefund(data) {
-	return request({
-		url: `/admin/maintenance/handleOrderRefund`,
-		method: 'post',
-    data
-	})
+  return request({
+    url: `/admin/maintenance/handleOrderRefund`,
+    method: "post",
+    data,
+  });
+}
+
+// 设置订单为返修单
+export function handleOrderRework(data) {
+  return request({
+    url: `/admin/maintenance/handleOrderRework`,
+    method: "post",
+    data,
+  });
+}
+
+// 设置师傅订单有效单数
+export function handleMasterOrderValidOrderNum(data) {
+  return request({
+    url: `/admin/maintenance/handleMasterOrderValidOrderNum`,
+    method: "post",
+    data,
+  });
+}
+
+// 设置师傅订单有效单数
+export function handleMasterOrderServiceTimeout(orderSn) {
+  return request({
+    url: `/admin/maintenance/handleMasterOrderServiceTimeout?orderSn=${orderSn}`,
+    method: "get",
+  });
+}
+
+// 新增维保订单投诉
+export function saveRepairOrderComplaint(data) {
+  return request({
+    url: `/admin/maintenance/saveRepairOrderComplaint`,
+    method: "post",
+    data,
+  });
+}
+
+// 查询维保订单投诉
+export function queryRepairOrderComplaint(data) {
+  return request({
+    url: `/admin/maintenance/queryRepairOrderComplaint`,
+    method: "post",
+    data,
+  });
+}
+
+// 订单绑定业务员
+export function bindSalesman(data) {
+  return request({
+    url: `/admin/maintenance/bindSalesman`,
+    method: "post",
+    data,
+  });
 }
