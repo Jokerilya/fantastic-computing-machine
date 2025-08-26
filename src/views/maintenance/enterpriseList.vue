@@ -97,54 +97,60 @@
           label="入驻时间"
           show-overflow-tooltip
           align="center"
-          width="140"
         ></el-table-column>
         <el-table-column
           prop="enterpriseName"
           label="企业名称"
           show-overflow-tooltip
-          width="250"
+          width="200px"
           align="center"
         ></el-table-column>
-        <el-table-column
-          label="企业身份"
-          show-overflow-tooltip
-          width="110"
-          align="center"
-        >
+        <el-table-column label="企业身份" show-overflow-tooltip align="center">
           <template slot-scope="{ row }">
             <el-tag :type="row.vipFlag == 1 ? '' : 'info'">
               {{ row.vipFlag == 1 ? "年保客户" : "普通客户" }}</el-tag
             >
           </template>
         </el-table-column>
+        <el-table-column label="结算类型" show-overflow-tooltip align="center">
+          <template slot-scope="{ row }">
+            {{ row.settlementType == 2 ? "月结" : "现结" }}
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="备注"
+          show-overflow-tooltip
+          align="center"
+          width="180px"
+        >
+          <template slot-scope="{ row }">
+            {{ row.remark ? row.remark : "/" }}
+          </template>
+        </el-table-column>
         <el-table-column
           prop="maintenancePhone"
           label="联系电话"
           show-overflow-tooltip
-          width="120"
           align="center"
-        ></el-table-column>
+        >
+          <template slot-scope="{ row }">
+            {{ row.maintenancePhone ? row.maintenancePhone : "/" }}
+          </template>
+        </el-table-column>
         <el-table-column
           prop="maintenancePeople"
           label="联系人"
           show-overflow-tooltip
-          width="70"
           align="center"
         ></el-table-column>
         <el-table-column
           prop="enterpriseAddress"
           label="企业地址"
+          width="170px"
           show-overflow-tooltip
-          width="350"
           align="center"
         ></el-table-column>
-        <el-table-column
-          label="推广人"
-          show-overflow-tooltip
-          width="140"
-          align="center"
-        >
+        <el-table-column label="推广人" show-overflow-tooltip align="center">
           <template slot-scope="{ row }">
             {{ row.promotionPeople ? row.promotionPeople : "/" }}
           </template>
@@ -152,7 +158,6 @@
         <el-table-column
           label="业务员(旧版)"
           show-overflow-tooltip
-          width="110"
           align="center"
         >
           <template slot-scope="{ row }">
@@ -258,20 +263,28 @@
             </div>
           </template>
         </el-table-column> -->
-        <el-table-column
+        <!-- <el-table-column
           prop="deviceScale"
           label="公司规模"
           show-overflow-tooltip
           width="100"
           align="center"
-        ></el-table-column>
+        >
+          <template slot-scope="{ row }">
+            {{ row.deviceScale ? row.deviceScale : "/" }}
+          </template>
+        </el-table-column>
         <el-table-column
           prop="deviceTypeIdsName"
           label="设备类型"
           show-overflow-tooltip
           width="200"
           align="center"
-        ></el-table-column>
+        >
+          <template slot-scope="{ row }">
+            {{ row.deviceTypeIdsName ? row.deviceTypeIdsName : "/" }}
+          </template>
+        </el-table-column> -->
         <el-table-column
           label="认证状态"
           show-overflow-tooltip
@@ -341,7 +354,7 @@
                       >成员</el-button
                     >
                   </el-dropdown-item>
-                  <el-dropdown-item>
+                  <el-dropdown-item v-if="row.enterpriseFlag == 2">
                     <el-button type="text" @click="editTeam(row)"
                       >编辑</el-button
                     >
@@ -349,6 +362,11 @@
                   <el-dropdown-item v-if="row.vipFlag == 1">
                     <el-button type="text" @click="openDataUrl(row.dataUrl)"
                       >大屏</el-button
+                    >
+                  </el-dropdown-item>
+                  <el-dropdown-item>
+                    <el-button type="text" @click="openRemarksDialog(row)"
+                      >备注</el-button
                     >
                   </el-dropdown-item>
                 </el-dropdown-menu>
@@ -481,147 +499,52 @@
     <div v-if="editForm">
       <el-dialog
         title="编辑企业"
-        width="60%"
+        width="30%"
         :visible="editEnterprise"
+        :close-on-click-modal="false"
         :before-close="closeEditEnterprise"
       >
-        <div class="content">
-          <div class="oneLine">
-            <div class="item">
-              <div class="title">联系人</div>
-              <el-input class="inp" v-model="editForm.maintenancePeople">
-              </el-input>
-            </div>
-            <div class="item">
-              <div class="title">联系电话</div>
-              <el-input class="inp" v-model="editForm.maintenancePhone">
-              </el-input>
-            </div>
-            <div class="item">
-              <div class="title">法人代表</div>
-              <el-input class="inp" v-model="editForm.frname"> </el-input>
-            </div>
-          </div>
-          <div class="oneLine">
-            <div class="item">
-              <div class="title">企业名称</div>
-              <el-input class="inp" v-model="editForm.enterpriseName">
-              </el-input>
-            </div>
-            <div class="item">
-              <div class="title">企业地址</div>
-              <el-input class="inp" v-model="editForm.enterpriseAddress">
-              </el-input>
-            </div>
-            <div class="item">
-              <div class="title">纳税人识别号</div>
-              <el-input
-                class="inp"
-                v-model="editForm.taxpayerNo"
-                :disabled="true"
-              >
-              </el-input>
-            </div>
-          </div>
-          <div class="oneLine">
-            <div class="item">
-              <div class="title">设备类型</div>
-              <el-cascader
-                class="inp"
-                :show-all-levels="false"
-                :options="typeList"
-                v-model="editForm.deviceTypeIds"
-                :props="{
-                  checkStrictly: true,
-                  emitPath: false,
-                  value: 'id',
-                  label: 'name',
-                  multiple: true,
-                  children: 'list',
-                }"
-                collapse-tags
-                clearable
-              ></el-cascader>
-            </div>
-            <!-- <div class="item">
-              <div class="title">
-                成立日期
-              </div>
-              <el-date-picker
-                class="inp"
-                v-model="editForm.opfrom"
-                type="date"
-                placeholder="选择日期"
-                value-format="yyyy-MM-dd"
-              >
-              </el-date-picker>
-            </div> -->
-            <!-- <div class="item">
-              <div class="title">
-                注册资本
-              </div>
-              <el-input class="inp" v-model="editForm.regCapital"> </el-input>
-            </div> -->
-            <div class="item">
-              <div class="title">直推师傅</div>
-              <el-select
-                filterable
-                :remote-method="remoteMethod"
-                disabled
-                remote
-                v-model="recommendMaster"
-                placeholder="请选择"
-              >
-                <el-option
-                  v-for="item in masterOptions"
-                  :key="item.value"
-                  :label="item.realName"
-                  :value="item.realName"
-                >
-                </el-option>
-              </el-select>
-            </div>
-
-            <div class="item" style="position: relative">
-              <!-- <div class="title" style="flex:3">
-                是否禁用
-              </div>
-              <div style="flex:6">
-                <el-switch
-                  v-model="editForm.status"
-                  active-color="#13ce66"
-                  inactive-color="#ff4949"
-                  :active-value="0"
-                  :inactive-value="1"
-                >
-                </el-switch>
-              </div> -->
-              <!-- <div
-                style="position: absolute;bottom: 9px;right: 23px;color: red;"
-              >
-                (注意:绿色状态是禁用)
-              </div> -->
-            </div>
-          </div>
-          <!-- <div class="oneLine">
-            <div class="item">
-              <div class="title" style="flex:3">
-                年保客户
-              </div>
-              <div style="flex:6">
-                <el-switch
-                  disabled
-                  v-model="editForm.vipFlag"
-                  active-color="#13ce66"
-                  inactive-color="#ff4949"
-                  :active-value="1"
-                  :inactive-value="0"
-                >
-                </el-switch>
-              </div>
-            </div>
-          </div> -->
-        </div>
+        <el-form label-width="120px" label-position="left">
+          <el-form-item label="企业名称">
+            <el-input class="inp" v-model="editForm.enterpriseName"> </el-input>
+          </el-form-item>
+          <el-form-item label="结算类型">
+            <el-select
+              v-model="editForm.settlementType"
+              placeholder="请选择"
+              style="width: 240px"
+            >
+              <el-option label="现结" :value="1">现结</el-option>
+              <el-option label="月结" :value="2">月结 </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="企业地址">
+            <el-cascader
+              v-model="editForm.areaId"
+              :options="addressOptions"
+              :props="addressOptionsProps"
+            ></el-cascader>
+          </el-form-item>
+          <el-form-item label="联系人">
+            <el-input class="inp" v-model="editForm.maintenancePeople">
+            </el-input>
+          </el-form-item>
+          <el-form-item label="联系电话">
+            <el-input class="inp" v-model="editForm.maintenancePhone">
+            </el-input>
+          </el-form-item>
+          <el-form-item label="法人代表">
+            <el-input class="inp" v-model="editForm.frname"> </el-input>
+          </el-form-item>
+          <el-form-item label="纳税人识别号">
+            <el-input
+              class="inp"
+              v-model="editForm.taxpayerNo"
+              :disabled="true"
+            >
+            </el-input>
+          </el-form-item>
+        </el-form>
         <div slot="footer" class="dialog-footer" style="text-align: center">
           <el-button @click="closeEditEnterprise">取 消</el-button>
           <el-button type="primary" @click="confirmFn">确 定</el-button>
@@ -634,6 +557,7 @@
       title="企业审核"
       :visible="auditDialog"
       width="30%"
+      :close-on-click-modal="false"
       :before-close="auditDialogClose"
     >
       <div class="auditDialog">
@@ -660,6 +584,52 @@
       <span slot="footer" class="dialog-footer">
         <el-button @click="auditDialogClose">取 消</el-button>
         <el-button type="primary" @click="auditDialogConfirm">确 定</el-button>
+      </span>
+    </el-dialog>
+
+    <!-- 备注 ＋ 标签 -->
+    <el-dialog
+      title="备注"
+      width="30%"
+      :before-close="closeRemarksDialog"
+      :visible="remarksDialogVisible"
+      :close-on-click-modal="false"
+    >
+      <div class="auditDialog">
+        <el-form label-width="80px">
+          <el-form-item
+            label="标签:"
+            v-if="enterpriseTag && enterpriseTag.length > 0"
+          >
+            <el-button
+              :type="judgeTagSelected(item) ? 'primary' : ''"
+              @click="addTag(item)"
+              size="small"
+              v-for="item in enterpriseTag"
+              :key="item"
+              >{{ item }}</el-button
+            >
+          </el-form-item>
+          <el-form-item label="自定义:">
+            <el-input
+              type="textarea"
+              placeholder="请输入内容"
+              v-model="handleEnterpriseRemarkParamsCopy.remark"
+              maxlength="100"
+              show-word-limit
+            >
+            </el-input>
+          </el-form-item>
+          <el-form-item label="备注:" v-if="enterpriseRemark">
+            {{ enterpriseRemark }}
+          </el-form-item>
+        </el-form>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeRemarksDialog">取 消</el-button>
+        <el-button type="primary" @click="handleEnterpriseRemark"
+          >确 定</el-button
+        >
       </span>
     </el-dialog>
   </div>
@@ -713,12 +683,14 @@
 
 <script>
 import tableMixin from "@/mixin/table";
+import { getSysLabel } from "@/api/system.js";
 import { getEnterpriseList, querySalesmanList } from "@/api/user.js";
 import {
   handleEnterpriseInfoExport,
   queryDeviceTypeList,
   queryEnterpriseMemberList,
   queryMasterName,
+  handleEnterpriseRemark,
 } from "@/api/order.js";
 import {
   handleEnterpriseExamine,
@@ -732,6 +704,14 @@ export default {
   mixins: [tableMixin],
   data() {
     return {
+      remarksDialogVisible: false,
+      handleEnterpriseRemarkParamsCopy: {
+        labelList: [],
+        remark: null,
+      },
+      chooseEnterpriseId: null,
+      enterpriseTag: [],
+
       reason: "", //驳回原因
 
       enlargeInvitationCodeUrl: null,
@@ -753,7 +733,7 @@ export default {
       currentPage: 1,
       enpTeamList: null,
       dataSumNum: "",
-      enterpriseList: "",
+      enterpriseList: [],
       enterpriseName: "",
       enterprisePhone: "",
       loading: false,
@@ -785,14 +765,103 @@ export default {
         salesmanId: null,
         queryTime: null,
       },
+
+      addressOptions: [],
+      addressOptionsProps: {
+        checkStrictly: false,
+        emitPath: false,
+        value: "id",
+        label: "name",
+        children: "child",
+      },
     };
+  },
+  computed: {
+    enterpriseRemark() {
+      const { labelList, remark } = this.handleEnterpriseRemarkParamsCopy;
+      const parts = [...labelList];
+      if (remark) {
+        parts.push(remark);
+      }
+      return parts.join(";");
+    },
   },
   async created() {
     this._getEnterpriseList();
     const res = await queryDeviceTypeList();
     this.typeList = res.data;
   },
+  mounted() {
+    this.addressOptions = require("../../utils/address.json");
+    this.getSysLabel();
+  },
   methods: {
+    // 确定企业备注
+    async handleEnterpriseRemark() {
+      let params = {
+        id: this.chooseEnterpriseId,
+        remark: this.enterpriseRemark,
+      };
+      const res = await handleEnterpriseRemark(params);
+      if (res.code == "000") {
+        this.$message({
+          message: res.message,
+          type: "success",
+        });
+        this.closeRemarksDialog();
+        this._getEnterpriseList();
+      }
+    },
+    // 关闭备注弹窗
+    closeRemarksDialog() {
+      this.handleEnterpriseRemarkParamsCopy = {
+        labelList: [],
+        remark: null,
+      };
+      this.chooseEnterpriseId = null;
+      this.remarksDialogVisible = false;
+    },
+    // 判断是否被选中
+    judgeTagSelected(tag) {
+      return this.handleEnterpriseRemarkParamsCopy.labelList.includes(tag);
+    },
+    // 点击标签
+    addTag(tag) {
+      const list = this.handleEnterpriseRemarkParamsCopy.labelList;
+      const index = list.indexOf(tag);
+      if (index > -1) {
+        // 已存在，移除
+        list.splice(index, 1);
+      } else {
+        // 不存在，添加
+        list.push(tag);
+      }
+    },
+    // 获取企业标签
+    async getSysLabel() {
+      const res = await getSysLabel("enterpriseTag");
+      if (res.code == "000") {
+        if (res.data) {
+          this.enterpriseTag = res.data.split(",");
+        }
+      }
+    },
+    // 打开备注弹框
+    openRemarksDialog(row) {
+      if (row.remark) {
+        let arr = row.remark.split(";");
+        arr.forEach((item) => {
+          if (this.enterpriseTag.includes(item)) {
+            this.handleEnterpriseRemarkParamsCopy.labelList.push(item);
+          } else {
+            this.handleEnterpriseRemarkParamsCopy.remark = item;
+          }
+        });
+      }
+      this.chooseEnterpriseId = row.id;
+      this.remarksDialogVisible = true;
+    },
+
     // 复制大屏链接
     openDataUrl(url) {
       window.open(url, "_blank");
@@ -874,7 +943,6 @@ export default {
     async confirmFn() {
       // 修改设备类型格式
       let str = "";
-      console.log(Array.isArray(this.editForm.deviceTypeIds));
       if (Array.isArray(this.editForm.deviceTypeIds)) {
         this.editForm.deviceTypeIds.forEach((el, index) => {
           if (index === 0) {
@@ -893,7 +961,6 @@ export default {
       this.editForm.id = this.editId;
       this.editForm.address = this.editForm.enterpriseAddress;
       const res1 = await editEnterpriseInfo(this.editForm);
-      console.log(846, this.editForm);
       if (res1.message === "操作成功") {
         this.$message({
           message: "编辑成功!",
@@ -912,18 +979,26 @@ export default {
     async editTeam(row) {
       this.editId = row.id;
       const res = await getEnterpriseInfo(row);
-      this.editForm = res.data;
-      this.recommendMaster = res.data.recommendMasterRealName;
-      console.log(this.editForm);
-      if (
-        this.editForm.deviceTypeIds &&
-        this.editForm.deviceTypeIds.indexOf(",") !== -1
-      ) {
-        this.editForm.deviceTypeIds = this.editForm.deviceTypeIds.split(",");
+      if (res.code == "000") {
+        this.editForm = res.data;
+        this.recommendMaster = res.data.recommendMasterRealName;
+        if (
+          this.editForm.deviceTypeIds &&
+          this.editForm.deviceTypeIds.indexOf(",") !== -1
+        ) {
+          this.editForm.deviceTypeIds = this.editForm.deviceTypeIds.split(",");
+        }
+        const queryEnterpriseNameRes = await queryEnterpriseName(
+          res.data.enterpriseName
+        );
+        if (queryEnterpriseNameRes.code == "000") {
+          this.editForm.uid =
+            queryEnterpriseNameRes.data[0] &&
+            queryEnterpriseNameRes.data[0].uid;
+          this.editEnterprise = true;
+          console.log(897, this.editForm);
+        }
       }
-      const { data } = await queryEnterpriseName(res.data.enterpriseName);
-      this.editForm.uid = data[0] && data[0].uid;
-      this.editEnterprise = true;
     },
     // 页码发生变化触发的事件
     updatePageNo(val) {

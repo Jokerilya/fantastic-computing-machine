@@ -1064,3 +1064,21 @@ export function bindSalesman(data) {
     data,
   });
 }
+
+// 设置企业备注
+export function handleEnterpriseRemark(data) {
+  return request({
+    url: `/admin/maintenance/handleEnterpriseRemark`,
+    method: "post",
+    data,
+  });
+}
+
+// 设置师傅备注
+export function handleMasterRemark(data) {
+  return request({
+    url: `/admin/maintenance/handleMasterRemark`,
+    method: "post",
+    data,
+  });
+}

@@ -11,9 +11,9 @@ import serviceManagement from "./modules/serviceManagement";
 import messageRouter from "./modules/message";
 import statisticsStatementRouter from "./modules/statisticsStatement";
 
-import orderManagement from "./modules/orderManagement"
+import orderManagement from "./modules/orderManagement";
 import masterManagement from "./modules/masterManagement";
-import enterpriseManagement  from "./modules/enterpriseManagement"
+import enterpriseManagement from "./modules/enterpriseManagement";
 
 // import orderRouter from "./modules/order.js";
 // import installRouter from "./modules/install.js";
@@ -26,7 +26,6 @@ import enterpriseManagement  from "./modules/enterpriseManagement"
 // import bossRouter from "./modules/boss.js";
 // import storeController from "./modules/storeController";
 // import stashSetoutHandleRouter from "./modules/stashSetoutHandle";
-
 
 export const constantRoutes = [
   {
@@ -91,7 +90,7 @@ export const constantRoutes = [
   systemRouter,
   activityRouter, // 运营管理
 
-  // maintenanceRouter,
+  maintenanceRouter,
   // stashSetoutHandleRouter,  // 仓库代处理
   // userListRouter,
   // storeController,

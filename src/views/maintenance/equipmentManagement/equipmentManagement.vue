@@ -46,7 +46,7 @@
         <el-input placeholder="客户名称"></el-input>
       </div> -->
       <div class="topTool_btn">
-        <!-- <el-button style="color:#2E4C9E" @click="addEquipmentPage" disabled
+        <!-- <el-button style="color: #2e4c9e" @click="addEquipmentPage" disabled
           >新增</el-button
         > -->
         <el-button style="color: #2e4c9e" @click="findFn">查询</el-button>
@@ -69,11 +69,11 @@
               'text-align': 'center',
             }"
           >
-            <el-table-column
-              width="150"
-              prop="enterpriseName"
-              label="客户名称"
-            ></el-table-column>
+            <el-table-column width="150" label="客户名称">
+              <template slot-scope="{ row }">
+                {{ row.enterpriseName ? row.enterpriseName : "/" }}
+              </template>
+            </el-table-column>
             <el-table-column label="类型" width="70">
               <template slot-scope="{ row }">
                 {{ row.type === 1 ? "普通" : row.type === 2 ? "年保" : "年卡" }}
@@ -100,20 +100,37 @@
               label="企业设备编码"
               width="120"
             >
+              <template slot-scope="{ row }">
+                {{ row.enterpriseDeviceNo ? row.enterpriseDeviceNo : "/" }}
+              </template>
             </el-table-column>
             <el-table-column
               width="120"
               prop="enterpriseDevicePosition"
               label="企业设备位置"
             >
+              <template slot-scope="{ row }">
+                {{
+                  row.enterpriseDevicePosition
+                    ? row.enterpriseDevicePosition
+                    : "/"
+                }}
+              </template>
             </el-table-column>
             <el-table-column prop="deviceBrand" label="设备品牌">
             </el-table-column>
             <el-table-column prop="deviceSystemName" label="设备系统">
             </el-table-column>
             <el-table-column prop="axesNumber" label="设备轴数">
+              <template slot-scope="{ row }">
+                {{ row.axesNumber ? row.axesNumber : "/" }}
+              </template>
             </el-table-column>
-            <el-table-column prop="cycle" label="保养周期"> </el-table-column>
+            <el-table-column prop="cycle" label="保养周期">
+              <template slot-scope="{ row }">
+                {{ row.cycle ? row.cycle : "/" }}
+              </template>
+            </el-table-column>
             <el-table-column prop="devicePlace" label="设备产地">
             </el-table-column>
             <el-table-column label="维保价格">
@@ -181,7 +198,7 @@ export default {
       data: {
         //获取列表需要的参数
         pageNo: 1,
-        pageSize: 5,
+        pageSize: 10,
       },
       equipmentStatus: [
         // 设备状态数组
@@ -221,10 +238,14 @@ export default {
     },
     // 跳转编辑
     editEquipmentPage(id) {
-      this.$router.push(
-        "/maintenance/equipmentManagement/addEquipment?titleName=编辑设备信息&id=" +
-          id
-      );
+      // this.$router.push(
+      //   "/maintenance/equipmentManagement/addEquipment?titleName=编辑设备信息&id=" +
+      //     id
+      // );
+      this.$router.push({
+        name: "addEquipment",
+        query: { titleName: "编辑设备信息", id },
+      });
     },
     // 跳转详情页
     goEquipmentDetails(id) {

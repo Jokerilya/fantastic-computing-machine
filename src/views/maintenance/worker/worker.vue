@@ -30,7 +30,7 @@
             ></el-input>
           </el-form-item>
         </el-col>
-        <el-col :span="5">
+        <!-- <el-col :span="5">
           <el-form-item label="团长名称">
             <el-select
               filterable
@@ -49,7 +49,7 @@
               </el-option>
             </el-select>
           </el-form-item>
-        </el-col>
+        </el-col> -->
         <el-col :span="5">
           <el-form-item label="审核状态">
             <el-select
@@ -62,7 +62,7 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="6">
+        <el-col :span="11">
           <el-form-item label="创建时间">
             <el-date-picker
               @change="changeQueryTimeCopy"
@@ -169,6 +169,16 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="备注"
+          show-overflow-tooltip
+          width="180px"
+          align="center"
+        >
+          <template slot-scope="{ row }">
+            {{ row.remark ? row.remark : "/" }}
+          </template>
+        </el-table-column>
+        <el-table-column
           label="活跃"
           show-overflow-tooltip
           width="80"
@@ -208,13 +218,13 @@
         </el-table-column>
         <el-table-column prop="integral" label="积分" align="center">
         </el-table-column>
-        <el-table-column
+        <!-- <el-table-column
           prop="superiorMasterName"
           label="团长"
           show-overflow-tooltip
           width="100"
           align="center"
-        ></el-table-column>
+        ></el-table-column> -->
         <el-table-column
           prop="promotionPeople"
           label="推广人"
@@ -222,13 +232,13 @@
           width="150"
           align="center"
         ></el-table-column>
-        <el-table-column
+        <!-- <el-table-column
           prop="recommendMasterName"
           label="推荐人(旧版)"
           show-overflow-tooltip
           width="110"
           align="center"
-        ></el-table-column>
+        ></el-table-column> -->
         <!-- <el-table-column
           prop="identity"
           label="角色"
@@ -449,7 +459,7 @@
                       >角色</el-button
                     >
                   </el-option> -->
-                  <el-option>
+                  <!-- <el-option>
                     <el-button
                       size="mini"
                       @click="open_integral_dialog(row.uid)"
@@ -460,7 +470,7 @@
                     <el-button size="mini" @click="open_score_dialog(row.uid)"
                       >分值</el-button
                     >
-                  </el-option>
+                  </el-option> -->
                   <el-option>
                     <el-button
                       size="mini"
@@ -471,6 +481,11 @@
                   <el-option>
                     <el-button size="mini" @click="openEditWorkerIdDialog(row)"
                       >身份</el-button
+                    >
+                  </el-option>
+                  <el-option>
+                    <el-button size="mini" @click="openRemarksDialog(row)"
+                      >备注</el-button
                     >
                   </el-option>
                 </el-select>
@@ -492,6 +507,47 @@
         ></el-pagination>
       </div>
     </el-card>
+
+    <!-- 备注 ＋ 标签 -->
+    <el-dialog
+      title="备注"
+      width="30%"
+      :before-close="closeRemarksDialog"
+      :visible="remarksDialogVisible"
+      :close-on-click-modal="false"
+    >
+      <div class="auditDialog">
+        <el-form label-width="80px">
+          <el-form-item label="标签:" v-if="masterTag && masterTag.length > 0">
+            <el-button
+              :type="judgeTagSelected(item) ? 'primary' : ''"
+              @click="addTag(item)"
+              size="small"
+              v-for="item in masterTag"
+              :key="item"
+              >{{ item }}</el-button
+            >
+          </el-form-item>
+          <el-form-item label="自定义:">
+            <el-input
+              type="textarea"
+              placeholder="请输入内容"
+              v-model="handleMasterRemarkParamsCopy.remark"
+              maxlength="100"
+              show-word-limit
+            >
+            </el-input>
+          </el-form-item>
+          <el-form-item label="备注:" v-if="masterRemark">
+            {{ masterRemark }}
+          </el-form-item>
+        </el-form>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeRemarksDialog">取 消</el-button>
+        <el-button type="primary" @click="handleMasterRemark">确 定</el-button>
+      </span>
+    </el-dialog>
 
     <!-- 设置区域经理/签约师傅 -->、
     <el-dialog
@@ -640,11 +696,7 @@
       </el-table>
     </model>
 
-    <EditWorker
-      ref="editWorker"
-      :dialogVisible="dialogVisible"
-      @closeFn="closeFn"
-    ></EditWorker>
+    <EditWorker ref="editWorker" @closeDialog="closeFn"></EditWorker>
 
     <!-- 新增签约师傅addSigningMaster -->
     <el-dialog
@@ -1212,7 +1264,7 @@
 </style>
 
 <script>
-import { UploadImg, addressFn } from "@/api/system";
+import { UploadImg, addressFn, getSysLabel } from "@/api/system";
 import EditWorker from "./components/editWorker.vue";
 import tableMixin from "@/mixin/table";
 import { getMasterList } from "@/api/user.js";
@@ -1230,12 +1282,21 @@ import {
   queryMasterIntegralList,
   handleActiveMaster,
   handleMasterType,
+  handleMasterRemark,
 } from "@/api/order.js";
 export default {
   title: "course",
   mixins: [tableMixin],
   data() {
     return {
+      remarksDialogVisible: false,
+      handleMasterRemarkParamsCopy: {
+        labelList: [],
+        remark: null,
+      },
+      chooseMasterId: null,
+      masterTag: [],
+
       setWorkerIdDialog: false,
       submitSetWorkerIdParams: {
         uid: null,
@@ -1450,8 +1511,6 @@ export default {
       addSigningMasterDialogShow: false, //新增签约师傅弹框
       params: null,
 
-      dialogVisible: false,
-
       status: null,
 
       referrerOptions: [],
@@ -1517,9 +1576,85 @@ export default {
     await this.getQueryDevicePositionList();
     await this.getAddressFn();
     await this.getMasterRoleList();
+    this.getSysLabel();
     this._getMasterList();
   },
+  computed: {
+    masterRemark() {
+      const { labelList, remark } = this.handleMasterRemarkParamsCopy;
+      const parts = [...labelList];
+      if (remark) {
+        parts.push(remark);
+      }
+      return parts.join(";");
+    },
+  },
   methods: {
+    // 确定师傅备注
+    async handleMasterRemark() {
+      let params = {
+        id: this.chooseMasterId,
+        remark: this.masterRemark,
+      };
+      const res = await handleMasterRemark(params);
+      if (res.code == "000") {
+        this.$message({
+          message: res.message,
+          type: "success",
+        });
+        this.closeRemarksDialog();
+        this._getMasterList();
+      }
+    },
+    // 关闭备注弹窗
+    closeRemarksDialog() {
+      this.handleMasterRemarkParamsCopy = {
+        labelList: [],
+        remark: null,
+      };
+      this.chooseMasterId = null;
+      this.remarksDialogVisible = false;
+    },
+    // 判断是否被选中
+    judgeTagSelected(tag) {
+      return this.handleMasterRemarkParamsCopy.labelList.includes(tag);
+    },
+    // 点击标签
+    addTag(tag) {
+      const list = this.handleMasterRemarkParamsCopy.labelList;
+      const index = list.indexOf(tag);
+      if (index > -1) {
+        // 已存在，移除
+        list.splice(index, 1);
+      } else {
+        // 不存在，添加
+        list.push(tag);
+      }
+    },
+    // 打开备注弹框
+    openRemarksDialog(row) {
+      if (row.remark) {
+        let arr = row.remark.split(";");
+        arr.forEach((item) => {
+          if (this.masterTag.includes(item)) {
+            this.handleMasterRemarkParamsCopy.labelList.push(item);
+          } else {
+            this.handleMasterRemarkParamsCopy.remark = item;
+          }
+        });
+      }
+      this.chooseMasterId = row.id;
+      this.remarksDialogVisible = true;
+    },
+    // 获取师傅标签
+    async getSysLabel() {
+      const res = await getSysLabel("masterTag");
+      if (res.code == "000") {
+        if (res.data) {
+          this.masterTag = res.data.split(",");
+        }
+      }
+    },
     // 确定更改师傅身份
     async confirmEditWorkerId() {
       const res = await handleMasterType(this.submitSetWorkerIdParams);
@@ -2063,81 +2198,15 @@ export default {
     // 关闭编辑弹窗事件
     closeFn() {
       this._getMasterList();
-      this.dialogVisible = false;
     },
     // 点击编辑触发的事件
     async editInit(row) {
       const loading = this.$loading();
       const res = await getMasterInfo(row.id);
-      this.$refs.editWorker.dialogForm = res.data;
-      this.$refs.editWorker.servePosition = [res.data.servePosition];
-
-      // 对图片单独处理
-      await this.$refs.editWorker.avatarFileList.push({
-        url: res.data.realPortrait,
-      });
-      await this.$refs.editWorker.idJustFileList.push({
-        url: res.data.identityFrontImage,
-      });
-      await this.$refs.editWorker.idBackFileList.push({
-        url: res.data.identityBackImage,
-      });
+      if (res.code == "000") {
+        this.$refs.editWorker.openEditworkerDialog(res.data);
+      }
       loading.close();
-      // 弹窗显示
-      this.dialogVisible = true;
-      return;
-
-      // this.editForm.serviceAreas = this.editForm.serviceAreas
-      //   ? this.editForm.serviceAreas.split(",")
-      //   : [];
-      // this.editForm.serviceTypes = this.editForm.serviceTypes
-      //   ? this.editForm.serviceTypes.split(",").map(item => {
-      //       return Number(item);
-      //     })
-      //   : [];
-      // delete this.editForm.createTime;
-      this.$nextTick(() => {
-        this.$refs.realPortrait.reset([]);
-        this.$refs.industryExperienceImages.reset([]);
-        this.$refs.skillCertificateImages.reset([]);
-        this.$refs.identityFrontImage.reset([]);
-        this.$refs.identityBackImage.reset([]);
-        this.$refs.realPortrait.reset(
-          row.realPortrait.split(",").map((item) => {
-            return {
-              url: item,
-            };
-          })
-        );
-        this.$refs.industryExperienceImages.reset(
-          row.industryExperienceImages.split(",").map((item) => {
-            return {
-              url: item,
-            };
-          })
-        );
-        this.$refs.skillCertificateImages.reset(
-          row.skillCertificateImages.split(",").map((item) => {
-            return {
-              url: item,
-            };
-          })
-        );
-        this.$refs.identityFrontImage.reset(
-          row.identityFrontImage.split(",").map((item) => {
-            return {
-              url: item,
-            };
-          })
-        );
-        this.$refs.identityBackImage.reset(
-          row.identityBackImage.split(",").map((item) => {
-            return {
-              url: item,
-            };
-          })
-        );
-      });
     },
     async handleEdit(fn) {
       this.edit(fn, {

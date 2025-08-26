@@ -243,6 +243,14 @@ function getQiniuToken(data) {
   });
 }
 
+// 获取系统标签
+export function getSysLabel(moudle) {
+  return request({
+    url: "/admin/base/getSysLabel?moudle=" + moudle,
+    method: "get",
+  });
+}
+
 // 上传图片
 export function UploadImg(data) {
   return request({

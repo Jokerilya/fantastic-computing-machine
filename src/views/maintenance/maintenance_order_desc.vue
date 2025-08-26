@@ -224,7 +224,7 @@
                   查看凭证
                 </div>
               </div>
-              <div
+              <!-- <div
                 class="mainOrderInfo_item"
                 v-if="orderDetail.enterpriseSubStatus == '2602'"
               >
@@ -261,7 +261,7 @@
                   >
                   </el-image>
                 </div>
-              </div>
+              </div> -->
 
               <div class="mainOrderInfo_item"></div>
               <!-- 设备信息 -->
@@ -529,18 +529,46 @@
                   {{ item.validOrderNum ? item.validOrderNum : 1 }}单
                 </div>
               </div>
-              <div class="mainOrderInfo_item" v-if="item.evaluationGrade">
+              <div class="mainOrderInfo_item" v-if="item.repairComment">
                 <div class="label">企业评分:</div>
                 <div class="value">
-                  <el-rate
-                    :max="3"
-                    v-model="item.evaluationGrade"
-                    disabled
-                    text-color="#ff9900"
-                    show-text
-                    :texts="['差评', '一般', '好评']"
+                  {{
+                    item.repairComment.comprehensiveScore == 2
+                      ? "太赞了"
+                      : item.repairComment.comprehensiveScore == 0
+                      ? "一般般"
+                      : "很糟糕"
+                  }}
+                </div>
+              </div>
+              <div
+                class="mainOrderInfo_item"
+                v-if="item.repairComment && item.repairComment.content"
+              >
+                <div class="label"></div>
+                <div class="value">
+                  {{ item.repairComment.content }}
+                </div>
+              </div>
+              <div
+                class="mainOrderInfo_item"
+                v-if="item.repairComment && item.repairComment.labels"
+              >
+                <div class="label"></div>
+                <div class="value">
+                  <el-tag
+                    style="margin-right: 15px"
+                    v-for="tag in item.repairComment.labels"
+                    :type="
+                      item.repairComment.comprehensiveScore == 2
+                        ? ''
+                        : item.repairComment.comprehensiveScore == 0
+                        ? 'info'
+                        : 'danger'
+                    "
+                    :key="tag"
+                    >{{ tag }}</el-tag
                   >
-                  </el-rate>
                 </div>
               </div>
               <!-- 空行 -->
@@ -934,6 +962,24 @@
                           type="text"
                           @click="delPartsList(row, item.orderSn)"
                           >删除</el-button
+                        >
+                        <el-button
+                          type="text"
+                          v-if="
+                            (row.type == 2 &&
+                              orderDetail.enterpriseSubStatus > 2202) ||
+                            (orderDetail.enterpriseSubStatus > 2202 &&
+                              row.model == 2 &&
+                              row.type == 2)
+                          "
+                          @click="
+                            goToLogisticsDetails(
+                              row.id,
+                              row.model,
+                              item.orderSn
+                            )
+                          "
+                          >物流详情</el-button
                         >
                         <!-- v-if="row.status == 1 && row.model == 1" -->
                         <el-button
@@ -2044,12 +2090,16 @@
 
     <!-- 标记返修单对话框 -->
     <el-dialog
-      title="标记返修单"
       width="40%"
       :visible="markRepairOrderDialogShow"
       :close-on-click-modal="false"
       :before-close="closeMarkRepairOrderDialog"
+      center
     >
+      <div slot="title">
+        标记返修单
+        <span style="color: red">(该功能需在订单节点[平台审核报价]前操作)</span>
+      </div>
       <div class="markRepairOrderDialog">
         <el-form
           ref="markRepairOrderForm"
@@ -2428,6 +2478,13 @@ export default {
     },
   },
   methods: {
+    // 跳转物流详情
+    goToLogisticsDetails(partId, model, orderSn) {
+      this.$router.push({
+        name: "logisticsDetails",
+        query: { partId, model, orderSn },
+      });
+    },
     // 确定代企业评价
     async handleReleaseComment() {
       if (!this.handleReleaseCommentParams.content) {
@@ -3747,12 +3804,9 @@ export default {
         ) {
           this.masterOrderTrackList = [];
           res.data.enrollRepairOrderOutList.forEach((item) => {
-            console.log(3671, item);
-            // 评价图片
-            if (item.repairComment && item.repairComment.images) {
-              item.repairComment.images = imgStrTurn(item.repairComment.images);
+            if (item.repairComment && item.repairComment.labels) {
+              item.repairComment.labels = item.repairComment.labels.split(",");
             }
-
             // 将多个师傅状态列表存储
             if (item.orderTrackList) {
               item.statusListData = [

@@ -14,7 +14,7 @@
           <el-col :span="5">
             <el-form-item label="师傅名称">
               <el-select
-                style="width: 250px"
+                style="width: 240px"
                 v-model="searchForm.masterUid"
                 filterable
                 placeholder="请选择"
@@ -48,7 +48,7 @@
               <el-select
                 v-model="searchForm.orderType"
                 placeholder="请选择"
-                style="width: 250px"
+                style="width: 240px"
               >
                 <el-option label="散单" :value="1">散单</el-option>
                 <el-option label="年保" :value="2">年保</el-option>
@@ -59,7 +59,7 @@
           <el-col :span="5">
             <el-form-item label="订单编号">
               <el-input
-                style="width: 250px"
+                style="width: 240px"
                 v-model="searchForm.orderSn"
                 placeholder="订单编号"
               ></el-input>
@@ -96,7 +96,7 @@
           <el-col :span="5">
             <el-form-item label="企业名称">
               <el-input
-                style="width: 250px"
+                style="width: 240px"
                 v-model="searchForm.enterpriseName"
                 placeholder="企业名称"
               ></el-input>
@@ -105,14 +105,26 @@
           <el-col :span="5">
             <el-form-item label="设备编码">
               <el-input
-                style="width: 250px"
+                style="width: 240px"
                 v-model="searchForm.no"
                 placeholder="设备编码"
               ></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="5">
-            <el-form-item label="选中是否超时">
+            <el-form-item label="结算类型">
+              <el-select
+                v-model="searchForm.settlementType"
+                placeholder="请选择"
+                style="width: 240px"
+              >
+                <el-option label="现结" :value="1">现结</el-option>
+                <el-option label="月结" :value="2">月结 </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="3">
+            <el-form-item label="仅选择超时">
               <el-switch
                 v-model="searchForm.timeoutFlag"
                 active-color="#409eff"
@@ -121,80 +133,53 @@
               </el-switch>
             </el-form-item>
           </el-col>
-          <el-col :span="9" style="text-align: right">
-            <el-button type="warning" plain @click="openSyncDialog">
-              同步
-            </el-button>
-            <el-button plain type="primary" @click="query_queryRepairOrderList"
-              >查询</el-button
-            >
-            <el-button plain type="info" @click="resetFn">重置</el-button>
-            <el-button type="success" plain @click="exportList">
-              导出
-            </el-button>
+          <el-col :span="6">
+            <el-form-item label="仅选择斯耐克">
+              <el-switch
+                v-model="searchForm.snkFlag"
+                active-color="#409eff"
+                inactive-color="#909399"
+              >
+              </el-switch>
+            </el-form-item>
           </el-col>
         </el-row>
-        <el-row> </el-row>
-        <!-- <el-row style="display: flex;">
-          <el-button
-            icon="el-icon-zoom-in"
-            plain
-            type="primary"
-            @click="query_queryRepairOrderList"
-            >查询</el-button
-          >
-          <el-button
-            style="margin-right: 10px;"
-            icon="el-icon-refresh"
-            plain
-            type="info"
-            @click="resetFn"
-            >重置</el-button
-          >
-          <el-upload
-            class="upload-demo"
-            action
-            multiple
-            :http-request="workOrderImport"
-            :show-file-list="false"
-          >
-            <el-button class="importBtn">工单批量下单</el-button>
-          </el-upload>
-          <el-button
-            style="margin-left: 10px;"
-            type="warning"
-            plain
-            @click="templateDownload"
-          >
-            批量下单模板下载
-          </el-button>
-          <el-button
-            style="margin-left: 10px;"
-            type="success"
-            plain
-            @click="$router.push('/maintenance/agentOrder')"
-          >
-            代客户下单
-          </el-button>
-          <el-button type="success" plain @click="exportList">
-            导出
-          </el-button>
-        </el-row> -->
       </el-form>
     </div>
+    <el-row :gutter="20">
+      <el-col :span="18">
+        <el-radio-group
+          v-model="searchForm.status"
+          style="margin-bottom: 30px"
+          @input="changeOrderState"
+        >
+          <el-radio-button
+            :label="item.num"
+            v-for="item in statusObjList"
+            :key="item.num"
+            >{{ item.desc }}({{ orderSubscript[item.str] }})</el-radio-button
+          >
+        </el-radio-group>
+      </el-col>
+      <el-col :span="6" style="text-align: right">
+        <el-button
+          plain
+          :disabled="multipleSelection.length == 0"
+          @click="handleBatchProxyPayment"
+        >
+          批量代付款
+        </el-button>
+        <el-button type="warning" plain @click="openSyncDialog">
+          同步
+        </el-button>
+        <el-button plain type="primary" @click="query_queryRepairOrderList"
+          >查询</el-button
+        >
+        <el-button plain type="info" @click="resetFn">重置</el-button>
+        <el-button type="success" plain @click="exportList"> 导出 </el-button>
+      </el-col>
+    </el-row>
 
-    <el-radio-group
-      v-model="searchForm.status"
-      style="margin-bottom: 30px"
-      @input="changeOrderState"
-    >
-      <el-radio-button
-        :label="item.num"
-        v-for="item in statusObjList"
-        :key="item.num"
-        >{{ item.desc }}({{ orderSubscript[item.str] }})</el-radio-button
-      >
-    </el-radio-group>
     <!-- 空行 -->
     <!-- <div style="height: 16px"></div> -->
 
@@ -206,7 +191,11 @@
         element-loading-text="拼命加载中"
         element-loading-spinner="el-icon-loading"
         :data="dataList"
+        @selection-change="handleSelectionChange"
+        :key="multipleOperation"
       >
+        <el-table-column v-if="multipleOperation" type="selection" width="55">
+        </el-table-column>
         <el-table-column
           prop="orderSn"
           label="订单编号"
@@ -285,6 +274,21 @@
           width="230"
           align="center"
         ></el-table-column>
+        <el-table-column
+          label="备注"
+          show-overflow-tooltip
+          width="180px"
+          align="center"
+        >
+          <template slot-scope="{ row }">
+            {{ row.remarks ? row.remarks : "/" }}
+          </template>
+        </el-table-column>
+        <el-table-column label="结算类型" show-overflow-tooltip align="center">
+          <template slot-scope="{ row }">
+            {{ row.settlementType == 2 ? "月结" : "现结" }}
+          </template>
+        </el-table-column>
         <el-table-column
           label="机台码"
           show-overflow-tooltip
@@ -430,17 +434,8 @@
             >
           </template>
         </el-table-column>
-        <el-table-column
-          label="备注"
-          show-overflow-tooltip
-          width="120"
-          align="center"
-        >
-          <template slot-scope="{ row }">
-            {{ row.remarks ? row.remarks : "/" }}
-          </template>
-        </el-table-column>
-        <el-table-column
+
+        <!-- <el-table-column
           label="平台回访结果"
           show-overflow-tooltip
           width="120"
@@ -449,7 +444,7 @@
           <template slot-scope="{ row }">
             {{ row.platformVisitMessage ? row.platformVisitMessage : "/" }}
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column
           prop="orderStatusName"
           label="状态"
@@ -514,79 +509,9 @@
                   >
                 </el-dropdown-menu>
               </el-dropdown>
-              <!-- <el-button
-                type="info"
-                size="mini"
-                plain
-                v-if="row.orderType == 1"
-                @click="openConvertToInsurance(row.orderSn)"
-                >转类型</el-button
-              >
-              <el-button
-                type="info"
-                size="mini"
-                plain
-                @click="openRemarksDialog(row)"
-                >备注</el-button
-              >
-              <el-button
-                v-if="row.orderType == 1"
-                type="info"
-                size="mini"
-                plain
-                @click="setOrderTag(row)"
-                >设置</el-button
-              > -->
-              <!-- <el-button
-                v-if="
-                  row.orderStatusName === '待平台指派' ||
-                    row.orderStatusName === '待师傅接单'
-                "
-                type="info"
-                size="mini"
-                plain
-                @click="querySnatchList(row)"
-                >指派列表</el-button
-              > -->
             </div>
           </template>
         </el-table-column>
-
-        <!-- <el-table-column
-          prop="enterpriseName"
-          label="企业名称"
-          show-overflow-tooltip
-          width="230"
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="address"
-          label="详细地址"
-          show-overflow-tooltip
-          width="350"
-          align="center"
-        ></el-table-column>   
-        <el-table-column
-          prop="type"
-          label="故障类型"
-          show-overflow-tooltip
-          width="200"
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="num"
-          label="设备数量"
-          show-overflow-tooltip
-          width="200"
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="createTime"
-          label="下单时间"
-          show-overflow-tooltip
-          width="150"
-          align="center"
-        ></el-table-column> -->
       </el-table>
 
       <!-- @size-change="handleSizeChange" -->
@@ -602,24 +527,44 @@
       </div>
     </el-card>
 
-    <!-- 备注框 -->
+    <!-- 备注 ＋ 标签 -->
     <el-dialog
       title="备注"
       width="30%"
-      :visible="openRemarksShow"
       :before-close="closeRemarksDialog"
-      center
+      :visible="remarksDialogVisible"
+      :close-on-click-modal="false"
     >
-      <el-input
-        type="textarea"
-        :rows="4"
-        placeholder="请输入内容"
-        v-model="remarksparams.remarks"
-      >
-      </el-input>
+      <div class="auditDialog">
+        <el-form label-width="80px">
+          <el-form-item label="标签:" v-if="orderTag && orderTag.length > 0">
+            <el-button
+              :type="judgeTagSelected(item) ? 'primary' : ''"
+              @click="addTag(item)"
+              size="small"
+              v-for="item in orderTag"
+              :key="item"
+              >{{ item }}</el-button
+            >
+          </el-form-item>
+          <el-form-item label="自定义:">
+            <el-input
+              type="textarea"
+              placeholder="请输入内容"
+              v-model="handleRepairRemarksParamsCopy.remark"
+              maxlength="100"
+              show-word-limit
+            >
+            </el-input>
+          </el-form-item>
+          <el-form-item label="备注:" v-if="orderRemark">
+            {{ orderRemark }}
+          </el-form-item>
+        </el-form>
+      </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="closeRemarksDialog">取 消</el-button>
-        <el-button type="primary" @click="comfirmRemarks">确 定</el-button>
+        <el-button type="primary" @click="handleRepairRemarks">确 定</el-button>
       </span>
     </el-dialog>
 
@@ -1009,8 +954,8 @@ import {
   getOrderSubscript,
   bindSalesman,
 } from "@/api/order.js";
-import { handleProxyCreateOrder } from "@/api/proxy";
-import { UploadImg } from "@/api/system.js";
+import { handleProxyCreateOrder, handleBatchProxyPayment } from "@/api/proxy";
+import { UploadImg, getSysLabel } from "@/api/system.js";
 // import tableMixin from "@/mixin/table";
 import { localStorageData } from "@/utils";
 export default {
@@ -1018,6 +963,13 @@ export default {
   // mixins: [tableMixin],
   data() {
     return {
+      remarksDialogVisible: false,
+      handleRepairRemarksParamsCopy: {
+        labelList: [],
+        remark: null,
+      },
+      chooseOrderSn: null,
+      orderTag: [],
       // 状态
       orderSubscript: {},
       statusObjList: [
@@ -1188,11 +1140,6 @@ export default {
       // 代下单模块 end
 
       masterSearchList: [],
-      remarksparams: {
-        remarks: null,
-        orderSn: null,
-      },
-      openRemarksShow: false,
       convertToInsuranceparams: {
         orderSn: null,
         no: null,
@@ -1214,6 +1161,8 @@ export default {
         queryTime: null,
         masterName: null,
         timeoutFlag: false,
+        snkFlag: false,
+        settlementType: null,
       },
       queryTimeCopy: null,
       dataList: [],
@@ -1266,7 +1215,20 @@ export default {
       },
       salesmanOptions: [],
       bindSalesmanDialogVisible: false,
+
+      multipleOperation: null,
+      multipleSelection: [],
     };
+  },
+  computed: {
+    orderRemark() {
+      const { labelList, remark } = this.handleRepairRemarksParamsCopy;
+      const parts = [...labelList];
+      if (remark) {
+        parts.push(remark);
+      }
+      return parts.join(";");
+    },
   },
   async created() {
     // 获取本地存储
@@ -1315,8 +1277,95 @@ export default {
     // this._queryAssignableMasterList();
     this._queryRepairOrderList();
     this.getOrderSubscript();
+    this.getSysLabel();
   },
   methods: {
+    // 确定企业备注
+    async handleRepairRemarks() {
+      let params = {
+        orderSn: this.chooseOrderSn,
+        remarks: this.orderRemark,
+      };
+      const res = await handleRepairRemarks(params);
+      if (res.code == "000") {
+        this.$message({
+          message: res.message,
+          type: "success",
+        });
+        this.closeRemarksDialog();
+        this._queryRepairOrderList();
+      }
+    },
+    // 关闭备注弹窗
+    closeRemarksDialog() {
+      this.handleRepairRemarksParamsCopy = {
+        labelList: [],
+        remark: null,
+      };
+      this.chooseOrderSn = null;
+      this.remarksDialogVisible = false;
+    },
+    // 判断是否被选中
+    judgeTagSelected(tag) {
+      return this.handleRepairRemarksParamsCopy.labelList.includes(tag);
+    },
+    // 点击标签
+    addTag(tag) {
+      const list = this.handleRepairRemarksParamsCopy.labelList;
+      const index = list.indexOf(tag);
+      if (index > -1) {
+        // 已存在，移除
+        list.splice(index, 1);
+      } else {
+        // 不存在，添加
+        list.push(tag);
+      }
+    },
+    // 获取企业标签
+    async getSysLabel() {
+      const res = await getSysLabel("orderTag");
+      if (res.code == "000") {
+        if (res.data) {
+          this.orderTag = res.data.split(",");
+        }
+      }
+    },
+    // 打开备注弹框
+    openRemarksDialog(row) {
+      if (row.remarks) {
+        let arr = row.remarks.split(";");
+        arr.forEach((item) => {
+          if (this.orderTag.includes(item)) {
+            this.handleRepairRemarksParamsCopy.labelList.push(item);
+          } else {
+            this.handleRepairRemarksParamsCopy.remark = item;
+          }
+        });
+      }
+      this.chooseOrderSn = row.orderSn;
+      this.remarksDialogVisible = true;
+    },
+
+    // 批量代付款
+    async handleBatchProxyPayment() {
+      const orderSnList = this.multipleSelection.map((item) =>
+        String(item.orderSn)
+      );
+      const res = await handleBatchProxyPayment({
+        orderSnList,
+      });
+      if (res.code == "000") {
+        this.$message({
+          message: "操作成功",
+          type: "success",
+        });
+        await this._queryRepairOrderList();
+      }
+    },
+    // 表格多选切换选择
+    handleSelectionChange(val) {
+      this.multipleSelection = val;
+    },
     // 绑定业务员
     async bindSalesman() {
       const res = await bindSalesman(this.bindSalesmanParams);
@@ -1656,28 +1705,6 @@ export default {
       });
       this.masterSearchList = res.data.records;
     },
-    // 确定添加备注
-    async comfirmRemarks() {
-      const res = await handleRepairRemarks(this.remarksparams);
-      if (res.message === "操作成功") {
-        this.closeRemarksDialog();
-        this._queryRepairOrderList();
-      }
-    },
-    // 关闭备注框
-    closeRemarksDialog() {
-      this.remarksparams = {
-        remarks: null,
-        orderSn: null,
-      };
-      this.openRemarksShow = false;
-    },
-    // 打开备注框
-    openRemarksDialog({ orderSn, remarks }) {
-      this.remarksparams.orderSn = orderSn;
-      this.remarksparams.remarks = remarks;
-      this.openRemarksShow = true;
-    },
     // 查询列表
     query_queryRepairOrderList() {
       this.currentPage = 1;
@@ -1722,6 +1749,8 @@ export default {
         finalExamineStatus: null,
         queryTime: "",
         timeoutFlag: false,
+        snkFlag: false,
+        settlementType: null,
       };
       this._queryRepairOrderList();
       this.getOrderSubscript();
@@ -1793,6 +1822,9 @@ export default {
                 item.label = "普通";
               }
             });
+            this.multipleOperation =
+              this.searchForm.settlementType === 1 ||
+              this.searchForm.settlementType === 2;
             this.dataList = res.data.records;
             this.pageCount = res.data.total;
           }

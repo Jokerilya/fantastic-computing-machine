@@ -33,12 +33,12 @@ const router = {
       meta: { title: "年保订单详情", noShow: "true" },
     },
 
-    {
-      path: "/financialManagement/incomeExpenditrue",
-      name: "workerDetails",
-      component: () => import("@/views/financialManagement/incomeExpenditrue"),
-      meta: { title: "收支明细" },
-    },
+    // {
+    //   path: "/financialManagement/incomeExpenditrue",
+    //   name: "workerDetails",
+    //   component: () => import("@/views/financialManagement/incomeExpenditrue"),
+    //   meta: { title: "收支明细" },
+    // },
     // {
     //   path: "/maintenance/masterOrderDiscount",
     //   name: "masterOrderDiscount",
@@ -102,6 +102,13 @@ const router = {
       name: "ReceiveRecords",
       component: () => import("@/views/activity/coupon/receiveRecords"),
       meta: { title: "领取记录" },
+    },
+    {
+      path: "/maintenance/equipmentManagement",
+      name: "equipmentManagement",
+      component: () =>
+        import("@/views/maintenance/equipmentManagement/equipmentManagement"),
+      meta: { title: "设备明细" },
     },
   ],
 };

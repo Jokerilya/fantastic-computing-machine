@@ -3,204 +3,56 @@
     <el-dialog
       title="编辑师傅"
       :visible="dialogVisible"
-      width="1000px"
       :before-close="closeFn"
+      width="35%"
+      :style="{ height: '90vh' }"
     >
-      <div class="content">
-        <div class="oneLine">
-          <div class="item">
-            <div class="label">姓名</div>
-            <el-input class="inp" v-model="dialogForm.realName"></el-input>
-          </div>
-          <div class="item">
-            <span class="label">身份证</span
-            ><el-input
-              class="inp"
-              v-model="dialogForm.identityNumber"
-            ></el-input>
-          </div>
-          <div class="item">
-            <span class="label">行业经验</span
-            ><el-input
-              class="inp"
-              v-model="dialogForm.industryExperience"
-            ></el-input>
-          </div>
-        </div>
-        <div class="oneLine">
-          <div class="item">
-            <span class="label">推荐人</span>
+      <div style="height: 60vh; overflow: auto">
+        <el-form label-width="120px" label-position="left">
+          <el-form-item label="姓名">
+            <el-input v-model="dialogForm.realName"></el-input>
+          </el-form-item>
+          <el-form-item label="身份证">
+            <el-input v-model="dialogForm.identityNumber"></el-input>
+          </el-form-item>
+          <el-form-item label="行业经验">
+            <el-input v-model="dialogForm.industryExperience"></el-input>
+          </el-form-item>
+          <el-form-item label="服务部位">
             <el-select
-              filterable
-              :remote-method="remoteMethod"
-              remote
-              v-model="dialogForm.recommendMasterRealName"
-              placeholder="请选择"
-            >
-              <el-option
-                v-for="item in options"
-                :key="item.value"
-                :label="item.realName"
-                :value="item.realName"
-              >
-              </el-option>
-            </el-select>
-          </div>
-          <!-- <div class="item">
-            <span class="label">推广人</span>
-            <el-select
-              filterable
-              :remote-method="remoteMethod"
-              remote
-              disabled
-              v-model="dialogForm.promotionPeople"
-              placeholder="请选择"
-            >
-              <el-option
-                v-for="item in options"
-                :key="item.value"
-                :label="item.realName"
-                :value="item.realName"
-              >
-              </el-option>
-            </el-select>
-          </div> -->
-          <div class="item">
-            <span class="label" style="margin-right: 20px">服务部位</span>
-            <el-tooltip
-              class="item"
-              effect="dark"
-              :content="dialogForm.servePosition"
-              placement="top"
-            >
-              <el-input
-                style="width: 200px"
-                class="inp"
-                v-if="servePositionShow"
-                :disabled="true"
-                :value="servePosition"
-              >
-              </el-input>
-            </el-tooltip>
-
-            <div
-              class="location"
-              @click="locationXiuFn(1)"
-              v-if="servePositionShow"
-            >
-              修
-            </div>
-            <el-select
-              collapse-tags
-              class="inp"
               v-model="dialogForm.servePosition"
               multiple
-              v-if="!servePositionShow"
               placeholder="请选择"
             >
               <el-option
-                v-for="item in PartsList"
-                :key="item.name"
+                v-for="(item, index) in positionList"
+                :key="index"
                 :label="item.name"
                 :value="item.name"
               ></el-option>
             </el-select>
-          </div>
-          <div class="item">
-            <span class="label" style="margin-right: 20px">服务地区</span>
-            <el-tooltip
-              class="item"
-              effect="dark"
-              :content="dialogForm.serviceAreasName"
-              placement="top"
-            >
-              <el-input
-                style="width: 200px"
-                v-if="serviceAreasShow"
-                class="inp"
-                :disabled="true"
-                v-model="dialogForm.serviceAreasName"
-              >
-              </el-input>
-            </el-tooltip>
-            <div
-              class="location"
-              @click="locationXiuFn(2)"
-              v-if="serviceAreasShow"
-            >
-              修
-            </div>
+          </el-form-item>
+          <el-form-item label="服务地区">
             <el-cascader
-              v-if="!serviceAreasShow"
               v-model="dialogForm.serviceAreas"
-              collapse-tags
-              class="inp"
-              :props="props1"
-              :show-all-levels="false"
+              :options="serviceAreasList"
+              :props="serviceAreasProps"
             ></el-cascader>
-          </div>
-        </div>
-        <div class="oneLine">
-          <div class="item">
-            <div class="label" style="width: 100px">服务类型</div>
-            <el-tooltip
-              class="item"
-              effect="dark"
-              :content="dialogForm.serviceTypesName"
-              placement="top"
-            >
-              <el-input
-                style="width: 200px"
-                :disabled="true"
-                v-model="dialogForm.serviceTypesName"
-                v-if="serviceTypesNameShow"
-              ></el-input>
-            </el-tooltip>
-            <div
-              class="location"
-              @click="locationXiuFn(3)"
-              v-if="serviceTypesNameShow"
-            >
-              修
-            </div>
+          </el-form-item>
+          <el-form-item label="服务类型">
             <el-cascader
-              v-if="!serviceTypesNameShow"
-              class="inp"
-              :show-all-levels="false"
               v-model="dialogForm.serviceTypes"
               :options="typeList"
-              :props="{
-                checkStrictly: true,
-                emitPath: false,
-                value: 'id',
-                label: 'name',
-                multiple: true,
-                children: 'list',
-              }"
-              collapse-tags
-              clearable
+              :props="serviceTypesProps"
             ></el-cascader>
-          </div>
-          <div class="item">
-            <div class="label" style="width: 100px">师傅编号</div>
+          </el-form-item>
+          <el-form-item label="师傅编号">
             <el-input
-              class="inp"
               v-model="dialogForm.number"
               @input="blurWorkerNum"
             ></el-input>
-          </div>
-          <div class="item">
-            <div class="label" style="width: 100px">推广人</div>
-            <el-input
-              disabled
-              class="inp"
-              v-model="dialogForm.promotionPeople"
-            ></el-input>
-          </div>
-        </div>
-        <div class="imgLine">
-          <div class="imgItem">
-            <div class="title">真实头像</div>
+          </el-form-item>
+          <el-form-item label="真实头像">
             <el-upload
               style="width: 50%"
               :file-list="avatarFileList"
@@ -212,9 +64,8 @@
             >
               <i class="el-icon-plus"></i>
             </el-upload>
-          </div>
-          <div class="imgItem">
-            <div class="title">身份证正面照</div>
+          </el-form-item>
+          <el-form-item label="身份证正面照">
             <el-upload
               style="width: 50%"
               :file-list="idJustFileList"
@@ -226,9 +77,8 @@
             >
               <i class="el-icon-plus"></i>
             </el-upload>
-          </div>
-          <div class="imgItem">
-            <div class="title">身份证反面照</div>
+          </el-form-item>
+          <el-form-item label="身份证反面照">
             <el-upload
               style="width: 50%"
               :file-list="idBackFileList"
@@ -240,8 +90,8 @@
             >
               <i class="el-icon-plus"></i>
             </el-upload>
-          </div>
-        </div>
+          </el-form-item>
+        </el-form>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="closeFn">取 消</el-button>
@@ -261,143 +111,93 @@ import {
 } from "@/api/order";
 
 export default {
-  props: {
-    dialogVisible: {
-      type: Boolean,
-      default: false,
-    },
-  },
   data() {
     return {
-      options: [],
-      value: "",
+      dialogVisible: false,
+      positionList: null,
 
-      serviceAreasShow: true, //默认地区输入框显示
-      serviceTypesNameShow: true,
-      servePositionShow: true,
-
-      servePosition: null,
       typeList: null,
-      PartsList: null,
+      serviceAreasList: [],
 
       dialogForm: null,
       avatarFileList: [],
       idJustFileList: [],
       idBackFileList: [],
-
-      props1: {
-        checkStrictly: true,
+      serviceAreasProps: {
+        checkStrictly: false,
+        emitPath: false,
+        multiple: true,
         value: "id",
         label: "name",
-        multiple: true,
-        lazy: true,
+        children: "child",
+      },
+      serviceTypesProps: {
+        checkStrictly: false,
         emitPath: false,
-        lazyLoad: async (node, resolve) => {
-          let pid = 0;
-          if (node.level != 0) {
-            pid = node.data.id;
-          }
-          if (node.level > 2) {
-            resolve([]);
-            return;
-          }
-          let res = await addressFn(pid);
-          if (res.code == "000")
-            resolve(
-              res.data.map((item) => {
-                return {
-                  ...item,
-                };
-              })
-            );
-        },
+        multiple: true,
+        value: "id",
+        label: "name",
+        children: "list",
       },
     };
   },
   async created() {
-    const res = await queryDevicePositionList();
-    this.PartsList = res.data;
-    const res1 = await queryDeviceTypeList();
-    this.typeList = res1.data;
+    const positionRes = await queryDevicePositionList();
+    this.positionList = positionRes.data;
+    const typeRes = await queryDeviceTypeList();
+    this.typeList = typeRes.data;
+  },
+  mounted() {
+    this.serviceAreasList = require("../../../../utils/address.json");
   },
   methods: {
+    // 打开弹框
+    async openEditworkerDialog(row) {
+      if (row.servePosition) {
+        row.servePosition = row.servePosition.split(",");
+      }
+      if (row.serviceAreas) {
+        row.serviceAreas = row.serviceAreas.split(",");
+      }
+      if (row.serviceTypes) {
+        row.serviceTypes = row.serviceTypes.split(",");
+      }
+      this.dialogForm = { ...row };
+      // 对图片单独处理
+      this.avatarFileList = [
+        {
+          url: row.realPortrait,
+        },
+      ];
+      this.idJustFileList = [
+        {
+          url: row.identityFrontImage,
+        },
+      ];
+      this.idBackFileList = [
+        {
+          url: row.identityBackImage,
+        },
+      ];
+      this.dialogVisible = true;
+    },
     // 判断师傅编号是否为数字或字母
     blurWorkerNum() {
       this.dialogForm.number = this.dialogForm.number.replace(/[^\w\/]/gi, "");
     },
-    // 搜索推荐人
-    async remoteMethod(query) {
-      const res = await queryMasterName(query);
-      this.options = res.data;
-    },
-
-    // 改造数据方案
-    repairData(arr) {
-      let str = null;
-      if (Array.isArray(arr)) {
-        arr.forEach((el, index) => {
-          if (index === 0) {
-            str = "" + el;
-          } else {
-            str = str + "," + el;
-          }
-        });
-      }
-      return str;
-    },
-
-    // 修改服务地区的事件
-    locationXiuFn(index) {
-      if (index === 2) {
-        this.serviceAreasShow = false;
-      } else if (index === 3) {
-        this.serviceTypesNameShow = false;
-      } else {
-        this.servePositionShow = false;
-      }
-    },
 
     // 确定的事件
     async confirmFn() {
-      // 师傅名字找到对于uid
-      if (this.dialogForm.recommendMasterRealName) {
-        const res = await queryMasterName(
-          this.dialogForm.recommendMasterRealName
-        );
-        this.dialogForm.recommendMasterUid = res.data[0].uid;
-      } else {
-        this.dialogForm.recommendMasterUid = "";
+      if (this.dialogForm.servePosition) {
+        this.dialogForm.servePosition = this.dialogForm.servePosition.join(",");
+      }
+      if (this.dialogForm.serviceAreas) {
+        this.dialogForm.serviceAreas = this.dialogForm.serviceAreas.join(",");
       }
 
-      // 服务部位
-      if (
-        this.dialogForm.servePosition &&
-        this.dialogForm.servePosition.length > 1
-      ) {
-        this.dialogForm.servePosition = await this.repairData(
-          this.dialogForm.servePosition
-        );
-      } else if (
-        this.dialogForm.servePosition &&
-        this.dialogForm.servePosition.length === 0
-      ) {
-        this.dialogForm.servePosition = "";
+      if (this.dialogForm.serviceTypes) {
+        this.dialogForm.serviceTypes = this.dialogForm.serviceTypes.join(",");
       }
-
-      // 改造一下服务地区的数据
-      if (this.serviceAreasShow === false) {
-        this.dialogForm.serviceAreas = await this.repairData(
-          this.dialogForm.serviceAreas
-        );
-      }
-
-      // 改造一下服务类型的数据
-      if (this.serviceTypesNameShow === false) {
-        this.dialogForm.serviceTypes = await this.repairData(
-          this.dialogForm.serviceTypes
-        );
-      }
-
       const res = await editMasterInfo(this.dialogForm);
       if (res.message === "操作成功") {
         this.$message({
@@ -407,7 +207,8 @@ export default {
         this.closeFn();
       }
     },
-    // 上传触发的事件
+
+    // 上传图片
     async idBackUploadFn(data) {
       const loading = this.$loading({
         text: "上传图片中,请耐心等待...",
@@ -416,9 +217,13 @@ export default {
       formData.append("file", data.file);
       const res = await UploadImg(formData);
       this.dialogForm.identityBackImage = res.data;
+      this.idBackFileList = [
+        {
+          url: res.data,
+        },
+      ];
       loading.close();
     },
-    // 上传触发的事件
     async idJustUploadFn(data) {
       const loading = this.$loading({
         text: "上传图片中,请耐心等待...",
@@ -427,9 +232,13 @@ export default {
       formData.append("file", data.file);
       const res = await UploadImg(formData);
       this.dialogForm.identityFrontImage = res.data;
+      this.idJustFileList = [
+        {
+          url: res.data,
+        },
+      ];
       loading.close();
     },
-    // 上传触发的事件
     async avatarUploadFn(data) {
       const loading = this.$loading({
         text: "上传图片中,请耐心等待...",
@@ -438,18 +247,21 @@ export default {
       formData.append("file", data.file);
       const res = await UploadImg(formData);
       this.dialogForm.realPortrait = res.data;
+      this.avatarFileList = [
+        {
+          url: res.data,
+        },
+      ];
       loading.close();
     },
     // 关闭事件
-    closeFn() {
-      this.servePositionShow = true;
-      this.serviceAreasShow = true;
-      this.serviceTypesNameShow = true;
+    async closeFn() {
+      await this.$emit("closeDialog");
+      this.dialogVisible = false;
       this.dialogForm = null;
       this.avatarFileList = [];
       this.idJustFileList = [];
       this.idBackFileList = [];
-      this.$emit("closeFn");
     },
   },
 };
@@ -472,9 +284,7 @@ export default {
         font-size: 15px;
         font-weight: 700;
       }
-      .inp {
-        width: 200px;
-      }
+
       .location {
         cursor: pointer;
         position: absolute;
