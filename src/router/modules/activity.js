@@ -9,24 +9,6 @@ const router = {
   meta: { title: "运营管理", icon: "el-icon-mouse" },
   children: [
     {
-      path: "banner",
-      name: "Banner",
-      component: () => import("@/views/activity/banner"),
-      meta: { title: "轮播图" },
-    },
-    {
-      path: "ad",
-      name: "Ad",
-      component: () => import("@/views/activity/ad"),
-      meta: { title: "Ad广告图" },
-    },
-    {
-      path: "partner",
-      name: "Partner",
-      component: () => import("@/views/activity/partner"),
-      meta: { title: "合作伙伴" },
-    },
-    {
       path: "news",
       name: "NewsList",
       component: () => import("@/views/news"),
@@ -56,6 +38,24 @@ const router = {
       name: "SystemNotice",
       component: () => import("@/views/activity/systemNotice"),
       meta: { title: "系统消息" },
+    },
+    {
+      path: "banner",
+      name: "Banner",
+      component: () => import("@/views/activity/banner"),
+      meta: { title: "轮播图" },
+    },
+    {
+      path: "ad",
+      name: "Ad",
+      component: () => import("@/views/activity/ad"),
+      meta: { title: "Ad广告图" },
+    },
+    {
+      path: "partner",
+      name: "Partner",
+      component: () => import("@/views/activity/partner"),
+      meta: { title: "合作伙伴" },
     },
   ],
 };

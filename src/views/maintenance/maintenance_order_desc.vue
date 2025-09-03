@@ -496,16 +496,50 @@
                   </el-image>
                 </div>
               </div>
-              <div class="mainOrderInfo_item">
+              <div
+                class="mainOrderInfo_item"
+                :style="{
+                  color:
+                    item.dataExamineStatus == 1
+                      ? '#e6a23c'
+                      : item.dataExamineStatus == 2
+                      ? ''
+                      : item.dataExamineStatus == 3
+                      ? 'red'
+                      : '',
+                }"
+              >
                 <div class="label">现场故障描述</div>
                 <div class="value">
                   {{ item.faultDescription ? item.faultDescription : "无" }}
                 </div>
               </div>
-              <div class="mainOrderInfo_item">
+              <div
+                class="mainOrderInfo_item"
+                :style="{
+                  color:
+                    item.dataExamineStatus == 1
+                      ? '#e6a23c'
+                      : item.dataExamineStatus == 2
+                      ? ''
+                      : item.dataExamineStatus == 3
+                      ? 'red'
+                      : '',
+                }"
+              >
                 <div class="label">处理过程</div>
                 <div class="value">
                   {{ item.handleProcess ? item.handleProcess : "无" }}
+                </div>
+              </div>
+              <div
+                class="mainOrderInfo_item"
+                style="color: red"
+                v-if="item.dataExamineStatus == 3 && item.dataExamineResult"
+              >
+                <div class="label">驳回原因</div>
+                <div class="value">
+                  {{ item.dataExamineResult }}
                 </div>
               </div>
               <div
@@ -1253,10 +1287,21 @@
                 >取消订单</el-button
               >
               <el-button
+                size="mini"
+                type="danger"
+                v-if="
+                  item.subStatus >= 3401 &&
+                  (item.dataExamineStatus == 1 || item.dataExamineStatus == 0)
+                "
+                @click="openReviewDescDialog(item.orderSn)"
+              >
+                审核描述/过程
+              </el-button>
+              <el-button
                 v-if="item.subStatus >= 3502 && nodeEnv == 'development'"
                 type="danger"
                 size="mini"
-                @click="handleOrderRefund(item.orderSn)"
+                @click="handleOrderRefund(orderDetail.orderSn)"
                 >订单退款</el-button
               >
               <el-button
@@ -1347,6 +1392,60 @@
     <!-- 空行 -->
     <div style="height: 50px"></div>
 
+    <!-- 审核描述/过程 -->
+    <el-dialog
+      title="审核描述/过程"
+      width="30%"
+      :visible="reviewDescVisible"
+      :before-close="closeReviewDescDialog"
+      :close-on-click-modal="false"
+      center
+    >
+      <el-form
+        label-width="120px"
+        label-position="left"
+        :model="examineMasterOrderDataParmas"
+        :rules="examineMasterOrderDataRules"
+        ref="examineMasterOrderDataRef"
+      >
+        <el-form-item label="审核状态" prop="status">
+          <el-radio-group
+            v-model="examineMasterOrderDataParmas.status"
+            @change="changeStatus"
+          >
+            <el-radio :label="2">通过</el-radio>
+            <el-radio :label="3">驳回</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item
+          label="常用驳回语"
+          prop="rejectionDesc"
+          v-if="examineMasterOrderDataParmas.status == 3"
+        >
+          <el-radio-group v-model="examineMasterOrderDataParmas.rejectionDesc">
+            <el-radio label="现场故障描述驳回"></el-radio>
+            <el-radio label="处理过程驳回"></el-radio>
+            <el-radio label="两者驳回"></el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item
+          label="备注"
+          v-if="examineMasterOrderDataParmas.status == 3"
+        >
+          <el-input
+            type="textarea"
+            v-model="examineMasterOrderDataParmas.result"
+          ></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeReviewDescDialog">取 消</el-button>
+        <el-button type="primary" @click="examineMasterOrderData"
+          >确 定</el-button
+        >
+      </span>
+    </el-dialog>
+
     <!-- 新增故障项目 -->
     <el-dialog
       title="新增故障项目"
@@ -1430,7 +1529,7 @@
             v-model="examineFaultsForm.simpleDesc"
           ></el-input>
         </el-form-item>
-        <!-- ps:3.19之前 -->
+        <!-- 3月19之前 -->
         <el-form-item
           label="师傅展示价格"
           v-if="!examineFaultsForm.isDateAfter20250301Val"
@@ -1489,7 +1588,7 @@
             v-model="examineFaultsForm.enterpriseConsultAmount"
           ></el-input>
         </el-form-item>
-        <!-- ps:3.19之后 -->
+        <!-- 3月19之后 -->
         <el-form-item
           label="区间浮动价"
           v-if="examineFaultsForm.isDateAfter20250301Val"
@@ -1967,11 +2066,7 @@
     </el-dialog>
 
     <!-- 取消订单的原因弹窗 -->
-    <el-dialog
-      :visible="cancelOrderDialog"
-      width="50%"
-      :before-close="closecancelOrderDialog"
-    >
+    <el-dialog width="50%" :before-close="closecancelOrderDialog">
       <div style="text-align: center; padding: 0 70px">
         <div style="color: #707070; font-size: 20px; font-weight: 700">
           取消说明
@@ -1998,6 +2093,49 @@
           >确 定</el-button
         >
       </div>
+    </el-dialog>
+    <!-- 备注 ＋ 标签 -->
+    <el-dialog
+      title="备注"
+      width="30%"
+      :before-close="closecancelOrderDialog"
+      :visible="cancelOrderDialog"
+      :close-on-click-modal="false"
+    >
+      <div class="auditDialog">
+        <el-form label-width="80px">
+          <el-form-item
+            label="标签:"
+            v-if="orderCancelTag && orderCancelTag.length > 0"
+          >
+            <el-button
+              :type="index == chooseOrderCancelTagNum ? 'primary' : ''"
+              size="small"
+              @click="changeOrderCancelTag(index)"
+              v-for="(item, index) in orderCancelTag"
+              :key="item"
+              >{{ item }}</el-button
+            >
+          </el-form-item>
+          <el-form-item label="自定义:">
+            <el-input
+              v-model="delOrderinpValue"
+              type="textarea"
+              placeholder="请输入内容"
+              maxlength="100"
+              show-word-limit
+            >
+            </el-input>
+          </el-form-item>
+          <el-form-item label="备注:" v-if="orderCancelRemark">
+            {{ orderCancelRemark }}
+          </el-form-item>
+        </el-form>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closecancelOrderDialog">取 消</el-button>
+        <el-button type="primary" @click="_cancelRepairOrder">确 定</el-button>
+      </span>
     </el-dialog>
 
     <!-- 投诉弹窗 -->
@@ -2212,8 +2350,9 @@ import {
   handleMasterOrderValidOrderNum,
   handleMasterOrderServiceTimeout,
   saveRepairOrderComplaint,
+  examineMasterOrderData,
 } from "@/api/order.js";
-import { UploadImg } from "@/api/system.js";
+import { UploadImg, getSysLabel } from "@/api/system.js";
 import {
   handleRemindStarted,
   handlePhotographPunch,
@@ -2229,6 +2368,25 @@ import {
 export default {
   data() {
     return {
+      orderCancelTag: [],
+      chooseOrderCancelTagNum: null,
+
+      reviewDescVisible: false,
+      examineMasterOrderDataParmas: {
+        orderSn: null,
+        result: null,
+        status: null,
+        rejectionDesc: null,
+      },
+      examineMasterOrderDataRules: {
+        status: [
+          { required: true, message: "请选择审核状态", trigger: "change" },
+        ],
+        rejectionDesc: [
+          { required: true, message: "请选择常用驳回语", trigger: "change" },
+        ],
+      },
+
       nodeEnv: null,
       maintenanceOrderDescWidth: null, //大盒子宽度
       orderSn: null,
@@ -2456,6 +2614,13 @@ export default {
     };
   },
   computed: {
+    orderCancelRemark() {
+      const str1 = this.orderCancelTag[this.chooseOrderCancelTagNum];
+      const str2 = this.delOrderinpValue;
+      if (!str1) return str2;
+      if (!str2) return str1;
+      return `${str1},${str2}`;
+    },
     laborCostTxt: function () {
       let { amount, serviceAmount, retentionMoney } = this.consultCostParams;
       amount = Number(amount);
@@ -2478,6 +2643,59 @@ export default {
     },
   },
   methods: {
+    // 切换取消订单标签
+    changeOrderCancelTag(index) {
+      this.chooseOrderCancelTagNum = index;
+    },
+    // 获取订单取消标签
+    async getSysLabel() {
+      const res = await getSysLabel("orderCancelTag");
+      if (res.code == "000") {
+        if (res.data) {
+          this.orderCancelTag = res.data.split(",");
+        }
+      }
+    },
+    // 关闭审核描述过程框
+    async closeReviewDescDialog() {
+      await this.$refs["examineMasterOrderDataRef"].resetFields();
+      this.examineMasterOrderDataParmas = {
+        orderSn: null,
+        result: null,
+        status: null,
+        rejectionDesc: null,
+      };
+      this.reviewDescVisible = false;
+    },
+    // 审核描述过程
+    async examineMasterOrderData() {
+      await this.$refs["examineMasterOrderDataRef"].validate();
+      let obj = { ...this.examineMasterOrderDataParmas };
+      if (obj.result) {
+        obj.result = obj.rejectionDesc + "、" + obj.result;
+      } else {
+        obj.result = obj.rejectionDesc;
+      }
+      delete obj.rejectionDesc;
+      const res = await examineMasterOrderData(obj);
+      if (res.code == "000") {
+        this.$message({
+          type: "success",
+          message: "操作成功!",
+        });
+        await this.getRepairOrderDetail();
+        this.closeReviewDescDialog();
+      }
+    },
+    // 修改审核描述过程状态
+    changeStatus(e) {
+      this.examineMasterOrderDataParmas.rejectionDesc = null;
+    },
+    // 打开审核描述过程框
+    openReviewDescDialog(orderSn) {
+      this.examineMasterOrderDataParmas.orderSn = orderSn;
+      this.reviewDescVisible = true;
+    },
     // 跳转物流详情
     goToLogisticsDetails(partId, model, orderSn) {
       this.$router.push({
@@ -2676,7 +2894,7 @@ export default {
         cancelButtonText: "取消",
         inputPattern: /^\d+$/,
         inputErrorMessage: "请输入正确的数字",
-        closeOnClickModal: false,
+        // closeOnClickModal: false,
       }).then(async ({ value }) => {
         const res = await handleMasterOrderValidOrderNum({
           validOrderNum: value,
@@ -2773,9 +2991,25 @@ export default {
     },
     // 点击取消订单弹窗确定的事件
     _cancelRepairOrder() {
+      if (!this.delOrderinpValue && this.chooseOrderCancelTagNum == null) {
+        this.$message({
+          message: "请勾选任一标签或填写取消原因",
+          type: "warning",
+        });
+        return;
+      }
+      let cancelReason;
+      if (this.chooseOrderCancelTagNum != null) {
+        cancelReason =
+          this.orderCancelTag[this.chooseOrderCancelTagNum] +
+          "," +
+          this.delOrderinpValue;
+      } else {
+        cancelReason = this.delOrderinpValue;
+      }
       let params = {
         orderSn: this.orderSn,
-        cancelReason: this.delOrderinpValue,
+        cancelReason,
       };
       cancelRepairOrder(params).then((res) => {
         if (res.code == "000") {
@@ -2792,6 +3026,7 @@ export default {
     closecancelOrderDialog() {
       this.cancelOrderDialog = false;
       this.delOrderinpValue = "";
+      this.chooseOrderCancelTagNum = null;
     },
     // 点击取消订单触发的时间
     clickCancelOrderDialog() {
@@ -3933,6 +4168,7 @@ export default {
       this.nodeEnv = "development";
     }
     this.orderSn = this.$route.query.orderSn;
+    this.getSysLabel();
     await this.getRepairOrderDetail();
   },
 };

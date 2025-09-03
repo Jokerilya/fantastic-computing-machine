@@ -20,11 +20,11 @@
         <el-button type="primary" @click="addItemFn"
           ><i class="el-icon-plus" />添加优惠券</el-button
         >
-        <!-- <el-button type="primary" @click="goToReceiveRecords"
-          ><i class="el-icon-tickets" />查看领取记录</el-button
-        > -->
         <el-button type="primary" @click="openGiveCouponDialog"
           >手动发券</el-button
+        >
+        <el-button type="warning" @click="goToReceiveRecords(null)"
+          ><i class="el-icon-tickets" />查看所有领取记录</el-button
         >
       </div>
     </div>

@@ -11,10 +11,10 @@
         label-position="right"
       >
         <el-row :gutter="20">
-          <el-col :span="5">
+          <el-col :span="4">
             <el-form-item label="师傅名称">
               <el-select
-                style="width: 240px"
+                style="width: 200px"
                 v-model="searchForm.masterUid"
                 filterable
                 placeholder="请选择"
@@ -43,12 +43,12 @@
               </el-select>
             </el-form-item>
           </el-col> -->
-          <el-col :span="5">
+          <el-col :span="4">
             <el-form-item label="订单类型">
               <el-select
                 v-model="searchForm.orderType"
                 placeholder="请选择"
-                style="width: 240px"
+                style="width: 200px"
               >
                 <el-option label="散单" :value="1">散单</el-option>
                 <el-option label="年保" :value="2">年保</el-option>
@@ -56,10 +56,10 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="5">
+          <el-col :span="4">
             <el-form-item label="订单编号">
               <el-input
-                style="width: 240px"
+                style="width: 200px"
                 v-model="searchForm.orderSn"
                 placeholder="订单编号"
               ></el-input>
@@ -77,7 +77,16 @@
               </el-select>
             </el-form-item>
           </el-col> -->
-          <el-col :span="9">
+          <el-col :span="4">
+            <el-form-item label="企业名称">
+              <el-input
+                style="width: 200px"
+                v-model="searchForm.enterpriseName"
+                placeholder="企业名称"
+              ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
             <el-form-item label="创建时间">
               <el-date-picker
                 @change="changeQueryTimeCopy"
@@ -93,37 +102,42 @@
           </el-col>
         </el-row>
         <el-row :gutter="20">
-          <el-col :span="5">
-            <el-form-item label="企业名称">
-              <el-input
-                style="width: 240px"
-                v-model="searchForm.enterpriseName"
-                placeholder="企业名称"
-              ></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="5">
+          <el-col :span="4">
             <el-form-item label="设备编码">
               <el-input
-                style="width: 240px"
+                style="width: 200px"
                 v-model="searchForm.no"
                 placeholder="设备编码"
               ></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="5">
+          <el-col :span="4">
             <el-form-item label="结算类型">
               <el-select
                 v-model="searchForm.settlementType"
                 placeholder="请选择"
-                style="width: 240px"
+                style="width: 200px"
               >
                 <el-option label="现结" :value="1">现结</el-option>
                 <el-option label="月结" :value="2">月结 </el-option>
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="3">
+          <el-col :span="4">
+            <el-form-item label="数据审核">
+              <el-select
+                v-model="searchForm.dataExamineStatus"
+                placeholder="请选择"
+                style="width: 200px"
+              >
+                <el-option label="全部" :value="null">全部</el-option>
+                <el-option label="审核中" :value="1">审核中</el-option>
+                <el-option label="审核通过" :value="2">审核通过</el-option>
+                <el-option label="审核驳回" :value="3">审核驳回</el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="2.5">
             <el-form-item label="仅选择超时">
               <el-switch
                 v-model="searchForm.timeoutFlag"
@@ -133,7 +147,7 @@
               </el-switch>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="2.5">
             <el-form-item label="仅选择斯耐克">
               <el-switch
                 v-model="searchForm.snkFlag"
@@ -473,7 +487,7 @@
         </el-table-column> -->
         <el-table-column label="操作" width="120" fixed="right" align="center">
           <template slot-scope="{ row }">
-            <div class="settings">
+            <div class="settings" v-if="row.deviceTypeName">
               <el-button
                 type="text"
                 style="font-size: 14px; margin-right: 10px; font-weight: 400"
@@ -509,6 +523,15 @@
                   >
                 </el-dropdown-menu>
               </el-dropdown>
+            </div>
+            <div class="settings" v-else>
+              <el-button
+                type="text"
+                style="font-size: 14px; margin-right: 10px; font-weight: 400"
+                plain
+                @click="deleteRepairOrder(row)"
+                >删除</el-button
+              >
             </div>
           </template>
         </el-table-column>
@@ -953,6 +976,7 @@ import {
   testData,
   getOrderSubscript,
   bindSalesman,
+  deleteRepairOrder,
 } from "@/api/order.js";
 import { handleProxyCreateOrder, handleBatchProxyPayment } from "@/api/proxy";
 import { UploadImg, getSysLabel } from "@/api/system.js";
@@ -1163,6 +1187,7 @@ export default {
         timeoutFlag: false,
         snkFlag: false,
         settlementType: null,
+        dataExamineStatus: null,
       },
       queryTimeCopy: null,
       dataList: [],
@@ -1280,6 +1305,24 @@ export default {
     this.getSysLabel();
   },
   methods: {
+    // 删除订单
+    async deleteRepairOrder(row) {
+      const confirmRes = await this.$confirm(`您确定要该订单吗？`, "删除订单", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      });
+      if (confirmRes == "confirm") {
+        const res = await deleteRepairOrder(row.id);
+        if (res.code == "000") {
+          this.$message({
+            message: "删除成功！",
+            type: "success",
+          });
+          this._queryRepairOrderList();
+        }
+      }
+    },
     // 确定企业备注
     async handleRepairRemarks() {
       let params = {
@@ -1323,7 +1366,7 @@ export default {
     },
     // 获取企业标签
     async getSysLabel() {
-      const res = await getSysLabel("orderTag");
+      const res = await getSysLabel("orderRemarkTag");
       if (res.code == "000") {
         if (res.data) {
           this.orderTag = res.data.split(",");
@@ -1709,7 +1752,7 @@ export default {
     query_queryRepairOrderList() {
       this.currentPage = 1;
       this._queryRepairOrderList();
-      // this.getOrderSubscript();
+      this.getOrderSubscript();
     },
     // 导出
     async exportList() {
@@ -1751,6 +1794,7 @@ export default {
         timeoutFlag: false,
         snkFlag: false,
         settlementType: null,
+        dataExamineStatus: null,
       };
       this._queryRepairOrderList();
       this.getOrderSubscript();

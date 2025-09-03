@@ -14,6 +14,13 @@ const router = {
       component: () => import("@/views/maintenance/maintenance_order"),
       meta: { title: "维保工单" },
     },
+    // 保养
+    {
+      path: "/maintenance/upkeepDetailModule",
+      name: "upkeepDetailModule",
+      component: () => import("@/views/maintenance/upkeepDetailModule"),
+      meta: { title: "保养工单" },
+    },
     {
       path: "/maintenance/maintenance_order_desc",
       name: "maintenance_order_desc",
@@ -25,6 +32,13 @@ const router = {
       name: "customer",
       component: () => import("@/views/maintenance/customer"),
       meta: { title: "年保合同" },
+    },
+    {
+      path: "/maintenance/equipmentManagement",
+      name: "equipmentManagement",
+      component: () =>
+        import("@/views/maintenance/equipmentManagement/equipmentManagement"),
+      meta: { title: "设备管理" },
     },
     {
       path: "/maintenance/customerDetail",
@@ -76,13 +90,7 @@ const router = {
       component: () => import("@/views/invoiceManagement/invoiceList"),
       meta: { title: "发票明细" },
     },
-    // 保养
-    {
-      path: "/maintenance/upkeepDetailModule",
-      name: "upkeepDetailModule",
-      component: () => import("@/views/maintenance/upkeepDetailModule"),
-      meta: { title: "保养明细" },
-    },
+
     // 物流
     {
       path: "/maintenance/logisticsDetails",
@@ -101,14 +109,7 @@ const router = {
       path: "/receiveRecords",
       name: "ReceiveRecords",
       component: () => import("@/views/activity/coupon/receiveRecords"),
-      meta: { title: "领取记录" },
-    },
-    {
-      path: "/maintenance/equipmentManagement",
-      name: "equipmentManagement",
-      component: () =>
-        import("@/views/maintenance/equipmentManagement/equipmentManagement"),
-      meta: { title: "设备明细" },
+      meta: { title: "领取记录", noShow: "true" },
     },
   ],
 };

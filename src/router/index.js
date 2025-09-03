@@ -90,7 +90,7 @@ export const constantRoutes = [
   systemRouter,
   activityRouter, // 运营管理
 
-  maintenanceRouter,
+  // maintenanceRouter,
   // stashSetoutHandleRouter,  // 仓库代处理
   // userListRouter,
   // storeController,

@@ -1082,3 +1082,20 @@ export function handleMasterRemark(data) {
     data,
   });
 }
+
+// 审核师傅订单数据
+export function examineMasterOrderData(data) {
+  return request({
+    url: "/admin/maintenance/examineMasterOrderData",
+    method: "post",
+    data,
+  });
+}
+
+// 删除维保订单.
+export function deleteRepairOrder(id) {
+  return request({
+    url: "/admin/maintenance/deleteRepairOrder?id=" + id,
+    method: "get",
+  });
+}
