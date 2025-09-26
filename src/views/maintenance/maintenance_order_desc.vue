@@ -121,23 +121,9 @@
                         : "年卡"
                     }}
                   </div>
-                  <div
-                    style="margin-bottom: 0"
-                    v-for="item in lablelList"
-                    :key="item.value"
-                  >
-                    <div
-                      v-if="orderDetail.label == item.value"
-                      :style="{
-                        color:
-                          orderDetail.label == '普通'
-                            ? '#409eff'
-                            : orderDetail.label == '199'
-                            ? '#67c23a'
-                            : '#e6a23c',
-                      }"
-                    >
-                      【{{ item.value }}】
+                  <div v-if="orderDetail.label !== '普通' && matchedLabelItem">
+                    <div :class="labelClass">
+                      【{{ matchedLabelItem.value }}】
                     </div>
                   </div>
                 </div>
@@ -191,6 +177,10 @@
                 <div
                   class="value"
                   style="color: #409eff; cursor: pointer"
+                  v-if="
+                    orderDetail.pictureList &&
+                    orderDetail.pictureList.length > 0
+                  "
                   @click="
                     goToVideoUrl(
                       orderDetail.videoList ? orderDetail.videoList[0] : null
@@ -209,6 +199,7 @@
                   >
                   </el-image>
                 </div>
+                <div v-else>未上传故障视图</div>
               </div>
               <div class="mainOrderInfo_item" v-if="orderDetail.onlineImages">
                 <div class="label">验收凭证</div>
@@ -222,6 +213,25 @@
                   "
                 >
                   查看凭证
+                </div>
+              </div>
+              <div class="mainOrderInfo_item">
+                <div class="label">故障类型</div>
+                <div class="value">
+                  {{ orderDetail.type }}
+                </div>
+              </div>
+              <div class="mainOrderInfo_item" v-if="orderDetail.warrantyTime">
+                <div class="label">质保时间</div>
+                <div
+                  class="value"
+                  style="color: #409eff; cursor: pointer"
+                  @click="openEditWarrantyPeriodDialog(orderDetail)"
+                >
+                  {{ orderDetail.warrantyTime }}天<span
+                    v-if="orderDetail.warrantyEndTime"
+                    >({{ orderDetail.warrantyEndTime }})</span
+                  >
                 </div>
               </div>
               <!-- <div
@@ -1298,7 +1308,7 @@
                 审核描述/过程
               </el-button>
               <el-button
-                v-if="item.subStatus >= 3502 && nodeEnv == 'development'"
+                v-if="item.subStatus >= 3502 && name == '管理员'"
                 type="danger"
                 size="mini"
                 @click="handleOrderRefund(orderDetail.orderSn)"
@@ -2323,6 +2333,38 @@
         >
       </span>
     </el-dialog>
+
+    <!-- 质保时间 -->
+    <el-dialog
+      title="修改质保时间"
+      :visible.sync="editWarrantyPeriodVisible"
+      width="20%"
+      :close-on-click-modal="false"
+      before-close="closeEditWarrantyPeriodDialog"
+      center
+    >
+      <el-form
+        label-width="80px"
+        label-position="left"
+        :model="handleOrderWarrantyParmas"
+        :rules="handleOrderWarrantyParmasRules"
+        ref="handleOrderWarrantyParmasRef"
+      >
+        <el-form-item label="质保时间" prop="days">
+          <el-input
+            placeholder="请输入质保时间"
+            v-model.number="handleOrderWarrantyParmas.days"
+            type="number"
+          >
+          </el-input>
+        </el-form-item>
+      </el-form>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeEditWarrantyPeriodDialog">取 消</el-button>
+        <el-button type="primary" @click="handleOrderWarranty">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -2351,6 +2393,7 @@ import {
   handleMasterOrderServiceTimeout,
   saveRepairOrderComplaint,
   examineMasterOrderData,
+  handleOrderWarranty,
 } from "@/api/order.js";
 import { UploadImg, getSysLabel } from "@/api/system.js";
 import {
@@ -2365,9 +2408,19 @@ import {
   handleProxyPayment,
   handleReleaseComment,
 } from "@/api/proxy";
+import { mapGetters } from "vuex";
 export default {
   data() {
     return {
+      editWarrantyPeriodVisible: false,
+      handleOrderWarrantyParmas: {
+        days: null,
+        orderSn: null,
+      },
+      handleOrderWarrantyParmasRules: {
+        days: [{ required: true, message: "请输入质保时间", trigger: "blur" }],
+      },
+
       orderCancelTag: [],
       chooseOrderCancelTagNum: null,
 
@@ -2614,6 +2667,23 @@ export default {
     };
   },
   computed: {
+    ...mapGetters(["name"]),
+    // 根据当前 label 找到匹配的 labelList 项
+    matchedLabelItem() {
+      return this.lablelList.find(
+        (item) => item.value === this.orderDetail.label
+      );
+    },
+    // 根据 type 返回对应 class
+    labelClass() {
+      const type = this.matchedLabelItem?.type || "";
+      const typeClassMap = {
+        success: "label-success",
+        warning: "label-warning",
+        // 可扩展更多类型
+      };
+      return typeClassMap[type] || "label-default";
+    },
     orderCancelRemark() {
       const str1 = this.orderCancelTag[this.chooseOrderCancelTagNum];
       const str2 = this.delOrderinpValue;
@@ -2643,6 +2713,42 @@ export default {
     },
   },
   methods: {
+    // 确定修改质保时间
+    async handleOrderWarranty() {
+      await this.$refs["handleOrderWarrantyParmasRef"].validate();
+      if (this.handleOrderWarrantyParmas.days <= 0) {
+        this.$message({
+          type: "warning",
+          message: "请设置大于0天的质保时间",
+        });
+        return;
+      }
+      const res = await handleOrderWarranty(this.handleOrderWarrantyParmas);
+      if (res.code == "000") {
+        this.$message({
+          type: "success",
+          message: "操作成功!",
+        });
+        await this.getRepairOrderDetail();
+        this.closeEditWarrantyPeriodDialog();
+      }
+    },
+    // 关闭修改质保时间框
+    closeEditWarrantyPeriodDialog() {
+      this.editWarrantyPeriodVisible = false;
+      this.$refs["handleOrderWarrantyParmasRef"].resetFields();
+      this.handleOrderWarrantyParmas = {
+        days: null,
+        orderSn: null,
+      };
+    },
+    // 打开修改质保时间框
+    openEditWarrantyPeriodDialog(orderDetail) {
+      this.editWarrantyPeriodVisible = true;
+      this.handleOrderWarrantyParmas.days =
+        orderDetail.warrantyTime == null ? 30 : orderDetail.warrantyTime;
+      this.handleOrderWarrantyParmas.orderSn = orderDetail.orderSn;
+    },
     // 切换取消订单标签
     changeOrderCancelTag(index) {
       this.chooseOrderCancelTagNum = index;
@@ -4385,5 +4491,15 @@ export default {
       padding-right: 10px;
     }
   }
+}
+
+.label-success {
+  color: #67c23a;
+}
+.label-warning {
+  color: #e6a23c;
+}
+.label-default {
+  color: #409eff;
 }
 </style>

@@ -36,6 +36,16 @@ export function handleEnterpriseInfoExport(data) {
   });
 }
 
+//企业列表导出
+export function handleRepairEnterpriseOrderExport(data) {
+  return request({
+    url: "/admin/maintenance/handleRepairEnterpriseOrderExport",
+    method: "POST",
+    data,
+    responseType: "blob",
+  });
+}
+
 //用户金额导出
 export function handleUserMoneyExport(data) {
   return request({
@@ -1096,6 +1106,58 @@ export function examineMasterOrderData(data) {
 export function deleteRepairOrder(id) {
   return request({
     url: "/admin/maintenance/deleteRepairOrder?id=" + id,
+    method: "get",
+  });
+}
+
+// 复制订单
+export function copyOrder(orderSn) {
+  return request({
+    url: "/admin/maintenance/copyOrder?orderSn=" + orderSn,
+    method: "get",
+  });
+}
+
+// 设置订单质保时长
+export function handleOrderWarranty(data) {
+  return request({
+    url: "/admin/maintenance/handleOrderWarranty",
+    method: "post",
+    data,
+  });
+}
+
+// 设置返佣绑定人
+export function handleBindCommission(data) {
+  return request({
+    url: "/admin/maintenance/handleBindCommission",
+    method: "post",
+    data,
+  });
+}
+
+// 查询订单佣金记录表
+export function queryOrderCommissionList(data) {
+  return request({
+    url: "/admin/maintenance/queryOrderCommissionList",
+    method: "post",
+    data,
+  });
+}
+
+// 设置订单佣金状态
+export function handleOrderCommissionStatus(data) {
+  return request({
+    url: "/admin/maintenance/handleOrderCommissionStatus",
+    method: "post",
+    data,
+  });
+}
+
+// 处理订单佣金打款
+export function handleOrderCommissionPayment(ids) {
+  return request({
+    url: `/admin/maintenance/handleOrderCommissionPayment?ids=${ids}`,
     method: "get",
   });
 }

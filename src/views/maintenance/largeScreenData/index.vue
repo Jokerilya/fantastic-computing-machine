@@ -325,7 +325,7 @@ export default {
       ],
       queryMasterPerformanceListParams: {
         type: 1,
-        targetMonth: "202507",
+        targetMonth: "202509",
       },
       masterInsuranceList: [],
       // masterInsuranceListTotal: 0,
@@ -650,6 +650,14 @@ export default {
       // 获取当前时间，并往前推2个月
       const now = new Date();
       now.setMonth(now.getMonth() + 2); // 往前推2个月
+      if (now.getMonth() - 1 < 10) {
+        this.queryMasterPerformanceListParams.targetMonth =
+          now.getFullYear() + "0" + (now.getMonth() - 1);
+      } else {
+        this.queryMasterPerformanceListParams.targetMonth =
+          now.getFullYear() + (now.getMonth() - 1);
+      }
+      console.log(653, this.queryMasterPerformanceListParams.targetMonth);
       let endYear = now.getFullYear();
       let endMonth = now.getMonth() + 1; // getMonth() 返回 0~11，所以要 +1
       // 创建结果数组

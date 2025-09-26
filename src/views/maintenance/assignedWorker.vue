@@ -4,12 +4,20 @@
     <div class="searchTool">
       <div class="workerName">
         <h4 style="color: #999">师傅名称</h4>
-        <div class="inp">
+        <div class="inp" style="margin-right: 10px">
           <el-input
             clearable
             placeholder="请输入你的师傅名称"
             v-model="params.realName"
           ></el-input>
+        </div>
+        <h4 style="color: #999">服务地区</h4>
+        <div class="inp">
+          <el-cascader
+            v-model="params.areaId"
+            :options="serviceAreasList"
+            :props="serviceAreasProps"
+          ></el-cascader>
         </div>
         <h4 style="color: #999; width: 90px; margin-left: 20px">指派的师傅:</h4>
         <div class="assignedWorkerList">
@@ -109,21 +117,77 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="realName" label="师傅" align="center">
+          <el-table-column
+            prop="realName"
+            label="师傅"
+            align="center"
+            width="150"
+          >
           </el-table-column>
-          <el-table-column prop="phone" label="师傅电话" align="center">
+          <el-table-column
+            prop="phone"
+            label="师傅电话"
+            align="center"
+            width="120"
+          >
           </el-table-column>
-          <el-table-column prop="identity" label="角色" align="center">
+          <el-table-column label="类型" align="center" width="120">
+            <template slot-scope="{ row }">
+              {{ row.type == 3 ? "全职" : row.type == 2 ? "签约" : "普通兼职" }}
+              <!-- 1 普通兼职 2 签约  3 全职" -->
+            </template>
           </el-table-column>
-          <el-table-column label="服务状态" align="center">
+          <el-table-column
+            prop="orderNum"
+            label="当月订单数量"
+            align="center"
+            width="120"
+          >
+            <template slot-scope="{ row }"> {{ row.orderNum }}单 </template>
+          </el-table-column>
+          <el-table-column
+            prop="orderSnList"
+            label="目前维修订单号"
+            align="center"
+            width="180"
+          >
+            <template slot-scope="{ row }">
+              <div v-for="item in row.orderSnList" :key="item">
+                <a
+                  type="text"
+                  style="color: #60a7e1"
+                  @click="queryDesc(item)"
+                  >{{ item }}</a
+                >
+              </div>
+              <div v-if="row.orderSnList.length == 0">空闲师傅</div>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="serviceAreas"
+            label="服务地区"
+            align="center"
+            width="350"
+          >
+          </el-table-column>
+          <el-table-column prop="serviceTypes" label="服务类型" align="center">
+          </el-table-column>
+          <!-- <el-table-column prop="identity" label="角色" align="center">
+          </el-table-column> -->
+          <!-- <el-table-column label="服务状态" align="center">
             <template> 可接单状态 </template>
+          </el-table-column> -->
+          <el-table-column
+            prop="createTime"
+            label="入驻时间"
+            align="center"
+            width="130"
+          >
           </el-table-column>
-          <el-table-column prop="createTime" label="入驻时间" align="center">
-          </el-table-column>
-          <el-table-column label="所属" align="center">
+          <!-- <el-table-column label="所属" align="center">
             <template> 广东机床加工有限公司 </template>
-          </el-table-column>
-          <el-table-column label="操作" align="center">
+          </el-table-column> -->
+          <el-table-column label="操作" align="center" width="80">
             <template slot-scope="{ row }">
               <a
                 href="#"
@@ -211,15 +275,35 @@ export default {
         pageNo: 1,
         pageSize: 10,
         realName: "",
+        areaId: null,
       },
-      masterList: null, //师傅列表
+      serviceAreasList: [],
+      serviceAreasProps: {
+        checkStrictly: false,
+        emitPath: false,
+        value: "id",
+        label: "name",
+        children: "child",
+      },
+      masterList: [], //师傅列表
       total: null, //师傅总条数
 
       masterUidList: [], //要指派师傅pdi的列表
       masterNameList: [], //要指派师傅姓名的列表
     };
   },
+  mounted() {
+    this.serviceAreasList = require("../../utils/city-address.json");
+  },
   methods: {
+    //  点击查看详情触发的事件
+    queryDesc(orderSn) {
+      const routeData = this.$router.resolve({
+        name: "maintenance_order_desc",
+        query: { orderSn },
+      });
+      window.open(routeData.href, "_blank");
+    },
     getRowKeys: function (row) {
       return row.id; // 指定table id
     },
@@ -355,10 +439,12 @@ export default {
     async getMasterList() {
       const loading = this.$loading();
       const res = await queryAssignableMasterList(this.params);
-      this.masterList = res.data.records;
-      this.total = res.data.total;
-      // 回显已选师傅
-      loading.close();
+      if (res.code == "000") {
+        // 回显已选师傅
+        this.masterList = res.data.records;
+        this.total = res.data.total;
+        loading.close();
+      }
     },
   },
   async created() {

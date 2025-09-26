@@ -5,23 +5,25 @@
     <div class="manage-top">
       <el-form label-width="88px" class="rule-form" label-position="right">
         <el-row :gutter="25">
-          <el-col :span="5">
+          <el-col :span="4">
             <el-form-item label="公司名称">
               <el-input
+                style="width: 250px"
                 placeholder="请输入公司名称"
                 v-model="queryEnterpriseListParms.name"
               ></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="5">
+          <el-col :span="4">
             <el-form-item label="联系电话">
               <el-input
+                style="width: 250px"
                 placeholder="请输入联系电话"
                 v-model="queryEnterpriseListParms.phone"
               ></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="5">
+          <el-col :span="4">
             <el-form-item label="业务员">
               <el-select
                 filterable
@@ -40,7 +42,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="9">
+          <el-col :span="4">
             <el-form-item label="创建时间">
               <el-date-picker
                 @change="changeQueryTimeCopy"
@@ -54,9 +56,7 @@
               </el-date-picker>
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row :gutter="25" style="margin-bottom: 15px; text-align: right">
-          <el-col>
+          <el-col :span="8" style="text-align: right">
             <el-button
               icon="el-icon-zoom-in"
               plain
@@ -179,6 +179,18 @@
         >
           <template slot-scope="{ row }">
             {{ row.frname ? row.frname : "/" }}
+          </template>
+        </el-table-column>
+        <el-table-column label="返佣人" show-overflow-tooltip align="center">
+          <template slot-scope="{ row }">
+            <div v-if="row.commissionNickName">
+              {{ row.commissionNickName }}
+            </div>
+            <div v-else>
+              <el-button type="text" @click="openBindbribeeDialog(row.id)"
+                >未绑定
+              </el-button>
+            </div>
           </template>
         </el-table-column>
         <!-- <el-table-column
@@ -632,10 +644,39 @@
         >
       </span>
     </el-dialog>
+
+    <!-- 绑定返佣人 -->
+    <el-dialog
+      title="绑定返佣人"
+      width="30%"
+      :before-close="closeBindbribeeDialog"
+      :visible="bindbribeeDialogVisible"
+      :close-on-click-modal="false"
+    >
+      <div class="bindbribeeDialog">
+        <el-form label-width="80px">
+          <el-form-item label="返佣人:">
+            <el-input
+              placeholder="请输入返佣人手机号码"
+              v-model="handleBindCommissionPhone"
+            ></el-input>
+          </el-form-item>
+        </el-form>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeBindbribeeDialog">取 消</el-button>
+        <el-button type="primary" @click="handleBindCommission"
+          >确 定</el-button
+        >
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <style lang="less" scoped>
+.bindbribeeDialog {
+  padding: 0 20px;
+}
 .auditDialog {
   .auditDialog_line {
     text-align: center;
@@ -684,13 +725,18 @@
 <script>
 import tableMixin from "@/mixin/table";
 import { getSysLabel } from "@/api/system.js";
-import { getEnterpriseList, querySalesmanList } from "@/api/user.js";
+import {
+  getEnterpriseList,
+  querySalesmanList,
+  queryUserInfoFn,
+} from "@/api/user.js";
 import {
   handleEnterpriseInfoExport,
   queryDeviceTypeList,
   queryEnterpriseMemberList,
   queryMasterName,
   handleEnterpriseRemark,
+  handleBindCommission,
 } from "@/api/order.js";
 import {
   handleEnterpriseExamine,
@@ -774,6 +820,14 @@ export default {
         label: "name",
         children: "child",
       },
+
+      // 绑定返佣人
+      bindbribeeDialogVisible: false,
+      handleBindCommissionParams: {
+        id: null,
+        uid: null,
+      },
+      handleBindCommissionPhone: null,
     };
   },
   computed: {
@@ -796,6 +850,66 @@ export default {
     this.getSysLabel();
   },
   methods: {
+    // 确定绑定返佣人
+    async handleBindCommission() {
+      const mobileRegex = /^1[3-9]\d{9}$/;
+      if (!mobileRegex.test(this.handleBindCommissionPhone)) {
+        this.$message({
+          message: "请输入11位中国大陆手机号",
+          type: "warning",
+        });
+        return;
+      }
+      const queryUserInfoFnRes = await queryUserInfoFn({
+        phone: this.handleBindCommissionPhone,
+      });
+      if (queryUserInfoFnRes.code == "000") {
+        if (queryUserInfoFnRes.data.records.length == 0) {
+          this.$message({
+            message: "该用户未在平台入驻",
+            type: "warning",
+          });
+        } else {
+          this.$confirm(
+            `您确定要将【${queryUserInfoFnRes.data.records[0].nickName}】绑定到该企业吗`,
+            "绑定",
+            {
+              confirmButtonText: "确定",
+              cancelButtonText: "取消",
+              type: "warning",
+            }
+          ).then(async () => {
+            this.handleBindCommissionParams.uid =
+              queryUserInfoFnRes.data.records[0].uid;
+            const handleBindCommissionRes = await handleBindCommission(
+              this.handleBindCommissionParams
+            );
+            if (handleBindCommissionRes.code == "000") {
+              this.$message({
+                message: handleBindCommissionRes.message,
+                type: "success",
+              });
+            }
+            this.closeBindbribeeDialog();
+            this._getEnterpriseList();
+          });
+        }
+      }
+    },
+    // 关闭返佣人弹框
+    closeBindbribeeDialog() {
+      this.handleBindCommissionPhone = null;
+      this.handleBindCommissionParams = {
+        id: null,
+        uid: null,
+      };
+      this.bindbribeeDialogVisible = false;
+    },
+    // 打开返佣人弹框
+    openBindbribeeDialog(id) {
+      this.handleBindCommissionParams.id = id;
+      this.bindbribeeDialogVisible = true;
+    },
     // 确定企业备注
     async handleEnterpriseRemark() {
       let params = {

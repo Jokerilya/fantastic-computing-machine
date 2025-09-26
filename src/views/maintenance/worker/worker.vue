@@ -21,12 +21,13 @@
               </el-option>
             </el-select>
           </el-form-item> -->
-        <el-col :span="5">
+        <el-col :span="4">
           <el-form-item label="师傅名称">
             <el-input
               placeholder="请输入师傅名称"
               clearable
               v-model="queryMasterListParams.realName"
+              style="width: 200px"
             ></el-input>
           </el-form-item>
         </el-col>
@@ -50,11 +51,12 @@
             </el-select>
           </el-form-item>
         </el-col> -->
-        <el-col :span="5">
+        <el-col :span="4">
           <el-form-item label="审核状态">
             <el-select
               placeholder="请选择审核状态"
               v-model="queryMasterListParams.status"
+              style="width: 200px"
             >
               <el-option label="审核中" :value="1"> </el-option>
               <el-option label="审核通过" :value="2"> </el-option>
@@ -62,6 +64,16 @@
             </el-select>
           </el-form-item>
         </el-col>
+        <el-col :span="4">
+          <el-form-item label="服务地区">
+            <el-cascader
+              v-model="queryMasterListParams.areaId"
+              :options="serviceAreasList"
+              :props="serviceAreasProps"
+            ></el-cascader>
+          </el-form-item>
+        </el-col>
+
         <el-col :span="11">
           <el-form-item label="创建时间">
             <el-date-picker
@@ -1289,6 +1301,14 @@ export default {
   mixins: [tableMixin],
   data() {
     return {
+      serviceAreasProps: {
+        checkStrictly: false,
+        emitPath: false,
+        value: "id",
+        label: "name",
+        children: "child",
+      },
+      serviceAreasList: [],
       remarksDialogVisible: false,
       handleMasterRemarkParamsCopy: {
         labelList: [],
@@ -1530,6 +1550,7 @@ export default {
         superiorMasterUid: null,
         recommendMasterUid: null,
         queryTime: null,
+        areaId: null,
       },
 
       loading: false,
@@ -1588,6 +1609,9 @@ export default {
       }
       return parts.join(";");
     },
+  },
+  mounted() {
+    this.serviceAreasList = require("../../../utils/city-address.json");
   },
   methods: {
     // 确定师傅备注

@@ -161,7 +161,7 @@
       </el-form>
     </div>
     <el-row :gutter="20">
-      <el-col :span="18">
+      <el-col :span="15">
         <el-radio-group
           v-model="searchForm.status"
           style="margin-bottom: 30px"
@@ -175,7 +175,7 @@
           >
         </el-radio-group>
       </el-col>
-      <el-col :span="6" style="text-align: right">
+      <el-col :span="9" style="text-align: right">
         <el-button
           plain
           :disabled="multipleSelection.length == 0"
@@ -191,6 +191,13 @@
         >
         <el-button plain type="info" @click="resetFn">重置</el-button>
         <el-button type="success" plain @click="exportList"> 导出 </el-button>
+        <el-button
+          type="success"
+          plain
+          @click="handleRepairEnterpriseOrderExport"
+        >
+          导出V2
+        </el-button>
       </el-col>
     </el-row>
 
@@ -487,7 +494,7 @@
         </el-table-column> -->
         <el-table-column label="操作" width="120" fixed="right" align="center">
           <template slot-scope="{ row }">
-            <div class="settings" v-if="row.deviceTypeName">
+            <div class="settings" v-if="row.orderSn">
               <el-button
                 type="text"
                 style="font-size: 14px; margin-right: 10px; font-weight: 400"
@@ -511,6 +518,11 @@
                   <el-dropdown-item
                     ><el-button type="text" @click="openRemarksDialog(row)"
                       >备注</el-button
+                    ></el-dropdown-item
+                  >
+                  <el-dropdown-item
+                    ><el-button type="text" @click="copyOrder(row)"
+                      >复制</el-button
                     ></el-dropdown-item
                   >
                   <el-dropdown-item
@@ -977,6 +989,8 @@ import {
   getOrderSubscript,
   bindSalesman,
   deleteRepairOrder,
+  copyOrder,
+  handleRepairEnterpriseOrderExport,
 } from "@/api/order.js";
 import { handleProxyCreateOrder, handleBatchProxyPayment } from "@/api/proxy";
 import { UploadImg, getSysLabel } from "@/api/system.js";
@@ -1305,6 +1319,51 @@ export default {
     this.getSysLabel();
   },
   methods: {
+    // 导出v2
+    async handleRepairEnterpriseOrderExport() {
+      const loading = this.$loading({
+        lock: true,
+        text: "数据传输中",
+        spinner: "el-icon-loading",
+      });
+      this.exportParams.pageSize = 10000;
+      const res = await handleRepairEnterpriseOrderExport(this.exportParams);
+      if (res) {
+        const link = document.createElement("a");
+        const blob = new Blob([res.data], {
+          type: "application/vnd.ms-excel",
+        });
+        link.style.display = "none";
+        link.href = URL.createObjectURL(blob);
+        link.download = "维保列表"; //下载的文件名
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        loading.close();
+      }
+    },
+    // 复制订单
+    async copyOrder(row) {
+      const confirm = await this.$confirm(
+        `您是否根据【${row.orderSn}】复制一个新的订单号?`,
+        "复制订单",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        }
+      );
+      if (confirm == "confirm") {
+        const res = await copyOrder(row.orderSn);
+        if (res.code == "000") {
+          this.$message({
+            message: "复制成功！",
+            type: "success",
+          });
+          this._queryRepairOrderList();
+        }
+      }
+    },
     // 删除订单
     async deleteRepairOrder(row) {
       const confirmRes = await this.$confirm(`您确定要该订单吗？`, "删除订单", {

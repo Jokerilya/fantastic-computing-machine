@@ -94,6 +94,9 @@
             ￥{{ accountMoneyList.retentionMoney }}
           </div>
         </div>
+        <el-button type="text" @click="handleRetentionWithdrawal">
+          返还质保金
+        </el-button>
       </div>
       <el-table :data="moneyList" border style="width: 100%" height="65vh">
         <el-table-column align="center" prop="createTime" label="操作时间">
@@ -134,6 +137,7 @@
 <script>
 import { getAccountMoney, queryMoneyList } from "@/api/user";
 import { queryMasterName, handleUserMoneyExport } from "@/api/order";
+import { handleRetentionWithdrawal } from "@/api/master";
 export default {
   data() {
     return {
@@ -190,6 +194,24 @@ export default {
     };
   },
   methods: {
+    // 返还质保金
+    async handleRetentionWithdrawal() {
+      this.$confirm("您确定该师傅不再平台接单?", "返还质保金", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then(async () => {
+        const res = await handleRetentionWithdrawal(
+          this.queryMoneyListParams.uid
+        );
+        if (res.code == "000") {
+          this.$message({
+            message: "操作成功",
+            type: "success",
+          });
+        }
+      });
+    },
     // 点击导出触发的事件
     handleUserMoneyExport() {
       if (!this.queryMoneyListParams.uid) {
