@@ -25,14 +25,21 @@ const router = {
       name: "giveawayRewards",
       component: () => import("@/views/maintenance/giveawayRewards"),
       meta: { title: "分佣奖励" },
-      hidden:true
+      hidden: true,
     },
     {
       path: "/serviceManagement/promotionTeam",
       name: "promotionTeam",
       component: () => import("@/views/maintenance/promotionTeam"),
       meta: { title: "推广团队" },
-      hidden:true
+      hidden: true,
+    },
+    {
+      path: "/serviceManagement/enterpriseWechatList",
+      name: "enterpriseWechatList",
+      component: () =>
+        import("@/views/maintenance/businessPersonnel/enterpriseWechatList"),
+      meta: { title: "外部群列表" },
     },
   ],
 };

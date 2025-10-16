@@ -4200,6 +4200,19 @@ export default {
                   subStatus: "-2001",
                 },
               ];
+              const hasMinus2001 = item.orderTrackList.some(
+                (i) => i.subStatus == "-2001"
+              );
+              const hasMinus3001 = item.orderTrackList.some(
+                (i) => i.subStatus == "-3001"
+              );
+              if (hasMinus2001 && hasMinus3001) {
+                // 同时存在 -2001 和 -3001，剔除 -3001
+                item.orderTrackList = item.orderTrackList.filter(
+                  (i) => i.subStatus !== "-3001"
+                );
+              }
+
               const subMap = new Map(
                 item.orderTrackList.map((item) => [item.subStatus, item])
               );

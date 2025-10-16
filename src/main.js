@@ -16,12 +16,12 @@ import App from "./App";
 import store from "./store";
 import router from "./router";
 
-import service from './utils/request-axios'
-import { Image, Model, Upload } from './components'
+import service from "./utils/request-axios";
+import { Image, Model, Upload } from "./components";
 import uploadImg from "@/components/uploadImg/upload-img.vue";
-import util from './utils'
+import util from "./utils";
 // 图视化
-import echarts from 'echarts'   
+import echarts from "echarts";
 
 // Vue.use(echarts)
 
@@ -29,7 +29,7 @@ Vue.component("first-title", FirstTitle);
 Vue.prototype.$webData = {
   webName,
   webLogo,
-  apiHost: process.env.VUE_APP_BASE_API
+  apiHost: process.env.VUE_APP_BASE_API,
 };
 Vue.mixin(vueMixin);
 // Vue.prototype.$store = store;
@@ -37,23 +37,35 @@ Vue.mixin(vueMixin);
 import "@/icons"; // icon
 import "@/permission"; // permission control
 
-Vue.component('y-image',Image)
-Vue.component('upload-img',uploadImg)
-Vue.component('upload',Upload)
-Vue.component('model',Model)
+Vue.component("y-image", Image);
+Vue.component("upload-img", uploadImg);
+Vue.component("upload", Upload);
+Vue.component("model", Model);
 
-Vue.prototype.util = util
-Vue.prototype.$axios = service
+Vue.prototype.util = util;
+Vue.prototype.$axios = service;
 
 // 引入vue-amap
-import VueAMap from 'vue-amap';
+import VueAMap from "vue-amap";
 // 初始化vue-amap
 Vue.use(VueAMap);
 VueAMap.initAMapApiLoader({
-  key: '0592067faeab23b9a97a69e4336d5ee6',
-  plugin: ['AMap.Autocomplete', 'AMap.PlaceSearch', 'AMap.Scale', 'AMap.OverView', 'AMap.ToolBar', 'AMap.MapType', 'AMap.PolyEditor', 'AMap.CircleEditor','AMap.Geocoder','AMap.Geolocation','AMap.MarkerClusterer'],
-  v: '1.4.4',
-  uiVersion: '1.0'
+  key: "0592067faeab23b9a97a69e4336d5ee6",
+  plugin: [
+    "AMap.Autocomplete",
+    "AMap.PlaceSearch",
+    "AMap.Scale",
+    "AMap.OverView",
+    "AMap.ToolBar",
+    "AMap.MapType",
+    "AMap.PolyEditor",
+    "AMap.CircleEditor",
+    "AMap.Geocoder",
+    "AMap.Geolocation",
+    "AMap.MarkerClusterer",
+  ],
+  v: "1.4.4",
+  uiVersion: "1.0",
 });
 
 /**
@@ -78,19 +90,18 @@ Vue.config.productionTip = false;
 
 // 创建一个响应式对象 为了做消息推送更新
 const messageList = Vue.observable({
-  intervalId:null,
-  repairMessgaeListTotal:null,
-  repairMessgaeList:null
+  intervalId: null,
+  repairMessgaeListTotal: null,
+  repairMessgaeList: null,
 });
 Vue.prototype.$messageList = messageList;
 
 // 图视化挂到vue上
 Vue.prototype.$echarts = echarts;
 
-
 new Vue({
   el: "#app",
   router,
   store,
-  render: h => h(App)
+  render: (h) => h(App),
 });

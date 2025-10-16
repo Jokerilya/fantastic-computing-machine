@@ -50,7 +50,12 @@
           />
         </template>
       </el-table-column>
-      <el-table-column label="事件类型" align="center" header-align="center" width="150">
+      <el-table-column
+        label="事件类型"
+        align="center"
+        header-align="center"
+        width="150"
+      >
         <template slot-scope="scope">
           <el-select v-model="scope.row.eventType" placeholder="请选择">
             <el-option
@@ -71,7 +76,12 @@
           <el-input v-model="scope.row.eventParam" />
         </template>
       </el-table-column>
-      <el-table-column label="广告位置" align="center" header-align="center" width="200">
+      <el-table-column
+        label="广告位置"
+        align="center"
+        header-align="center"
+        width="200"
+      >
         <template slot-scope="scope">
           <el-select
             v-model="scope.row.positionType"
@@ -89,7 +99,8 @@
       <el-table-column
         label="排序(越小越前)"
         align="center"
-        header-align="center" width="160"
+        header-align="center"
+        width="160"
       >
         <template slot-scope="scope">
           <el-input
@@ -102,7 +113,8 @@
       <el-table-column
         label="状态(开启/关闭)"
         align="center"
-        header-align="center" width="120"
+        header-align="center"
+        width="120"
       >
         <template slot-scope="scope">
           <el-switch
@@ -221,7 +233,11 @@ export default {
         {
           event: 13,
           name: "小程序商城首页活动中部",
-        }
+        },
+        {
+          event: 21,
+          name: "企业端首页轮播图",
+        },
       ],
       eventTypes: [
         {

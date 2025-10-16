@@ -655,7 +655,7 @@ export default {
           now.getFullYear() + "0" + (now.getMonth() - 1);
       } else {
         this.queryMasterPerformanceListParams.targetMonth =
-          now.getFullYear() + (now.getMonth() - 1);
+          now.getFullYear() + (now.getMonth() - 1).toString();
       }
       console.log(653, this.queryMasterPerformanceListParams.targetMonth);
       let endYear = now.getFullYear();

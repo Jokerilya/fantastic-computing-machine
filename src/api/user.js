@@ -344,3 +344,29 @@ export function handleAccountEdit(data) {
     data,
   });
 }
+
+// 企业微信外部群列表
+export function queryEnterpriseWechatList(data) {
+  return request({
+    url: "/admin/business/queryEnterpriseWechatList",
+    method: "post",
+    data,
+  });
+}
+
+// 企业微信外部群绑定业务员
+export function handleEnterpriseWechatBind(data) {
+  return request({
+    url: "/admin/business/handleEnterpriseWechatBind",
+    method: "post",
+    data,
+  });
+}
+
+// 同步维修订单
+export function handleRepairOrderBind() {
+  return request({
+    url: "/admin/business/handleRepairOrderBind",
+    method: "post",
+  });
+}

@@ -183,9 +183,9 @@
         >
           批量代付款
         </el-button>
-        <el-button type="warning" plain @click="openSyncDialog">
+        <!-- <el-button type="warning" plain @click="openSyncDialog">
           同步
-        </el-button>
+        </el-button> -->
         <el-button plain type="primary" @click="query_queryRepairOrderList"
           >查询</el-button
         >
