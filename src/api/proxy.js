@@ -114,3 +114,12 @@ export function handleOnlineOrder(orderSn) {
     method: "get",
   });
 }
+
+// 企业单方议价
+export function handleEnterpriseNegotiatedPrice(data) {
+  return request({
+    url: "/admin/maintenance/proxy/handleEnterpriseNegotiatedPrice",
+    method: "post",
+    data,
+  });
+}

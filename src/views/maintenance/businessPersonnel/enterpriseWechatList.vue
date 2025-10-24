@@ -4,10 +4,11 @@
     <!-- 顶部工具栏 -->
     <div class="topTool">
       <el-form :inline="true">
-        <el-form-item label="企业微信群名称:">
+        <el-form-item label="群名称:">
           <el-input
-            placeholder="请输入企业微信群名称,模糊查询"
+            placeholder="支持模糊查询"
             class="toolInput"
+            style="width: 120px"
             v-model="queryEnterpriseWechatListParams.chatName"
           ></el-input>
         </el-form-item>
@@ -15,10 +16,11 @@
           <el-select
             class="toolInput"
             filterable
+            style="width: 120px"
             :remote-method="remoteMethod"
             remote
             v-model="queryEnterpriseWechatListParams.salesmanId"
-            placeholder="请选择业务员"
+            placeholder="请选择"
           >
             <el-option
               v-for="item in salesmanOptions"
@@ -31,8 +33,9 @@
         </el-form-item>
         <el-form-item label="内部联系人昵称:">
           <el-input
-            placeholder="请输入内部联系人昵称,模糊查询"
+            placeholder="支持模糊查询"
             class="toolInput"
+            style="width: 120px"
             v-model="queryEnterpriseWechatListParams.internalUsername"
           ></el-input>
         </el-form-item>
@@ -115,6 +118,7 @@
           :page-size="queryEnterpriseWechatListParams.pageSize"
           :total="queryEnterpriseWechatListTotal"
           @current-change="currentChangeFn"
+          :current-page="queryEnterpriseWechatListParams.pageNo"
         >
         </el-pagination>
       </div>

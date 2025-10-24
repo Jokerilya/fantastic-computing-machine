@@ -84,6 +84,11 @@
       </div>
     </div>
     <el-table border :data="receiveRecords">
+      <el-table-column label="编号" width="120" align="center">
+        <template slot-scope="{ row }">
+          {{ row.couponCode }}
+        </template>
+      </el-table-column>
       <el-table-column label="发放类型" width="120" align="center">
         <template slot-scope="{ row }">
           {{ row.type == 0 ? "手动赠送" : "平台发放" }}

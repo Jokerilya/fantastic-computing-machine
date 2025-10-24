@@ -15,6 +15,12 @@ const router = {
       meta: { title: "企业列表" },
     },
     {
+      path: "/maintenance/monthlyApplyRecords",
+      name: "monthlyApplyRecords",
+      component: () => import("@/views/maintenance/monthlyApplyRecords"),
+      meta: { title: "月结记录" },
+    },
+    {
       path: "rebateRecord",
       name: "rebateRecord",
       component: () => import("@/views/maintenance/rebateRecord"),

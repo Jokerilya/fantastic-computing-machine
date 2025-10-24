@@ -121,10 +121,15 @@
                         : "年卡"
                     }}
                   </div>
-                  <div v-if="orderDetail.label !== '普通' && matchedLabelItem">
-                    <div :class="labelClass">
+                  <!-- orderDetail.label !== '普通' && matchedLabelItem -->
+                  <div
+                    v-if="orderDetail.label"
+                    style="color: red; margin-left: 5px"
+                  >
+                    <!-- <div :class="labelClass">
                       【{{ matchedLabelItem.value }}】
-                    </div>
+                    </div> -->
+                    【{{ orderDetail.label }}】
                   </div>
                 </div>
               </div>
@@ -393,8 +398,21 @@
                 <div class="label">人工费</div>
                 <div class="value">
                   {{ orderDetail.doorAmount ? orderDetail.doorAmount : 0 }}元
-                  <span v-if="orderDetail.orderType == 3"
-                    >(年卡订单包人工不包配件)</span
+                  <span
+                    style="
+                      margin-left: 10px;
+                      color: #409eff;
+                      cursor: pointer;
+                      font-weight: 400;
+                    "
+                    v-if="
+                      orderDetail.enterpriseSubStatus >= 2401 &&
+                      orderDetail.enterpriseSubStatus < 2601
+                    "
+                    @click="
+                      openSinglePartyNegotiationDialog(orderDetail.orderSn)
+                    "
+                    >单方议价</span
                   >
                 </div>
               </div>
@@ -431,6 +449,9 @@
                 <div class="label">企业应付</div>
                 <div class="value">
                   {{ orderDetail.payAmount ? orderDetail.payAmount : 0 }}元
+                  <span v-if="orderDetail.orderType == 3"
+                    >(年卡订单包人工不包配件)</span
+                  >
                 </div>
               </div>
             </div>
@@ -1062,7 +1083,7 @@
                 <div class="label">师傅应收</div>
                 <div class="value" style="font-weight: 700">
                   <span>{{ item.totalAmount ? item.totalAmount : 0 }}元 </span>
-                  <span
+                  <!-- <span
                     v-if="orderDetail.label != '普通'"
                     style="
                       font-weight: 400;
@@ -1071,10 +1092,10 @@
                       margin-left: 8px;
                     "
                   >
-                    该订单为{{ orderDetail.label }}订单,师傅人工费固定为{{
+                    师傅人工费固定为{{
                       orderDetail.label == "199" ? 100 : 200
                     }}元,不扣除质保金及平台抽成</span
-                  >
+                  > -->
                 </div>
               </div>
               <div
@@ -1401,6 +1422,45 @@
     </div>
     <!-- 空行 -->
     <div style="height: 50px"></div>
+
+    <!-- 单方议价 -->
+    <el-dialog
+      width="30%"
+      center
+      title="单方议价"
+      :close-on-click-modal="false"
+      :visible="singlePartyNegotiationPriceVisible"
+      :before-close="closeSinglePartyNegotiationDialog"
+    >
+      <div class="consultPriceDialog">
+        <!--  
+          :rules="consultCostRules"
+          ref="consultCostForm" -->
+        <el-form
+          :model="handleEnterpriseNegotiatedPriceParams"
+          label-position="left"
+          label-width="120px"
+        >
+          <el-form-item label="企业原人工费" prop="amount">
+            {{ orderDetail.doorAmount }}
+          </el-form-item>
+          <el-form-item label="企业现人工费" prop="amount">
+            <el-input
+              type="number"
+              placeholder="请输入企业现人工费"
+              @input="blurAmount"
+              v-model.number="handleEnterpriseNegotiatedPriceParams.doorAmount"
+            ></el-input>
+          </el-form-item>
+        </el-form>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeSinglePartyNegotiationDialog">取 消</el-button>
+        <el-button type="primary" @click="handleEnterpriseNegotiatedPrice"
+          >确 定</el-button
+        >
+      </span>
+    </el-dialog>
 
     <!-- 审核描述/过程 -->
     <el-dialog
@@ -2369,6 +2429,7 @@
 </template>
 
 <script>
+import { handleEnterpriseNegotiatedPrice } from "@/api/proxy.js";
 import { getRepairOrderDetail } from "@/api/user.js";
 import {
   queryFaultItems,
@@ -2664,6 +2725,13 @@ export default {
       evaluateImgFileList: [],
 
       masterTypeNameChoose: null,
+
+      // 单反议价
+      singlePartyNegotiationPriceVisible: false,
+      handleEnterpriseNegotiatedPriceParams: {
+        doorAmount: null,
+        orderSn: null,
+      },
     };
   },
   computed: {
@@ -2713,6 +2781,33 @@ export default {
     },
   },
   methods: {
+    // 确定单反议价
+    async handleEnterpriseNegotiatedPrice() {
+      const res = await handleEnterpriseNegotiatedPrice(
+        this.handleEnterpriseNegotiatedPriceParams
+      );
+      if (res.code == "000") {
+        this.$message({
+          type: "success",
+          message: "操作成功!",
+        });
+        await this.getRepairOrderDetail();
+        this.closeSinglePartyNegotiationDialog();
+      }
+    },
+    // 关闭单方议价弹窗
+    closeSinglePartyNegotiationDialog() {
+      this.singlePartyNegotiationPriceVisible = false;
+      this.handleEnterpriseNegotiatedPriceParams = {
+        doorAmount: null,
+        orderSn: null,
+      };
+    },
+    // 打开单方议价弹窗
+    openSinglePartyNegotiationDialog(orderSn) {
+      this.handleEnterpriseNegotiatedPriceParams.orderSn = orderSn;
+      this.singlePartyNegotiationPriceVisible = true;
+    },
     // 确定修改质保时间
     async handleOrderWarranty() {
       await this.$refs["handleOrderWarrantyParmasRef"].validate();
@@ -4135,9 +4230,9 @@ export default {
             .filter((i) => i);
         };
 
-        if (!res.data.label) {
-          res.data.label = "普通";
-        }
+        // if (!res.data.label) {
+        //   res.data.label = "普通";
+        // }
 
         if (
           res.data.enrollRepairOrderOutList &&
