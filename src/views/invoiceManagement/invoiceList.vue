@@ -171,7 +171,6 @@ export default {
         orderSn,
       };
       const result = await uploadRepairInvoice(obj);
-      console.log(137, result);
       if (result.message == "操作成功") {
         this.$message({
           message: "上传成功",
@@ -182,7 +181,6 @@ export default {
     },
     // 切换页码
     changePage(page) {
-      console.log(119, page);
       this.queryRepairInvoiceOrderListParams.pageNo = page;
       this.queryRepairInvoiceOrderList();
     },

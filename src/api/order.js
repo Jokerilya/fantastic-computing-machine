@@ -109,6 +109,19 @@ export function handleMasterPayment(orderSn) {
   });
 }
 
+//合同上传 三合一
+export async function importButlerOrder(data, type, snkFlag) {
+  return request({
+    url:
+      "/admin/maintenance/importButlerOrder?type=" +
+      type +
+      "&snkFlag=" +
+      snkFlag,
+    method: "POST",
+    data,
+  });
+}
+
 //合同上传
 export async function uploadButlerOrder(data, num) {
   return request({
@@ -1159,5 +1172,24 @@ export function handleOrderCommissionPayment(ids) {
   return request({
     url: `/admin/maintenance/handleOrderCommissionPayment?ids=${ids}`,
     method: "get",
+  });
+}
+
+// 审核维保订单投诉
+export function handleExamineRepairOrderComplaint(data) {
+  return request({
+    url: `/admin/maintenance/handleExamineRepairOrderComplaint`,
+    method: "post",
+    data,
+  });
+}
+
+// 测试 师傅列表导出
+export function test(data) {
+  return request({
+    url: "/admin/maintenance/io/test",
+    method: "POST",
+    data,
+    responseType: "blob",
   });
 }

@@ -99,13 +99,17 @@
                 <div class="label">超时状态</div>
                 <div class="value">
                   {{
-                    orderDetail.timeoutFlag == 2001
+                    orderDetail.timeoutFlag == "2001"
                       ? "指派超时"
-                      : orderDetail.timeoutFlag == 2101
+                      : orderDetail.timeoutFlag == "2101"
                       ? "接单超时"
-                      : orderDetail.timeoutFlag == 2201
+                      : orderDetail.timeoutFlag == "2201"
                       ? "打卡超时"
-                      : "服务中超时"
+                      : orderDetail.timeoutFlag == "2301"
+                      ? "服务中超时"
+                      : orderDetail.timeoutFlag == "3001"
+                      ? "派发->接单超时 "
+                      : "/"
                   }}
                 </div>
               </div>
@@ -206,18 +210,31 @@
                 </div>
                 <div v-else>未上传故障视图</div>
               </div>
-              <div class="mainOrderInfo_item" v-if="orderDetail.onlineImages">
+              <div
+                class="mainOrderInfo_item"
+                v-if="
+                  orderDetail.onlineAcceptanceNonePriceFile ||
+                  orderDetail.onlineAcceptanceFile
+                "
+              >
                 <div class="label">验收凭证</div>
                 <div
                   class="value"
+                  v-if="orderDetail.onlineAcceptanceFile"
                   style="color: #409eff; cursor: pointer"
+                  @click="goToVideoUrl(orderDetail.onlineAcceptanceFile)"
+                >
+                  验收单(有价格版)
+                </div>
+                <div
+                  class="value"
+                  style="color: #409eff; cursor: pointer"
+                  v-if="orderDetail.onlineAcceptanceNonePriceFile"
                   @click="
-                    goToVideoUrl(
-                      orderDetail.onlineImages ? orderDetail.onlineImages : null
-                    )
+                    goToVideoUrl(orderDetail.onlineAcceptanceNonePriceFile)
                   "
                 >
-                  查看凭证
+                  验收单(无价格版)
                 </div>
               </div>
               <div class="mainOrderInfo_item">
@@ -3445,21 +3462,32 @@ export default {
       });
     },
     // 生成线上工单
-    handleOnlineOrder(orderSn) {
+    async handleOnlineOrder(orderSn) {
+      let loading;
       this.$confirm("您确定要为该企业生成线上工单?", "提示", {
         confirmButtonText: "确认",
         cancelButtonText: "取消",
         type: "warning",
-      }).then(async () => {
-        const res = await handleOnlineOrder(orderSn);
-        if (res.message === "操作成功") {
-          this.$message({
-            message: res.message,
-            type: "success",
+      })
+        .then(async () => {
+          loading = this.$loading({
+            lock: true,
+            text: "正在生成工单...",
+            spinner: "el-icon-loading",
+            background: "rgba(0, 0, 0, 0.7)",
           });
-          this.getRepairOrderDetail();
-        }
-      });
+          const res = await handleOnlineOrder(orderSn);
+          if (res.message === "操作成功") {
+            this.$message({
+              message: res.message,
+              type: "success",
+            });
+            this.getRepairOrderDetail();
+          }
+        })
+        .finally(() => {
+          loading.close();
+        });
     },
     // 驳回师傅验收申请
     rejectOrderCheck(orderSn) {

@@ -32,7 +32,7 @@
           }"
         >
           <el-table-column label="姓名" prop="realName"></el-table-column>
-          <el-table-column label="头像">
+          <!-- <el-table-column label="头像">
             <template slot-scope="{ row }">
               <el-image
                 :src="
@@ -43,8 +43,12 @@
                 style="height: 100px; width: 100px"
               ></el-image>
             </template>
+          </el-table-column> -->
+          <el-table-column label="电话" prop="phone">
+            <template slot-scope="{ row }">
+              {{ row.phone ? row.phone : "/" }}
+            </template>
           </el-table-column>
-          <el-table-column label="电话" prop="phone"></el-table-column>
           <el-table-column label="业务类型">
             <template slot-scope="{ row }">
               {{ row.type === 1 ? "兼职业务" : "全职业务" }}
@@ -56,30 +60,49 @@
                 :src="row.programUrl"
                 style="height: 100px; width: 100px"
                 v-if="row.programUrl"
+                :preview-src-list="[row.programUrl]"
               ></el-image>
-              <div v-else>\</div>
+              <div v-else>/</div>
             </template>
           </el-table-column>
-          <el-table-column
-            label="推荐人"
-            prop="recommendName"
-          ></el-table-column>
-          <el-table-column
-            label="合同数量"
-            prop="agreementNum"
-          ></el-table-column>
-          <el-table-column
-            label="合同金额"
-            prop="agreementFee"
-          ></el-table-column>
-          <el-table-column
-            label="佣金金额"
-            prop="commissionFee"
-          ></el-table-column>
-          <el-table-column
-            label="推荐奖励金额"
-            prop="recommendFee"
-          ></el-table-column>
+          <el-table-column label="推荐人" prop="recommendName">
+            <template slot-scope="{ row }">
+              {{ row.recommendName ? row.recommendName : "/" }}
+            </template>
+          </el-table-column>
+          <el-table-column label="合同数量" prop="agreementNum">
+            <template slot-scope="{ row }">
+              {{ row.agreementNum ? row.agreementNum : "/" }}
+            </template>
+          </el-table-column>
+          <el-table-column label="合同金额" prop="agreementFee">
+            <template slot-scope="{ row }">
+              {{ row.agreementFee ? row.agreementFee : "/" }}
+            </template>
+          </el-table-column>
+          <el-table-column label="佣金金额" prop="commissionFee">
+            <template slot-scope="{ row }">
+              {{ row.commissionFee ? row.commissionFee : "/" }}
+            </template>
+          </el-table-column>
+          <el-table-column label="推荐奖励金额" prop="recommendFee">
+            <template slot-scope="{ row }">
+              {{ row.recommendFee ? row.recommendFee : "/" }}
+            </template>
+          </el-table-column>
+          <el-table-column label="外部群映射">
+            <template slot-scope="{ row }">
+              <el-switch
+                v-model="row.chatMapperFlag"
+                @change="handleSalesmanChatMapperBind(row)"
+                :active-value="1"
+                :inactive-value="0"
+                active-color="#13ce66"
+                inactive-color="#ff4949"
+              >
+              </el-switch>
+            </template>
+          </el-table-column>
           <el-table-column label="操作" width="150">
             <template slot-scope="{ row }">
               <el-button
@@ -112,7 +135,7 @@
 </template>
 
 <script>
-import { querySalesmanList } from "@/api/user";
+import { querySalesmanList, handleSalesmanChatMapperBind } from "@/api/user";
 export default {
   data() {
     return {
@@ -130,6 +153,22 @@ export default {
     this.querySalesmanList();
   },
   methods: {
+    // 设置业务员映射外部群
+    async handleSalesmanChatMapperBind(e) {
+      let chatMapperFlag = e.chatMapperFlag ? 1 : 0;
+      let id = e.id;
+      const res = await handleSalesmanChatMapperBind({
+        chatMapperFlag,
+        id,
+      });
+      if (res.code == "000") {
+        this.$message({
+          message: "操作成功",
+          type: "success",
+        });
+        this.querySalesmanList();
+      }
+    },
     // 跳转佣金奖励列表
     goToGiveawayRewards(invitationCode) {
       this.$router.push({

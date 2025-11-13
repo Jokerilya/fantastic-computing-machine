@@ -103,6 +103,7 @@
         <el-button type="success" plain @click="_handleMasterInfoExport">
           导出
         </el-button>
+        <el-button type="success" plain @click="test"> 导出TEST </el-button>
         <!-- <el-button plain type="primary" @click="addSigningMaster"
             >新增签约师傅</el-button
           > -->
@@ -1295,6 +1296,7 @@ import {
   handleActiveMaster,
   handleMasterType,
   handleMasterRemark,
+  test,
 } from "@/api/order.js";
 export default {
   title: "course",
@@ -1614,6 +1616,31 @@ export default {
     this.serviceAreasList = require("../../../utils/city-address.json");
   },
   methods: {
+    //测试
+    test() {
+      const loading = this.$loading({
+        lock: true,
+        text: "数据传输中",
+        spinner: "el-icon-loading",
+      });
+      const data = this.queryMasterListParams;
+      data.pageSize = 1000;
+      test(data).then((res) => {
+        if (res) {
+          const link = document.createElement("a");
+          const blob = new Blob([res.data], {
+            type: "application/vnd.ms-excel",
+          });
+          link.style.display = "none";
+          link.href = URL.createObjectURL(blob);
+          link.download = "师傅列表"; //下载的文件名
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          loading.close();
+        }
+      });
+    },
     // 确定师傅备注
     async handleMasterRemark() {
       let params = {

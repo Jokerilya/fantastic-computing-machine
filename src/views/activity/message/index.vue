@@ -15,8 +15,8 @@
         >
           <el-option
             v-for="(item, index) in typeList"
-            :key="item"
-            :label="item"
+            :key="item.value"
+            :label="item.label"
             :value="index + 1"
           >
           </el-option>
@@ -47,7 +47,7 @@
         header-align="center"
       >
       </el-table-column>
-      <el-table-column label="来源渠道" align="center" header-align="center">
+      <el-table-column label="来源渠道 " align="center" header-align="center">
         <template slot-scope="{ row }">
           <span>{{ channelList[row.channel - 1].label }}</span>
         </template>
@@ -164,7 +164,7 @@
         :page-size="queryRegisterInfoListParams.pageSize"
         :page-sizes="[20, 30, 50, 100]"
         layout="total,sizes, prev, pager, next"
-        :total="queryRegisterInfoListParamsTotal"
+        :total="queryRegisterInfoListTotal"
       >
       </el-pagination>
     </div>
@@ -312,7 +312,7 @@ export default {
         simpleContent: null,
         queryTime: null,
       },
-      queryRegisterInfoListParamsTotal: null,
+      queryRegisterInfoListTotal: null,
       feedbackdialogVisible: false,
       handleRegisterInfoParams: {
         id: null,
@@ -540,7 +540,7 @@ export default {
     async queryRegisterInfoList() {
       const res = await queryRegisterInfoList(this.queryRegisterInfoListParams);
       this.dataList = res.data.records;
-      this.queryRegisterInfoListParamsTotal = res.data.total;
+      this.queryRegisterInfoListTotal = res.data.total;
     },
     handleSizeChange(val) {
       this.queryRegisterInfoListParams.pageSize = val;

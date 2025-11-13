@@ -19,6 +19,15 @@ export function querySalesmanList(data) {
   });
 }
 
+// 设置业务员映射外部群
+export function handleSalesmanChatMapperBind(data) {
+  return request({
+    url: "/admin/business/handleSalesmanChatMapperBind",
+    method: "post",
+    data,
+  });
+}
+
 // 绑定企业
 export function bindUserAccount(data) {
   return request({

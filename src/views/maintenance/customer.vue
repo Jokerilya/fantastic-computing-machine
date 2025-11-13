@@ -484,6 +484,7 @@ import {
   downloadButlerOrderTemplate,
   handleButlerOrderExport,
   uploadButlerOrderByOwn,
+  importButlerOrder,
 } from "@/api/order.js";
 import tableMixin from "@/mixin/table";
 import { localStorageData } from "@/utils";
@@ -755,8 +756,8 @@ export default {
       formData.append("file", data.file);
       // nsk的上传
       if (num === 1) {
-        uploadButlerOrderByOwn(formData)
-          .then((res) => {
+        importButlerOrder(formData, num, true).then((res) => {
+          if (res.code == "000") {
             this.$emit("uploadSuc", res.data);
             this.$message({
               showClose: true,
@@ -765,18 +766,11 @@ export default {
             });
             loading.close();
             this._getOrderList();
-          })
-          .catch(() => {
-            this.$message({
-              showClose: true,
-              message: "文件上传失败！",
-              type: "warning",
-            });
-            loading.close();
-          });
+          }
+        });
       } else {
-        uploadButlerOrder(formData, num)
-          .then((res) => {
+        importButlerOrder(formData, num, false).then((res) => {
+          if (res.code == "000") {
             this.$emit("uploadSuc", res.data);
             this.$message({
               showClose: true,
@@ -785,15 +779,8 @@ export default {
             });
             loading.close();
             this._getOrderList();
-          })
-          .catch(() => {
-            this.$message({
-              showClose: true,
-              message: "文件上传失败！",
-              type: "warning",
-            });
-            loading.close();
-          });
+          }
+        });
       }
     },
     // 查询列表的事件
