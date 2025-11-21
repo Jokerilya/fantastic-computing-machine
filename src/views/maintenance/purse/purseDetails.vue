@@ -76,27 +76,31 @@
     </el-form>
     <el-card>
       <div class="masterInfo">
-        <div class="masterInfoItem">
-          <div class="masterInfoItem_label">可提现余额：</div>
-          <div class="masterInfoItem_value">
-            ￥{{ accountMoneyList.balanceAmount }}
+        <div class="masterInfo_left">
+          <div class="masterInfoItem">
+            <div class="masterInfoItem_label">可提现余额：</div>
+            <div class="masterInfoItem_value">
+              ￥{{ accountMoneyList.balanceAmount }}
+            </div>
+          </div>
+          <div class="masterInfoItem">
+            <div class="masterInfoItem_label">冻结余额：</div>
+            <div class="masterInfoItem_value">
+              ￥{{ accountMoneyList.freezeBalanceAmount }}
+            </div>
+          </div>
+          <div class="masterInfoItem">
+            <div class="masterInfoItem_label">质保金额：</div>
+            <div class="masterInfoItem_value">
+              ￥{{ accountMoneyList.retentionMoney }}
+            </div>
           </div>
         </div>
-        <div class="masterInfoItem">
-          <div class="masterInfoItem_label">冻结余额：</div>
-          <div class="masterInfoItem_value">
-            ￥{{ accountMoneyList.freezeBalanceAmount }}
-          </div>
+        <div class="masterInfo_right">
+          <el-button type="danger" @click="handleRetentionWithdrawal">
+            返还质保金
+          </el-button>
         </div>
-        <div class="masterInfoItem">
-          <div class="masterInfoItem_label">质保金额：</div>
-          <div class="masterInfoItem_value">
-            ￥{{ accountMoneyList.retentionMoney }}
-          </div>
-        </div>
-        <el-button type="text" @click="handleRetentionWithdrawal">
-          返还质保金
-        </el-button>
       </div>
       <el-table :data="moneyList" border style="width: 100%" height="65vh">
         <el-table-column align="center" prop="createTime" label="操作时间">
@@ -336,7 +340,12 @@ export default {
   margin-bottom: 20px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   width: 100%;
+  .masterInfo_left {
+    display: flex;
+    align-items: center;
+  }
 
   .masterInfoItem {
     margin-right: 30px;

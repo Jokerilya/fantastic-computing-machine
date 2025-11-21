@@ -71,9 +71,9 @@
               label="保养类型"
             ></el-table-column>
             <el-table-column prop="person" label="保养人"></el-table-column>
-            <el-table-column label="保养内容" prop="content">
+            <el-table-column label="保养内容" prop="simpleContent">
               <template slot-scope="{ row }">
-                {{ row.content ? row.content : "/" }}
+                {{ row.simpleContent ? row.simpleContent : "/" }}
               </template>
             </el-table-column>
             <el-table-column prop="fault" label="排除故障"></el-table-column>

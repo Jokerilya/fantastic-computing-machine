@@ -756,7 +756,7 @@ export default {
       formData.append("file", data.file);
       // nsk的上传
       if (num === 1) {
-        importButlerOrder(formData, num, true).then((res) => {
+        importButlerOrder(formData, 2, true).then((res) => {
           if (res.code == "000") {
             this.$emit("uploadSuc", res.data);
             this.$message({

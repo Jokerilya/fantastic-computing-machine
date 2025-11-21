@@ -648,16 +648,17 @@ export default {
       let startYear = 2025;
       let startMonth = 6;
       // 获取当前时间，并往前推2个月
-      const now = new Date();
-      now.setMonth(now.getMonth() + 2); // 往前推2个月
-      if (now.getMonth() - 1 < 10) {
+      let now = new Date();
+      if (now.getMonth() + 1 < 10) {
         this.queryMasterPerformanceListParams.targetMonth =
-          now.getFullYear() + "0" + (now.getMonth() - 1);
+          now.getFullYear() + "0" + (now.getMonth() + 1);
       } else {
         this.queryMasterPerformanceListParams.targetMonth =
-          now.getFullYear() + (now.getMonth() - 1).toString();
+          now.getFullYear() + (now.getMonth() + 1).toString();
       }
-      console.log(653, this.queryMasterPerformanceListParams.targetMonth);
+      console.log(659, this.queryMasterPerformanceListParams.targetMonth);
+
+      now.setMonth(now.getMonth() + 2); // 往前推2个月
       let endYear = now.getFullYear();
       let endMonth = now.getMonth() + 1; // getMonth() 返回 0~11，所以要 +1
       // 创建结果数组

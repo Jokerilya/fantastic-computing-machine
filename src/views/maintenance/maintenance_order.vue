@@ -14,7 +14,7 @@
           <el-col :span="4">
             <el-form-item label="师傅名称">
               <el-select
-                style="width: 200px"
+                style="width: 10vw"
                 v-model="searchForm.masterUid"
                 filterable
                 placeholder="请选择"
@@ -48,7 +48,7 @@
               <el-select
                 v-model="searchForm.orderType"
                 placeholder="请选择"
-                style="width: 200px"
+                style="width: 10vw"
               >
                 <el-option label="散单" :value="1">散单</el-option>
                 <el-option label="年保" :value="2">年保</el-option>
@@ -59,7 +59,7 @@
           <el-col :span="4">
             <el-form-item label="订单编号">
               <el-input
-                style="width: 200px"
+                style="width: 10vw"
                 v-model="searchForm.orderSn"
                 placeholder="订单编号"
               ></el-input>
@@ -80,7 +80,7 @@
           <el-col :span="4">
             <el-form-item label="企业名称">
               <el-input
-                style="width: 200px"
+                style="width: 10vw"
                 v-model="searchForm.enterpriseName"
                 placeholder="企业名称"
               ></el-input>
@@ -105,7 +105,7 @@
           <el-col :span="4">
             <el-form-item label="设备编码">
               <el-input
-                style="width: 200px"
+                style="width: 10vw"
                 v-model="searchForm.no"
                 placeholder="设备编码"
               ></el-input>
@@ -116,7 +116,7 @@
               <el-select
                 v-model="searchForm.settlementType"
                 placeholder="请选择"
-                style="width: 200px"
+                style="width: 10vw"
               >
                 <el-option label="现结" :value="1">现结</el-option>
                 <el-option label="月结" :value="2">月结 </el-option>
@@ -128,7 +128,7 @@
               <el-select
                 v-model="searchForm.dataExamineStatus"
                 placeholder="请选择"
-                style="width: 200px"
+                style="width: 10vw"
               >
                 <el-option label="全部" :value="null">全部</el-option>
                 <el-option label="审核中" :value="1">审核中</el-option>
@@ -137,7 +137,27 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="2.5">
+          <!--  -->
+          <el-col :span="4">
+            <el-form-item label="设备类型">
+              <el-cascader
+                v-model="searchForm.deviceTypeId"
+                :options="typeList"
+                :props="serviceTypesProps"
+              ></el-cascader>
+            </el-form-item>
+          </el-col>
+          <!--  -->
+          <el-col :span="4">
+            <el-form-item label="设备型号">
+              <el-input
+                style="width: 10vw"
+                v-model="searchForm.deviceModel"
+                placeholder="设备型号"
+              ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="2">
             <el-form-item label="仅选择超时">
               <el-switch
                 v-model="searchForm.timeoutFlag"
@@ -147,7 +167,7 @@
               </el-switch>
             </el-form-item>
           </el-col>
-          <el-col :span="2.5">
+          <el-col :span="2">
             <el-form-item label="仅选择斯耐克">
               <el-switch
                 v-model="searchForm.snkFlag"
@@ -161,7 +181,7 @@
       </el-form>
     </div>
     <el-row :gutter="20">
-      <el-col :span="15">
+      <el-col :span="17">
         <el-radio-group
           v-model="searchForm.status"
           style="margin-bottom: 30px"
@@ -175,7 +195,7 @@
           >
         </el-radio-group>
       </el-col>
-      <el-col :span="9" style="text-align: right">
+      <el-col :span="7" style="text-align: right">
         <el-button
           plain
           :disabled="multipleSelection.length == 0"
@@ -356,6 +376,17 @@
           width="130"
           align="center"
         ></el-table-column>
+
+        <el-table-column
+          label="设备型号"
+          show-overflow-tooltip
+          width="130"
+          align="center"
+        >
+          <template slot-scope="{ row }">
+            {{ row.deviceModel ? row.deviceModel : "/" }}
+          </template>
+        </el-table-column>
         <el-table-column
           prop="deviceBrand"
           label="设备品牌"
@@ -387,7 +418,6 @@
           width="150"
           align="center"
         ></el-table-column>
-
         <el-table-column
           prop="contactsPeople"
           label="联系人"
@@ -632,107 +662,6 @@
         <el-button type="primary" @click="convertToInsurance">确 定</el-button>
       </span>
     </el-dialog>
-
-    <!-- 指派列表模态框 -->
-    <!-- <model
-      ref="snatch"
-      title="指派列表"
-      :isSubmit="false"
-      :column="2"
-      @close="closeSnatch"
-    >
-      <el-form label-width="88px" class="rule-form" label-position="right">
-        <el-row :gutter="20">
-          <el-col :span="5" style="margin-right: 130px;">
-            <el-form-item label="师傅名称">
-              <el-input
-                placeholder="请输入师傅名称"
-                style="width: 200px;"
-                v-model="Name"
-              ></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="15">
-            <el-button
-              icon="el-icon-zoom-in"
-              plain
-              type="primary"
-              @click="_getMasterList"
-              >查询</el-button
-            >
-            <el-button
-              icon="el-icon-refresh"
-              plain
-              type="primary"
-              @click="seedIt"
-              >提交</el-button
-            >
-            <el-button
-              icon="el-icon-refresh"
-              plain
-              type="primary"
-              @click="seedItout"
-              >抛入市场</el-button
-            >
-          </el-col>
-        </el-row>
-      </el-form>
-      <el-table
-        highlight-current-row
-        v-loading.fullscreen.lock="loading"
-        element-loading-text="拼命加载中"
-        border
-        element-loading-spinner="el-icon-loading"
-        :data="masterList"
-        style="width: 1500px;"
-      >
-        <el-table-column
-          prop="realName"
-          label="真实姓名"
-          show-overflow-tooltip
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="realPortrait"
-          label="真实头像"
-          show-overflow-tooltip
-          align="center"
-        >
-          <template slot-scope="{ row }">
-            <el-image
-              style="width: 80px; height: 80px"
-              :src="row.realPortrait.split(',')[0]"
-              :preview-src-list="row.realPortrait.split(',')"
-            ></el-image>
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="phone"
-          label="联系电话"
-          show-overflow-tooltip
-          align="center"
-        ></el-table-column>
-        <el-table-column label="操作" fixed="right" align="center">
-          <template slot-scope="{ row }">
-            <el-checkbox
-              size="medium"
-              v-model="row.isSelect"
-              true-label="row.uid"
-              @change="changeMaster(row)"
-            ></el-checkbox>
-          </template>
-        </el-table-column>
-      </el-table>
-      <el-pagination
-        background
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page="currentPage"
-        :page-size="10"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="pageCountMaster"
-      ></el-pagination>
-    </model> -->
 
     <!-- 代下单弹框 -->
     <el-dialog
@@ -1202,27 +1131,23 @@ export default {
         snkFlag: false,
         settlementType: null,
         dataExamineStatus: null,
+        deviceModel: "",
+        deviceTypeId: "",
       },
       queryTimeCopy: null,
       dataList: [],
       pageCount: null,
       pageCountMaster: "",
       currentPage: 1,
-      tabelList: [],
-      changeData: [],
       masterList: [],
       loading: false,
-      typeData: [],
-      courseList: [],
-      snatchList: [],
-      courseDistriList: [],
+
       Name: "",
       Phone: "",
       enterpriseOrderSn: "",
       url: {
         query: "/admin/maintenance/queryRepairOrderList",
         querySnatch: "/admin/maintenance/queryMasterGrabOrderList",
-        assign: "/admin/maintenance/handleAssignMaster",
         handleMasterQuotation: "/admin/maintenance/handleMasterQuotation",
       },
       rules: {
@@ -1257,6 +1182,15 @@ export default {
 
       multipleOperation: null,
       multipleSelection: [],
+
+      serviceTypesProps: {
+        checkStrictly: false,
+        emitPath: false,
+        multiple: false,
+        value: "id",
+        label: "name",
+        children: "list",
+      },
     };
   },
   computed: {
@@ -1313,6 +1247,9 @@ export default {
       this.pageSize = 10;
     }
 
+    const typeRes = await queryDeviceTypeList();
+    this.typeList = typeRes.data;
+
     // this._queryAssignableMasterList();
     this._queryRepairOrderList();
     this.getOrderSubscript();
@@ -1321,6 +1258,13 @@ export default {
   methods: {
     // 导出v2
     async handleRepairEnterpriseOrderExport() {
+      if (this.pageCount >= 900) {
+        this.$message({
+          message: "总条数不能大于900条",
+          type: "warning",
+        });
+        return;
+      }
       const loading = this.$loading({
         lock: true,
         text: "数据传输中",
@@ -1772,7 +1716,6 @@ export default {
     openFaultImg() {
       window.open(this.handleProxyCreateOrderParams.images, "_blank");
     },
-
     // 代下单模块 end
 
     // 确认散单转年保
@@ -1795,11 +1738,13 @@ export default {
         no: null,
       };
     },
+
     // 打开转年保框
     openConvertToInsurance(orderSn) {
       this.convertToInsuranceparams.orderSn = orderSn;
       this.openConvertToInsuranceShow = true;
     },
+
     // 查询师傅列表
     async searchMaster(val) {
       const res = await getMasterList({
@@ -1807,14 +1752,23 @@ export default {
       });
       this.masterSearchList = res.data.records;
     },
+
     // 查询列表
-    query_queryRepairOrderList() {
+    async query_queryRepairOrderList() {
       this.currentPage = 1;
-      this._queryRepairOrderList();
+      await this._queryRepairOrderList();
       this.getOrderSubscript();
     },
+
     // 导出
     async exportList() {
+      if (this.pageCount >= 150) {
+        this.$message({
+          message: "总条数不能大于150条",
+          type: "warning",
+        });
+        return;
+      }
       const loading = this.$loading({
         lock: true,
         text: "数据传输中",
@@ -1836,8 +1790,9 @@ export default {
         loading.close();
       }
     },
+
     // 重置
-    resetFn() {
+    async resetFn() {
       this.currentPage = 1;
       this.queryTimeCopy = null;
       this.searchForm = {
@@ -1854,10 +1809,13 @@ export default {
         snkFlag: false,
         settlementType: null,
         dataExamineStatus: null,
+        deviceModel: "",
+        deviceTypeId: "",
       };
-      this._queryRepairOrderList();
+      await this._queryRepairOrderList();
       this.getOrderSubscript();
     },
+
     // 批量下单模板下载
     async templateDownload() {
       const res = await downloadBatchRepairOrderTemplate();
@@ -1892,6 +1850,7 @@ export default {
         }
       });
     },
+
     // 查询维保订单列表角标
     async getOrderSubscript() {
       let data = {
@@ -1908,107 +1867,39 @@ export default {
 
     // 获取维保订单列表
     _queryRepairOrderList() {
-      // const loading = this.$loading({ text: "加载中.." });
       let data = {
         pageNo: this.currentPage,
         pageSize: 10,
         ...this.searchForm,
       };
       localStorageData("queryRepairData", JSON.stringify(data));
-      this.exportParams = data;
-      queryRepairOrderList(data)
-        .then((res) => {
-          if (res) {
-            // 初始化标签
-            res.data.records.forEach((item) => {
-              if (!item.label) {
-                item.label = "普通";
-              }
-            });
-            this.multipleOperation =
-              this.searchForm.settlementType === 1 ||
-              this.searchForm.settlementType === 2;
-            this.dataList = res.data.records;
-            this.pageCount = res.data.total;
-          }
-        })
-        .finally(() => {});
+
+      // 保存查询条件 为了导出
+      this.exportParams = JSON.parse(JSON.stringify(data));
+
+      queryRepairOrderList(data).then((res) => {
+        if (res) {
+          // 初始化标签
+          res.data.records.forEach((item) => {
+            if (!item.label) {
+              item.label = "普通";
+            }
+          });
+          this.multipleOperation =
+            this.searchForm.settlementType === 1 ||
+            this.searchForm.settlementType === 2;
+          this.dataList = res.data.records;
+          this.pageCount = res.data.total;
+        }
+      });
     },
+
     // 点击页码触发的事件
     updatePageNo(val) {
       this.currentPage = val;
       this._queryRepairOrderList();
     },
-    // 点击指派列表模态框的页码触发的事件
-    handleCurrentChange(val) {
-      this.currentPage = val;
-      // this.currentPage2 = val;
-      this._getMasterList();
-    },
-    // 点击指派列表模态框操作里多选框的事件
-    changeMaster(row) {
-      console.log("row", row.uid);
-      this.tabelList.push(row.uid);
-      // this.tabelList.forEach((item, index) => {
-      //   if (item.isSelect == 0) {
-      //     this.tabelList.splice(index, 1);
-      //   }else{
-      //      this.tabelList.push(row.uid);
-      //   }
-      // });
-      console.log("list", this.tabelList);
-    },
-    // 点击派列表模态框抛入市场的事件
-    seedItout() {
-      let params = {
-        enterpriseOrderSn: this.enterpriseOrderSn,
-        masterUidList: [],
-      };
-      handleAssignMaster(params).then((res) => {
-        console.log("指派师傅", res);
-        if (res.success) {
-          this.$message({
-            showClose: true,
-            message: res.message,
-            type: "success",
-          });
-          this.$refs.snatch.close();
-        } else {
-          this.$message({
-            showClose: true,
-            message: res.message,
-            type: "false",
-          });
-        }
-      });
-    },
-    // 点击派列表模态框提交的事件
-    seedIt() {
-      let id = this.tabelList;
-      id.join(",");
-      console.log("选中id", id);
-      let params = {
-        enterpriseOrderSn: this.enterpriseOrderSn,
-        masterUidList: id,
-      };
-      handleAssignMaster(params).then((res) => {
-        console.log("指派师傅", res);
-        if (res.success) {
-          this.$message({
-            showClose: true,
-            message: res.message,
-            type: "success",
-          });
-          this.$refs.snatch.close();
-        } else {
-          this.$message({
-            showClose: true,
-            message: res.message,
-            type: "false",
-          });
-        }
-      });
-    },
+
     //  点击查看详情触发的事件
     queryDesc(row) {
       const routeData = this.$router.resolve({
@@ -2016,88 +1907,6 @@ export default {
         query: { orderSn: row.orderSn },
       });
       window.open(routeData.href, "_blank");
-    },
-    // 点击指派列表触发的事件
-    // querySnatchList({ orderSn: enterpriseOrderSn }) {
-    //   this.$refs.snatch.open();
-    //   this.enterpriseOrderSn = enterpriseOrderSn;
-    // },
-    // 指派列表模态框关闭的事件
-    closeSnatch(fn) {
-      fn(false);
-    },
-    // 有用到 不知道干嘛
-    assign(masterOrderSn) {
-      this.$axios
-        .post(this.url.assign, {
-          enterpriseOrderSn: this.param.enterpriseOrderSn,
-          masterOrderSn: masterOrderSn,
-        })
-        .then((data) => {
-          if (data.code == "000") {
-            this.$message({
-              showClose: true,
-              message: data.message,
-              type: "success",
-            });
-            this.$refs.snatch.close();
-            this.query();
-          }
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-    },
-    getType(val) {
-      return this.typeData.filter((item) => {
-        if (item.id == val) {
-          return item;
-        }
-      })[0].name;
-    },
-    _handleAssignMaster(row) {
-      let params = {
-        enterpriseOrderSn: this.enterpriseOrderSn,
-        masterUid: row.uid,
-      };
-      handleAssignMaster(params).then((res) => {
-        console.log("指派师傅", res);
-        if (res.success) {
-          this.$message({
-            showClose: true,
-            message: res.message,
-            type: "success",
-          });
-          this.$refs.snatch.close();
-        } else {
-          this.$message({
-            showClose: true,
-            message: res.message,
-            type: "false",
-          });
-        }
-      });
-    },
-    _addOrder() {
-      this.$router.push({
-        name: "maintenance",
-      });
-    },
-    _getMasterList() {
-      let params = {
-        pageNo: this.currentPage,
-        pageSize: 10,
-        realName: this.Name,
-        phone: this.Phone,
-      };
-      getMasterList(params).then((res) => {
-        if (res) {
-          this.masterList = res.data.records;
-          console.log("师傅列表", this.masterList);
-          this.pageCount = res.data.total;
-          this.currentPage = res.data.current;
-        }
-      });
     },
   },
 };
