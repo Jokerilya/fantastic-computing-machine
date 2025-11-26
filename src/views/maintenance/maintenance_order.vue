@@ -11,10 +11,10 @@
         label-position="right"
       >
         <el-row :gutter="20">
-          <el-col :span="4">
+          <el-col :span="3.5">
             <el-form-item label="师傅名称">
               <el-select
-                style="width: 10vw"
+                style="width: 9vw"
                 v-model="searchForm.masterUid"
                 filterable
                 placeholder="请选择"
@@ -43,12 +43,12 @@
               </el-select>
             </el-form-item>
           </el-col> -->
-          <el-col :span="4">
+          <el-col :span="3.5">
             <el-form-item label="订单类型">
               <el-select
                 v-model="searchForm.orderType"
                 placeholder="请选择"
-                style="width: 10vw"
+                style="width: 9vw"
               >
                 <el-option label="散单" :value="1">散单</el-option>
                 <el-option label="年保" :value="2">年保</el-option>
@@ -56,10 +56,10 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="4">
+          <el-col :span="3.5">
             <el-form-item label="订单编号">
               <el-input
-                style="width: 10vw"
+                style="width: 9vw"
                 v-model="searchForm.orderSn"
                 placeholder="订单编号"
               ></el-input>
@@ -77,18 +77,33 @@
               </el-select>
             </el-form-item>
           </el-col> -->
-          <el-col :span="4">
+          <el-col :span="3.5">
             <el-form-item label="企业名称">
               <el-input
-                style="width: 10vw"
+                style="width: 9vw"
                 v-model="searchForm.enterpriseName"
                 placeholder="企业名称"
               ></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="3.5">
+            <el-form-item label="紧急程度">
+              <el-select
+                v-model="searchForm.degree"
+                placeholder="请选择"
+                style="width: 9vw"
+              >
+                <el-option label="全部" :value="null">全部</el-option>
+                <el-option label="一般" :value="1">一般</el-option>
+                <el-option label="常规" :value="0">常规</el-option>
+                <el-option label="紧急" :value="2">紧急</el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6.5">
             <el-form-item label="创建时间">
               <el-date-picker
+                style="width: 11vw"
                 @change="changeQueryTimeCopy"
                 v-model="queryTimeCopy"
                 type="daterange"
@@ -102,33 +117,33 @@
           </el-col>
         </el-row>
         <el-row :gutter="20">
-          <el-col :span="4">
+          <el-col :span="3.5">
             <el-form-item label="设备编码">
               <el-input
-                style="width: 10vw"
+                style="width: 9vw"
                 v-model="searchForm.no"
                 placeholder="设备编码"
               ></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="4">
+          <el-col :span="3.5">
             <el-form-item label="结算类型">
               <el-select
                 v-model="searchForm.settlementType"
                 placeholder="请选择"
-                style="width: 10vw"
+                style="width: 9vw"
               >
                 <el-option label="现结" :value="1">现结</el-option>
                 <el-option label="月结" :value="2">月结 </el-option>
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="4">
+          <el-col :span="3.5">
             <el-form-item label="数据审核">
               <el-select
                 v-model="searchForm.dataExamineStatus"
                 placeholder="请选择"
-                style="width: 10vw"
+                style="width: 9vw"
               >
                 <el-option label="全部" :value="null">全部</el-option>
                 <el-option label="审核中" :value="1">审核中</el-option>
@@ -137,21 +152,20 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <!--  -->
-          <el-col :span="4">
+          <el-col :span="3.5">
             <el-form-item label="设备类型">
               <el-cascader
                 v-model="searchForm.deviceTypeId"
                 :options="typeList"
                 :props="serviceTypesProps"
+                style="width: 9vw"
               ></el-cascader>
             </el-form-item>
           </el-col>
-          <!--  -->
-          <el-col :span="4">
+          <el-col :span="3.5">
             <el-form-item label="设备型号">
               <el-input
-                style="width: 10vw"
+                style="width: 9vw"
                 v-model="searchForm.deviceModel"
                 placeholder="设备型号"
               ></el-input>
@@ -167,7 +181,7 @@
               </el-switch>
             </el-form-item>
           </el-col>
-          <el-col :span="2">
+          <el-col :span="4.5">
             <el-form-item label="仅选择斯耐克">
               <el-switch
                 v-model="searchForm.snkFlag"
@@ -241,9 +255,19 @@
           prop="orderSn"
           label="订单编号"
           show-overflow-tooltip
-          width="200"
+          width="180"
           align="center"
         ></el-table-column>
+        <el-table-column
+          label="紧急程度"
+          show-overflow-tooltip
+          width="80"
+          align="center"
+        >
+          <template slot-scope="{ row }">
+            {{ row.degree == 1 ? "一般" : row.degree == 2 ? "紧急" : "常规" }}
+          </template>
+        </el-table-column>
         <el-table-column
           label="超时状态"
           show-overflow-tooltip
@@ -1133,6 +1157,7 @@ export default {
         dataExamineStatus: null,
         deviceModel: "",
         deviceTypeId: "",
+        degree: null,
       },
       queryTimeCopy: null,
       dataList: [],
@@ -1811,6 +1836,7 @@ export default {
         dataExamineStatus: null,
         deviceModel: "",
         deviceTypeId: "",
+        degree: null,
       };
       await this._queryRepairOrderList();
       this.getOrderSubscript();

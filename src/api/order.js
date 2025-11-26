@@ -36,6 +36,16 @@ export function handleEnterpriseInfoExport(data) {
   });
 }
 
+// 设备列表导出
+export function handleDeviceInfoExport(data) {
+  return request({
+    url: "/admin/maintenance/handleDeviceInfoExport",
+    method: "POST",
+    data,
+    responseType: "blob",
+  });
+}
+
 //企业列表导出
 export function handleRepairEnterpriseOrderExport(data) {
   return request({

@@ -15,19 +15,9 @@
           </el-option>
         </el-select>
       </div>
-      <!-- <div class="topTool_Status">
-        <el-cascader
-          clearable
-          :options="equipmentTypeList"
-          :show-all-levels="false"
-          :props="{
-            children: 'list',
-            label: 'name',
-            value: 'id',
-            emitPath: false,
-          }"
-        ></el-cascader>
-      </div> -->
+      <div class="topTool_Status">
+        <el-input placeholder="年保合同单号" v-model="orderSn"> </el-input>
+      </div>
       <div class="topTool_time">
         <el-date-picker
           value-format="yyyy-MM-dd"
@@ -49,6 +39,9 @@
         <!-- <el-button style="color: #2e4c9e" @click="addEquipmentPage" disabled
           >新增</el-button
         > -->
+        <el-button style="color: #2e4c9e" @click="handleDeviceInfoExport"
+          >导出</el-button
+        >
         <el-button style="color: #2e4c9e" @click="findFn">查询</el-button>
         <el-button style="color: #2e4c9e" @click="resetFn">重置</el-button>
       </div>
@@ -82,6 +75,11 @@
             <el-table-column
               prop="no"
               label="设备编号"
+              width="120"
+            ></el-table-column>
+            <el-table-column
+              prop="orderSn"
+              label="合同单号"
               width="120"
             ></el-table-column>
             <!-- <el-table-column prop="nameplateImg" label="设备铭牌">
@@ -184,7 +182,7 @@
 
 <script>
 import { getEquipmentList, getDeviceInfoCode } from "@/api/equipmentManagement";
-import { queryDeviceTypeList } from "@/api/order";
+import { queryDeviceTypeList, handleDeviceInfoExport } from "@/api/order";
 export default {
   data() {
     return {
@@ -192,6 +190,7 @@ export default {
       equipmentStatusValue: "", //设备状态值
       topTool_time: "", //日期选择值
       topTool_code: "", //设备编码值
+      orderSn: "", //订单编号
       equipmentList: [], //设备列表
       total: 0,
       current: 1,
@@ -214,6 +213,28 @@ export default {
     };
   },
   methods: {
+    // 设备列表导出
+    async handleDeviceInfoExport() {
+      const loading = this.$loading({
+        lock: true,
+        text: "数据传输中",
+        spinner: "el-icon-loading",
+      });
+      const res = await handleDeviceInfoExport(this.data);
+      if (res) {
+        const link = document.createElement("a");
+        const blob = new Blob([res.data], {
+          type: "application/vnd.ms-excel",
+        });
+        link.style.display = "none";
+        link.href = URL.createObjectURL(blob);
+        link.download = "设备列表"; //下载的文件名
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        loading.close();
+      }
+    },
     // 前往设备码页面
     async goToDevicecode(no) {
       const loading = this.$loading({
@@ -276,8 +297,8 @@ export default {
         delete this.data["endTime"];
       }
       this.data.pageNo = 1;
-      this.data.pageSize = 5;
       this.data.no = this.topTool_code;
+      this.data.orderSn = this.orderSn;
       this.getEquipmentList(this.data);
     },
     // 页码发生变化触发的事件

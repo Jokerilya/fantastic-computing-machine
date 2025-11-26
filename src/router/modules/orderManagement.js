@@ -111,13 +111,13 @@ const router = {
       component: () => import("@/views/activity/coupon/receiveRecords"),
       meta: { title: "领取记录", noShow: "true" },
     },
-    // {
-    //   path: "/assignmentMaster",
-    //   name: "assignmentMaster",
-    //   component: () => import("@/views/maintenance/assignmentMaster"),
-    //   meta: { title: "指派师傅" },
-    //   //   hidden: false,
-    // },
+    {
+      path: "/assignmentMaster",
+      name: "assignmentMaster",
+      component: () => import("@/views/maintenance/assignmentMaster"),
+      meta: { title: "指派师傅" },
+      //   hidden: false,
+    },
   ],
 };
 export default router;

@@ -174,6 +174,18 @@
                 <div class="value">{{ orderDetail.serviceTime }}</div>
               </div>
               <div class="mainOrderInfo_item">
+                <div class="label">期望时间</div>
+                <div class="value">
+                  {{
+                    orderDetail.degree == 1
+                      ? "一般"
+                      : orderDetail.degree == 2
+                      ? "紧急"
+                      : "常规"
+                  }}
+                </div>
+              </div>
+              <div class="mainOrderInfo_item">
                 <div class="label">故障部位</div>
                 <div class="value">{{ orderDetail.position }}</div>
               </div>
@@ -874,7 +886,7 @@
                   <el-button
                     size="mini"
                     type="primary"
-                    @click="openAddEditPart(null, null, item)"
+                    @click="openAddEditPart(null, null, item, index)"
                   >
                     新增配件
                   </el-button>
@@ -3983,9 +3995,8 @@ export default {
       this.$refs["partInfoRuleForm"].resetFields();
     },
     // 打开新增修改配件
-    openAddEditPart(row, index, item) {
-      console.log(2316, index);
-
+    // index: 配件在配件列表中的下标  item: 故障项目对象  itemIndex: 师傅的下标
+    async openAddEditPart(row, index, item, itemIndex) {
       if (index || index == 0) {
         this.partInfo.operationType = "edit";
         this.partInfo = { ...row };
@@ -4004,16 +4015,21 @@ export default {
         this.addEditPartTitle = "新增配件";
         this.partInfo.operationType = "add";
 
+        // 防止客服一直存在同一个页面 重新获取一下最新的配件列表
+        const res = await getRepairOrderDetail({
+          enterpriseOrderSn: this.orderSn,
+        });
+        let partList = res.data.enrollRepairOrderOutList[itemIndex].parts;
+        partList = JSON.parse(partList);
         // 需要加一个index 金蝶需要
         let indexArr = [];
-        if (item.parts) {
-          item.parts.forEach((i) => {
+        if (partList) {
+          partList.forEach((i) => {
             if (i.index) {
               indexArr.push(i.index);
             }
           });
         }
-
         if (indexArr.length > 0) {
           // 取最大值
           let max = Math.max(...indexArr);
@@ -4022,6 +4038,7 @@ export default {
           // 默认赋值1
           this.partInfo.index = 1;
         }
+        console.log(4033, this.partInfo.index);
       }
       this.partInfo.orderSn = item.orderSn;
       this.addEditPartDialogShow = true;
