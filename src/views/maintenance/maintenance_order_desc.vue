@@ -236,7 +236,7 @@
                   style="color: #409eff; cursor: pointer"
                   @click="goToVideoUrl(orderDetail.onlineAcceptanceFile)"
                 >
-                  验收单(有价格版)
+                  验收单(有价版)
                 </div>
                 <div
                   class="value"
@@ -246,7 +246,7 @@
                     goToVideoUrl(orderDetail.onlineAcceptanceNonePriceFile)
                   "
                 >
-                  验收单(无价格版)
+                  验收单(无价版)
                 </div>
               </div>
               <div class="mainOrderInfo_item">
@@ -462,18 +462,45 @@
                   }}元
                 </div>
               </div>
-              <div
-                class="mainOrderInfo_item"
-                style="color: red"
-                v-if="orderDetail.discountAmount > 0"
-              >
+              <!-- ps -->
+              <div class="mainOrderInfo_item">
                 <div class="label">优惠减免</div>
-                <div class="value">
-                  -{{
-                    orderDetail.discountAmount ? orderDetail.discountAmount : 0
-                  }}元 [{{ orderDetail.couponName }}]
+                <div class="value" style="color: #409eff">
+                  <div
+                    v-if="orderDetail.discountAmount > 0"
+                    style="display: flex"
+                    :style="{
+                      cursor:
+                        orderDetail.enterpriseSubStatus < 2601 ? 'pointer' : '',
+                    }"
+                  >
+                    <div @click="openUseDiscountDialog">
+                      -{{
+                        orderDetail.discountAmount
+                          ? orderDetail.discountAmount
+                          : 0
+                      }}元 [{{ orderDetail.couponName }}]
+                    </div>
+                    <span
+                      style="margin-left: 6px; color: red"
+                      @click="resetOrderDiscount"
+                      >重置</span
+                    >
+                  </div>
+                  <div
+                    style="font-weight: 400"
+                    :style="{
+                      cursor:
+                        orderDetail.enterpriseSubStatus < 2601 ? 'pointer' : '',
+                    }"
+                    v-else
+                    @click="openUseDiscountDialog"
+                  >
+                    未使用优惠
+                  </div>
                 </div>
               </div>
+
               <div class="mainOrderInfo_item" style="font-weight: 700">
                 <div class="label">企业应付</div>
                 <div class="value">
@@ -1452,6 +1479,83 @@
     <!-- 空行 -->
     <div style="height: 50px"></div>
 
+    <!-- ps -->
+    <!-- 关联优惠 -->
+    <el-dialog
+      width="50%"
+      center
+      :close-on-click-modal="false"
+      :visible="useDiscountVisible"
+      :before-close="closeUseDiscountDialog"
+    >
+      <template slot="title">
+        <div style="font-size: 20px; margin-top: 6px">
+          使用减免<span style="color: red"
+            >(该操作选择后,请点击标记企业付款按钮,该券或卡才算已核销)</span
+          >
+        </div>
+      </template>
+      <div class="useDiscountBox">
+        <el-tabs type="card" v-model="activeDiscountType">
+          <el-tab-pane label="优惠券" name="优惠券">
+            <el-table
+              :data="ownedCouponsList"
+              v-if="ownedCouponsList.length > 0"
+              highlight-current-row
+              @current-change="changeCouponCode"
+              ref="useDiscountTableRef"
+            >
+              <el-table-column
+                width="135"
+                align="center"
+                prop="couponCode"
+                label="编码"
+              >
+                <template slot-scope="{ row }">
+                  <el-radio
+                    v-model="couponCodeNow"
+                    :label="row.couponCode"
+                  ></el-radio>
+                </template>
+              </el-table-column>
+              <el-table-column
+                width="160"
+                align="center"
+                prop="createTime"
+                label="发放时间"
+              >
+              </el-table-column>
+              <el-table-column
+                prop="name"
+                align="center"
+                width="180"
+                label="优惠券名称"
+              >
+              </el-table-column>
+              <el-table-column label="发放类型" align="center" width="120">
+                <template slot-scope="{ row }">
+                  {{ row.type == 0 ? "手动赠送" : "平台发放" }}
+                </template>
+              </el-table-column>
+              <el-table-column align="center" label="关联订单号">
+                <template slot-scope="{ row }">
+                  {{ row.orderId || "无" }}
+                </template>
+              </el-table-column>
+              <el-table-column align="center" label="备注" prop="remark">
+              </el-table-column>
+            </el-table>
+            <div v-if="ownedCouponsList.length == 0">未领取过优惠券</div>
+          </el-tab-pane>
+          <el-tab-pane label="机将卡" name="机将卡">功能开发中...</el-tab-pane>
+        </el-tabs>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeUseDiscountDialog">取 消</el-button>
+        <el-button type="primary" @click="useOrderDiscount">确 定</el-button>
+      </span>
+    </el-dialog>
+
     <!-- 单方议价 -->
     <el-dialog
       width="30%"
@@ -2429,7 +2533,7 @@
       :visible.sync="editWarrantyPeriodVisible"
       width="20%"
       :close-on-click-modal="false"
-      before-close="closeEditWarrantyPeriodDialog"
+      :before-close="closeEditWarrantyPeriodDialog"
       center
     >
       <el-form
@@ -2484,6 +2588,8 @@ import {
   saveRepairOrderComplaint,
   examineMasterOrderData,
   handleOrderWarranty,
+  useOrderDiscount,
+  resetOrderDiscount,
 } from "@/api/order.js";
 import { UploadImg, getSysLabel } from "@/api/system.js";
 import {
@@ -2755,12 +2861,23 @@ export default {
 
       masterTypeNameChoose: null,
 
-      // 单反议价
+      // 单方议价
       singlePartyNegotiationPriceVisible: false,
       handleEnterpriseNegotiatedPriceParams: {
         doorAmount: null,
         orderSn: null,
       },
+
+      // ps
+      // 关联优惠
+      useDiscountVisible: false,
+      activeDiscountType: "优惠券",
+      ownedCouponsList: [], //已领取的优惠券
+      useCouponParams: {
+        couponCode: null,
+        orderSn: null,
+      },
+      couponCodeNow: null,
     };
   },
   computed: {
@@ -2810,6 +2927,60 @@ export default {
     },
   },
   methods: {
+    // 重置减免优惠
+    resetOrderDiscount() {
+      this.$confirm(`您确定要重置减免优惠吗?`, "重置减免优惠", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then(async () => {
+        const res = await resetOrderDiscount(this.orderSn);
+        if (res.code == "000") {
+          this.$message({
+            type: "success",
+            message: res.message,
+          });
+          this.getRepairOrderDetail();
+        }
+      });
+    },
+    // 减免优惠
+    async useOrderDiscount() {
+      if (!this.useCouponParams.couponCode) {
+        this.$message({
+          type: "warning",
+          message: "请选择优惠券/机将卡",
+        });
+      }
+      const res = await useOrderDiscount(this.useCouponParams);
+      if (res.code == "000") {
+        await this.getRepairOrderDetail();
+        this.closeUseDiscountDialog();
+      }
+    },
+    // 修改使用的优惠券
+    changeCouponCode(e) {
+      this.couponCodeNow = e.couponCode;
+      this.useCouponParams.couponCode = e.couponCode;
+    },
+    // 关闭使用优惠框
+    closeUseDiscountDialog() {
+      this.useCouponParams = {
+        couponCode: null,
+        orderSn: null,
+      };
+      this.couponCodeNow = null;
+      this.useDiscountVisible = false;
+      this.$refs.useDiscountTableRef.setCurrentRow(null);
+    },
+    // 打开使用优惠框
+    openUseDiscountDialog() {
+      if (this.orderDetail.enterpriseSubStatus >= 2601) {
+        return;
+      }
+      this.useCouponParams.orderSn = this.orderDetail.orderSn;
+      this.useDiscountVisible = true;
+    },
     // 确定单反议价
     async handleEnterpriseNegotiatedPrice() {
       const res = await handleEnterpriseNegotiatedPrice(
@@ -4267,6 +4438,10 @@ export default {
         enterpriseOrderSn: this.orderSn,
       });
       if (res.code == "000") {
+        if (res.data.userCouponList) {
+          this.ownedCouponsList = res.data.userCouponList;
+        }
+
         // Fn:图片字符串转数组方法
         let imgStrTurn = (str) => {
           return str

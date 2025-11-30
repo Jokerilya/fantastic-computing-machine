@@ -1,9 +1,31 @@
 <template>
   <div class="activityProductList">
-    <div class="activityProductList_btnline">
-      <el-button @click="openAddEditActivityProductDialog(null)"
-        >新增</el-button
-      >
+    <first-title title="机将卡" />
+    <div class="select_view flexBox">
+      <div>
+        <!-- <el-input
+          style="width: 200px"
+          class="mg_r15 mg_t10"
+          placeholder="请输入机将卡名称"
+        /> -->
+      </div>
+      <div>
+        <!-- <el-button class="mg_t10" type="primary"
+          ><i class="el-icon-search" />查询</el-button
+        >
+        <el-button class="mg_t10 mg_r15" type="danger"
+          ><i class="el-icon-refresh" />重置</el-button
+        > -->
+        <el-button type="primary" @click="openAddEditActivityProductDialog"
+          ><i class="el-icon-plus" />添加机将卡</el-button
+        >
+        <el-button type="primary" @click="openActivateCardDialog"
+          >绑定外部套餐</el-button
+        >
+        <el-button type="warning" @click="goToBindActivateOrder"
+          ><i class="el-icon-tickets" />查看绑定订单</el-button
+        >
+      </div>
     </div>
     <el-card>
       <el-table :data="activityProductList" style="width: 100%">
@@ -12,11 +34,7 @@
         <el-table-column align="center" label="类型">
           <template slot-scope="{ row }">
             {{
-              row.type == 1
-                ? "保养服务"
-                : row.type == 2
-                ? "检测服务"
-                : "维保服务"
+              row.type == 1 ? "保养卡" : row.type == 2 ? "维修月卡" : "维修次卡"
             }}
           </template>
         </el-table-column>
@@ -52,6 +70,11 @@
         </el-table-column>
         <el-table-column align="center" prop="price" label="价格">
         </el-table-column>
+        <el-table-column align="center" prop="simpleDesc" label="描述">
+          <template slot-scope="{ row }">
+            {{ row.simpleDesc ? row.simpleDesc : "/" }}
+          </template>
+        </el-table-column>
         <el-table-column align="center" width="80" prop="sort" label="排序">
         </el-table-column>
         <el-table-column align="center" label="更多">
@@ -68,6 +91,127 @@
         </el-table-column>
       </el-table>
     </el-card>
+
+    <!-- 激活机将卡 -->
+    <el-dialog
+      :close-on-click-modal="false"
+      title="绑定外部套餐"
+      :visible="activateCardVisible"
+      :show-close="false"
+      center
+      width="70%"
+    >
+      <el-form label-width="100px" label-position="left">
+        <el-form-item label="第三方订单号">
+          <el-input
+            placeholder="请输入第三方订单号"
+            v-model="bindExternalComboParams.orderSn"
+          >
+          </el-input>
+        </el-form-item>
+        <el-form-item label="激活机将卡">
+          <div style="text-align: right">
+            <el-button type="primary" @click="addActivateCard">新增</el-button>
+          </div>
+        </el-form-item>
+        <el-form-item>
+          <el-table
+            :data="bindExternalComboParams.list"
+            border
+            style="width: 100%"
+          >
+            <el-table-column label="卡类型" width="180">
+              <template slot-scope="{ row }">
+                <el-select
+                  v-model="row.type"
+                  placeholder="请选择卡类型"
+                  @change="changeCardType(row)"
+                >
+                  <el-option
+                    v-for="item in cardList"
+                    :key="item.type"
+                    :label="item.text"
+                    :value="item.type"
+                  >
+                  </el-option>
+                </el-select>
+              </template>
+            </el-table-column>
+            <el-table-column label="卡名称" width="230">
+              <template slot-scope="{ row }">
+                <el-select
+                  v-model="row.name"
+                  placeholder="请选择卡类型"
+                  @change="changeCradName(row)"
+                >
+                  <el-option
+                    v-for="item in row.nameList"
+                    :key="item.id"
+                    :label="item.title"
+                    :value="item.title"
+                  >
+                  </el-option>
+                </el-select>
+              </template>
+            </el-table-column>
+            <el-table-column label="数量" width="145">
+              <template slot-scope="{ row }">
+                <el-input-number
+                  style="width: 120px"
+                  v-model="row.num"
+                  :min="1"
+                  :max="100"
+                ></el-input-number>
+              </template>
+            </el-table-column>
+            <el-table-column label="有效月数" width="145">
+              <template slot-scope="{ row }">
+                <div v-if="row.type == 2">
+                  <el-input-number
+                    style="width: 120px"
+                    v-model="row.month"
+                    :min="1"
+                    :max="100"
+                  ></el-input-number>
+                </div>
+                <div v-else>/</div>
+              </template>
+            </el-table-column>
+            <el-table-column label="机台码">
+              <template slot-scope="{ row }">
+                <div v-if="row.type == 2">
+                  <el-input
+                    v-model="row.no"
+                    placeholder="请填写机台码,多个请用&隔开"
+                  ></el-input>
+                </div>
+                <div v-else>/</div>
+              </template>
+            </el-table-column>
+            <el-table-column label="总价" width="180">
+              <template slot-scope="{ row }">
+                <el-input
+                  v-model="row.totalAmount"
+                  type="number"
+                  placeholder="请填写购买总价"
+                ></el-input>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" width="100">
+              <template slot-scope="{ $index }">
+                <el-button type="danger" @click="delActivateCard($index)"
+                  >删除</el-button
+                >
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeActivateCardDialog">取 消</el-button>
+        <el-button type="primary" @click="bindExternalCombo">确 定</el-button>
+      </span>
+    </el-dialog>
 
     <!-- 新增编辑产品框 -->
     <el-dialog
@@ -87,9 +231,12 @@
       >
         <el-form-item label="类型" prop="type">
           <el-radio-group v-model="queryActivityProductListParams.type">
-            <el-radio :label="1">保养服务</el-radio>
-            <el-radio :label="2">检测服务</el-radio>
-            <el-radio :label="3">维保服务</el-radio>
+            <el-radio
+              :label="item.type"
+              v-for="item in cardList"
+              :key="item.type"
+              >{{ item.text }}</el-radio
+            >
           </el-radio-group>
         </el-form-item>
         <el-form-item label="标题" prop="title">
@@ -105,8 +252,14 @@
             v-model="queryActivityProductListParams.price"
           ></el-input>
         </el-form-item>
+        <el-form-item label="描述" prop="simpleDesc">
+          <el-input
+            placeholder="请输入描述"
+            v-model="queryActivityProductListParams.simpleDesc"
+          ></el-input>
+        </el-form-item>
         <el-form-item label="排序">
-          <div style="color: #999; font-size: 26px">
+          <div style="color: #999; font-size: 18px">
             Tip:数字越低,排序越靠前
           </div>
           <el-input
@@ -116,7 +269,7 @@
           ></el-input>
         </el-form-item>
         <el-form-item label="封面图" prop="coverImage">
-          <div style="color: #999; font-size: 26px">
+          <div style="color: #999; font-size: 18px">
             Tip:封面图的尺寸最佳比例:宽 1486像素 : 高 1486像素
           </div>
           <el-upload
@@ -133,8 +286,8 @@
           </el-upload>
         </el-form-item>
         <el-form-item label="轮播图" prop="images">
-          <div style="color: #999; font-size: 26px">
-            Tip:轮播图的尺寸最佳比例:宽 1486 像素 : 高 991 像素
+          <div style="color: #999; font-size: 18px">
+            Tip:轮播图的尺寸最佳比例:宽 1486 像素 : 高 1486 像素
           </div>
           <el-upload
             action="#"
@@ -183,6 +336,7 @@ import {
   queryActivityProductList,
   editActivityProduct,
   shelvesActivityProduct,
+  bindExternalCombo,
 } from "@/api/activity";
 export default {
   data() {
@@ -198,11 +352,30 @@ export default {
         coverImage: null,
         content: null,
         sort: null,
+        simpleDesc: null,
       },
 
       coverImageFileList: [],
       contentFileList: [],
       imagesFileList: [],
+
+      cardList: [
+        {
+          type: 1,
+          text: "保养卡",
+          list: [],
+        },
+        {
+          type: 2,
+          text: "维修月卡",
+          list: [],
+        },
+        {
+          type: 3,
+          text: "维修次卡",
+          list: [],
+        },
+      ],
 
       queryActivityProductListRules: {
         type: [{ required: true, message: "请选择类型", trigger: "change" }],
@@ -218,9 +391,181 @@ export default {
           { required: true, message: "请上传轮播图", trigger: "change" },
         ],
       },
+
+      activateCardVisible: false,
+      activateCardList: [],
+      bindExternalComboParams: {
+        orderSn: null, //订单号
+        code: null, // 激活码
+        totalAmount: null, //所有卡的总价
+        // 机将卡列表
+        list: [
+          {
+            type: null, //卡类型
+            name: null, //卡名称
+            num: 1, // 数量
+            month: 1, // 月份(type==2 必填)
+            no: null, // 机台码(type==2 必填)
+            nameList: [],
+            totalAmount: null, //单张卡的总价
+            productId: null, //卡id
+          },
+        ],
+      },
     };
   },
   methods: {
+    // 切换卡名称 把卡id也传
+    changeCradName(row) {
+      const targetItem = row.nameList.find((item) => item.title === row.name);
+      row.productId = targetItem.id;
+    },
+    // 跳转查看活动订单
+    goToBindActivateOrder() {
+      const routeData = this.$router.resolve({
+        name: "bindActivateOrder",
+      });
+      window.open(routeData.href, "_blank");
+    },
+    // 对提交绑定套餐的参数校验
+    validateBindExternalComboParams(params) {
+      if (!params.orderSn) return "订单号不能为空";
+      if (!Array.isArray(params.list) || params.list.length === 0)
+        return "卡列表不能为空";
+      for (let i = 0; i < params.list.length; i++) {
+        const item = params.list[i];
+
+        if (item.type == null) return "第" + (i + 1) + "项：卡类型不能为空";
+        if (!item.name) return "第" + (i + 1) + "项：卡名称不能为空";
+        if (item.num == null || item.num <= 0)
+          return "第" + (i + 1) + "项：数量必须为正数";
+        if (item.totalAmount == null || item.totalAmount < 0)
+          return "第" + (i + 1) + "项：单张卡总价不能为负";
+
+        if (item.type === 2) {
+          if (!item.month || item.month <= 0)
+            return "第" + (i + 1) + "项：月份不能为空且须为正数（仅限机台卡）";
+          if (!item.no) {
+            return "第" + (i + 1) + "项：机台码不能为空（仅限机台卡）";
+          }
+          let noArr = item.no.split("&");
+          if (noArr.length != item.num) {
+            return "第" + (i + 1) + "项：机台码台数和数量不一致";
+          }
+        }
+      }
+      return true;
+    },
+    // 确定绑定外部套餐
+    async bindExternalCombo() {
+      let validate = this.validateBindExternalComboParams(
+        this.bindExternalComboParams
+      );
+      if (validate === true) {
+        // 生成激活码 orderSn后6+时间戳后6
+        const orderSnTail = (
+          this.bindExternalComboParams.orderSn?.toString() || ""
+        )
+          .slice(-6)
+          .padStart(6, "0");
+        const timestampTail = String(Date.now()).slice(-6);
+        this.bindExternalComboParams.code = orderSnTail + timestampTail;
+        let code = orderSnTail + timestampTail;
+        // 计算外层总价
+        const sum = this.bindExternalComboParams.list.reduce((acc, item) => {
+          return acc + (parseFloat(item.totalAmount) || 0);
+        }, 0);
+        const rounded = Math.round(sum * 100) / 100; // 先保留两位精度（避免浮点误差）
+        if (Number.isInteger(rounded)) {
+          this.bindExternalComboParams.totalAmount = Math.trunc(rounded); // 或直接：params.totalAmount = rounded;
+        } else {
+          this.bindExternalComboParams.totalAmount = Number(rounded.toFixed(2)); // 确保是 number 类型，非字符串
+        }
+
+        let list = [...this.bindExternalComboParams.list];
+        list = list.map(({ nameList, ...rest }) => rest);
+        console.log(477, list);
+        let params = {
+          orderSn: this.bindExternalComboParams.orderSn,
+          code: this.bindExternalComboParams.code,
+          totalAmount: this.bindExternalComboParams.totalAmount,
+          comboContent: JSON.stringify(list),
+        };
+        const res = await bindExternalCombo(params);
+        if (res.code == "000") {
+          this.closeActivateCardDialog();
+          this.$alert(
+            `已为您生成激活码【${code}】,点击下方按钮复制即可`,
+            "生成激活码",
+            {
+              confirmButtonText: "复制",
+              callback: async (action) => {
+                await navigator.clipboard.writeText(code);
+                this.$message({
+                  message: "复制成功",
+                  type: "success",
+                });
+              },
+            }
+          );
+        }
+      } else {
+        this.$message({
+          message: validate,
+          type: "warning",
+        });
+      }
+    },
+    // 删除机将卡
+    delActivateCard(index) {
+      this.bindExternalComboParams.list.splice(index, 1);
+    },
+    // 新增机将卡
+    addActivateCard() {
+      this.bindExternalComboParams.list.push({
+        type: null,
+        name: null,
+        num: 1,
+        month: 1,
+        no: null,
+        nameList: [],
+        totalAmount: null,
+        productId: null,
+      });
+    },
+    // 切换每行的卡类型
+    changeCardType(row) {
+      row.nameList = this.cardList[row.type - 1].list;
+      row.name = null;
+      row.productId = null;
+      row.num = null;
+      row.month = null;
+      row.no = null;
+    },
+    // 关闭绑定外部套餐弹框
+    closeActivateCardDialog() {
+      this.bindExternalComboParams = {
+        orderSn: null,
+        code: null,
+        list: [
+          {
+            type: null,
+            name: null,
+            num: 1,
+            month: 1,
+            no: null,
+            nameList: [],
+            totalAmount: null,
+            productId: null,
+          },
+        ],
+      };
+      this.activateCardVisible = false;
+    },
+    // 打开绑定外部套餐弹框
+    openActivateCardDialog() {
+      this.activateCardVisible = true;
+    },
     // 上/下架商品
     async unmountProductFn(item) {
       const res = await this.$confirm(
@@ -273,6 +618,7 @@ export default {
         images: null,
         coverImage: null,
         content: null,
+        simpleDesc: null,
       };
       this.coverImageFileList = [];
       this.contentFileList = [];
@@ -407,6 +753,19 @@ export default {
         }
       });
       this.activityProductList = res.data;
+
+      // 将优惠券 按type分类
+      let filterByType = (arr, targetType) => {
+        return arr.filter(
+          (item) => item.type === targetType && item.isShelves === 1
+        );
+      };
+      let type1Items = filterByType(this.activityProductList, 1);
+      this.cardList[0].list = type1Items;
+      let type2Items = filterByType(this.activityProductList, 2);
+      this.cardList[1].list = type2Items;
+      let type3Items = filterByType(this.activityProductList, 3);
+      this.cardList[2].list = type3Items;
     },
   },
   created() {
@@ -422,5 +781,13 @@ export default {
     text-align: right;
     margin-bottom: 20px;
   }
+}
+
+.flexBox {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 15px 10px;
+  margin-bottom: 15px;
 }
 </style>

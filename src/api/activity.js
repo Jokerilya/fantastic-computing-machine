@@ -184,3 +184,29 @@ export function handleActivityOrderAssign(data) {
     data,
   });
 }
+
+// 绑定外部套餐
+export function bindExternalCombo(data) {
+  return request({
+    url: "/admin/activity/bindExternalCombo",
+    method: "post",
+    data,
+  });
+}
+
+// 查询外部套餐列表
+export function queryExternalComboList(data) {
+  return request({
+    url: "/admin/activity/queryExternalComboList",
+    method: "get",
+  });
+}
+
+// 删除外部套餐
+export function deleteExternalCombo(id) {
+  return request({
+    url: "/admin/activity/deleteExternalCombo",
+    method: "delete",
+    params: { id }, // 将 id 作为 query 参数传递
+  });
+}

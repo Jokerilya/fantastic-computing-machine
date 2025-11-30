@@ -1195,11 +1195,27 @@ export function handleExamineRepairOrderComplaint(data) {
 }
 
 // 测试 师傅列表导出
-export function test(data) {
+export function testExport(data) {
   return request({
     url: "/admin/maintenance/io/test",
     method: "POST",
     data,
     responseType: "blob",
+  });
+}
+
+// 订单优惠券减免
+export function useOrderDiscount(data) {
+  return request({
+    url: `/admin/maintenance/useOrderDiscount`,
+    method: "post",
+    data,
+  });
+}
+// 订单重置优惠减免
+export function resetOrderDiscount(orderSn) {
+  return request({
+    url: `/admin/maintenance/resetOrderDiscount?orderSn=${orderSn}`,
+    method: "get",
   });
 }

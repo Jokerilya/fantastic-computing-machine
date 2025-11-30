@@ -14,7 +14,7 @@
           <el-col :span="3.5">
             <el-form-item label="师傅名称">
               <el-select
-                style="width: 9vw"
+                style="width: 8.5vw"
                 v-model="searchForm.masterUid"
                 filterable
                 placeholder="请选择"
@@ -48,7 +48,7 @@
               <el-select
                 v-model="searchForm.orderType"
                 placeholder="请选择"
-                style="width: 9vw"
+                style="width: 8.5vw"
               >
                 <el-option label="散单" :value="1">散单</el-option>
                 <el-option label="年保" :value="2">年保</el-option>
@@ -59,7 +59,7 @@
           <el-col :span="3.5">
             <el-form-item label="订单编号">
               <el-input
-                style="width: 9vw"
+                style="width: 8.5vw"
                 v-model="searchForm.orderSn"
                 placeholder="订单编号"
               ></el-input>
@@ -80,7 +80,7 @@
           <el-col :span="3.5">
             <el-form-item label="企业名称">
               <el-input
-                style="width: 9vw"
+                style="width: 8.5vw"
                 v-model="searchForm.enterpriseName"
                 placeholder="企业名称"
               ></el-input>
@@ -91,7 +91,7 @@
               <el-select
                 v-model="searchForm.degree"
                 placeholder="请选择"
-                style="width: 9vw"
+                style="width: 8.5vw"
               >
                 <el-option label="全部" :value="null">全部</el-option>
                 <el-option label="一般" :value="1">一般</el-option>
@@ -103,7 +103,7 @@
           <el-col :span="6.5">
             <el-form-item label="创建时间">
               <el-date-picker
-                style="width: 11vw"
+                style="width: 10.5vw"
                 @change="changeQueryTimeCopy"
                 v-model="queryTimeCopy"
                 type="daterange"
@@ -116,11 +116,12 @@
             </el-form-item>
           </el-col>
         </el-row>
+
         <el-row :gutter="20">
           <el-col :span="3.5">
             <el-form-item label="设备编码">
               <el-input
-                style="width: 9vw"
+                style="width: 8.5vw"
                 v-model="searchForm.no"
                 placeholder="设备编码"
               ></el-input>
@@ -131,7 +132,7 @@
               <el-select
                 v-model="searchForm.settlementType"
                 placeholder="请选择"
-                style="width: 9vw"
+                style="width: 8.5vw"
               >
                 <el-option label="现结" :value="1">现结</el-option>
                 <el-option label="月结" :value="2">月结 </el-option>
@@ -143,7 +144,7 @@
               <el-select
                 v-model="searchForm.dataExamineStatus"
                 placeholder="请选择"
-                style="width: 9vw"
+                style="width: 8.5vw"
               >
                 <el-option label="全部" :value="null">全部</el-option>
                 <el-option label="审核中" :value="1">审核中</el-option>
@@ -158,14 +159,14 @@
                 v-model="searchForm.deviceTypeId"
                 :options="typeList"
                 :props="serviceTypesProps"
-                style="width: 9vw"
+                style="width: 8.5vw"
               ></el-cascader>
             </el-form-item>
           </el-col>
           <el-col :span="3.5">
             <el-form-item label="设备型号">
               <el-input
-                style="width: 9vw"
+                style="width: 8.5vw"
                 v-model="searchForm.deviceModel"
                 placeholder="设备型号"
               ></el-input>

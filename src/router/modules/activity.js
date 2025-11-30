@@ -25,7 +25,13 @@ const router = {
       name: "activityProductOrderList",
       component: () =>
         import("@/views/activityManage/activityProductOrderList"),
-      meta: { title: "产品订单列表" },
+      meta: { title: "活动订单列表" },
+    },
+    {
+      path: "bindActivateOrder",
+      name: "bindActivateOrder",
+      component: () => import("@/views/activityManage/bindActivateOrder"),
+      meta: { title: "绑定订单列表", noShow: "true" },
     },
     {
       path: "/activity/message",

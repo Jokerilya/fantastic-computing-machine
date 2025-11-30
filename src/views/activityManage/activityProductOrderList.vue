@@ -46,11 +46,7 @@
         <el-table-column align="center" label="订单类型">
           <template slot-scope="{ row }">
             {{
-              row.orderType == 1
-                ? "保养服务"
-                : row.orderType == 2
-                ? "检测服务"
-                : "维保产品"
+              row.type == 1 ? "保养卡" : row.type == 2 ? "维修月卡" : "维修次卡"
             }}
           </template>
         </el-table-column>
@@ -248,15 +244,15 @@ export default {
       orderTypeOptions: [
         {
           value: 1,
-          label: "保养服务",
+          label: "保养卡",
         },
         {
           value: 2,
-          label: "检测服务",
+          label: "维修月卡",
         },
         {
           value: 3,
-          label: "维保产品",
+          label: "维修次卡",
         },
       ],
 

@@ -24,7 +24,7 @@
           >手动发券</el-button
         >
         <el-button type="warning" @click="goToReceiveRecords(null)"
-          ><i class="el-icon-tickets" />查看所有领取记录</el-button
+          ><i class="el-icon-tickets" />查看领取记录</el-button
         >
       </div>
     </div>
@@ -451,6 +451,15 @@ export default {
     this.queryCouponFn();
   },
   methods: {
+    resSetQueryFn() {
+      this.queryCouponParams = {
+        isExpired: null,
+        name: null,
+        pageNo: 1,
+        pageSize: 10,
+      };
+      this.queryCouponFn();
+    },
     // 获取用户列表
     async queryUserInfoFn(e) {
       const res = await queryUserInfoFn({
