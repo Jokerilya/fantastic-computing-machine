@@ -7,18 +7,6 @@
           v-model="queryActivityOrderListParams.orderSn"
           placeholder="请输入订单编号"
         ></el-input>
-        <el-select
-          v-model="queryActivityOrderListParams.orderType"
-          placeholder="请选择类型"
-        >
-          <el-option
-            v-for="item in orderTypeOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          >
-          </el-option>
-        </el-select>
       </div>
       <div>
         <el-button @click="searchQueryActivityOrderList">搜索</el-button>
@@ -27,38 +15,58 @@
     </div>
     <el-card>
       <el-table :data="activityProductOrderList" style="width: 100%">
-        <el-table-column
-          align="center"
-          prop="payTime"
-          label="支付时间"
-          width="150"
-        >
+        <el-table-column align="center" prop="payTime" label="支付时间">
+          <template slot-scope="{ row }">
+            {{ row.payTime ? row.payTime : "/" }}
+          </template>
         </el-table-column>
-        <el-table-column
-          align="center"
-          prop="orderSn"
-          label="订单编号"
-          width="150"
-        >
+        <el-table-column align="center" prop="orderSn" label="订单编号">
         </el-table-column>
         <el-table-column align="center" prop="realName" label="下单用户">
         </el-table-column>
-        <el-table-column align="center" label="订单类型">
+        <el-table-column align="center" prop="enterpriseName" label="公司名称">
+          <template slot-scope="{ row }">
+            {{ row.enterpriseName ? row.enterpriseName : "/" }}
+          </template>
+        </el-table-column>
+        <el-table-column align="center" label="推荐人身份">
           <template slot-scope="{ row }">
             {{
-              row.type == 1 ? "保养卡" : row.type == 2 ? "维修月卡" : "维修次卡"
+              row.channel == "saleman"
+                ? "业务员"
+                : row.channel == "master"
+                ? "师傅"
+                : "/"
             }}
           </template>
         </el-table-column>
-        <el-table-column align="center" prop="title" label="商品标题">
+        <el-table-column align="center" label="推荐人">
+          <template slot-scope="{ row }">
+            {{ row.promotionName ? row.promotionName : "/" }}
+          </template>
         </el-table-column>
-        <el-table-column align="center" prop="notQty" label="未核销">
+        <el-table-column align="center" label="支付金额">
+          <template slot-scope="{ row }"> ￥{{ row.payAmount }} </template>
         </el-table-column>
-        <el-table-column align="center" prop="waitUseQty" label="待核销">
+        <el-table-column align="center" label="支付状态">
+          <template slot-scope="{ row }">
+            {{ row.status == 0 ? "未支付" : "已支付" }}
+          </template>
         </el-table-column>
-        <el-table-column align="center" prop="useQty" label="已核销">
-        </el-table-column>
-        <el-table-column align="center" prop="returnQty" label="已退款">
+        <el-table-column align="center" label="退款状态">
+          <template slot-scope="{ row }">
+            <span :style="{ color: row.returnExamineStatus == 1 ? 'red' : '' }">
+              {{
+                row.returnExamineStatus == 0
+                  ? "未退款"
+                  : row.returnExamineStatus == 1
+                  ? "退款中"
+                  : row.returnExamineStatus == 2
+                  ? "已退款"
+                  : "已驳回"
+              }}</span
+            >
+          </template>
         </el-table-column>
         <el-table-column align="center" label="操作">
           <template slot-scope="{ row }">
@@ -70,7 +78,6 @@
           </template>
         </el-table-column>
       </el-table>
-
       <div class="activityProductOrderList_pagination">
         <el-pagination
           layout="prev, pager, next"
@@ -99,124 +106,109 @@
           :key="index"
           :name="item.orderSn"
         >
-          <div slot="label">核销订单{{ index + 1 }}</div>
-          <el-descriptions
-            class="margin-top"
-            title=""
-            :column="5"
-            direction="vertical"
-            border
+          <div slot="label">产品:{{ item.title }}</div>
+          <div
+            v-if="item.orderType != 2 && item.applyRefundAmount > 0"
+            style="margin-bottom: 15px; text-align: right"
           >
-            <template
-              slot="extra"
-              v-if="
-                !activityOrderDetailItem.masterRealName &&
-                !activityOrderDetailItem.applyRefundTime
-              "
+            <el-button type="primary" @click="openReviewRefundDialog">
+              审核退款
+            </el-button>
+          </div>
+          <el-table
+            v-if="item.orderType != 2"
+            :data="item.list"
+            border
+            style="width: 100%"
+          >
+            <el-table-column prop="code" label="券码" align="center">
+              <template slot-scope="{ row }">
+                <el-tag>{{ row.code }}</el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column label="使用状态" align="center">
+              <template slot-scope="{ row }">
+                <div :style="{ color: row.useStatus == 1 ? 'green' : '' }">
+                  {{ row.useStatus == 1 ? "已使用" : "未使用" }}
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column label="目标订单号" align="center">
+              <template slot-scope="{ row }">
+                {{ row.targetOrder ? row.targetOrder : "/" }}
+              </template>
+            </el-table-column>
+            <el-table-column label="使用时间" align="center">
+              <template slot-scope="{ row }">
+                {{ row.useTime ? row.useTime : "/" }}
+              </template>
+            </el-table-column>
+            <el-table-column label="退款申请" align="center">
+              <template slot-scope="{ row }">
+                {{
+                  row.returnStatus == 0
+                    ? "/"
+                    : row.returnStatus == 1
+                    ? "申请中"
+                    : row.returnStatus == 2
+                    ? "已通过"
+                    : "已驳回"
+                }}
+              </template>
+            </el-table-column>
+            <el-table-column label="申请退款时间" align="center">
+              <template slot-scope="{ row }">
+                {{ row.applyReturnTime ? row.applyReturnTime : "/" }}
+              </template>
+            </el-table-column>
+            <el-table-column label="退款时间" align="center">
+              <template slot-scope="{ row }">
+                {{ row.examineReturnTime ? row.examineReturnTime : "/" }}
+              </template>
+            </el-table-column>
+          </el-table>
+
+          <el-table v-else :data="item.list" border style="width: 100%">
+            <el-table-column prop="code" label="机台码" align="center">
+              <template slot-scope="{ row }">
+                <el-tag>{{ row.code }}</el-tag>
+              </template>
+            </el-table-column>
+
+            <el-table-column
+              prop="validPeriodData"
+              label="有限期限范围"
+              align="center"
             >
-              <el-button
-                type="primary"
-                size="small"
-                @click="openDesignateMasterDialog(item.orderSn)"
-                >指派师傅</el-button
-              >
-            </template>
-            <el-descriptions-item label="联系人">{{
-              activityOrderDetailItem.maintenancePeople
-            }}</el-descriptions-item>
-            <el-descriptions-item label="联系电话">{{
-              activityOrderDetailItem.maintenancePhone
-            }}</el-descriptions-item>
-            <el-descriptions-item label="订单号">{{
-              activityOrderDetailItem.orderSn
-            }}</el-descriptions-item>
-            <el-descriptions-item label="企业名称">{{
-              activityOrderDetailItem.enterpriseName
-            }}</el-descriptions-item>
-            <el-descriptions-item label="创建时间">{{
-              activityOrderDetailItem.createTime
-            }}</el-descriptions-item>
-            <el-descriptions-item label="预约时间">
-              {{
-                activityOrderDetailItem.reservationTime
-                  ? activityOrderDetailItem.reservationTime
-                  : "未预约"
-              }}</el-descriptions-item
-            >
-            <el-descriptions-item label="核销时间">{{
-              activityOrderDetailItem.verificationTime
-                ? activityOrderDetailItem.verificationTime
-                : "未核销"
-            }}</el-descriptions-item>
-            <el-descriptions-item label="申请退款时间">
-              <span
-                :style="{
-                  color: activityOrderDetailItem.applyRefundTime ? 'red' : '',
-                }"
-                >{{
-                  activityOrderDetailItem.applyRefundTime
-                    ? activityOrderDetailItem.applyRefundTime
-                    : "未退款"
-                }}</span
-              >
-            </el-descriptions-item>
-            <el-descriptions-item label="师傅名称">{{
-              activityOrderDetailItem.masterRealName
-                ? activityOrderDetailItem.masterRealName
-                : "未指派"
-            }}</el-descriptions-item>
-            <el-descriptions-item label="预约数量">{{
-              activityOrderDetailItem.qty
-            }}</el-descriptions-item>
-            <el-descriptions-item label="核销状态">{{
-              activityOrderDetailItem.status == 0 ? "未核销" : "已核销"
-            }}</el-descriptions-item>
-            <el-descriptions-item label="企业地址">{{
-              activityOrderDetailItem.enterpriseAddress
-            }}</el-descriptions-item>
-          </el-descriptions>
+            </el-table-column>
+            <el-table-column label="使用状态" align="center">
+              <template> 已使用 </template>
+            </el-table-column>
+          </el-table>
         </el-tab-pane>
       </el-tabs>
     </el-dialog>
 
-    <el-dialog
-      :visible="designateMasterVisible"
-      title="指派师傅"
-      width="45%"
-      :show-close="false"
-      :close-on-click-modal="false"
-      center
-    >
-      <div class="designateMasterDialog">
-        <div class="designateMasterDialog_topBtn">
-          <el-input
-            v-model="getMasterListParams.realName"
-            placeholder="请输入师傅名称"
-          ></el-input>
-          <el-button
-            class="designateMasterDialog_topBtn_search"
-            @click="searchMasterList"
-            >搜索</el-button
-          >
-        </div>
-        <el-table
-          :data="masterList"
-          highlight-current-row
-          @current-change="changeMaster"
-        >
-          <el-table-column label="师傅姓名" prop="realName" align="center">
-          </el-table-column>
-          <el-table-column label="师傅电话" prop="phone" align="center">
-          </el-table-column>
-          <el-table-column label="等级" prop="levelName" align="center">
-          </el-table-column>
-        </el-table>
+    <el-dialog title="审核退款" width="35%" :visible="reviewRefundVisible">
+      <div class="reviewRefundBox">
+        <el-form>
+          <el-form-item label="退款张数:">
+            {{ computeRefundNum(activityOrderDetailItem.list) }}张
+          </el-form-item>
+          <el-form-item label="审核状态">
+            <el-select
+              v-model="handleOrderRefundParams.examineStatus"
+              placeholder="请选择审核状态"
+            >
+              <el-option label="通过" :value="2"> </el-option>
+              <!-- <el-option label="驳回" :value="3"> </el-option> -->
+            </el-select>
+          </el-form-item>
+        </el-form>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="closeDesignateMasterDialog">取 消</el-button>
-        <el-button type="primary" @click="confirmHandleActivityOrderAssign"
-          >确 定</el-button
-        >
+        <el-button @click="closeReviewRefundDialog">取 消</el-button>
+        <el-button type="primary" @click="handleOrderRefund">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -226,9 +218,8 @@
 import {
   queryActivityOrderList,
   queryActivityOrderDetail,
-  handleActivityOrderAssign,
+  handleOrderRefund,
 } from "@/api/activity";
-import { getMasterList } from "@/api/user";
 export default {
   data() {
     return {
@@ -262,70 +253,44 @@ export default {
       activityOrderDetailItem: [],
       activeOrderDetail: null,
       relationOrderSn: null,
-
-      //  指派师傅
-      designateMasterVisible: false,
-      getMasterListParams: {
-        pageNo: 1,
-        pageSize: 5,
-        realName: null,
-      },
-      masterList: [],
-      handleActivityOrderAssignParams: {
+      // 审核退款
+      reviewRefundVisible: false,
+      handleOrderRefundParams: {
         orderSn: null,
-        uid: null,
+        examineStatus: null,
       },
     };
   },
   methods: {
-    // 确定指派师傅
-    async confirmHandleActivityOrderAssign() {
-      const res = await handleActivityOrderAssign(
-        this.handleActivityOrderAssignParams
-      );
-      if (res.message == "操作成功") {
+    // 审核退款
+    async handleOrderRefund() {
+      const res = await handleOrderRefund(this.handleOrderRefundParams);
+      if (res.code == "000") {
         this.$message({
-          message: "指派成功",
+          message: "操作成功",
           type: "success",
         });
-        this.queryActivityOrderDetail();
-        this.closeDesignateMasterDialog();
+        await this.queryActivityOrderList();
+        await this.closeReviewRefundDialog();
+        this.closeActivityOrderDetailDialog();
       }
     },
-    // 关闭指派师傅框
-    closeDesignateMasterDialog() {
-      this.handleActivityOrderAssignParams = {
+    // 计算退款张数
+    computeRefundNum(arr) {
+      if (!arr || arr.length == 0) return 0;
+      return arr.filter((item) => item.returnStatus === 1).length;
+    },
+    // 关闭审核退款弹框
+    closeReviewRefundDialog() {
+      this.handleOrderRefundParams = {
         orderSn: null,
-        uid: null,
+        examineStatus: null,
       };
-      this.getMasterListParams = {
-        pageNo: 1,
-        pageSize: 5,
-        realName: null,
-      };
-      this.masterList = [];
-      this.designateMasterVisible = false;
+      this.reviewRefundVisible = false;
     },
-    // 选中师傅
-    changeMaster(val) {
-      this.handleActivityOrderAssignParams.uid = val.uid;
-    },
-    // 点击搜索查询师傅
-    searchMasterList() {
-      this.getMasterListParams.pageNo = 1;
-      this.getMasterList();
-    },
-    // 查询师傅列表
-    async getMasterList() {
-      const res = await getMasterList(this.getMasterListParams);
-      this.masterList = res.data.records;
-      this.masterListTotal = res.data.total;
-    },
-    // 打开指派师傅
-    openDesignateMasterDialog(orderSn) {
-      this.getMasterList();
-      this.handleActivityOrderAssignParams.orderSn = orderSn;
-      this.designateMasterVisible = true;
+    // 打开审核退款
+    openReviewRefundDialog() {
+      this.reviewRefundVisible = true;
     },
     // 修改详情框tab
     changeActivityOrderDetailTab(tab) {
@@ -342,7 +307,7 @@ export default {
     // 查询详情信息
     async queryActivityOrderDetail() {
       const res = await queryActivityOrderDetail(this.relationOrderSn);
-      if (res.data) {
+      if (res.code == "000") {
         this.activityOrderDetailList = res.data;
         this.activeOrderDetail = res.data[0].orderSn;
         this.activityOrderDetailItem = res.data[0];
@@ -352,6 +317,7 @@ export default {
     openActivityOrderDetailDialog(relationOrderSn) {
       this.relationOrderSn = relationOrderSn;
       this.queryActivityOrderDetail();
+      this.handleOrderRefundParams.orderSn = relationOrderSn;
       this.activityOrderDetailVisible = true;
     },
     // 切换页码
@@ -379,9 +345,11 @@ export default {
       const res = await queryActivityOrderList(
         this.queryActivityOrderListParams
       );
-      this.activityProductOrderList = res.data.records;
-      this.activityProductOrderListPages = res.data.pages;
-      this.activityProductOrderListTotal = res.data.total;
+      if (res.code == "000") {
+        this.activityProductOrderList = res.data.records;
+        this.activityProductOrderListPages = res.data.pages;
+        this.activityProductOrderListTotal = res.data.total;
+      }
     },
   },
   created() {

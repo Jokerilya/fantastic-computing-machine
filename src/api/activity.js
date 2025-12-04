@@ -207,6 +207,15 @@ export function deleteExternalCombo(id) {
   return request({
     url: "/admin/activity/deleteExternalCombo",
     method: "delete",
-    params: { id }, // 将 id 作为 query 参数传递
+    params: { id },
+  });
+}
+
+// 处理订单退款
+export function handleOrderRefund(data) {
+  return request({
+    url: "/admin/activity/handleOrderRefund",
+    method: "post",
+    data,
   });
 }

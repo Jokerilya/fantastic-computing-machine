@@ -1496,11 +1496,15 @@
         </div>
       </template>
       <div class="useDiscountBox">
-        <el-tabs type="card" v-model="activeDiscountType">
+        <el-tabs
+          type="card"
+          v-model="activeDiscountType"
+          @tab-click="changeActiveDiscountType"
+        >
           <el-tab-pane label="优惠券" name="优惠券">
             <el-table
-              :data="ownedCouponsList"
-              v-if="ownedCouponsList.length > 0"
+              :data="ownedCouponsList[0]"
+              v-if="ownedCouponsList[0].length > 0"
               highlight-current-row
               @current-change="changeCouponCode"
               ref="useDiscountTableRef"
@@ -1545,9 +1549,49 @@
               <el-table-column align="center" label="备注" prop="remark">
               </el-table-column>
             </el-table>
-            <div v-if="ownedCouponsList.length == 0">未领取过优惠券</div>
+            <div v-if="ownedCouponsList[0].length == 0">未领取过优惠券</div>
           </el-tab-pane>
-          <el-tab-pane label="机将卡" name="机将卡">功能开发中...</el-tab-pane>
+          <el-tab-pane label="维修次卡" name="维修次卡">
+            <el-table
+              :data="ownedCouponsList[1]"
+              v-if="ownedCouponsList[1].length > 0"
+              ref="useDiscountTableRef"
+            >
+              <el-table-column align="center" prop="couponCode" label="券码">
+                <template slot-scope="{ row }">
+                  <el-checkbox
+                    v-model="checkCardList"
+                    :label="row.couponCode"
+                    :key="row.couponCode"
+                  ></el-checkbox>
+                </template>
+              </el-table-column>
+              <el-table-column
+                align="center"
+                prop="createTime"
+                label="支付时间"
+              >
+              </el-table-column>
+              <el-table-column prop="name" align="center" label="优惠券名称">
+              </el-table-column>
+              <el-table-column align="center" label="备注">
+                <template slot-scope="{ row }">
+                  {{ row.remark ? row.remark : "机将维保小程序购买" }}
+                </template>
+              </el-table-column>
+            </el-table>
+            <div v-if="ownedCouponsList[1].length == 0">未购买过维修次卡</div>
+            <el-form style="margin-top: 15px">
+              <el-form-item label="抵扣金额:">
+                <el-input-number
+                  v-model="useCouponParams.amount"
+                  :min="1"
+                  :max="orderDetail.doorAmount"
+                  label="抵扣金额"
+                ></el-input-number>
+              </el-form-item>
+            </el-form>
+          </el-tab-pane>
         </el-tabs>
       </div>
       <span slot="footer" class="dialog-footer">
@@ -2876,8 +2920,11 @@ export default {
       useCouponParams: {
         couponCode: null,
         orderSn: null,
+        amount: 1,
+        type: null,
       },
       couponCodeNow: null,
+      checkCardList: [],
     };
   },
   computed: {
@@ -2927,6 +2974,11 @@ export default {
     },
   },
   methods: {
+    // 切换减免优惠类型
+    changeActiveDiscountType() {
+      this.couponCodeNow = null;
+      this.checkCardList = [];
+    },
     // 重置减免优惠
     resetOrderDiscount() {
       this.$confirm(`您确定要重置减免优惠吗?`, "重置减免优惠", {
@@ -2934,23 +2986,60 @@ export default {
         cancelButtonText: "取消",
         type: "warning",
       }).then(async () => {
+        const loading = this.$loading({
+          lock: true,
+          text: "正在重置中...",
+          spinner: "el-icon-loading",
+          background: "rgba(0, 0, 0, 0.7)",
+        });
         const res = await resetOrderDiscount(this.orderSn);
         if (res.code == "000") {
           this.$message({
             type: "success",
             message: res.message,
           });
+          loading.close();
           this.getRepairOrderDetail();
+        } else {
+          loading.close();
         }
       });
     },
+    // 判断维修次卡多张情况 用的是同一种
+    allNamesEqual(knownList, ids) {
+      const matched = knownList.filter((item) => ids.includes(item.couponCode));
+      if (matched.length === 0) return true;
+      const firstType = matched[0].couponId;
+      return matched.every((item) => item.couponId === firstType);
+    },
     // 减免优惠
     async useOrderDiscount() {
-      if (!this.useCouponParams.couponCode) {
-        this.$message({
-          type: "warning",
-          message: "请选择优惠券/机将卡",
-        });
+      if (this.activeDiscountType == "优惠券") {
+        this.useCouponParams.type = 2;
+        if (!this.useCouponParams.couponCode) {
+          this.$message({
+            type: "warning",
+            message: "请选择优惠券",
+          });
+          return;
+        }
+      } else {
+        if (this.checkCardList.length == 0) {
+          this.$message({
+            type: "warning",
+            message: "请选择维修次卡",
+          });
+          return;
+        }
+        if (!this.allNamesEqual(this.ownedCouponsList[1], this.checkCardList)) {
+          this.$message({
+            type: "warning",
+            message: "请选择同一种维修次卡",
+          });
+          return;
+        }
+        this.useCouponParams.type = 3;
+        this.useCouponParams.couponCode = this.checkCardList.join(",");
       }
       const res = await useOrderDiscount(this.useCouponParams);
       if (res.code == "000") {
@@ -2968,8 +3057,11 @@ export default {
       this.useCouponParams = {
         couponCode: null,
         orderSn: null,
+        amount: 1,
+        type: null,
       };
       this.couponCodeNow = null;
+      this.checkCardList = [];
       this.useDiscountVisible = false;
       this.$refs.useDiscountTableRef.setCurrentRow(null);
     },
@@ -4439,7 +4531,15 @@ export default {
       });
       if (res.code == "000") {
         if (res.data.userCouponList) {
-          this.ownedCouponsList = res.data.userCouponList;
+          // type == 2 优惠券
+          const type2Coupons = res.data.userCouponList.filter(
+            (item) => item.type === 2
+          );
+          // type == 3 维修次卡
+          const type3Coupons = res.data.userCouponList
+            .filter((item) => item.type === 3)
+            .slice(0, 10);
+          this.ownedCouponsList = [type2Coupons, type3Coupons];
         }
 
         // Fn:图片字符串转数组方法

@@ -44,7 +44,7 @@
           <template slot-scope="{ row }">
             <el-image
               :src="row.coverImage"
-              style="width: 120px; height: 90px"
+              style="width: 120px; height: 120px"
               :preview-src-list="[row.coverImage]"
             ></el-image>
           </template>
@@ -53,7 +53,7 @@
           <template slot-scope="{ row }">
             <el-image
               :src="row.images && row.images[0]"
-              style="width: 120px; height: 90px"
+              style="width: 120px; height: 120px"
               :preview-src-list="row.images"
             ></el-image>
           </template>
@@ -64,7 +64,7 @@
               :src="row.content"
               fit="cover"
               :preview-src-list="[row.content]"
-              style="width: 120px; height: 90px"
+              style="width: 120px; height: 120px"
             ></el-image>
           </template>
         </el-table-column>
@@ -76,6 +76,16 @@
           </template>
         </el-table-column>
         <el-table-column align="center" width="80" prop="sort" label="排序">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          width="80"
+          prop="saleNum"
+          label="销售数量"
+        >
+          <template slot-scope="{ row }">
+            {{ row.saleNum ? row.saleNum : 0 }}
+          </template>
         </el-table-column>
         <el-table-column align="center" label="更多">
           <template slot-scope="{ row }">
@@ -108,6 +118,15 @@
             v-model="bindExternalComboParams.orderSn"
           >
           </el-input>
+        </el-form-item>
+        <el-form-item label="支付时间">
+          <el-date-picker
+            value-format="yyyy-MM-dd HH:mm:ss"
+            v-model="bindExternalComboParams.payTime"
+            type="datetime"
+            placeholder="选择支付时间"
+          >
+          </el-date-picker>
         </el-form-item>
         <el-form-item label="激活机将卡">
           <div style="text-align: right">
@@ -177,7 +196,7 @@
                 <div v-else>/</div>
               </template>
             </el-table-column>
-            <el-table-column label="机台码">
+            <el-table-column label="机台码,多个请用&隔开">
               <template slot-scope="{ row }">
                 <div v-if="row.type == 2">
                   <el-input
@@ -397,6 +416,7 @@ export default {
       bindExternalComboParams: {
         orderSn: null, //订单号
         code: null, // 激活码
+        payTime: null, //支付时间
         totalAmount: null, //所有卡的总价
         // 机将卡列表
         list: [
@@ -430,6 +450,7 @@ export default {
     // 对提交绑定套餐的参数校验
     validateBindExternalComboParams(params) {
       if (!params.orderSn) return "订单号不能为空";
+      if (!params.payTime) return "支付时间不能为空";
       if (!Array.isArray(params.list) || params.list.length === 0)
         return "卡列表不能为空";
       for (let i = 0; i < params.list.length; i++) {
@@ -484,31 +505,42 @@ export default {
 
         let list = [...this.bindExternalComboParams.list];
         list = list.map(({ nameList, ...rest }) => rest);
-        console.log(477, list);
-        let params = {
-          orderSn: this.bindExternalComboParams.orderSn,
-          code: this.bindExternalComboParams.code,
-          totalAmount: this.bindExternalComboParams.totalAmount,
-          comboContent: JSON.stringify(list),
-        };
-        const res = await bindExternalCombo(params);
-        if (res.code == "000") {
-          this.closeActivateCardDialog();
-          this.$alert(
-            `已为您生成激活码【${code}】,点击下方按钮复制即可`,
-            "生成激活码",
-            {
-              confirmButtonText: "复制",
-              callback: async (action) => {
-                await navigator.clipboard.writeText(code);
-                this.$message({
-                  message: "复制成功",
-                  type: "success",
-                });
-              },
-            }
-          );
-        }
+
+        this.$confirm(
+          `请确认订单总价为【￥${this.bindExternalComboParams.totalAmount}】,无误后点击确定?`,
+          "提示",
+          {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            type: "warning",
+          }
+        ).then(async () => {
+          let params = {
+            orderSn: this.bindExternalComboParams.orderSn,
+            code: this.bindExternalComboParams.code,
+            payTime: this.bindExternalComboParams.payTime,
+            totalAmount: this.bindExternalComboParams.totalAmount,
+            comboContent: JSON.stringify(list),
+          };
+          const res = await bindExternalCombo(params);
+          if (res.code == "000") {
+            this.closeActivateCardDialog();
+            this.$alert(
+              `已为您生成激活码【${code}】,点击下方按钮复制即可`,
+              "生成激活码",
+              {
+                confirmButtonText: "复制",
+                callback: async (action) => {
+                  await navigator.clipboard.writeText(code);
+                  this.$message({
+                    message: "复制成功",
+                    type: "success",
+                  });
+                },
+              }
+            );
+          }
+        });
       } else {
         this.$message({
           message: validate,
