@@ -60,6 +60,8 @@
             </el-table-column>
             <el-table-column width="150" label="设备编号" prop="no">
             </el-table-column>
+            <el-table-column label="公司名称" prop="enterpriseName">
+            </el-table-column>
             <el-table-column label="保养日期">
               <template slot-scope="{ row }">
                 {{ row.keepTime && row.keepTime.substr(0, 10) }}

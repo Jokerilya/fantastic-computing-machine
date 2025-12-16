@@ -1,5 +1,19 @@
 <template>
   <div class="maintenanceOrderDesc" ref="maintenanceOrderDesc">
+    <!-- 待办事项 新增 -->
+    <div
+      class="todoListIconBox"
+      @click="openAddMessageReminderDialog(orderDetail.orderSn)"
+    >
+      <div class="todoListIconBox">
+        <el-image
+          style="width: 100%; height: 100%"
+          src="https://snk-1305456087.cos.ap-guangzhou.myqcloud.com/user/20251216/DM00004408.png"
+        >
+        </el-image>
+      </div>
+    </div>
+
     <!-- 状态步骤 -->
     <el-card v-if="masterOrderTrackList.length > 0">
       <div class="statusListBox">
@@ -462,7 +476,6 @@
                   }}元
                 </div>
               </div>
-              <!-- ps -->
               <div class="mainOrderInfo_item">
                 <div class="label">优惠减免</div>
                 <div class="value" style="color: #409eff">
@@ -482,6 +495,7 @@
                       }}元 [{{ orderDetail.couponName }}]
                     </div>
                     <span
+                      v-if="orderDetail.enterpriseMainStatus == 5"
                       style="margin-left: 6px; color: red"
                       @click="resetOrderDiscount"
                       >重置</span
@@ -498,6 +512,28 @@
                   >
                     未使用优惠
                   </div>
+                </div>
+              </div>
+              <div
+                class="mainOrderInfo_item"
+                v-if="
+                  ownedCouponsList[0].length > 0 ||
+                  ownedCouponsList[1].length > 0
+                "
+              >
+                <div class="label"></div>
+                <div class="value">
+                  账户有<span
+                    :style="{
+                      color: ownedCouponsList[0].length > 0 ? 'red' : '',
+                    }"
+                    >{{ ownedCouponsList[0].length }}</span
+                  >张优惠券,<span
+                    :style="{
+                      color: ownedCouponsList[1].length > 0 ? 'red' : '',
+                    }"
+                    >{{ ownedCouponsList[1].length }}</span
+                  >张维修次卡
                 </div>
               </div>
 
@@ -1478,8 +1514,6 @@
     </div>
     <!-- 空行 -->
     <div style="height: 50px"></div>
-
-    <!-- ps -->
     <!-- 关联优惠 -->
     <el-dialog
       width="50%"
@@ -2574,7 +2608,7 @@
     <!-- 质保时间 -->
     <el-dialog
       title="修改质保时间"
-      :visible.sync="editWarrantyPeriodVisible"
+      :visible="editWarrantyPeriodVisible"
       width="20%"
       :close-on-click-modal="false"
       :before-close="closeEditWarrantyPeriodDialog"
@@ -2602,10 +2636,64 @@
         <el-button type="primary" @click="handleOrderWarranty">确 定</el-button>
       </span>
     </el-dialog>
+
+    <!-- 新增提醒 -->
+    <el-dialog
+      title="新增提醒"
+      :visible="addMessageReminderDialogVisible"
+      width="35%"
+      :close-on-click-modal="false"
+      :before-close="closeAddMessageReminderDialog"
+      center
+    >
+      <el-form
+        :model="saveOrderReminderParams"
+        label-width="80px"
+        label-position="left"
+      >
+        <el-form-item label="提醒时间">
+          <el-date-picker
+            type="date"
+            v-model="datePickerVal"
+            :picker-options="pickerOptionsDate"
+            placeholder="选择提醒日期"
+            value-format="yyyy-MM-dd"
+            style="margin-right: 10px"
+          >
+          </el-date-picker>
+          <el-time-select
+            v-model="timePickerVal"
+            :picker-options="{
+              start: '09:00',
+              end: '18:00',
+              step: '00:15',
+            }"
+            placeholder="选择提醒时间"
+          >
+          </el-time-select>
+        </el-form-item>
+        <el-form-item label="内容" prop="content">
+          <el-input
+            v-model="saveOrderReminderParams.content"
+            placeholder="请输入内容"
+          >
+          </el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeAddMessageReminderDialog">取 消</el-button>
+        <el-button type="primary" @click="saveOrderReminder">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import {
+  saveOrderReminder,
+  queryOrderReminderList,
+  handleOrderReminder,
+} from "@/api/orderReminder";
 import { handleEnterpriseNegotiatedPrice } from "@/api/proxy.js";
 import { getRepairOrderDetail } from "@/api/user.js";
 import {
@@ -2649,9 +2737,19 @@ import {
   handleReleaseComment,
 } from "@/api/proxy";
 import { mapGetters } from "vuex";
+import { Notification } from "element-ui";
 export default {
   data() {
     return {
+      // 初始化提醒框
+      pickerOptionsDate: {
+        disabledDate(time) {
+          return time.getTime() < new Date().setHours(0, 0, 0, 0);
+        },
+      },
+      datePickerVal: new Date(), // 默认选中今天,
+      timePickerVal: null,
+
       editWarrantyPeriodVisible: false,
       handleOrderWarrantyParmas: {
         days: null,
@@ -2660,10 +2758,8 @@ export default {
       handleOrderWarrantyParmasRules: {
         days: [{ required: true, message: "请输入质保时间", trigger: "blur" }],
       },
-
       orderCancelTag: [],
       chooseOrderCancelTagNum: null,
-
       reviewDescVisible: false,
       examineMasterOrderDataParmas: {
         orderSn: null,
@@ -2912,7 +3008,6 @@ export default {
         orderSn: null,
       },
 
-      // ps
       // 关联优惠
       useDiscountVisible: false,
       activeDiscountType: "优惠券",
@@ -2925,6 +3020,22 @@ export default {
       },
       couponCodeNow: null,
       checkCardList: [],
+
+      // 提醒
+      addMessageReminderDialogVisible: false,
+      saveOrderReminderParams: {
+        content: null,
+        reminderTime: null,
+        relationOrderSn: null,
+      },
+      queryOrderReminderListParams: {
+        pageNo: 1,
+        pageSize: 3,
+        relationOrderSn: null,
+        status: 0,
+      },
+      orderReminderList: [],
+      NotificationList: [],
     };
   },
   computed: {
@@ -2974,6 +3085,137 @@ export default {
     },
   },
   methods: {
+    // 获取该订单待办事项
+    async queryOrderReminderList() {
+      if (this.NotificationList.length > 0) {
+        this.NotificationList.forEach((item) => {
+          item.close();
+        });
+        this.NotificationList = [];
+      }
+      this.queryOrderReminderListParams.relationOrderSn = this.orderSn;
+      const res = await queryOrderReminderList(
+        this.queryOrderReminderListParams
+      );
+      if (res.code == "000") {
+        this.orderReminderList = res.data.records;
+        if (this.orderReminderList.length > 0) {
+          this.orderReminderList.forEach((item, index) => {
+            setTimeout(() => {
+              const NotificationItem = Notification({
+                title: "提醒",
+                dangerouslyUseHTMLString: true,
+                message: `${item.content} (点击则标记为已处理)<br />${item.reminderTime}`,
+                duration: 10000,
+                offset: 50,
+                onClick: async () => {
+                  let params = {
+                    id: item.id,
+                    handleType: 1,
+                  };
+                  const res = await handleOrderReminder(params);
+                  if (res.code == "000") {
+                    this.$message({
+                      type: "success",
+                      message: "操作成功",
+                    });
+                    this.NotificationList.forEach((i, idx) => {
+                      if (index == idx) {
+                        i.close();
+                      }
+                    });
+                  }
+                },
+              });
+              this.NotificationList.push(NotificationItem);
+            }, 0 + 500 * (index + 1));
+          });
+        }
+      }
+    },
+    // 判断是否超过当前时间并格式化日期时间
+    checkAndFormat(dateStr, timeStr) {
+      const now = new Date();
+      const [Y, M, D] = dateStr.split("-");
+      const [h, m] = timeStr.split(":").map(Number);
+      const target = new Date(Y, M - 1, D, h, m);
+      const isValid =
+        target >=
+        new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate(),
+          now.getHours(),
+          now.getMinutes()
+        );
+      return isValid
+        ? `${dateStr} ${h.toString().padStart(2, "0")}:${m
+            .toString()
+            .padStart(2, "0")}:00`
+        : false;
+    },
+    // 获取今日
+    getTodayString() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, "0"); // 月份从0开始，需+1
+      const day = String(now.getDate()).padStart(2, "0");
+      this.datePickerVal = `${year}-${month}-${day}`;
+    },
+    // 确定新增消息提醒
+    async saveOrderReminder() {
+      if (!this.timePickerVal) {
+        this.$message({
+          message: "请选择提醒时间",
+          type: "warning",
+        });
+        return;
+      }
+      if (!this.checkAndFormat(this.datePickerVal, this.timePickerVal)) {
+        this.$message({
+          message: "请选择正确的提醒时间，提醒时间不能早于当前时间",
+          type: "warning",
+        });
+        return;
+      } else {
+        this.saveOrderReminderParams.reminderTime = this.checkAndFormat(
+          this.datePickerVal,
+          this.timePickerVal
+        );
+      }
+      if (!this.saveOrderReminderParams.content) {
+        this.$message({
+          message: "请输入提醒内容",
+          type: "warning",
+        });
+        return;
+      }
+      const res = await saveOrderReminder(this.saveOrderReminderParams);
+      if (res.code == "000") {
+        this.$message({
+          type: "success",
+          message: "操作成功",
+        });
+        this.queryOrderReminderList();
+        this.closeAddMessageReminderDialog();
+      }
+    },
+    // 关闭新增消息提醒
+    closeAddMessageReminderDialog() {
+      this.addMessageReminderDialogVisible = false;
+      this.getTodayString();
+      this.timePickerVal = null;
+      this.saveOrderReminderParams = {
+        content: null,
+        reminderTime: null,
+        relationOrderSn: null,
+      };
+    },
+    // 打开新增消息提醒
+    openAddMessageReminderDialog(orderSn) {
+      this.saveOrderReminderParams.relationOrderSn = orderSn;
+      this.addMessageReminderDialogVisible = true;
+    },
     // 切换减免优惠类型
     changeActiveDiscountType() {
       this.couponCodeNow = null;
@@ -4697,6 +4939,14 @@ export default {
       }
     },
   },
+  beforeDestroy() {
+    if (this.NotificationList.length > 0) {
+      this.NotificationList.forEach((item) => {
+        item.close();
+      });
+      this.NotificationList = [];
+    }
+  },
   async created() {
     if (process.env.NODE_ENV == "development") {
       this.nodeEnv = "development";
@@ -4704,6 +4954,11 @@ export default {
     this.orderSn = this.$route.query.orderSn;
     this.getSysLabel();
     await this.getRepairOrderDetail();
+    // 获取今日日期
+    this.getTodayString();
+
+    // 该订单是否有未读信息
+    await this.queryOrderReminderList();
   },
 };
 </script>
@@ -4712,6 +4967,30 @@ export default {
 .maintenanceOrderDesc {
   padding: 10px;
   // font: 12px/1.5 Tahoma, Helvetica, Arial, "宋体", sans-serif;
+
+  .todoListIconBox {
+    position: fixed;
+    right: 3%;
+    top: 32%;
+    z-index: 5;
+    border: 1px solid #efefef;
+    border-radius: 50%;
+    padding: 8px;
+    font-weight: bold;
+    border: none;
+    box-shadow: 0 2px 40px rgba(0, 0, 0, 0.25);
+    .todoListIconBox {
+      width: 40px;
+      height: 40px;
+    }
+    .todoListIconBox:hover,
+    .todoListIconBox:focus {
+      cursor: pointer;
+      background-color: #efefef;
+      transform: scale(1.05);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+    }
+  }
 
   // 状态步骤
   .statusListBox {
@@ -4847,7 +5126,7 @@ export default {
     background-color: #fff;
     border-top: 2px solid #efefef;
     text-align: right;
-    padding: 10px 20px;
+    padding: 10px 20px 10px 50%;
   }
 
   // 新增故障项目框

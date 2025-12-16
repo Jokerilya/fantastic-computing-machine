@@ -4,8 +4,10 @@
     <!-- 顶部工具栏部分 -->
     <div class="topTool">
       <div class="topTool_Status">
-        <el-select v-model="equipmentStatusValue" placeholder="设备状态">
-          <!-- 下拉菜单的内容 -->
+        <el-select
+          v-model="getEquipmentListParams.status"
+          placeholder="设备状态"
+        >
           <el-option
             v-for="item in equipmentStatus"
             :key="item.value"
@@ -16,25 +18,41 @@
         </el-select>
       </div>
       <div class="topTool_Status">
-        <el-input placeholder="年保合同单号" v-model="orderSn"> </el-input>
+        <el-input
+          placeholder="年保合同单号"
+          v-model="getEquipmentListParams.orderSn"
+        >
+        </el-input>
       </div>
       <div class="topTool_time">
         <el-date-picker
           value-format="yyyy-MM-dd"
-          v-model="topTool_time"
+          v-model="timeRange"
           type="daterange"
           range-separator="———"
           start-placeholder="开始时间"
           end-placeholder="结束时间"
+          @change="
+            (val) => {
+              getEquipmentListParams.startTime = val[0];
+              getEquipmentListParams.endTime = val[1];
+            }
+          "
         >
         </el-date-picker>
       </div>
       <div class="topTool_name">
-        <el-input v-model="topTool_code" placeholder="设备编码"></el-input>
+        <el-input
+          v-model="getEquipmentListParams.no"
+          placeholder="请输入设备编码"
+        ></el-input>
       </div>
-      <!-- <div class="topTool_name">
-        <el-input placeholder="客户名称"></el-input>
-      </div> -->
+      <div class="topTool_name">
+        <el-input
+          v-model="getEquipmentListParams.enterpriseName"
+          placeholder="请输入企业名称"
+        ></el-input>
+      </div>
       <div class="topTool_btn">
         <!-- <el-button style="color: #2e4c9e" @click="addEquipmentPage" disabled
           >新增</el-button
@@ -167,10 +185,10 @@
           <div class="footer_pagination">
             <el-pagination
               @current-change="currentChangeFn"
-              :current-page="data.pageNo"
-              :page-size="5"
+              :current-page="getEquipmentListParams.pageNo"
+              :page-size="getEquipmentListParams.pageSize"
               layout="jumper, prev, pager, next,total "
-              :total="total"
+              :total="equipmentListTotal"
             >
             </el-pagination>
           </div>
@@ -187,18 +205,19 @@ export default {
   data() {
     return {
       equipmentTypeList: "", //设备类型
-      equipmentStatusValue: "", //设备状态值
-      topTool_time: "", //日期选择值
-      topTool_code: "", //设备编码值
-      orderSn: "", //订单编号
-      equipmentList: [], //设备列表
-      total: 0,
-      current: 1,
-      data: {
-        //获取列表需要的参数
+      timeRange: null, //时间范围
+      getEquipmentListParams: {
         pageNo: 1,
         pageSize: 10,
+        enterpriseName: "",
+        no: "",
+        orderSn: "",
+        startTime: "",
+        endTime: "",
+        status: "",
       },
+      equipmentList: [], //设备列表
+      equipmentListTotal: 0, //设备列表总数
       equipmentStatus: [
         // 设备状态数组
         {
@@ -220,8 +239,8 @@ export default {
         text: "数据传输中",
         spinner: "el-icon-loading",
       });
-      const res = await handleDeviceInfoExport(this.data);
-      if (res) {
+      const res = await handleDeviceInfoExport(this.getEquipmentListParams);
+      if (res.code == "000") {
         const link = document.createElement("a");
         const blob = new Blob([res.data], {
           type: "application/vnd.ms-excel",
@@ -259,10 +278,6 @@ export default {
     },
     // 跳转编辑
     editEquipmentPage(id) {
-      // this.$router.push(
-      //   "/maintenance/equipmentManagement/addEquipment?titleName=编辑设备信息&id=" +
-      //     id
-      // );
       this.$router.push({
         name: "addEquipment",
         query: { titleName: "编辑设备信息", id },
@@ -277,50 +292,50 @@ export default {
     },
     // 重置所有搜索要求
     resetFn() {
-      this.equipmentStatusValue = "";
-      this.topTool_time = "";
-      this.topTool_code = "";
-      this.data = {
+      this.getEquipmentListParams = {
         pageNo: 1,
-        pageSize: 5,
+        pageSize: 10,
+        enterpriseName: "",
+        no: "",
+        orderSn: "",
+        startTime: "",
+        endTime: "",
+        status: "",
       };
+      this.timeRange = null;
       this.getEquipmentList(this.data);
     },
     // 点击查询的事件
     findFn() {
-      this.data.status = this.equipmentStatusValue;
-      if (this.topTool_time) {
-        this.data.startTime = this.topTool_time[0];
-        this.data.endTime = this.topTool_time[1];
-      } else {
-        delete this.data["startTime"];
-        delete this.data["endTime"];
-      }
-      this.data.pageNo = 1;
-      this.data.no = this.topTool_code;
-      this.data.orderSn = this.orderSn;
-      this.getEquipmentList(this.data);
+      this.getEquipmentListParams.pageNo = 1;
+      this.getEquipmentList();
     },
+
     // 页码发生变化触发的事件
     currentChangeFn(page) {
-      this.current = page;
-      this.data.pageNo = page;
-      this.getEquipmentList(this.data);
+      this.getEquipmentListParams.pageNo = page;
+      this.getEquipmentList();
     },
     // 获取设备列表
-    async getEquipmentList(data) {
-      const res = await getEquipmentList(data);
-      const { records, total, current } = res.data;
-      console.log(240, records);
-      this.equipmentList = records;
-      this.total = total;
-      this.current = current;
+    async getEquipmentList() {
+      const res = await getEquipmentList(this.getEquipmentListParams);
+      if (res.code == "000") {
+        const { records, total } = res.data;
+        this.equipmentList = records;
+        this.equipmentListTotal = total;
+      }
+    },
+    // 获取设备类型列表
+    async queryDeviceTypeList() {
+      const res = await queryDeviceTypeList();
+      if (res.code == "000") {
+        this.equipmentTypeList = res.data;
+      }
     },
   },
   async created() {
-    this.getEquipmentList(this.data);
-    const res = await queryDeviceTypeList();
-    this.equipmentTypeList = res.data;
+    this.getEquipmentList();
+    this.queryDeviceTypeList();
   },
 };
 </script>

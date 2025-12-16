@@ -86,7 +86,6 @@ service.interceptors.request.use((request) => {
       }
     }
   }
-
   return request;
 });
 // response interceptor
@@ -108,7 +107,7 @@ service.interceptors.response.use(
     if (response.config.responseType == "blob") {
       return response;
     } else {
-      // 图片接口不需要  判断在测试环境下
+      // 判断在测试环境下
       if (process.env.NODE_ENV != "development") {
         let pass = true;
         forbiddenUrl.forEach((item) => {

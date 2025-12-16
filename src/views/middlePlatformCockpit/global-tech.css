@@ -1,0 +1,28 @@
+/* global-tech.css - 全局科技感样式 */
+.tech-message {
+    background: rgba(16, 22, 36, 0.95) !important;
+    backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(0, 198, 255, 0.3) !important;
+    color: white !important;
+    box-shadow: 0 4px 20px rgba(0, 114, 255, 0.2) !important;
+}
+
+.tech-message .el-message__content {
+    color: white !important;
+}
+
+.tech-message.el-message--success {
+    border-color: rgba(0, 198, 255, 0.5) !important;
+}
+
+.tech-message.el-message--info {
+    border-color: rgba(0, 114, 255, 0.5) !important;
+}
+
+.tech-message.el-message--warning {
+    border-color: rgba(255, 204, 0, 0.5) !important;
+}
+
+.tech-message.el-message--error {
+    border-color: rgba(255, 46, 99, 0.5) !important;
+}

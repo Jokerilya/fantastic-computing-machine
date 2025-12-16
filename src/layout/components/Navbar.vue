@@ -81,10 +81,21 @@ import { mapGetters } from "vuex";
 import Breadcrumb from "@/components/Breadcrumb";
 import Hamburger from "@/components/Hamburger";
 import { queryRepairMessgae, handleUnReadMessage } from "@/api/order";
+import { queryOrderReminderList } from "@/api/orderReminder";
+
+// 通知
+import { NotificationManager } from "@/utils/notificationManager";
 
 export default {
   data() {
-    return {};
+    return {
+      queryOrderReminderListParams: {
+        status: 0,
+        relationOrderSn: null,
+        pageNo: 1,
+        pageSize: 10,
+      },
+    };
   },
   components: {
     Breadcrumb,
@@ -94,6 +105,37 @@ export default {
     ...mapGetters(["name", "sidebar", "avatar"]),
   },
   methods: {
+    // 判断是否在当前时间的前后5分钟
+    isWithin5Minutes(targetTimeStr) {
+      const targetTime = new Date(targetTimeStr.replace(" ", "T"));
+      const now = new Date();
+      const diffMs = Math.abs(now - targetTime);
+      const fiveMinutesMs = 5 * 60 * 1000;
+      return diffMs <= fiveMinutesMs;
+    },
+    // 查询订单提醒列表
+    async queryOrderReminderList() {
+      const res = await queryOrderReminderList(
+        this.queryOrderReminderListParams
+      );
+      if (res.code == "000") {
+        if (res.data.records && res.data.records.length > 0) {
+          res.data.records.forEach((item) => {
+            if (this.isWithin5Minutes(item.reminderTime)) {
+              this.$notify.pushOnce(item.id, item.relationOrderSn, {
+                body: item.content,
+                onclick: () => {
+                  this.$router.push({
+                    name: "maintenance_order_desc",
+                    query: { orderSn: item.relationOrderSn },
+                  });
+                },
+              });
+            }
+          });
+        }
+      }
+    },
     toggleSideBar() {
       this.$store.dispatch("app/toggleSideBar");
     },
@@ -108,9 +150,15 @@ export default {
         pageSize: 5,
         status: 0,
       });
-      Vue.prototype.$messageList.repairMessgaeListTotal = res.data.total;
-      Vue.prototype.$messageList.repairMessgaeList = res.data.records;
+      if (res.code == "000") {
+        Vue.prototype.$messageList.repairMessgaeListTotal = res.data.total;
+        Vue.prototype.$messageList.repairMessgaeList = res.data.records;
+      }
+
+      // 获取待办事项
+      this.queryOrderReminderList();
     },
+    //
     // 跳转信息列表
     goToMessageList() {
       this.$router.push({
@@ -176,9 +224,17 @@ export default {
     if (!Vue.prototype.$messageList.intervalId) {
       Vue.prototype.$messageList.intervalId = setInterval(
         this.queryRepairMessgae,
-        1 * 60 * 1000
+        5 * 60 * 1000
       );
     }
+
+    // 初始化通知
+    const globalNotifManager = new NotificationManager({
+      maxAge: 3 * 24 * 60 * 60 * 1000,
+    });
+    this.$root.constructor.prototype.$notify = {
+      pushOnce: globalNotifManager.pushOnce.bind(globalNotifManager),
+    };
   },
   beforeDestroy() {
     if (Vue.prototype.$messageList.intervalId) {

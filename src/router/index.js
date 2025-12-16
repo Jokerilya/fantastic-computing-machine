@@ -10,6 +10,7 @@ import maintenanceRouter from "./modules/maintenance.js";
 import serviceManagement from "./modules/serviceManagement";
 import messageRouter from "./modules/message";
 import statisticsStatementRouter from "./modules/statisticsStatement";
+import middlePlatformCockpit from "./modules/middlePlatformCockpit";
 
 import orderManagement from "./modules/orderManagement";
 import masterManagement from "./modules/masterManagement";
@@ -83,6 +84,7 @@ export const constantRoutes = [
 
   messageRouter, // 消息列表
   statisticsStatementRouter, // 统计报表
+  // middlePlatformCockpit, // 中台驾驶舱
   orderManagement, // 订单管理
   masterManagement, // 师傅管理
   enterpriseManagement, // 企业管理

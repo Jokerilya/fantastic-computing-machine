@@ -2,11 +2,24 @@
   <div class="activityProductOrderList">
     <div class="activityProductOrderList_btnline">
       <div class="activityProductOrderList_btnline_left">
-        <el-input
-          style="margin-right: 10px"
-          v-model="queryActivityOrderListParams.orderSn"
-          placeholder="请输入订单编号"
-        ></el-input>
+        <el-form inline>
+          <el-form-item label="订单编号:">
+            <el-input
+              v-model="queryActivityOrderListParams.orderSn"
+              placeholder="请输入订单编号"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="支付状态:">
+            <el-select
+              v-model="queryActivityOrderListParams.status"
+              placeholder="请选择支付状态"
+            >
+              <el-option label="全部" :value="null"> </el-option>
+              <el-option label="未支付" :value="0"> </el-option>
+              <el-option label="已支付" :value="1"> </el-option>
+            </el-select>
+          </el-form-item>
+        </el-form>
       </div>
       <div>
         <el-button @click="searchQueryActivityOrderList">搜索</el-button>
@@ -50,7 +63,9 @@
         </el-table-column>
         <el-table-column align="center" label="支付状态">
           <template slot-scope="{ row }">
-            {{ row.status == 0 ? "未支付" : "已支付" }}
+            <span :style="{ color: row.status == 0 ? 'red' : 'green' }">
+              {{ row.status == 0 ? "未支付" : "已支付" }}
+            </span>
           </template>
         </el-table-column>
         <el-table-column align="center" label="退款状态">
@@ -229,6 +244,7 @@ export default {
         pageSize: 10,
         orderSn: null,
         orderType: null,
+        status: null,
       },
       activityProductOrderListPages: null,
       activityProductOrderListTotal: null,
@@ -337,6 +353,7 @@ export default {
         pageSize: 10,
         orderSn: null,
         orderType: null,
+        status: null,
       };
       this.queryActivityOrderList();
     },

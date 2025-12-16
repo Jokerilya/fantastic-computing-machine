@@ -8,191 +8,139 @@
         ref="ruleForm"
         label-width="100px"
         class="rule-form"
-        label-position="right"
+        label-position="left"
+        :inline="true"
       >
-        <el-row :gutter="20">
-          <el-col :span="3.5">
-            <el-form-item label="师傅名称">
-              <el-select
-                style="width: 8.5vw"
-                v-model="searchForm.masterUid"
-                filterable
-                placeholder="请选择"
-                :remote-method="searchMaster"
-                remote
-                @change="changeInquireMasterFn"
-              >
-                <el-option
-                  v-for="item in masterSearchList"
-                  :key="item.uid"
-                  :label="item.realName"
-                  :value="item.uid"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <!-- <el-col :span="5">
-            <el-form-item label="订单状态">
-              <el-select v-model="searchForm.status" placeholder="请选择">
-                <el-option
-                  v-for="item in util.global.mainStatus"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col> -->
-          <el-col :span="3.5">
-            <el-form-item label="订单类型">
-              <el-select
-                v-model="searchForm.orderType"
-                placeholder="请选择"
-                style="width: 8.5vw"
-              >
-                <el-option label="散单" :value="1">散单</el-option>
-                <el-option label="年保" :value="2">年保</el-option>
-                <el-option label="年卡" :value="3">年卡</el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="3.5">
-            <el-form-item label="订单编号">
-              <el-input
-                style="width: 8.5vw"
-                v-model="searchForm.orderSn"
-                placeholder="订单编号"
-              ></el-input>
-            </el-form-item>
-          </el-col>
-          <!-- <el-col :span="4">
-            <el-form-item label="审核状态">
-              <el-select
-                v-model="searchForm.finalExamineStatus"
-                placeholder="请选择"
-              >
-                <el-option label="未审核" :value="0">未审核</el-option>
-                <el-option label="部分审核" :value="1">部分审核</el-option>
-                <el-option label="已审核" :value="2">已审核</el-option>
-              </el-select>
-            </el-form-item>
-          </el-col> -->
-          <el-col :span="3.5">
-            <el-form-item label="企业名称">
-              <el-input
-                style="width: 8.5vw"
-                v-model="searchForm.enterpriseName"
-                placeholder="企业名称"
-              ></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="3.5">
-            <el-form-item label="紧急程度">
-              <el-select
-                v-model="searchForm.degree"
-                placeholder="请选择"
-                style="width: 8.5vw"
-              >
-                <el-option label="全部" :value="null">全部</el-option>
-                <el-option label="一般" :value="1">一般</el-option>
-                <el-option label="常规" :value="0">常规</el-option>
-                <el-option label="紧急" :value="2">紧急</el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6.5">
-            <el-form-item label="创建时间">
-              <el-date-picker
-                style="width: 10.5vw"
-                @change="changeQueryTimeCopy"
-                v-model="queryTimeCopy"
-                type="daterange"
-                value-format="yyyy-MM-dd"
-                range-separator="至"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-              >
-              </el-date-picker>
-            </el-form-item>
-          </el-col>
-        </el-row>
+        <el-form-item label="师傅名称">
+          <el-select
+            :style="{ width: sidebar.opened ? '10.5vw' : '9vw' }"
+            v-model="searchForm.masterUid"
+            filterable
+            placeholder="请选择师傅"
+            :remote-method="searchMaster"
+            remote
+            @change="changeInquireMasterFn"
+          >
+            <el-option
+              v-for="item in masterSearchList"
+              :key="item.uid"
+              :label="item.realName"
+              :value="item.uid"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="订单类型">
+          <el-select
+            v-model="searchForm.orderType"
+            placeholder="请选择订单类型"
+            :style="{ width: sidebar.opened ? '10.5vw' : '9vw' }"
+          >
+            <el-option label="散单" :value="1">散单</el-option>
+            <el-option label="年保" :value="2">年保</el-option>
+            <el-option label="年卡" :value="3">年卡</el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="订单编号">
+          <el-input
+            :style="{ width: sidebar.opened ? '10.5vw' : '9vw' }"
+            v-model="searchForm.orderSn"
+            placeholder="请输入订单编号"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="企业名称">
+          <el-input
+            :style="{ width: sidebar.opened ? '10.5vw' : '9vw' }"
+            v-model="searchForm.enterpriseName"
+            placeholder="请输入企业名称"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="紧急程度">
+          <el-select
+            v-model="searchForm.degree"
+            placeholder="请选择紧急程度"
+            :style="{ width: sidebar.opened ? '10.5vw' : '9vw' }"
+          >
+            <el-option label="全部" :value="null">全部</el-option>
+            <el-option label="一般" :value="1">一般</el-option>
+            <el-option label="常规" :value="0">常规</el-option>
+            <el-option label="紧急" :value="2">紧急</el-option>
+          </el-select>
+        </el-form-item>
 
-        <el-row :gutter="20">
-          <el-col :span="3.5">
-            <el-form-item label="设备编码">
-              <el-input
-                style="width: 8.5vw"
-                v-model="searchForm.no"
-                placeholder="设备编码"
-              ></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="3.5">
-            <el-form-item label="结算类型">
-              <el-select
-                v-model="searchForm.settlementType"
-                placeholder="请选择"
-                style="width: 8.5vw"
-              >
-                <el-option label="现结" :value="1">现结</el-option>
-                <el-option label="月结" :value="2">月结 </el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="3.5">
-            <el-form-item label="数据审核">
-              <el-select
-                v-model="searchForm.dataExamineStatus"
-                placeholder="请选择"
-                style="width: 8.5vw"
-              >
-                <el-option label="全部" :value="null">全部</el-option>
-                <el-option label="审核中" :value="1">审核中</el-option>
-                <el-option label="审核通过" :value="2">审核通过</el-option>
-                <el-option label="审核驳回" :value="3">审核驳回</el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="3.5">
-            <el-form-item label="设备类型">
-              <el-cascader
-                v-model="searchForm.deviceTypeId"
-                :options="typeList"
-                :props="serviceTypesProps"
-                style="width: 8.5vw"
-              ></el-cascader>
-            </el-form-item>
-          </el-col>
-          <el-col :span="3.5">
-            <el-form-item label="设备型号">
-              <el-input
-                style="width: 8.5vw"
-                v-model="searchForm.deviceModel"
-                placeholder="设备型号"
-              ></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="2">
-            <el-form-item label="仅选择超时">
-              <el-switch
-                v-model="searchForm.timeoutFlag"
-                active-color="#409eff"
-                inactive-color="#909399"
-              >
-              </el-switch>
-            </el-form-item>
-          </el-col>
-          <el-col :span="4.5">
-            <el-form-item label="仅选择斯耐克">
-              <el-switch
-                v-model="searchForm.snkFlag"
-                active-color="#409eff"
-                inactive-color="#909399"
-              >
-              </el-switch>
-            </el-form-item>
-          </el-col>
-        </el-row>
+        <el-form-item label="设备编码">
+          <el-input
+            :style="{ width: sidebar.opened ? '10.5vw' : '9vw' }"
+            v-model="searchForm.no"
+            placeholder="请输入设备编码"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="结算类型">
+          <el-select
+            v-model="searchForm.settlementType"
+            placeholder="请选择结算类型"
+            :style="{ width: sidebar.opened ? '10.5vw' : '9vw' }"
+          >
+            <el-option label="现结" :value="1">现结</el-option>
+            <el-option label="月结" :value="2">月结 </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="数据审核">
+          <el-select
+            v-model="searchForm.dataExamineStatus"
+            placeholder="请选择数据审核"
+            :style="{ width: sidebar.opened ? '10.5vw' : '9vw' }"
+          >
+            <el-option label="全部" :value="null">全部</el-option>
+            <el-option label="审核中" :value="1">审核中</el-option>
+            <el-option label="审核通过" :value="2">审核通过</el-option>
+            <el-option label="审核驳回" :value="3">审核驳回</el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="设备类型">
+          <el-cascader
+            v-model="searchForm.deviceTypeId"
+            :options="typeList"
+            placeholder="请选择设备类型"
+            :props="serviceTypesProps"
+            :style="{ width: sidebar.opened ? '10.5vw' : '9vw' }"
+          ></el-cascader>
+        </el-form-item>
+        <el-form-item label="设备型号">
+          <el-input
+            :style="{ width: sidebar.opened ? '10.5vw' : '9vw' }"
+            v-model="searchForm.deviceModel"
+            placeholder="请填写设备型号"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="创建时间">
+          <el-date-picker
+            style="width: 13vw"
+            @change="changeQueryTimeCopy"
+            v-model="queryTimeCopy"
+            type="daterange"
+            value-format="yyyy-MM-dd"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+          >
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="仅选择超时">
+          <el-switch
+            v-model="searchForm.timeoutFlag"
+            active-color="#409eff"
+            inactive-color="#909399"
+          >
+          </el-switch>
+        </el-form-item>
+        <el-form-item label="仅选择斯耐克">
+          <el-switch
+            v-model="searchForm.snkFlag"
+            active-color="#409eff"
+            inactive-color="#909399"
+          >
+          </el-switch>
+        </el-form-item>
       </el-form>
     </div>
     <el-row :gutter="20">
@@ -948,6 +896,7 @@ import {
 } from "@/api/order.js";
 import { handleProxyCreateOrder, handleBatchProxyPayment } from "@/api/proxy";
 import { UploadImg, getSysLabel } from "@/api/system.js";
+import { mapGetters } from "vuex";
 // import tableMixin from "@/mixin/table";
 import { localStorageData } from "@/utils";
 export default {
@@ -1220,6 +1169,7 @@ export default {
     };
   },
   computed: {
+    ...mapGetters(["sidebar"]),
     orderRemark() {
       const { labelList, remark } = this.handleRepairRemarksParamsCopy;
       const parts = [...labelList];
@@ -1282,11 +1232,31 @@ export default {
     this.getSysLabel();
   },
   methods: {
+    /**
+     * 判断日期区间是否在限制天数内
+     * @param {string} dateRangeStr - 日期区间字符串，格式为 "YYYY-MM-DD ~ YYYY-MM-DD"
+     * @param {number} astrictDays - 限制的天数
+     * @returns {boolean} - 如果日期区间在限制天数内返回 true，否则返回 false
+     */
+    isWithinOneMonth(dateRangeStr, astrictDays) {
+      if (!dateRangeStr) {
+        return false;
+      }
+      const [startStr, endStr] = dateRangeStr.split("~").map((s) => s.trim());
+      const start = new Date(startStr);
+      const end = new Date(endStr);
+      if (isNaN(start) || isNaN(end)) {
+        throw new Error("Invalid date format");
+      }
+      const diffMs = end - start;
+      const diffDays = diffMs / (1000 * 60 * 60 * 24);
+      return diffDays >= 0 && diffDays <= astrictDays;
+    },
     // 导出v2
     async handleRepairEnterpriseOrderExport() {
-      if (this.pageCount >= 900) {
+      if (!this.isWithinOneMonth(this.exportParams.queryTime, 62)) {
         this.$message({
-          message: "总条数不能大于900条",
+          message: "查询时间间隔不能超过62天",
           type: "warning",
         });
         return;
@@ -1788,9 +1758,16 @@ export default {
 
     // 导出
     async exportList() {
-      if (this.pageCount >= 150) {
+      // if (this.pageCount >= 150) {
+      //   this.$message({
+      //     message: "总条数不能大于150条",
+      //     type: "warning",
+      //   });
+      //   return;
+      // }
+      if (!this.isWithinOneMonth(this.exportParams.queryTime, 31)) {
         this.$message({
-          message: "总条数不能大于150条",
+          message: "查询时间间隔不能超过31天",
           type: "warning",
         });
         return;
