@@ -153,7 +153,7 @@ export async function uploadButlerOrderByOwn(data) {
 //维保订单列表
 export function queryRepairOrderList(data) {
   return request({
-    url: "/admin/maintenance/queryRepairOrderList",
+    url: "/admin/order/queryRepairOrderList",
     method: "POST",
     data,
   });
@@ -195,6 +195,35 @@ export function handleRepairOrderExportByFaults(data) {
     method: "POST",
     data,
     responseType: "blob",
+  });
+}
+
+// 在线表格(企业总表)导出
+export function handleOnlineRepairEnterpriseOrderExport(data) {
+  return request({
+    url: "/admin/maintenance/handleOnlineRepairEnterpriseOrderExport",
+    method: "POST",
+    data,
+    responseType: "blob",
+  });
+}
+
+// 在线表格(师傅交单)导出
+export function handleOnlineRepairMasterOrderExport(data) {
+  return request({
+    url: "/admin/maintenance/handleOnlineRepairMasterOrderExport",
+    method: "POST",
+    data,
+    responseType: "blob",
+  });
+}
+
+// 补充订单主表信息
+export function updateOnlineRepairOrder(data) {
+  return request({
+    url: "/admin/order/updateOnlineRepairOrder",
+    method: "POST",
+    data,
   });
 }
 
@@ -1013,7 +1042,7 @@ export function handleOrderLabel(data) {
 // 查询维保订单列表角标
 export function getOrderSubscript(data) {
   return request({
-    url: `/admin/maintenance/getOrderSubscript`,
+    url: `/admin/order/getOrderSubscript`,
     method: "post",
     data,
   });
@@ -1217,5 +1246,23 @@ export function resetOrderDiscount(orderSn) {
   return request({
     url: `/admin/maintenance/resetOrderDiscount?orderSn=${orderSn}`,
     method: "get",
+  });
+}
+
+// 查询师傅交接表信息
+export function queryEnrollRepairOrderList(data) {
+  return request({
+    url: `/admin/order/queryEnrollRepairOrderList`,
+    method: "post",
+    data,
+  });
+}
+
+// 查询师傅交接表信息
+export function updateOnlineEnrollRepairOrder(data) {
+  return request({
+    url: `/admin/order/updateOnlineEnrollRepairOrder`,
+    method: "post",
+    data,
   });
 }

@@ -21,6 +21,19 @@ const router = {
       component: () => import("@/views/maintenance/upkeepDetailModule"),
       meta: { title: "保养工单" },
     },
+    // 发票
+    {
+      path: "/invoiceManagement/invoiceList",
+      name: "workerDetails",
+      component: () => import("@/views/invoiceManagement/invoiceList"),
+      meta: { title: "订单发票" },
+    },
+    {
+      path: "/coupon",
+      name: "Coupon",
+      component: () => import("@/views/activity/coupon"),
+      meta: { title: "优惠券管理" },
+    },
     {
       path: "/maintenance/maintenance_order_desc",
       name: "maintenance_order_desc",
@@ -83,13 +96,6 @@ const router = {
       component: () => import("@/views/maintenance/assignedWorker"),
       meta: { title: "指派师傅", noShow: "true" },
     },
-    // 发票
-    {
-      path: "/invoiceManagement/invoiceList",
-      name: "workerDetails",
-      component: () => import("@/views/invoiceManagement/invoiceList"),
-      meta: { title: "发票明细" },
-    },
 
     // 物流
     {
@@ -99,12 +105,7 @@ const router = {
       meta: { title: "物流详情" },
       hidden: true,
     },
-    {
-      path: "/coupon",
-      name: "Coupon",
-      component: () => import("@/views/activity/coupon"),
-      meta: { title: "优惠券管理" },
-    },
+
     {
       path: "/receiveRecords",
       name: "ReceiveRecords",

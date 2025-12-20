@@ -66,6 +66,7 @@ module.exports = {
     // it can be accessed in index.html to inject the correct title.
     name: name,
     resolve: {
+      caseSensitivePaths: false,
       alias: {
         "@": resolve("src"),
       },
