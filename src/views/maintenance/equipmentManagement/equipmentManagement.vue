@@ -240,7 +240,7 @@ export default {
         spinner: "el-icon-loading",
       });
       const res = await handleDeviceInfoExport(this.getEquipmentListParams);
-      if (res.code == "000") {
+      if (res) {
         const link = document.createElement("a");
         const blob = new Blob([res.data], {
           type: "application/vnd.ms-excel",

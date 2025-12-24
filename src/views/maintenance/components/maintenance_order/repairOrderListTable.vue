@@ -1,12 +1,13 @@
 <template>
   <div class="repairOrderListTable">
     <el-table
+      ref="repairOrderListTableRef"
       @selection-change="handleSelectionChange"
       highlight-current-row
       :data="repairOrderList"
       :key="params.status == 5"
     >
-      <el-table-column v-if="params.status == 5" type="selection" width="55">
+      <el-table-column v-if="params.status >= 5" type="selection" width="55">
       </el-table-column>
       <el-table-column
         prop="orderSn"
@@ -257,7 +258,7 @@
           <div class="settings" v-if="row.orderSn">
             <el-dropdown trigger="click">
               <span class="el-dropdown-link" style="color: #409eff">
-                其他<i class="el-icon-arrow-down el-icon--right"></i>
+                操作<i class="el-icon-arrow-down el-icon--right"></i>
               </span>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item
@@ -527,6 +528,11 @@ export default {
           this._queryRepairOrderList();
         }
       }
+    },
+
+    // 清除表格选中
+    cleanTableChoose() {
+      this.$refs.repairOrderListTableRef.clearSelection();
     },
 
     // 表格多选切换选择

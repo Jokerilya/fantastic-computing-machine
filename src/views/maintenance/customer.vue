@@ -486,11 +486,11 @@ import {
   uploadButlerOrderByOwn,
   importButlerOrder,
 } from "@/api/order.js";
-import tableMixin from "@/mixin/table";
+// import tableMixin from "@/mixin/table";
 import { localStorageData } from "@/utils";
 export default {
   title: "course",
-  mixins: [tableMixin],
+  // mixins: [tableMixin],
   data() {
     return {
       // 推荐人弹窗绑定的电话名字
@@ -565,7 +565,6 @@ export default {
         localStorage.getItem("queryButlerParams")
       );
     }
-    console.log(514, "-------", queryButlerParamsStr);
     if (queryButlerParamsStr) {
       const { pageNo, enterpriseName, contactsPhone, contactsPeople } =
         queryButlerParamsStr;

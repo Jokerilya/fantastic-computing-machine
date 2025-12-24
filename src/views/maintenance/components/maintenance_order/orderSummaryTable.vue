@@ -344,6 +344,9 @@ export default {
     // 点击编辑映射到表格
     changeOrderSummaryTableListEdit(flag) {
       this.orderSummaryTableListEdit = flag;
+      if (flag == false) {
+        this.queryRepairOrderList();
+      }
     },
     // 查询总表列表
     async queryRepairOrderList() {

@@ -38,6 +38,11 @@
           {{ row.workOrderChannel ? row.workOrderChannel : "/" }}
         </template>
       </el-table-column>
+      <el-table-column label="工单属性" width="120" align="center">
+        <template slot-scope="{ row }">
+          {{ row.workOrderProperty ? row.workOrderProperty : "/" }}
+        </template>
+      </el-table-column>
       <el-table-column label="师傅" width="90" align="center">
         <template slot-scope="{ row }">
           {{ row.masterRealName ? row.masterRealName : "/" }}
@@ -58,14 +63,23 @@
           {{ row.doorAmount ? row.doorAmount : "/" }}
         </template>
       </el-table-column>
+      <el-table-column label="师傅代买配件费" width="150" align="center">
+        <template slot-scope="{ row }">
+          {{ row.partsAmount ? row.partsAmount : "/" }}
+        </template>
+      </el-table-column>
       <el-table-column label="运营费用25%" width="110" align="center">
         <template slot-scope="{ row }">
-          {{ row.serviceAmount ? row.serviceAmount : "/" }}
+          <div :style="{ color: row.serviceAmount > 0 ? 'red' : '' }">
+            {{ row.serviceAmount ? row.serviceAmount : "/" }}
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="质保金" width="110" align="center">
         <template slot-scope="{ row }">
-          {{ row.retentionMoney ? row.retentionMoney : "/" }}
+          <div :style="{ color: row.retentionMoney > 0 ? 'red' : '' }">
+            {{ row.retentionMoney ? row.retentionMoney : "/" }}
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="应付师傅总费用" width="130" align="center">
@@ -80,16 +94,6 @@
       </el-table-column>
       <el-table-column label="客户验收" width="120" align="center">
         <template slot-scope="{ row }"> {{ row.checkTime }} </template>
-      </el-table-column>
-      <el-table-column label="工单属性" width="160" align="center">
-        <template slot-scope="{ row }">
-          {{ row.workOrderProperty ? row.workOrderProperty : "/" }}
-        </template>
-      </el-table-column>
-      <el-table-column label="师傅代买配件费" width="170" align="center">
-        <template slot-scope="{ row }">
-          {{ row.partsAmount ? row.partsAmount : "/" }}
-        </template>
       </el-table-column>
       <el-table-column label="申请人" width="120" align="center">
         <template slot-scope="{ row }">
@@ -197,6 +201,9 @@ export default {
     // 点击编辑映射到表格
     changeChecklistTableListEdit(flag) {
       this.checklistTableListEdit = flag;
+      if (flag == false) {
+        this.queryEnrollRepairOrderList();
+      }
     },
     // 跳转详情
     goToOrderDesc(row) {

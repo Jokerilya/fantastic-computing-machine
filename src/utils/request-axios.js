@@ -58,6 +58,8 @@ const forbiddenUrl = [
   "/admin/maintenance/handleRepairOrderExportByFaults",
   "/admin/maintenance/editMasterAssessmentItem",
   "/admin/maintenance/handleOnlineRepairEnterpriseOrderExport",
+  "/admin/maintenance/importButlerOrder",
+  "/admin/maintenance/handleDeviceInfoExport",
 ];
 
 service.interceptors.request.use((request) => {

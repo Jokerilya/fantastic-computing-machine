@@ -5126,7 +5126,7 @@ export default {
     background-color: #fff;
     border-top: 2px solid #efefef;
     text-align: right;
-    padding: 10px 20px 10px 50%;
+    padding: 10px 20px 10px 0;
   }
 
   // 新增故障项目框

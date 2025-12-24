@@ -270,10 +270,7 @@ export default {
     // 关闭群绑定业务员弹窗
     closeEnterpriseWechatBind() {
       this.enterpriseWechatBindVisible = false;
-      this.handleEnterpriseWechatBindParams = {
-        salesmanId: "",
-        chatIds: "",
-      };
+      this.handleEnterpriseWechatBindParams.salesmanId = "";
     },
     // 推荐人搜索
     async remoteMethod(query) {

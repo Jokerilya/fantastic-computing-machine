@@ -39,10 +39,6 @@ const forbiddenUrl = [
   "/admin/base/uploadImg",
   "/admin/financial/handlePaymentListImport",
   "/admin/maintenance/uploadBatchRepairOrder",
-  "/admin/maintenance/uploadButlerOrder",
-  "/admin/maintenance/uploadButlerOrder?type=2",
-  "/admin/maintenance/uploadButlerOrder?type=3",
-  "/admin/maintenance/uploadButlerOrderByOwn",
   "/admin/maintenance/handleMasterInfoExport",
   "/admin/maintenance/handleEnterpriseInfoExport",
   "/admin/maintenance/handleRepairEnterpriseOrderExport",
@@ -54,6 +50,8 @@ const forbiddenUrl = [
   "/admin/maintenance/handleRepairOrderExportByFaults",
   "/admin/maintenance/editMasterAssessmentItem",
   "/admin/maintenance/handleOnlineRepairEnterpriseOrderExport",
+  "/admin/maintenance/importButlerOrder",
+  "/admin/maintenance/handleDeviceInfoExport",
 ];
 
 service.interceptors.request.use(

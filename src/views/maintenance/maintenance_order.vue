@@ -156,7 +156,7 @@
     <el-row :gutter="20" style="margin-bottom: 10px">
       <el-col
         :span="17"
-        v-if="!orderSummaryTableListEdit && tableType != '交接单'"
+        v-if="!orderSummaryTableListEdit && tableType != 3 && tableType != 4"
       >
         <el-radio-group
           :size="sidebar.opened ? 'small' : 'medium'"
@@ -172,27 +172,45 @@
         </el-radio-group>
       </el-col>
       <el-col
-        :span="!orderSummaryTableListEdit && tableType != '交接单' ? 7 : 24"
+        :span="
+          !orderSummaryTableListEdit && tableType != 3 && tableType != 4
+            ? 7
+            : 24
+        "
         style="text-align: right"
       >
         <el-button
           plain
           @click="handleBatchProxyPayment"
           :disabled="multipleSelection.length == 0"
-          v-if="tableType == '视图'"
+          v-if="tableType == 1"
         >
           批量代付款
         </el-button>
         <el-button
+          @click="openPreviewGenerateBill"
+          plain
+          v-if="tableType == 4"
+          :disabled="accountSelection.length == 0"
+        >
+          生成对账单
+        </el-button>
+        <el-button
           @click="changeOrderSummaryTableListEdit"
           type="warning"
-          v-if="!orderSummaryTableListEdit && tableType != '视图'"
+          v-if="!orderSummaryTableListEdit && tableType != 1 && tableType != 4"
           >编辑</el-button
+        >
+        <el-button
+          @click="cancelOnlineRepairOrder"
+          type="success"
+          v-if="orderSummaryTableListEdit && tableType != 1"
+          >取消</el-button
         >
         <el-button
           @click="updateOnlineRepairOrder"
           type="success"
-          v-if="orderSummaryTableListEdit && tableType != '视图'"
+          v-if="orderSummaryTableListEdit && tableType != 1"
           >保存</el-button
         >
         <el-button
@@ -206,12 +224,14 @@
           v-if="!orderSummaryTableListEdit"
           plain
           type="info"
-          :style="{ marginRight: tableType == '视图' ? '10px' : '0px' }"
+          :style="{
+            marginRight: tableType == 1 || tableType == 4 ? '10px' : '0px',
+          }"
           @click="resetTableList"
           >重置</el-button
         >
         <el-dropdown
-          v-if="tableType == '视图'"
+          v-if="tableType == 1"
           @command="exportListFn"
           trigger="click"
           style="margin-right: 10px"
@@ -224,7 +244,7 @@
         </el-dropdown>
         <el-button
           style="margin-right: 10px"
-          v-if="tableType != '视图' && !orderSummaryTableListEdit"
+          v-if="tableType != 1 && !orderSummaryTableListEdit && tableType != 4"
           type="success"
           plain
           @click="handleTableExport"
@@ -236,21 +256,31 @@
           trigger="click"
           @command="tableTypeListFn"
         >
-          <el-button type="success" plain> 图表 </el-button>
+          <el-button type="success" plain>
+            {{
+              tableType == 1
+                ? "默认"
+                : tableType == 2
+                ? "订单总表"
+                : tableType == 3
+                ? "交接单"
+                : "对账单"
+            }}
+          </el-button>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item command="视图">视图</el-dropdown-item>
-            <el-dropdown-item command="对账单">对账单</el-dropdown-item>
-            <el-dropdown-item command="订单总表">订单总表</el-dropdown-item>
-            <el-dropdown-item command="交接单">交接单</el-dropdown-item>
+            <el-dropdown-item :command="1">默认</el-dropdown-item>
+            <el-dropdown-item :command="2">订单总表</el-dropdown-item>
+            <el-dropdown-item :command="3">交接单</el-dropdown-item>
+            <el-dropdown-item :command="4">对账单</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </el-col>
     </el-row>
 
     <el-card>
-      <!-- 订单列表视图 -->
+      <!-- 订单列表默认 -->
       <RepairOrderListTable
-        v-if="tableType == '视图'"
+        v-if="tableType == 1"
         ref="repairOrderListTableRef"
         :params="queryRepairOrderListParams"
         @change-paginationTotal="changePaginationTotal"
@@ -259,7 +289,7 @@
 
       <!-- 订单总表 -->
       <OrderSummaryTable
-        v-if="tableType == '订单总表'"
+        v-if="tableType == 2"
         ref="orderSummaryTableRef"
         :params="queryRepairOrderListParams"
         @change-paginationTotal="changePaginationTotal"
@@ -269,13 +299,140 @@
 
       <!-- 交接单-->
       <HandoverSheetTable
-        v-if="tableType == '交接单'"
+        v-if="tableType == 3"
         ref="handoverSheetTableRef"
         :params="queryRepairOrderListParams"
         @change-paginationTotal="changePaginationTotal"
         @change-checklistTableListEdit="changeOrderSummaryTableListEditBack"
       >
       </HandoverSheetTable>
+
+      <!-- 对账单 -->
+      <AccountTable
+        v-if="tableType == 4"
+        ref="accountTableRef"
+        :params="queryRepairOrderListParams"
+        @change-paginationTotal="changePaginationTotal"
+        @change-tableSelection="changeTableSelection"
+      >
+      </AccountTable>
+
+      <!-- 对账单信息 -->
+      <el-dialog
+        title="预览对账单信息"
+        :visible="previewGenerateBillInfoVisible"
+        width="50%"
+        :before-close="closePreviewGenerateBill"
+      >
+        <el-form
+          :rules="generateBillParamsRules"
+          :model="generateBillParams"
+          ref="generateBillFormRef"
+          label-position="top"
+          inline
+        >
+          <el-form-item label="甲方(供方)" prop="mchName">
+            <el-select
+              placeholder="请选择"
+              v-model="generateBillParams.mchName"
+            >
+              <el-option
+                v-for="item in mchNameList"
+                :key="item"
+                :label="item"
+                :value="item"
+              >
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="乙方(需方)" prop="enterpriseName">
+            <el-input
+              placeholder="请输入"
+              v-model="generateBillParams.enterpriseName"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="开票税率" prop="taxRateValue">
+            <el-select
+              placeholder="请选择"
+              v-model="generateBillParams.taxRateValue"
+              @change="changeTaxRate"
+            >
+              <el-option
+                v-for="item in taxRateList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              >
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="已选订单">
+            <el-table
+              style="width: 100%"
+              :data="accountSelectionCopy"
+              :key="accountSelectionCopy.length"
+            >
+              <el-table-column
+                label="公司名称"
+                show-overflow-tooltip
+                align="center"
+                width="230"
+              >
+                <template slot-scope="{ row }">
+                  {{ row.enterpriseName ? row.enterpriseName : "/" }}
+                </template>
+              </el-table-column>
+              <el-table-column
+                label="设备码"
+                show-overflow-tooltip
+                align="center"
+                width="200"
+              >
+                <template slot-scope="{ row }">
+                  {{ row.no ? row.no : "/" }}
+                </template>
+              </el-table-column>
+              <el-table-column
+                prop="orderSn"
+                label="订单号"
+                show-overflow-tooltip
+                align="center"
+                width="200"
+              >
+                <template slot-scope="{ row }">
+                  {{ row.orderSn }}
+                </template>
+              </el-table-column>
+              <el-table-column
+                prop="simpleDesc"
+                label="故障描述"
+                show-overflow-tooltip
+                width="200"
+                align="center"
+              ></el-table-column>
+              <el-table-column label="人工费" align="center">
+                <template slot-scope="{ row }">
+                  {{ row.doorAmount ? row.doorAmount : "/" }}
+                </template>
+              </el-table-column>
+              <el-table-column label="配件费" align="center">
+                <template slot-scope="{ row }">
+                  {{ row.partsAmount ? row.partsAmount : "/" }}
+                </template>
+              </el-table-column>
+              <el-table-column prop="payAmount" label="总金额" align="center">
+                <template slot-scope="{ row }">
+                  {{ row.payAmount ? row.payAmount : "/" }}
+                </template>
+              </el-table-column>
+            </el-table>
+          </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="closePreviewGenerateBill">取 消</el-button>
+          <el-button type="primary" @click="generateBill">确 定</el-button>
+        </span>
+      </el-dialog>
 
       <!-- 分页 -->
       <div
@@ -286,9 +443,10 @@
           background
           :current-page="queryRepairOrderListParams.pageNo"
           :page-size="queryRepairOrderListParams.pageSize"
-          layout="total, prev, pager, next, jumper"
+          layout="sizes, total, prev, pager, next, jumper"
           :total="paginationTotal"
           @current-change="changePageNo"
+          @size-change="changePageSize"
         ></el-pagination>
       </div>
     </el-card>
@@ -299,6 +457,7 @@
 import RepairOrderListTable from "../maintenance/components/maintenance_order/repairOrderListTable.vue";
 import OrderSummaryTable from "../maintenance/components/maintenance_order/orderSummaryTable.vue";
 import HandoverSheetTable from "../maintenance/components/maintenance_order/handoverSheetTable.vue";
+import AccountTable from "../maintenance/components/maintenance_order/accountTable.vue";
 
 import { handleBatchProxyPayment } from "@/api/proxy";
 import { getMasterList } from "@/api/user.js";
@@ -309,14 +468,37 @@ import {
   handleRepairEnterpriseOrderExport,
   handleOnlineRepairEnterpriseOrderExport,
   handleOnlineRepairMasterOrderExport,
+  generateBill,
 } from "@/api/order.js";
 import { mapGetters } from "vuex";
 export default {
-  components: { RepairOrderListTable, OrderSummaryTable, HandoverSheetTable },
+  components: {
+    RepairOrderListTable,
+    OrderSummaryTable,
+    HandoverSheetTable,
+    AccountTable,
+  },
   data() {
     return {
-      tableType: "视图", //视图  对账单  订单总表 交接单
-      multipleSelection: [], // 待收款订单
+      mchNameList: ["广东机将信息科技有限公司", "东莞市机之工匠科技有限公司"],
+      taxRateList: [
+        {
+          label: "1%",
+          value: 0,
+        },
+        {
+          label: "6%",
+          value: 0.05,
+        },
+        {
+          label: "13%",
+          value: 0.12,
+        },
+      ],
+      tableType: 1, //1默认  2订单总表 3交接单 4对账单
+      multipleSelection: [], // 选中的待收款订单
+      accountSelection: [], // 选中的对账单订单
+      accountSelectionCopy: [], //预览选中的对账单订单
       // 订单搜索条件
       queryRepairOrderListParams: {
         pageNo: 1,
@@ -420,6 +602,22 @@ export default {
       deviceTypeList: [],
       // 状态栏需要的数据
       orderSubscript: {},
+      generateBillParams: {
+        mchName: null,
+        enterpriseName: null,
+        relationOrderSnList: null,
+        taxRateValue: 0,
+      },
+      generateBillParamsRules: {
+        mchName: [{ required: true, message: "请选择甲方", trigger: "change" }],
+        enterpriseName: [
+          { required: true, message: "请输入乙方", trigger: "blur" },
+        ],
+        taxRateValue: [
+          { required: true, message: "请选择税率", trigger: "blur" },
+        ],
+      },
+      previewGenerateBillInfoVisible: false,
       statusObjList: [
         {
           str: "totalNum",
@@ -478,15 +676,87 @@ export default {
     ...mapGetters(["sidebar"]),
   },
   methods: {
+    closePreviewGenerateBill() {
+      this.accountSelectionCopy = [];
+      this.generateBillParams = {
+        mchName: null,
+        enterpriseName: null,
+        relationOrderSnList: null,
+        taxRateValue: 0,
+      };
+      this.$refs["generateBillFormRef"].resetFields();
+      this.previewGenerateBillInfoVisible = false;
+    },
+    // 选择税率后重新计算
+    changeTaxRate(e) {
+      if (e === 0) {
+        this.accountSelectionCopy = JSON.parse(
+          JSON.stringify(this.accountSelection)
+        );
+      } else {
+        let accountSelectionCopy = JSON.parse(
+          JSON.stringify(this.accountSelection)
+        );
+        accountSelectionCopy = accountSelectionCopy.map((item) => {
+          const newItem = { ...item };
+          const keys = ["doorAmount", "partsAmount", "payAmount"];
+          for (const key of keys) {
+            const val = item[key];
+            if (typeof val === "number" && !isNaN(val)) {
+              const result = Math.round(val * (1 + e) * 100) / 100;
+              newItem[key] = Number.isInteger(result)
+                ? Math.floor(result)
+                : result;
+            }
+          }
+          return newItem;
+        });
+        this.accountSelectionCopy = accountSelectionCopy;
+      }
+    },
+    // 打开预览
+    openPreviewGenerateBill() {
+      this.accountSelectionCopy = JSON.parse(
+        JSON.stringify(this.accountSelection)
+      );
+      this.generateBillParams.enterpriseName =
+        this.accountSelection[0].enterpriseName;
+      this.previewGenerateBillInfoVisible = true;
+    },
+    // 【生成对账单】
+    async generateBill() {
+      await this.$refs.generateBillFormRef.validate();
+      const orderSnList = this.accountSelection.map((item) =>
+        String(item.orderSn)
+      );
+      this.generateBillParams.taxRateLabel =
+        this.generateBillParams.taxRateValue === 0.12
+          ? "13%"
+          : this.generateBillParams.taxRateValue === 0.05
+          ? "6%"
+          : "1%";
+      this.generateBillParams.relationOrderSnList = orderSnList;
+      const res = await generateBill(this.generateBillParams);
+      if (res.code == "000") {
+        window.open(res.data, "_blank");
+        this.$message({
+          message: "操作成功",
+          type: "success",
+        });
+        await this.closePreviewGenerateBill();
+        this.accountSelection = [];
+        this.$refs.accountTableRef.cleanTableChoose();
+      }
+    },
     // 【导出订单总表】
     async handleTableExport() {
-      if (this.tableType == "订单总表") {
+      if (this.tableType == 2) {
         this.handleExport(
           1000,
           handleOnlineRepairEnterpriseOrderExport,
           "订单总表"
         );
-      } else if (this.tableType == "交接单") {
+      } else if (this.tableType == 3) {
         this.handleExport(1000, handleOnlineRepairMasterOrderExport, "交接单");
       }
     },
@@ -494,21 +764,34 @@ export default {
     // 【编辑图表】
     async changeOrderSummaryTableListEdit() {
       this.orderSummaryTableListEdit = true;
-      if (this.tableType == "订单总表") {
+      if (this.tableType == 2) {
         await this.$refs.orderSummaryTableRef.changeOrderSummaryTableListEdit(
           true
         );
-      } else if (this.tableType == "交接单") {
+      } else if (this.tableType == 3) {
         await this.$refs.handoverSheetTableRef.changeChecklistTableListEdit(
           true
         );
       }
     },
+    // 取消图表信息
+    async cancelOnlineRepairOrder() {
+      if (this.tableType == 2) {
+        await this.$refs.orderSummaryTableRef.changeOrderSummaryTableListEdit(
+          false
+        );
+      } else if (this.tableType == 3) {
+        await this.$refs.handoverSheetTableRef.changeChecklistTableListEdit(
+          false
+        );
+      }
+      this.orderSummaryTableListEdit = false;
+    },
     // 保存图表信息
     updateOnlineRepairOrder() {
-      if (this.tableType == "订单总表") {
+      if (this.tableType == 2) {
         this.$refs.orderSummaryTableRef.updateOnlineRepairOrder();
-      } else if (this.tableType == "交接单") {
+      } else if (this.tableType == 3) {
         this.$refs.handoverSheetTableRef.updateOnlineEnrollRepairOrder();
       }
     },
@@ -518,16 +801,11 @@ export default {
     },
     // 【切换图表】
     tableTypeListFn(e) {
-      if (e == "对账单") {
-        this.$message({
-          message: `正在开发中...`,
-          type: "warning",
-        });
-        return;
-      }
+      let tableTypeName =
+        e == 1 ? "默认" : e == 2 ? "订单总表" : e == 3 ? "交接单" : "对账单";
       if (e == this.tableType) {
         this.$message({
-          message: `您已经在 【${e}】 页面`,
+          message: `您已经在 【${tableTypeName}】 页面`,
           type: "warning",
         });
       } else {
@@ -548,26 +826,68 @@ export default {
           message: "操作成功",
           type: "success",
         });
+
         this.multipleSelection = [];
+        this.$refs.repairOrderListTableRef.cleanTableChoose();
+
         await this.getOrderSubscript();
         await this.$refs.repairOrderListTableRef.queryRepairOrderList();
       }
     },
     // 切换代付款项
     changeTableSelection(val) {
-      this.multipleSelection = val;
+      if (this.tableType == 1) {
+        this.multipleSelection = val;
+      } else if (this.tableType == 4) {
+        this.accountSelection = val;
+      }
     },
+    // 点击选择分页数量
+    async changePageSize(pagesize) {
+      this.queryRepairOrderListParams.pageSize = pagesize;
 
+      this.multipleSelection = [];
+      if (this.$refs.repairOrderListTableRef) {
+        this.$refs.repairOrderListTableRef.cleanTableChoose();
+      }
+
+      this.accountSelection = [];
+      if (this.$refs.accountTableRef) {
+        this.$refs.accountTableRef.cleanTableChoose();
+      }
+
+      if (this.tableType == 1) {
+        await this.$refs.repairOrderListTableRef.queryRepairOrderList();
+      } else if (this.tableType == 2) {
+        await this.$refs.orderSummaryTableRef.queryRepairOrderList();
+      } else if (this.tableType == 3) {
+        await this.$refs.handoverSheetTableRef.queryEnrollRepairOrderList();
+      } else if (this.tableType == 4) {
+        await this.$refs.accountTableRef.queryRepairOrderList();
+      }
+    },
     // 点击分页的页码
     async changePageNo(page) {
       this.queryRepairOrderListParams.pageNo = page;
+
       this.multipleSelection = [];
-      if (this.tableType == "视图") {
+      if (this.$refs.repairOrderListTableRef) {
+        this.$refs.repairOrderListTableRef.cleanTableChoose();
+      }
+
+      this.accountSelection = [];
+      if (this.$refs.accountTableRef) {
+        this.$refs.accountTableRef.cleanTableChoose();
+      }
+
+      if (this.tableType == 1) {
         await this.$refs.repairOrderListTableRef.queryRepairOrderList();
-      } else if (this.tableType == "订单总表") {
+      } else if (this.tableType == 2) {
         await this.$refs.orderSummaryTableRef.queryRepairOrderList();
-      } else if (this.tableType == "交接单") {
+      } else if (this.tableType == 3) {
         await this.$refs.handoverSheetTableRef.queryEnrollRepairOrderList();
+      } else if (this.tableType == 4) {
+        await this.$refs.accountTableRef.queryRepairOrderList();
       }
     },
     // 修改查询师傅
@@ -647,13 +967,25 @@ export default {
     // 修改订单状态 然后查询
     async changeOrderState() {
       this.queryRepairOrderListParams.pageNo = 1;
+
       this.multipleSelection = [];
-      if (this.tableType == "视图") {
+      if (this.$refs.repairOrderListTableRef) {
+        this.$refs.repairOrderListTableRef.cleanTableChoose();
+      }
+
+      this.accountSelection = [];
+      if (this.$refs.accountTableRef) {
+        this.$refs.accountTableRef.cleanTableChoose();
+      }
+
+      if (this.tableType == 1) {
         await this.$refs.repairOrderListTableRef.queryRepairOrderList();
-      } else if (this.tableType == "订单总表") {
+      } else if (this.tableType == 2) {
         await this.$refs.orderSummaryTableRef.queryRepairOrderList();
-      } else if (this.tableType == "交接单") {
+      } else if (this.tableType == 3) {
         await this.$refs.handoverSheetTableRef.queryEnrollRepairOrderList();
+      } else if (this.tableType == 4) {
+        await this.$refs.accountTableRef.queryRepairOrderList();
       }
     },
     // 重置订单表单数据
@@ -677,14 +1009,26 @@ export default {
         snkFlag: false,
         status: null,
       };
+
       this.multipleSelection = [];
+      if (this.$refs.repairOrderListTableRef) {
+        this.$refs.repairOrderListTableRef.cleanTableChoose();
+      }
+
+      this.accountSelection = [];
+      if (this.$refs.accountTableRef) {
+        this.$refs.accountTableRef.cleanTableChoose();
+      }
+
       setTimeout(async () => {
-        if (this.tableType == "视图") {
+        if (this.tableType == 1) {
           await this.$refs.repairOrderListTableRef.queryRepairOrderList();
-        } else if (this.tableType == "订单总表") {
+        } else if (this.tableType == 2) {
           await this.$refs.orderSummaryTableRef.queryRepairOrderList();
-        } else if (this.tableType == "交接单") {
+        } else if (this.tableType == 3) {
           await this.$refs.handoverSheetTableRef.queryEnrollRepairOrderList();
+        } else if (this.tableType == 4) {
+          await this.$refs.accountTableRef.queryRepairOrderList();
         }
         this.getOrderSubscript();
       }, 500);
@@ -692,13 +1036,25 @@ export default {
     // 查询订单表单数据
     async searchTableList() {
       this.queryRepairOrderListParams.pageNo = 1;
+
       this.multipleSelection = [];
-      if (this.tableType == "视图") {
+      if (this.$refs.repairOrderListTableRef) {
+        this.$refs.repairOrderListTableRef.cleanTableChoose();
+      }
+
+      this.accountSelection = [];
+      if (this.$refs.accountTableRef) {
+        this.$refs.accountTableRef.cleanTableChoose();
+      }
+
+      if (this.tableType == 1) {
         await this.$refs.repairOrderListTableRef.queryRepairOrderList();
-      } else if (this.tableType == "订单总表") {
+      } else if (this.tableType == 2) {
         await this.$refs.orderSummaryTableRef.queryRepairOrderList();
-      } else if (this.tableType == "交接单") {
+      } else if (this.tableType == 3) {
         await this.$refs.handoverSheetTableRef.queryEnrollRepairOrderList();
+      } else if (this.tableType == 4) {
+        await this.$refs.accountTableRef.queryRepairOrderList();
       }
       this.getOrderSubscript();
     },

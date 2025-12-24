@@ -1048,6 +1048,15 @@ export function getOrderSubscript(data) {
   });
 }
 
+// 生成对账单
+export function generateBill(data) {
+  return request({
+    url: `/admin/order/generateBill`,
+    method: "post",
+    data,
+  });
+}
+
 // 设置订单配件商品到达信息
 export function handlePartProductArriveInfo(data) {
   return request({
