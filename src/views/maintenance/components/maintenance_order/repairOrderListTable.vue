@@ -77,11 +77,14 @@
       </el-table-column>
       <el-table-column label="标签" show-overflow-tooltip align="center">
         <template slot-scope="{ row }">
-          <div v-for="item in lablelList" :key="item.value">
-            <el-tag v-if="row.label == item.value" :type="item.type">{{
-              item.value
-            }}</el-tag>
+          <div v-if="row.label != null">
+            <div v-for="item in lablelList" :key="item.value">
+              <el-tag v-if="row.label == item.value" :type="item.type">{{
+                item.value
+              }}</el-tag>
+            </div>
           </div>
+          <el-tag v-else> 普通 </el-tag>
         </template>
       </el-table-column>
       <el-table-column
@@ -487,7 +490,7 @@ export default {
       lablelList: [
         {
           value: "普通",
-          type: "",
+          type: null,
         },
         {
           value: "199",

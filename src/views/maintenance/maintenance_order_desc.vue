@@ -14,16 +14,31 @@
       </div>
     </div>
 
-    <!-- 状态步骤 -->
-    <el-card v-if="masterOrderTrackList.length > 0">
-      <div class="statusListBox">
+    <!-- 状态步骤 orderProcessList-->
+    <el-card
+      :body-style="{ padding: '10px 20px' }"
+      v-if="
+        masterOrderTrackList.length > 0 ||
+        orderDetail.orderProcessList.length > 0
+      "
+    >
+      <ProcessFlow
+        :params="orderDetail.orderProcessList"
+        v-if="
+          orderDetail.orderProcessList &&
+          orderDetail.orderProcessList.length > 0
+        "
+      ></ProcessFlow>
+      <div class="statusListBox" v-else>
         <div class="goLeftBtn" @click="scrollLeft">
           <el-image
+            style="width: 100%; height: 100%"
             src="https://res.bangwo8.com/osp2016/images/ui/arrow_left_0.svg?v=a556e390"
           ></el-image>
         </div>
         <div class="goRightBtn" @click="scrollRight">
           <el-image
+            style="width: 100%; height: 100%"
             src="https://res.bangwo8.com/osp2016/images/ui/arrow_right_0.svg?v=a23798a7"
           ></el-image>
         </div>
@@ -32,16 +47,8 @@
             <div
               class="statusItem"
               :style="{
-                backgroundColor:
-                  orderTrackListIndex ==
-                  masterOrderTrackList[chooseMaster].length - 1
-                    ? '#59a2f4'
-                    : '#fff',
-                color:
-                  orderTrackListIndex ==
-                  masterOrderTrackList[chooseMaster].length - 1
-                    ? '#fff'
-                    : '#000',
+                backgroundColor: orderTrackListIndex <= 5 ? '#59a2f4' : '#fff',
+                color: orderTrackListIndex <= 5 ? '#fff' : '#000',
               }"
               v-for="(
                 orderTrackListItem, orderTrackListIndex
@@ -49,14 +56,13 @@
               :key="orderTrackListItem.subStatus"
             >
               <div>{{ orderTrackListItem.title }}</div>
-              <div>{{ orderTrackListItem.createTime }}</div>
+              <div>
+                {{ orderTrackListItem.createTime }}
+              </div>
               <div
                 :style="{
                   backgroundColor:
-                    orderTrackListIndex ==
-                    masterOrderTrackList[chooseMaster].length - 1
-                      ? '#59a2f4'
-                      : '#fff',
+                    orderTrackListIndex <= 5 ? '#59a2f4' : '#fff',
                 }"
                 class="statusItem_rightLing"
                 v-if="
@@ -154,6 +160,14 @@
               <div class="mainOrderInfo_item">
                 <div class="label">下单时间</div>
                 <div class="value">{{ orderDetail.createTime }}</div>
+              </div>
+              <div
+                class="mainOrderInfo_item"
+                style="color: #999"
+                v-if="orderDetail.lastOrderCreateTime"
+              >
+                <div class="label">上次下单时间</div>
+                <div class="value">{{ orderDetail.lastOrderCreateTime }}</div>
               </div>
               <div class="mainOrderInfo_item">
                 <div class="label">下单人</div>
@@ -434,9 +448,7 @@
               </div>
 
               <div class="mainOrderInfo_item"></div>
-
               <!-- 企业付款 -->
-
               <div class="mainOrderInfo_item">
                 <div class="label">人工费</div>
                 <div class="value">
@@ -580,13 +592,11 @@
                 <div class="value">
                   {{ item.orderSn
                   }}<el-tag
-                    v-if="item.statusFlag"
-                    :type="item.statusFlag == 1 ? 'success' : 'danger'"
+                    v-if="item.statusFlag === 1"
+                    :type="danger"
                     size="mini"
                     style="margin-left: 8px"
-                    >{{
-                      item.statusFlag == 1 ? "再次上门维修" : "订单挂起"
-                    }}</el-tag
+                    >订单挂起</el-tag
                   >
                 </div>
               </div>
@@ -1271,199 +1281,227 @@
             <div class="operationBtnList">
               <el-button
                 size="mini"
-                type="primary"
-                v-if="item.remindStarted == 0 && item.subStatus == 3201"
-                @click="openRemindStartedDialog(item.orderSn)"
-              >
-                代师傅开始出发
-              </el-button>
-              <el-button
-                size="mini"
-                type="primary"
+                type="warning"
+                plain
+                icon="el-icon-video-pause"
                 v-if="
-                  !item.punchImages &&
-                  item.subStatus == 3201 &&
-                  item.remindStarted == 1
+                  orderDetail.enrollRepairOrderOutList &&
+                  orderDetail.enrollRepairOrderOutList.length > 0 &&
+                  !stopOrderStatus
                 "
-                @click="openHandlePhotographPunchDialog(item.orderSn)"
+                @click="openOrderSuspendDialog(1)"
+                >挂起</el-button
               >
-                代师傅拍照打卡
-              </el-button>
-              <el-button
-                size="mini"
-                type="primary"
-                v-if="item.subStatus == 3201 && item.punchImages"
-                @click="handleMasterQuotation(item.orderSn)"
-              >
-                代师傅检测报价
-              </el-button>
-              <el-button
-                size="mini"
-                type="primary"
-                v-if="item.subStatus == 3203"
-                @click="handleProxyConfirmQuotation(item.orderSn)"
-              >
-                代企业确认师傅报价
-              </el-button>
-              <el-button
-                size="mini"
-                type="primary"
-                v-if="item.subStatus == 3204"
-                @click="handleStartService(item.orderSn)"
-              >
-                代师傅开始服务
-              </el-button>
-              <el-button
-                size="mini"
-                type="primary"
-                v-if="item.subStatus == 3301"
-                @click="openSubmitAcceptanceDialog(item.orderSn)"
-              >
-                代师傅提交验收
-              </el-button>
               <el-button
                 size="mini"
                 type="warning"
-                v-if="item.subStatus == 3401"
-                @click="rejectOrderCheck(item.orderSn)"
-              >
-                驳回师傅验收申请
-              </el-button>
-              <el-button
-                size="mini"
-                type="primary"
-                v-if="item.subStatus == 3401"
-                @click="handleEnterpriseCheck(item.orderSn)"
-              >
-                代企业确认验收
-              </el-button>
-              <el-button
-                size="mini"
-                type="primary"
-                v-if="item.subStatus == 3501"
-                @click="handleProxyPayment(item.orderSn)"
-              >
-                标记企业付款
-              </el-button>
-              <el-button
-                size="mini"
-                type="primary"
+                plain
+                icon="el-icon-video-pause"
+                @click="openOrderSuspendDialog(0)"
                 v-if="
-                  orderDetail.enterpriseSubStatus == 2601 &&
-                  orderDetail.enrollRepairOrderOutList.length == index + 1
+                  orderDetail.enrollRepairOrderOutList &&
+                  orderDetail.enrollRepairOrderOutList.length > 0 &&
+                  stopOrderStatus
                 "
-                @click="openEnterpriseEvaluateDialog(item.orderSn)"
+                >取消挂起</el-button
               >
-                代企业评价
-              </el-button>
-              <el-button
-                size="mini"
-                type="primary"
-                v-if="item.subStatus >= 3301"
-                @click="handleOnlineOrder(orderDetail.orderSn)"
-              >
-                生成线上工单
-              </el-button>
-              <el-button
-                type="primary"
-                size="mini"
-                @click="sumbitQuotation(item.orderSn)"
-                v-if="['3202'].includes(item.subStatus)"
-                >确认报价</el-button
-              >
-              <el-button
-                size="mini"
-                type="primary"
-                @click="goAssignedMasterPage"
-                v-if="
-                  (orderDetail.enterpriseSubStatus == 2001 ||
-                    orderDetail.enterpriseSubStatus == 2101 ||
-                    item.consultDoorAmount != null) &&
-                  orderDetail.enrollRepairOrderOutList.length == index + 1
-                "
-              >
-                指派师傅
-              </el-button>
-              <el-button
-                v-if="item.subStatus <= 3502"
-                type="primary"
-                size="mini"
-                @click="
-                  openConsultPriceDialog(
-                    item.orderSn,
-                    item.doorAmount,
-                    item.consultRemarks,
-                    item.consultDoorAmount,
-                    item.masterTypeName
-                  )
-                "
-                >协商人工费</el-button
-              >
-              <el-button
-                v-if="
-                  orderDetail.enterpriseMainStatus > -1 &&
-                  orderDetail.enterpriseMainStatus <= 4
-                "
-                type="primary"
-                size="mini"
-                @click="clickCancelOrderDialog"
-                >取消订单</el-button
-              >
-              <el-button
-                size="mini"
-                type="danger"
-                v-if="
-                  item.subStatus >= 3401 &&
-                  (item.dataExamineStatus == 1 || item.dataExamineStatus == 0)
-                "
-                @click="openReviewDescDialog(item.orderSn)"
-              >
-                审核描述/过程
-              </el-button>
-              <el-button
-                v-if="item.subStatus >= 3502 && name == '管理员'"
-                type="danger"
-                size="mini"
-                @click="handleOrderRefund(orderDetail.orderSn)"
-                >订单退款</el-button
-              >
-              <el-button
-                size="mini"
-                type="danger"
-                v-if="
-                  orderDetail.timeoutFlag != 2301 &&
-                  item.subStatus == 3301 &&
-                  orderDetail.enrollRepairOrderOutList.length == index + 1
-                "
-                @click="
-                  handleMasterOrderServiceTimeout(item.orderSn, item.realName)
-                "
-              >
-                标记服务超时
-              </el-button>
-              <el-button
-                size="mini"
-                type="danger"
-                @click="handleMarkValidOrder(item.orderSn)"
-              >
-                标记师傅有效单
-              </el-button>
-              <el-button
-                size="mini"
-                type="danger"
-                @click="openMarkRepairOrderDialog(orderDetail.orderSn)"
-                v-if="!orderDetail.orderSn.includes('-F-')"
-              >
-                标记返修单
-              </el-button>
-              <el-button
-                size="mini"
-                type="danger"
-                @click="openComplaintDialog(item)"
-                v-if="item.subStatus > 3201"
-              >
-                投诉
-              </el-button>
+              <span v-if="!stopOrderStatus" style="margin-left: 8px">
+                <el-button
+                  size="mini"
+                  type="primary"
+                  v-if="item.remindStarted == 0 && item.subStatus == 3201"
+                  @click="openRemindStartedDialog(item.orderSn)"
+                >
+                  代师傅开始出发
+                </el-button>
+                <el-button
+                  size="mini"
+                  type="primary"
+                  v-if="
+                    !item.punchImages &&
+                    item.subStatus == 3201 &&
+                    item.remindStarted == 1
+                  "
+                  @click="openHandlePhotographPunchDialog(item.orderSn)"
+                >
+                  代师傅拍照打卡
+                </el-button>
+                <el-button
+                  size="mini"
+                  type="primary"
+                  v-if="item.subStatus == 3201 && item.punchImages"
+                  @click="handleMasterQuotation(item.orderSn)"
+                >
+                  代师傅检测报价
+                </el-button>
+                <el-button
+                  size="mini"
+                  type="primary"
+                  v-if="item.subStatus == 3203"
+                  @click="handleProxyConfirmQuotation(item.orderSn)"
+                >
+                  代企业确认师傅报价
+                </el-button>
+                <el-button
+                  size="mini"
+                  type="primary"
+                  v-if="item.subStatus == 3204"
+                  @click="handleStartService(item.orderSn)"
+                >
+                  代师傅开始服务
+                </el-button>
+                <el-button
+                  size="mini"
+                  type="primary"
+                  v-if="item.subStatus == 3301"
+                  @click="openSubmitAcceptanceDialog(item.orderSn)"
+                >
+                  代师傅提交验收
+                </el-button>
+                <el-button
+                  size="mini"
+                  type="warning"
+                  v-if="item.subStatus == 3401"
+                  @click="rejectOrderCheck(item.orderSn)"
+                >
+                  驳回师傅验收申请
+                </el-button>
+                <el-button
+                  size="mini"
+                  type="primary"
+                  v-if="item.subStatus == 3401"
+                  @click="handleEnterpriseCheck(item.orderSn)"
+                >
+                  代企业确认验收
+                </el-button>
+                <el-button
+                  size="mini"
+                  type="primary"
+                  v-if="item.subStatus == 3501"
+                  @click="handleProxyPayment(item.orderSn)"
+                >
+                  标记企业付款
+                </el-button>
+                <el-button
+                  size="mini"
+                  type="primary"
+                  v-if="
+                    orderDetail.enterpriseSubStatus == 2601 &&
+                    orderDetail.enrollRepairOrderOutList.length == index + 1
+                  "
+                  @click="openEnterpriseEvaluateDialog(item.orderSn)"
+                >
+                  代企业评价
+                </el-button>
+                <el-button
+                  size="mini"
+                  type="primary"
+                  v-if="item.subStatus >= 3301"
+                  @click="handleOnlineOrder(orderDetail.orderSn)"
+                >
+                  生成线上工单
+                </el-button>
+                <el-button
+                  type="primary"
+                  size="mini"
+                  @click="sumbitQuotation(item.orderSn)"
+                  v-if="['3202'].includes(item.subStatus)"
+                  >确认报价</el-button
+                >
+                <el-button
+                  size="mini"
+                  type="primary"
+                  @click="goAssignedMasterPage"
+                  v-if="
+                    (orderDetail.enterpriseSubStatus == 2001 ||
+                      orderDetail.enterpriseSubStatus == 2101 ||
+                      item.consultDoorAmount != null) &&
+                    orderDetail.enrollRepairOrderOutList.length == index + 1
+                  "
+                >
+                  指派师傅
+                </el-button>
+                <el-button
+                  v-if="item.subStatus <= 3502"
+                  type="primary"
+                  size="mini"
+                  @click="
+                    openConsultPriceDialog(
+                      item.orderSn,
+                      item.doorAmount,
+                      item.consultRemarks,
+                      item.consultDoorAmount,
+                      item.masterTypeName
+                    )
+                  "
+                  >协商人工费</el-button
+                >
+                <el-button
+                  v-if="
+                    orderDetail.enterpriseMainStatus > -1 &&
+                    orderDetail.enterpriseMainStatus <= 4
+                  "
+                  type="primary"
+                  size="mini"
+                  @click="clickCancelOrderDialog"
+                  >取消订单</el-button
+                >
+                <el-button
+                  size="mini"
+                  type="danger"
+                  v-if="
+                    item.subStatus >= 3401 &&
+                    (item.dataExamineStatus == 1 || item.dataExamineStatus == 0)
+                  "
+                  @click="openReviewDescDialog(item.orderSn)"
+                >
+                  审核描述/过程
+                </el-button>
+                <el-button
+                  v-if="item.subStatus >= 3502 && name == '管理员'"
+                  type="danger"
+                  size="mini"
+                  @click="handleOrderRefund(orderDetail.orderSn)"
+                  >订单退款</el-button
+                >
+                <el-button
+                  size="mini"
+                  type="danger"
+                  v-if="
+                    orderDetail.timeoutFlag != 2301 &&
+                    item.subStatus == 3301 &&
+                    orderDetail.enrollRepairOrderOutList.length == index + 1
+                  "
+                  @click="
+                    handleMasterOrderServiceTimeout(item.orderSn, item.realName)
+                  "
+                >
+                  标记服务超时
+                </el-button>
+                <el-button
+                  size="mini"
+                  type="danger"
+                  @click="handleMarkValidOrder(item.orderSn)"
+                >
+                  标记师傅有效单
+                </el-button>
+                <el-button
+                  size="mini"
+                  type="danger"
+                  @click="openMarkRepairOrderDialog(orderDetail.orderSn)"
+                  v-if="!orderDetail.orderSn.includes('-F-')"
+                >
+                  标记返修单
+                </el-button>
+                <el-button
+                  size="mini"
+                  type="danger"
+                  @click="openComplaintDialog(item)"
+                  v-if="item.subStatus > 3201"
+                >
+                  投诉
+                </el-button>
+              </span>
             </div>
           </el-tab-pane>
           <el-tab-pane label="全流程跟踪" name="全流程跟踪">
@@ -1485,7 +1523,7 @@
               </el-timeline>
             </div>
             <!-- 操作按钮 -->
-            <div class="operationBtnList">
+            <div class="operationBtnList" v-if="!stopOrderStatus">
               <el-button
                 size="mini"
                 type="primary"
@@ -1507,6 +1545,60 @@
                 @click="clickCancelOrderDialog"
                 >取消订单</el-button
               >
+            </div>
+          </el-tab-pane>
+          <el-tab-pane
+            label="全流程跟踪V2"
+            name="全流程跟踪V2"
+            v-if="
+              orderDetail.orderProcessList &&
+              orderDetail.orderProcessList.length > 0
+            "
+          >
+            <!--  @jump="handleJump" -->
+            <ServiceTimeline
+              :params="orderDetail.orderProcessList"
+              @biz-click="handleBizClick"
+            ></ServiceTimeline>
+            <!-- 操作按钮 -->
+            <div class="operationBtnList">
+              <!-- <el-button size="small" plain type="primary"
+                >关联咨询订单</el-button
+              > -->
+              <el-button
+                size="mini"
+                type="warning"
+                plain
+                icon="el-icon-video-pause"
+                @click="openOrderSuspendDialog(1)"
+                v-if="
+                  orderDetail.enrollRepairOrderOutList &&
+                  orderDetail.enrollRepairOrderOutList.length > 0 &&
+                  !stopOrderStatus
+                "
+                >挂起</el-button
+              >
+              <el-button
+                size="mini"
+                type="warning"
+                plain
+                icon="el-icon-video-pause"
+                @click="openOrderSuspendDialog(0)"
+                v-if="
+                  orderDetail.enrollRepairOrderOutList &&
+                  orderDetail.enrollRepairOrderOutList.length > 0 &&
+                  stopOrderStatus
+                "
+                >取消挂起</el-button
+              >
+
+              <!-- <el-button
+                size="small"
+                type="danger"
+                plain
+                icon="el-icon-circle-close"
+                >中止</el-button
+              > -->
             </div>
           </el-tab-pane>
         </el-tabs>
@@ -2346,38 +2438,82 @@
       </span>
     </el-dialog>
 
-    <!-- 取消订单的原因弹窗 -->
-    <el-dialog width="50%" :before-close="closecancelOrderDialog">
+    <!-- 挂起/取消挂起 -->
+    <el-dialog
+      width="50%"
+      :visible="orderSuspendDialogVisible"
+      :before-close="closeOrderSuspendDialog"
+      :close-on-click-modal="false"
+    >
       <div style="text-align: center; padding: 0 70px">
         <div style="color: #707070; font-size: 20px; font-weight: 700">
-          取消说明
+          {{
+            handleOrderPendingStatusParams.flag == 1 ? "订单挂起" : "取消挂起"
+          }}
         </div>
         <el-input
           type="textarea"
           resize="none"
           :rows="10"
-          v-model="delOrderinpValue"
+          v-model="handleOrderPendingStatusParams.remark"
           style="margin-top: 20px"
-          placeholder="请输入取消订单的原因"
+          :placeholder="`请输入${
+            handleOrderPendingStatusParams.flag == 1 ? '订单挂起' : '取消挂起'
+          }的原因`"
         ></el-input>
       </div>
       <div slot="footer" class="dialog-footer" style="text-align: center">
         <el-button
           style="width: 150px; background-color: #ffffff; color: #2e4c9e"
-          @click="closecancelOrderDialog"
+          @click="closeOrderSuspendDialog"
           >取 消</el-button
         >
         <el-button
           style="width: 150px; background-color: #2e4c9e"
           type="primary"
-          @click="_cancelRepairOrder"
+          @click="handleOrderPendingStatus"
           >确 定</el-button
         >
       </div>
     </el-dialog>
-    <!-- 备注 ＋ 标签 -->
+
+    <!--订单轨迹V2备注 -->
     <el-dialog
-      title="备注"
+      width="50%"
+      :visible="orderTrackingRemarkDialogVisible"
+      :before-close="closeOrderTrackingRemarkDialog"
+      :close-on-click-modal="false"
+    >
+      <div style="text-align: center; padding: 0 70px">
+        <div style="color: #707070; font-size: 20px; font-weight: 700">
+          添加备注
+        </div>
+        <el-input
+          type="textarea"
+          resize="none"
+          :rows="10"
+          v-model="handleRepairProcessRemarkParams.remark"
+          style="margin-top: 20px"
+          placeholder="请填写备注"
+        ></el-input>
+      </div>
+      <div slot="footer" class="dialog-footer" style="text-align: center">
+        <el-button
+          style="width: 150px; background-color: #ffffff; color: #2e4c9e"
+          @click="closeOrderTrackingRemarkDialog"
+          >取 消</el-button
+        >
+        <el-button
+          style="width: 150px; background-color: #2e4c9e"
+          type="primary"
+          @click="handleRepairProcessRemark"
+          >确 定</el-button
+        >
+      </div>
+    </el-dialog>
+
+    <el-dialog
+      title="取消订单"
       width="30%"
       :before-close="closecancelOrderDialog"
       :visible="cancelOrderDialog"
@@ -2689,6 +2825,9 @@
 </template>
 
 <script>
+import ProcessFlow from "../maintenance/components/maintenance_order_desc/processFlow.vue";
+import ServiceTimeline from "../maintenance/components/maintenance_order_desc/serviceTimeline.vue";
+
 import {
   saveOrderReminder,
   queryOrderReminderList,
@@ -2722,6 +2861,8 @@ import {
   handleOrderWarranty,
   useOrderDiscount,
   resetOrderDiscount,
+  handleOrderPendingStatus,
+  handleRepairProcessRemark,
 } from "@/api/order.js";
 import { UploadImg, getSysLabel } from "@/api/system.js";
 import {
@@ -2739,8 +2880,26 @@ import {
 import { mapGetters } from "vuex";
 import { Notification } from "element-ui";
 export default {
+  components: {
+    ProcessFlow,
+    ServiceTimeline,
+  },
   data() {
     return {
+      orderTrackingRemarkDialogVisible: false,
+      handleRepairProcessRemarkParams: {
+        id: null,
+        remark: null,
+      },
+
+      stopOrderStatus: false, // 点击了挂起 其他按钮隐藏
+
+      handleOrderPendingStatusParams: {
+        flag: null,
+        orderSn: null,
+        remark: null,
+      },
+      orderSuspendDialogVisible: false,
       // 初始化提醒框
       pickerOptionsDate: {
         disabledDate(time) {
@@ -3085,6 +3244,89 @@ export default {
     },
   },
   methods: {
+    // 确定备注
+    async handleRepairProcessRemark() {
+      if (!this.handleRepairProcessRemarkParams.remark) {
+        this.$message({
+          message: `请填写备注信息`,
+          type: "warning",
+        });
+      }
+      const res = await handleRepairProcessRemark(
+        this.handleRepairProcessRemarkParams
+      );
+      if (res.code == "000") {
+        this.$message({
+          message: "操作成功",
+          type: "success",
+        });
+        await this.getRepairOrderDetail();
+        this.closeOrderTrackingRemarkDialog();
+      }
+    },
+    // 关闭轨迹备注框
+    closeOrderTrackingRemarkDialog() {
+      this.orderTrackingRemarkDialogVisible = false;
+      this.handleRepairProcessRemarkParams = {
+        id: null,
+        remark: null,
+      };
+    },
+    // 订单挂起
+    async handleOrderPendingStatus() {
+      if (!this.handleOrderPendingStatusParams.remark) {
+        this.$message({
+          message: `请填写${
+            this.handleOrderPendingStatusParams.flag == 1
+              ? "订单挂起"
+              : "取消订单挂起"
+          }的原因`,
+          type: "warning",
+        });
+        return;
+      }
+      const res = await handleOrderPendingStatus(
+        this.handleOrderPendingStatusParams
+      );
+      if (res.code == "000") {
+        this.$message({
+          message: "操作成功",
+          type: "success",
+        });
+        await this.getRepairOrderDetail();
+        this.closeOrderSuspendDialog();
+      }
+    },
+    // 关闭订单挂起/取消挂起弹框
+    closeOrderSuspendDialog() {
+      this.handleOrderPendingStatusParams = {
+        flag: null,
+        orderSn: null,
+        remark: null,
+      };
+      this.orderSuspendDialogVisible = false;
+    },
+    // 打开订单挂起/取消挂起弹框
+    openOrderSuspendDialog(flag) {
+      this.handleOrderPendingStatusParams.orderSn =
+        this.orderDetail.enrollRepairOrderOutList[
+          this.orderDetail.enrollRepairOrderOutList.length - 1
+        ].orderSn;
+      this.handleOrderPendingStatusParams.flag = flag;
+      this.orderSuspendDialogVisible = true;
+    },
+
+    // 点击了按钮
+    handleBizClick(btnName, item) {
+      if (btnName == "添加备注") {
+        this.handleRepairProcessRemarkParams.id = item.id;
+        this.orderTrackingRemarkDialogVisible = true;
+      }
+    },
+    //
+    // handleJump(item) {
+    //   console.log("点击了跳转:", item.stepName);
+    // },
     // 获取该订单待办事项
     async queryOrderReminderList() {
       if (this.NotificationList.length > 0) {
@@ -4760,24 +5002,28 @@ export default {
     // 状态内容左滑 右滑
     scrollLeft() {
       let container = this.$refs.statusListFlex;
-      container.scrollLeft -= 300; // 每次左移100px
+      if (container && container.scrollLeft) {
+        container.scrollLeft -= 300; // 每次左移100px
+      }
     },
     scrollRight() {
       let container = this.$refs.statusListFlex;
-      container.scrollLeft += 300; // 每次右移100px.
+      if (container && container.scrollLeft) {
+        container.scrollLeft += 300; // 每次右移100px.
+      }
     },
     // 获取详情
     async getRepairOrderDetail() {
       const res = await getRepairOrderDetail({
         enterpriseOrderSn: this.orderSn,
       });
+
       if (res.code == "000") {
         if (res.data.userCouponList) {
-          // type == 2 优惠券
+          // type == 2 优惠券 type == 3 维修次卡
           const type2Coupons = res.data.userCouponList.filter(
             (item) => item.type === 2
           );
-          // type == 3 维修次卡
           const type3Coupons = res.data.userCouponList
             .filter((item) => item.type === 3)
             .slice(0, 10);
@@ -4791,10 +5037,6 @@ export default {
             .map((i) => i.trim()) // 去除每项前后的空格
             .filter((i) => i);
         };
-
-        // if (!res.data.label) {
-        //   res.data.label = "普通";
-        // }
 
         if (
           res.data.enrollRepairOrderOutList &&
@@ -4869,7 +5111,6 @@ export default {
                   (i) => i.subStatus !== "-3001"
                 );
               }
-
               const subMap = new Map(
                 item.orderTrackList.map((item) => [item.subStatus, item])
               );
@@ -4894,6 +5135,7 @@ export default {
             if (item.completeImages) {
               item.completeImages = imgStrTurn(item.completeImages);
             }
+
             // 回显打卡图片
             if (item.punchImages) {
               item.punchImages = imgStrTurn(item.punchImages);
@@ -4910,6 +5152,7 @@ export default {
                 });
               }
             }
+
             // 回显配件
             if (item.parts) {
               item.parts = JSON.parse(item.parts);
@@ -4920,21 +5163,36 @@ export default {
             }
           });
 
+          // 状态默认到最新
+          setTimeout(() => {
+            let container = this.$refs.statusListFlex;
+            container.scrollLeft += 1000; // 每次左移100px
+          }, 1000);
+
           // 展示最后一个师傅的数据
-          this.rightTabActiveName =
-            res.data.enrollRepairOrderOutList[
-              res.data.enrollRepairOrderOutList.length - 1
-            ].orderSn;
-          this.chooseMaster = res.data.enrollRepairOrderOutList.length - 1;
+          if (!this.rightTabActiveName) {
+            this.rightTabActiveName =
+              res.data.enrollRepairOrderOutList[
+                res.data.enrollRepairOrderOutList.length - 1
+              ].orderSn;
+            this.chooseMaster = res.data.enrollRepairOrderOutList.length - 1;
+          }
         } else {
           this.rightTabActiveName = "全流程跟踪";
         }
 
-        // 状态默认到最新
-        setTimeout(() => {
-          let container = this.$refs.statusListFlex;
-          container.scrollLeft += 1000; // 每次左移100px
-        }, 1000);
+        console.log(5172, res.data.orderProcessList);
+
+        if (res.data.orderProcessList && res.data.orderProcessList.length > 0) {
+          let lastOrderProcess =
+            res.data.orderProcessList[res.data.orderProcessList.length - 1];
+          if (lastOrderProcess.processKey == "order_stop") {
+            this.stopOrderStatus = true;
+          } else {
+            this.stopOrderStatus = false;
+          }
+        }
+
         this.orderDetail = res.data;
       }
     },
@@ -4971,7 +5229,7 @@ export default {
   .todoListIconBox {
     position: fixed;
     right: 3%;
-    top: 32%;
+    top: 22%;
     z-index: 5;
     border: 1px solid #efefef;
     border-radius: 50%;
@@ -5004,33 +5262,15 @@ export default {
       position: absolute;
       top: 16px;
       left: 24px;
-      width: 90px;
-      height: 90px;
+      width: 20px;
+      height: 20px;
     }
     .goRightBtn {
       position: absolute;
       top: 16px;
-      right: -63px;
-      width: 90px;
-      height: 90px;
-    }
-    .goLeftBtn > image,
-    .goRightBtn > image {
-      width: 100%;
-      height: 100%;
-    }
-
-    .statusList_leftBtn {
-      position: absolute;
-      left: 10px;
-      top: 15px;
-      height: 20px;
+      right: -0px;
       width: 20px;
-    }
-    .statusList_rightBtn {
-      position: absolute;
-      right: 10px;
-      top: 15px;
+      height: 20px;
     }
     .statusList {
       max-width: 87vw;

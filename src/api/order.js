@@ -1275,3 +1275,21 @@ export function updateOnlineEnrollRepairOrder(data) {
     data,
   });
 }
+
+// 订单挂起/继续
+export function handleOrderPendingStatus(data) {
+  return request({
+    url: `/admin/order/handleOrderPendingStatus`,
+    method: "post",
+    data,
+  });
+}
+
+// 订单流程备注
+export function handleRepairProcessRemark(data) {
+  return request({
+    url: `/admin/order/handleRepairProcessRemark`,
+    method: "post",
+    data,
+  });
+}

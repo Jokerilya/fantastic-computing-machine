@@ -1,1 +1,5 @@
-node_modules
+node_modules/
+dist/
+dist.rar
+*.zip
+dist background22.8.11,16.41.zip

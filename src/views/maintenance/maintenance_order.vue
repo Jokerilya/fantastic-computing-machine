@@ -272,6 +272,7 @@
             <el-dropdown-item :command="2">订单总表</el-dropdown-item>
             <el-dropdown-item :command="3">交接单</el-dropdown-item>
             <el-dropdown-item :command="4">对账单</el-dropdown-item>
+            <!-- <el-dropdown-item :command="5">日报</el-dropdown-item> -->
           </el-dropdown-menu>
         </el-dropdown>
       </el-col>
@@ -317,6 +318,8 @@
       >
       </AccountTable>
 
+      <DailyNewspaper v-if="tableType == 5"> </DailyNewspaper>
+
       <!-- 对账单信息 -->
       <el-dialog
         title="预览对账单信息"
@@ -352,10 +355,10 @@
             ></el-input>
           </el-form-item>
           <el-form-item label="开票税率" prop="taxRateValue">
+            <!-- @change="changeTaxRate" -->
             <el-select
               placeholder="请选择"
               v-model="generateBillParams.taxRateValue"
-              @change="changeTaxRate"
             >
               <el-option
                 v-for="item in taxRateList"
@@ -366,17 +369,17 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="已选订单">
+          <el-form-item label="已选订单" style="width: 100%">
             <el-table
               style="width: 100%"
-              :data="accountSelectionCopy"
               :key="accountSelectionCopy.length"
+              :data="accountSelectionCopy"
             >
               <el-table-column
                 label="公司名称"
                 show-overflow-tooltip
                 align="center"
-                width="230"
+                width="240"
               >
                 <template slot-scope="{ row }">
                   {{ row.enterpriseName ? row.enterpriseName : "/" }}
@@ -386,7 +389,6 @@
                 label="设备码"
                 show-overflow-tooltip
                 align="center"
-                width="200"
               >
                 <template slot-scope="{ row }">
                   {{ row.no ? row.no : "/" }}
@@ -397,7 +399,6 @@
                 label="订单号"
                 show-overflow-tooltip
                 align="center"
-                width="200"
               >
                 <template slot-scope="{ row }">
                   {{ row.orderSn }}
@@ -407,7 +408,6 @@
                 prop="simpleDesc"
                 label="故障描述"
                 show-overflow-tooltip
-                width="200"
                 align="center"
               ></el-table-column>
               <el-table-column label="人工费" align="center">
@@ -458,6 +458,7 @@ import RepairOrderListTable from "../maintenance/components/maintenance_order/re
 import OrderSummaryTable from "../maintenance/components/maintenance_order/orderSummaryTable.vue";
 import HandoverSheetTable from "../maintenance/components/maintenance_order/handoverSheetTable.vue";
 import AccountTable from "../maintenance/components/maintenance_order/accountTable.vue";
+import DailyNewspaper from "../maintenance/components/maintenance_order/dailyNewspaper.vue";
 
 import { handleBatchProxyPayment } from "@/api/proxy";
 import { getMasterList } from "@/api/user.js";
@@ -470,6 +471,7 @@ import {
   handleOnlineRepairMasterOrderExport,
   generateBill,
 } from "@/api/order.js";
+
 import { mapGetters } from "vuex";
 export default {
   components: {
@@ -477,6 +479,7 @@ export default {
     OrderSummaryTable,
     HandoverSheetTable,
     AccountTable,
+    DailyNewspaper,
   },
   data() {
     return {
