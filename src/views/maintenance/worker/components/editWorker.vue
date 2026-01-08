@@ -1,28 +1,89 @@
 <template>
   <div v-if="dialogForm">
     <el-dialog
-      title="编辑师傅"
-      :visible="dialogVisible"
+      title="编辑师傅信息"
+      :visible.sync="dialogVisible"
       :before-close="closeFn"
-      width="35%"
-      :style="{ height: '90vh' }"
+      width="650px"
+      :close-on-click-modal="false"
+      top="8vh"
+      custom-class="edit-worker-dialog"
     >
-      <div style="height: 60vh; overflow: auto">
-        <el-form label-width="120px" label-position="left">
-          <el-form-item label="姓名">
-            <el-input v-model="dialogForm.realName"></el-input>
+      <div class="scroll-form-container">
+        <el-form
+          ref="editForm"
+          :model="dialogForm"
+          label-width="90px"
+          label-position="right"
+          size="small"
+        >
+          <div class="form-section-header">基础信息</div>
+          <el-row :gutter="20">
+            <el-col :span="12">
+              <el-form-item label="师傅姓名">
+                <el-input
+                  v-model="dialogForm.realName"
+                  placeholder="请输入姓名"
+                ></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="师傅编号">
+                <el-input
+                  v-model="dialogForm.number"
+                  @input="blurWorkerNum"
+                  placeholder="请输入编号"
+                ></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-form-item label="身份证号">
+            <el-input
+              v-model="dialogForm.identityNumber"
+              placeholder="请输入身份证号码"
+            ></el-input>
           </el-form-item>
-          <el-form-item label="身份证">
-            <el-input v-model="dialogForm.identityNumber"></el-input>
-          </el-form-item>
+
           <el-form-item label="行业经验">
-            <el-input v-model="dialogForm.industryExperience"></el-input>
+            <el-input
+              type="textarea"
+              :rows="2"
+              v-model="dialogForm.industryExperience"
+              placeholder="请简述行业经验"
+            ></el-input>
           </el-form-item>
+
+          <div class="form-section-header">服务配置</div>
+          <el-form-item label="服务地区">
+            <el-cascader
+              v-model="dialogForm.serviceAreas"
+              :options="serviceAreasList"
+              :props="serviceAreasProps"
+              style="width: 100%"
+              placeholder="请选择服务地区 (可多选)"
+              clearable
+            ></el-cascader>
+          </el-form-item>
+
+          <el-form-item label="服务类型">
+            <el-cascader
+              v-model="dialogForm.serviceTypes"
+              :options="typeList"
+              :props="serviceTypesProps"
+              style="width: 100%"
+              placeholder="请选择服务类型 (可多选)"
+              clearable
+            ></el-cascader>
+          </el-form-item>
+
           <el-form-item label="服务部位">
             <el-select
               v-model="dialogForm.servePosition"
               multiple
-              placeholder="请选择"
+              collapse-tags
+              placeholder="请选择服务部位"
+              style="width: 100%"
             >
               <el-option
                 v-for="(item, index) in positionList"
@@ -32,97 +93,114 @@
               ></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="服务地区">
-            <el-cascader
-              v-model="dialogForm.serviceAreas"
-              :options="serviceAreasList"
-              :props="serviceAreasProps"
-            ></el-cascader>
-          </el-form-item>
-          <el-form-item label="服务类型">
-            <el-cascader
-              v-model="dialogForm.serviceTypes"
-              :options="typeList"
-              :props="serviceTypesProps"
-            ></el-cascader>
-          </el-form-item>
-          <el-form-item label="师傅编号">
-            <el-input
-              v-model="dialogForm.number"
-              @input="blurWorkerNum"
-            ></el-input>
-          </el-form-item>
-          <el-form-item label="真实头像">
-            <el-upload
-              style="width: 50%"
-              :file-list="avatarFileList"
-              :limit="1"
-              action="#"
-              :http-request="avatarUploadFn"
-              accept=".jpg,.png"
-              list-type="picture-card"
-            >
-              <i class="el-icon-plus"></i>
-            </el-upload>
-          </el-form-item>
-          <el-form-item label="身份证正面照">
-            <el-upload
-              style="width: 50%"
-              :file-list="idJustFileList"
-              :limit="1"
-              action="#"
-              accept=".jpg,.png"
-              :http-request="idJustUploadFn"
-              list-type="picture-card"
-            >
-              <i class="el-icon-plus"></i>
-            </el-upload>
-          </el-form-item>
-          <el-form-item label="身份证反面照">
-            <el-upload
-              style="width: 50%"
-              :file-list="idBackFileList"
-              :http-request="idBackUploadFn"
-              accept=".jpg,.png"
-              :limit="1"
-              action="#"
-              list-type="picture-card"
-            >
-              <i class="el-icon-plus"></i>
-            </el-upload>
-          </el-form-item>
+
+          <div class="form-section-header">证件照片</div>
+          <el-row :gutter="10">
+            <el-col :span="8">
+              <el-form-item label="真实头像" label-width="70px">
+                <el-upload
+                  class="avatar-uploader-mini"
+                  action="#"
+                  :http-request="avatarUploadFn"
+                  :show-file-list="false"
+                  accept=".jpg,.png,.jpeg"
+                >
+                  <img
+                    v-if="dialogForm.realPortrait"
+                    :src="dialogForm.realPortrait"
+                    class="avatar"
+                  />
+                  <div v-else class="uploader-placeholder">
+                    <i class="el-icon-plus"></i>
+                  </div>
+                </el-upload>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="身份证正" label-width="70px">
+                <el-upload
+                  class="avatar-uploader-mini"
+                  action="#"
+                  :http-request="idJustUploadFn"
+                  :show-file-list="false"
+                  accept=".jpg,.png,.jpeg"
+                >
+                  <img
+                    v-if="dialogForm.identityFrontImage"
+                    :src="dialogForm.identityFrontImage"
+                    class="avatar"
+                  />
+                  <div v-else class="uploader-placeholder">
+                    <i class="el-icon-plus"></i>
+                  </div>
+                </el-upload>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="身份证反" label-width="70px">
+                <el-upload
+                  class="avatar-uploader-mini"
+                  action="#"
+                  :http-request="idBackUploadFn"
+                  :show-file-list="false"
+                  accept=".jpg,.png,.jpeg"
+                >
+                  <img
+                    v-if="dialogForm.identityBackImage"
+                    :src="dialogForm.identityBackImage"
+                    class="avatar"
+                  />
+                  <div v-else class="uploader-placeholder">
+                    <i class="el-icon-plus"></i>
+                  </div>
+                </el-upload>
+              </el-form-item>
+            </el-col>
+          </el-row>
         </el-form>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="closeFn">取 消</el-button>
-        <el-button type="primary" @click="confirmFn">确 定</el-button>
+        <el-button type="primary" @click="confirmFn">保存修改</el-button>
       </span>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { addressFn, UploadImg } from "@/api/system";
+import { UploadImg } from "@/api/system";
 import {
   editMasterInfo,
   queryDevicePositionList,
   queryDeviceTypeList,
-  queryMasterName,
 } from "@/api/order";
 
+// 引入地址数据，建议改为 import 方式或者保留 require
+import addressData from "../../../../utils/address.json";
+
 export default {
+  name: "EditWorker",
   data() {
     return {
       dialogVisible: false,
-      positionList: null,
+      positionList: [],
+      typeList: [],
+      serviceAreasList: addressData, // 直接赋值
 
-      typeList: null,
-      serviceAreasList: [],
+      dialogForm: {
+        realName: "",
+        identityNumber: "",
+        industryExperience: "",
+        servePosition: [],
+        serviceAreas: [],
+        serviceTypes: [],
+        number: "",
+        realPortrait: "",
+        identityFrontImage: "",
+        identityBackImage: "",
+      },
 
-      dialogForm: null,
-      avatarFileList: [],
-      idJustFileList: [],
-      idBackFileList: [],
+      // 级联配置
       serviceAreasProps: {
         checkStrictly: false,
         emitPath: false,
@@ -142,180 +220,210 @@ export default {
     };
   },
   async created() {
-    const positionRes = await queryDevicePositionList();
-    this.positionList = positionRes.data;
-    const typeRes = await queryDeviceTypeList();
-    this.typeList = typeRes.data;
-  },
-  mounted() {
-    this.serviceAreasList = require("../../../../utils/address.json");
+    // 并发请求，提高速度
+    Promise.all([queryDevicePositionList(), queryDeviceTypeList()]).then(
+      ([posRes, typeRes]) => {
+        this.positionList = posRes.data;
+        this.typeList = typeRes.data;
+      }
+    );
   },
   methods: {
     // 打开弹框
-    async openEditworkerDialog(row) {
-      if (row.servePosition) {
-        row.servePosition = row.servePosition.split(",");
-      }
-      if (row.serviceAreas) {
-        row.serviceAreas = row.serviceAreas.split(",");
-      }
-      if (row.serviceTypes) {
-        row.serviceTypes = row.serviceTypes.split(",");
-      }
-      this.dialogForm = { ...row };
-      // 对图片单独处理
-      this.avatarFileList = [
-        {
-          url: row.realPortrait,
-        },
-      ];
-      this.idJustFileList = [
-        {
-          url: row.identityFrontImage,
-        },
-      ];
-      this.idBackFileList = [
-        {
-          url: row.identityBackImage,
-        },
-      ];
+    openEditworkerDialog(row) {
+      // 深拷贝，防止修改影响父组件列表显示
+      const formData = JSON.parse(JSON.stringify(row));
+
+      // 数据格式转换：字符串转数组 (加了非空判断)
+      formData.servePosition = formData.servePosition
+        ? formData.servePosition.split(",")
+        : [];
+      formData.serviceAreas = formData.serviceAreas
+        ? formData.serviceAreas.split(",")
+        : [];
+      formData.serviceTypes = formData.serviceTypes
+        ? formData.serviceTypes.split(",")
+        : [];
+
+      // 赋值
+      this.dialogForm = formData;
       this.dialogVisible = true;
     },
-    // 判断师傅编号是否为数字或字母
+
+    // 过滤编号特殊字符
     blurWorkerNum() {
-      this.dialogForm.number = this.dialogForm.number.replace(/[^\w\/]/gi, "");
+      if (this.dialogForm.number) {
+        this.dialogForm.number = this.dialogForm.number.replace(
+          /[^\w\/]/gi,
+          ""
+        );
+      }
     },
 
-    // 确定的事件
+    // 确定提交
     async confirmFn() {
-      if (this.dialogForm.servePosition) {
-        this.dialogForm.servePosition = this.dialogForm.servePosition.join(",");
-      }
-      if (this.dialogForm.serviceAreas) {
-        this.dialogForm.serviceAreas = this.dialogForm.serviceAreas.join(",");
-      }
+      // 构造提交参数，将数组转回字符串
+      const params = { ...this.dialogForm };
 
-      if (this.dialogForm.serviceTypes) {
-        this.dialogForm.serviceTypes = this.dialogForm.serviceTypes.join(",");
-      }
-      const res = await editMasterInfo(this.dialogForm);
-      if (res.message === "操作成功") {
-        this.$message({
-          message: "编辑成功",
-          type: "success",
-        });
-        this.closeFn();
+      params.servePosition = Array.isArray(params.servePosition)
+        ? params.servePosition.join(",")
+        : "";
+      params.serviceAreas = Array.isArray(params.serviceAreas)
+        ? params.serviceAreas.join(",")
+        : "";
+      params.serviceTypes = Array.isArray(params.serviceTypes)
+        ? params.serviceTypes.join(",")
+        : "";
+
+      try {
+        const res = await editMasterInfo(params);
+        if (res.message === "操作成功") {
+          this.$message.success("编辑成功");
+          this.closeFn();
+        }
+      } catch (e) {
+        console.error(e);
       }
     },
 
-    // 上传图片
-    async idBackUploadFn(data) {
+    // 通用上传处理逻辑
+    async handleUpload(data, fieldName) {
       const loading = this.$loading({
-        text: "上传图片中,请耐心等待...",
+        text: "上传中...",
+        target: ".edit-worker-dialog", // loading只遮罩弹窗
       });
-      const formData = new FormData();
-      formData.append("file", data.file);
-      const res = await UploadImg(formData);
-      this.dialogForm.identityBackImage = res.data;
-      this.idBackFileList = [
-        {
-          url: res.data,
-        },
-      ];
-      loading.close();
+      try {
+        const formData = new FormData();
+        formData.append("file", data.file);
+        const res = await UploadImg(formData);
+        if (res.code === "000" || res.data) {
+          this.dialogForm[fieldName] = res.data;
+          this.$message.success("上传成功");
+        }
+      } catch (e) {
+        this.$message.error("上传失败");
+      } finally {
+        loading.close();
+      }
     },
-    async idJustUploadFn(data) {
-      const loading = this.$loading({
-        text: "上传图片中,请耐心等待...",
-      });
-      const formData = new FormData();
-      formData.append("file", data.file);
-      const res = await UploadImg(formData);
-      this.dialogForm.identityFrontImage = res.data;
-      this.idJustFileList = [
-        {
-          url: res.data,
-        },
-      ];
-      loading.close();
+
+    // 各个字段的上传入口
+    avatarUploadFn(data) {
+      this.handleUpload(data, "realPortrait");
     },
-    async avatarUploadFn(data) {
-      const loading = this.$loading({
-        text: "上传图片中,请耐心等待...",
-      });
-      const formData = new FormData();
-      formData.append("file", data.file);
-      const res = await UploadImg(formData);
-      this.dialogForm.realPortrait = res.data;
-      this.avatarFileList = [
-        {
-          url: res.data,
-        },
-      ];
-      loading.close();
+    idJustUploadFn(data) {
+      this.handleUpload(data, "identityFrontImage");
     },
+    idBackUploadFn(data) {
+      this.handleUpload(data, "identityBackImage");
+    },
+
     // 关闭事件
     async closeFn() {
-      await this.$emit("closeDialog");
       this.dialogVisible = false;
+      this.$emit("closeDialog"); // 通知父组件刷新列表
+      // 重置表单 (可选，因为每次打开都会重新赋值)
       this.dialogForm = null;
-      this.avatarFileList = [];
-      this.idJustFileList = [];
-      this.idBackFileList = [];
     },
   },
 };
 </script>
 
-<style lang="less">
-.content {
-  .oneLine {
-    display: flex;
-    margin-bottom: 20px;
-    .item {
-      position: relative;
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 20px 0 10px;
-      .label {
-        color: #1f1f1f;
-        font-size: 15px;
-        font-weight: 700;
-      }
+<style lang="less" scoped>
+/* 弹窗整体美化 */
+::v-deep .edit-worker-dialog {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
 
-      .location {
-        cursor: pointer;
-        position: absolute;
-        right: 13px;
-        bottom: 9px;
-        background-color: orange;
-        color: #fff;
-        width: 20px;
-        height: 20px;
-        border-radius: 10px;
-        font-size: 12px;
-        line-height: 20px;
-        text-align: center;
-      }
+  .el-dialog__header {
+    background: #f8f9fa;
+    padding: 15px 20px;
+    border-bottom: 1px solid #ebeef5;
+    .el-dialog__title {
+      font-weight: 600;
+      color: #333;
     }
   }
 
-  .imgLine {
-    display: flex;
-    height: 180px;
+  .el-dialog__body {
+    padding: 0; /* padding交给内部容器 */
+  }
+
+  .el-dialog__footer {
+    padding: 15px 20px;
+    border-top: 1px solid #ebeef5;
+    background: #fff;
+  }
+}
+
+/* 滚动区域 */
+.scroll-form-container {
+  height: 60vh;
+  overflow-y: auto;
+  padding: 20px 25px;
+
+  /* 滚动条美化 */
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #c0c4cc;
+    border-radius: 3px;
+  }
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+}
+
+/* 分组标题 */
+.form-section-header {
+  font-size: 14px;
+  font-weight: 700;
+  color: #303133;
+  margin: 5px 0 15px 0;
+  padding-left: 10px;
+  border-left: 3px solid #409eff;
+  line-height: 1.4;
+  background-color: #fcfcfc;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+/* 上传组件美化 */
+.avatar-uploader-mini {
+  ::v-deep .el-upload {
+    border: 1px dashed #dcdfe6;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
     overflow: hidden;
-    .imgItem {
-      flex: 1;
-      padding: 0 5px;
-      .title {
-        color: #1f1f1f;
-        font-size: 15px;
-        margin-bottom: 10px;
-        font-weight: 700;
-      }
+    width: 100px;
+    height: 100px;
+    transition: 0.3s;
+    background-color: #fff;
+
+    &:hover {
+      border-color: #409eff;
+      background-color: #f0f9eb;
     }
   }
+}
+
+.uploader-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #8c939d;
+  font-size: 24px;
+}
+
+.avatar {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
 }
 </style>

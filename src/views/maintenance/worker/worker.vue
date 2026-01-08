@@ -1,599 +1,409 @@
-<!--编程订单-->
 <template>
   <div class="app-container">
-    <el-form label-width="88px" class="rule-form" label-position="right">
-      <el-row :gutter="24">
-        <!-- <el-form-item label="推荐人名称">
-            <el-select
-              clearable
-              filterable
-              :remote-method="remoteMethod"
-              remote
-              v-model="referrerName"
-              placeholder="请选择"
-            >
-              <el-option
-                v-for="item in referrerOptions"
-                :key="item.value"
-                :label="item.realName"
-                :value="item.realName"
-              >
-              </el-option>
-            </el-select>
-          </el-form-item> -->
-        <el-col :span="4">
-          <el-form-item label="师傅名称">
-            <el-input
-              placeholder="请输入师傅名称"
-              clearable
-              v-model="queryMasterListParams.realName"
-              style="width: 200px"
-            ></el-input>
-          </el-form-item>
-        </el-col>
-        <!-- <el-col :span="5">
-          <el-form-item label="团长名称">
-            <el-select
-              filterable
-              :remote-method="remoteMethod"
-              remote
-              v-model="colonelName"
-              placeholder="请选择"
-              clearable
-            >
-              <el-option
-                v-for="item in referrerOptions"
-                :key="item.value"
-                :label="item.realName"
-                :value="item.realName"
-              >
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </el-col> -->
-        <el-col :span="4">
-          <el-form-item label="审核状态">
-            <el-select
-              placeholder="请选择审核状态"
-              v-model="queryMasterListParams.status"
-              style="width: 200px"
-            >
-              <el-option label="审核中" :value="1"> </el-option>
-              <el-option label="审核通过" :value="2"> </el-option>
-              <el-option label="审核驳回" :value="3"> </el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="4">
-          <el-form-item label="服务地区">
-            <el-cascader
-              v-model="queryMasterListParams.areaId"
-              :options="serviceAreasList"
-              :props="serviceAreasProps"
-            ></el-cascader>
-          </el-form-item>
-        </el-col>
+    <el-card shadow="never" class="search-wrapper">
+      <el-form
+        :inline="true"
+        :model="queryMasterListParams"
+        size="small"
+        label-width="70px"
+      >
+        <el-form-item label="师傅名称">
+          <el-input
+            placeholder="请输入师傅名称"
+            clearable
+            v-model="queryMasterListParams.realName"
+            style="width: 180px"
+            @keyup.enter.native="_getMasterList(1)"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="审核状态">
+          <el-select
+            placeholder="全部"
+            v-model="queryMasterListParams.status"
+            style="width: 120px"
+            clearable
+            @change="_getMasterList(1)"
+          >
+            <el-option label="审核中" :value="1"></el-option>
+            <el-option label="审核通过" :value="2"></el-option>
+            <el-option label="审核驳回" :value="3"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="服务地区">
+          <el-cascader
+            v-model="queryMasterListParams.areaId"
+            :options="serviceAreasList"
+            :props="serviceAreasProps"
+            clearable
+            placeholder="请选择地区"
+            style="width: 200px"
+            @change="_getMasterList(1)"
+          ></el-cascader>
+        </el-form-item>
+        <el-form-item label="创建时间">
+          <el-date-picker
+            @change="changeQueryTimeCopy"
+            v-model="queryTimeCopy"
+            value-format="yyyy-MM-dd"
+            type="daterange"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            style="width: 240px"
+          >
+          </el-date-picker>
+        </el-form-item>
 
-        <el-col :span="11">
-          <el-form-item label="创建时间">
-            <el-date-picker
-              @change="changeQueryTimeCopy"
-              v-model="queryTimeCopy"
-              value-format="yyyy-MM-dd"
-              type="daterange"
-              range-separator="至"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-            >
-            </el-date-picker>
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row :gutter="24" style="margin-bottom: 15px; text-align: right">
-        <el-button
-          icon="el-icon-zoom-in"
-          plain
-          type="primary"
-          @click="_getMasterList(1)"
-          >查询</el-button
-        >
-        <el-button icon="el-icon-refresh" plain type="info" @click="resetFn"
-          >重置</el-button
-        >
-        <el-button type="success" plain @click="_handleMasterInfoExport">
-          导出
-        </el-button>
-        <!-- <el-button type="success" plain @click="testExport">
-          导出TEST
-        </el-button> -->
-        <!-- <el-button plain type="primary" @click="addSigningMaster"
-            >新增签约师傅</el-button
-          > -->
-      </el-row>
-    </el-form>
+        <el-form-item class="search-btns">
+          <el-button
+            type="primary"
+            icon="el-icon-search"
+            @click="_getMasterList(1)"
+            >查询</el-button
+          >
+          <el-button icon="el-icon-refresh" @click="resetFn">重置</el-button>
+          <el-button
+            type="success"
+            plain
+            icon="el-icon-download"
+            @click="_handleMasterInfoExport"
+            >导出</el-button
+          >
+        </el-form-item>
+      </el-form>
+    </el-card>
 
-    <el-card>
+    <el-card shadow="never" class="table-wrapper">
       <el-table
         highlight-current-row
-        v-loading.fullscreen.isLock="loading"
-        element-loading-text="拼命加载中"
-        element-loading-spinner="el-icon-loading"
+        v-loading="loading"
+        element-loading-text="加载中..."
         :data="masterList"
-        height="65vh"
+        height="calc(100vh - 230px)"
+        style="width: 100%"
+        :header-cell-style="{ background: '#f5f7fa', color: '#606266' }"
       >
-        <el-table-column
-          prop="number"
-          label="师傅编号"
-          show-overflow-tooltip
-          width="150"
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="realName"
-          label="真实姓名"
-          show-overflow-tooltip
-          width="150"
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          label="身份"
-          show-overflow-tooltip
-          width="100"
-          align="center"
-        >
+        <el-table-column label="师傅信息" width="200" fixed="left">
           <template slot-scope="{ row }">
-            {{ row.type == 1 ? "兼职" : row.type == 2 ? "签约" : "全职" }}
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="realPortrait"
-          label="真实头像"
-          show-overflow-tooltip
-          align="center"
-          width="120"
-        >
-          <template slot-scope="{ row }">
-            <div style="position: relative; width: 70px; height: 70px">
-              <el-image
-                style="width: 100%; height: 100%"
-                :src="row.realPortrait ? row.realPortrait.split(',')[0] : ''"
-              >
-              </el-image>
-              <!-- <y-image
-                style="width: 100%; height: 100%"
-                :src="row.realPortrait ? row.realPortrait.split(',')[0] : ''"
-                :srcList="row.realPortrait ? row.realPortrait.split(',') : ''"
-              /> -->
-              <el-image
-                v-if="
-                  row.number &&
-                  (row.number.includes('V') || row.number.includes('v'))
-                "
-                src="https://snk-1305456087.cos.ap-guangzhou.myqcloud.com/user/20240927/AU04149909.png"
-                style="
-                  width: 70px;
-                  height: 70px;
-                  position: absolute;
-                  left: 0;
-                  top: 0;
-                  z-index: 3;
-                "
-              >
-              </el-image>
+            <div class="user-cell">
+              <div class="avatar-box">
+                <el-image
+                  class="avatar-img"
+                  :src="getImgUrl(row.realPortrait)"
+                  :preview-src-list="getImgList(row.realPortrait)"
+                >
+                  <div slot="error" class="image-slot">
+                    <i class="el-icon-picture-outline"></i>
+                  </div>
+                </el-image>
+                <img
+                  v-if="isVerified(row.number)"
+                  class="v-badge"
+                  src="https://snk-1305456087.cos.ap-guangzhou.myqcloud.com/user/20240927/AU04149909.png"
+                />
+              </div>
+              <div class="info-box">
+                <div class="name">{{ row.realName || "-" }}</div>
+                <div class="phone">{{ row.phone }}</div>
+              </div>
             </div>
           </template>
         </el-table-column>
+
         <el-table-column
-          label="备注"
-          show-overflow-tooltip
-          width="180px"
+          prop="number"
+          label="师傅编号"
+          width="140"
           align="center"
-        >
+          show-overflow-tooltip
+        ></el-table-column>
+
+        <el-table-column label="身份" width="100" align="center">
           <template slot-scope="{ row }">
-            {{ row.remark ? row.remark : "/" }}
+            <el-tag :type="getIdentityTag(row.type)" size="mini" effect="dark">
+              {{ row.type == 1 ? "兼职" : row.type == 2 ? "签约" : "全职" }}
+            </el-tag>
           </template>
         </el-table-column>
-        <el-table-column
-          label="活跃"
-          show-overflow-tooltip
-          width="80"
-          align="center"
-        >
+
+        <el-table-column label="状态" width="100" align="center">
           <template slot-scope="{ row }">
-            {{ row.activeFlag == 1 ? "是" : "否" }}
+            <el-tag :type="getStatusTag(row.status)" size="mini">
+              {{ util.global.getLabel("checkStatus", row.status) }}
+            </el-tag>
           </template>
         </el-table-column>
+
+        <el-table-column label="活跃" width="80" align="center">
+          <template slot-scope="{ row }">
+            <el-tag
+              :type="row.activeFlag == 1 ? 'success' : 'info'"
+              size="mini"
+              effect="plain"
+            >
+              {{ row.activeFlag == 1 ? "是" : "否" }}
+            </el-tag>
+          </template>
+        </el-table-column>
+
         <el-table-column
-          prop="phone"
-          label="联系电话"
-          show-overflow-tooltip
-          width="120"
+          prop="levelName"
+          label="等级"
+          width="100"
           align="center"
         ></el-table-column>
-        <!-- <el-table-column
-          prop="integral"
-          label="钻石"
-          show-overflow-tooltip
-          width="100"
-          align="center"
-        >
-          <template slot-scope="{ row }">
-            {{ row.integral ? row.integral : 0 }}
-          </template>
-        </el-table-column> -->
         <el-table-column
-          label="等级"
-          show-overflow-tooltip
-          width="150"
+          prop="integral"
+          label="积分"
+          width="80"
           align="center"
-        >
-          <template slot-scope="{ row }">
-            {{ row.levelName }}
-          </template>
-        </el-table-column>
-        <el-table-column prop="integral" label="积分" align="center">
-        </el-table-column>
-        <!-- <el-table-column
-          prop="superiorMasterName"
-          label="团长"
-          show-overflow-tooltip
-          width="100"
-          align="center"
-        ></el-table-column> -->
+        ></el-table-column>
+
         <el-table-column
           prop="promotionPeople"
           label="推广人"
-          show-overflow-tooltip
-          width="150"
+          width="120"
           align="center"
+          show-overflow-tooltip
         ></el-table-column>
-        <!-- <el-table-column
-          prop="recommendMasterName"
-          label="推荐人(旧版)"
-          show-overflow-tooltip
-          width="110"
-          align="center"
-        ></el-table-column> -->
-        <!-- <el-table-column
-          prop="identity"
-          label="角色"
-          show-overflow-tooltip
-          width="100"
-          align="center"
-        ></el-table-column> -->
-        <el-table-column
-          prop="identityFrontImage"
-          label="身份证正面照"
-          show-overflow-tooltip
-          align="center"
-        >
+
+        <el-table-column label="身份证" width="120" align="center">
           <template slot-scope="{ row }">
-            <y-image
-              :src="
-                row.identityFrontImage
-                  ? row.identityFrontImage.split(',')[0]
-                  : ''
-              "
-              :srcList="
-                row.identityFrontImage ? row.identityFrontImage.split(',') : ''
-              "
-            />
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="identityBackImage"
-          label="身份证反面照"
-          show-overflow-tooltip
-          align="center"
-        >
-          <template slot-scope="{ row }">
-            <y-image
-              :src="
-                row.identityBackImage ? row.identityBackImage.split(',')[0] : ''
-              "
-              :srcList="
-                row.identityBackImage ? row.identityBackImage.split(',') : ''
-              "
-            />
+            <div class="img-row">
+              <el-image
+                class="mini-img"
+                :src="getImgUrl(row.identityFrontImage)"
+                :preview-src-list="getImgList(row.identityFrontImage)"
+              ></el-image>
+              <el-image
+                class="mini-img"
+                :src="getImgUrl(row.identityBackImage)"
+                :preview-src-list="getImgList(row.identityBackImage)"
+              ></el-image>
+            </div>
           </template>
         </el-table-column>
 
         <el-table-column
           prop="identityNumber"
-          label="身份证号码"
-          show-overflow-tooltip
+          label="身份证号"
           width="170"
           align="center"
+          show-overflow-tooltip
         ></el-table-column>
+
+        <el-table-column label="经验/证书" width="120" align="center">
+          <template slot-scope="{ row }">
+            <div class="img-row">
+              <el-tooltip content="行业经验" placement="top">
+                <el-image
+                  class="mini-img"
+                  v-if="row.industryExperienceImages"
+                  :src="getImgUrl(row.industryExperienceImages)"
+                  :preview-src-list="getImgList(row.industryExperienceImages)"
+                ></el-image>
+              </el-tooltip>
+              <el-tooltip content="技能证书" placement="top">
+                <el-image
+                  class="mini-img"
+                  v-if="row.skillCertificateImages"
+                  :src="getImgUrl(row.skillCertificateImages)"
+                  :preview-src-list="getImgList(row.skillCertificateImages)"
+                ></el-image>
+              </el-tooltip>
+            </div>
+          </template>
+        </el-table-column>
 
         <el-table-column
           prop="industryExperience"
-          label="行业经验"
-          show-overflow-tooltip
-          width="200"
+          label="经验描述"
+          width="150"
           align="center"
+          show-overflow-tooltip
         ></el-table-column>
-        <el-table-column
-          prop="industryExperienceImages"
-          label="行业经验照片"
-          show-overflow-tooltip
-          align="center"
-        >
-          <template slot-scope="{ row }">
-            <y-image
-              :src="
-                row.industryExperienceImages
-                  ? row.industryExperienceImages.split(',')[0]
-                  : ''
-              "
-              :srcList="
-                row.industryExperienceImages
-                  ? row.industryExperienceImages.split(',')
-                  : ''
-              "
-            />
-          </template>
-        </el-table-column>
         <el-table-column
           prop="serviceAreas"
           label="服务地区"
-          show-overflow-tooltip
           width="150"
           align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="skillCertificateImages"
-          label="技能证书"
           show-overflow-tooltip
-          align="center"
-        >
-          <template slot-scope="{ row }">
-            <y-image
-              :src="
-                row.skillCertificateImages
-                  ? row.skillCertificateImages.split(',')[0]
-                  : ''
-              "
-              :srcList="
-                row.skillCertificateImages
-                  ? row.skillCertificateImages.split(',')
-                  : ''
-              "
-            />
-          </template>
-        </el-table-column>
+        ></el-table-column>
         <el-table-column
           prop="serviceTypes"
           label="服务类型"
-          show-overflow-tooltip
           width="150"
           align="center"
+          show-overflow-tooltip
         ></el-table-column>
         <el-table-column
           prop="servePosition"
           label="服务部位"
-          show-overflow-tooltip
           width="150"
           align="center"
+          show-overflow-tooltip
         ></el-table-column>
         <el-table-column
           prop="serveSystem"
           label="服务系统"
-          show-overflow-tooltip
           width="150"
           align="center"
+          show-overflow-tooltip
         ></el-table-column>
         <el-table-column
           prop="address"
           label="详细地址"
+          width="180"
+          align="center"
           show-overflow-tooltip
+        ></el-table-column>
+        <el-table-column
+          prop="remark"
+          label="备注"
           width="150"
           align="center"
+          show-overflow-tooltip
         ></el-table-column>
         <el-table-column
           prop="createTime"
-          label="创建时间 "
-          show-overflow-tooltip
-          width="150"
+          label="创建时间"
+          width="160"
           align="center"
         ></el-table-column>
-        <el-table-column
-          prop="isLock"
-          label="是否锁定"
-          show-overflow-tooltip
-          width="100"
-          align="center"
-          fixed="right"
-        >
-          <template slot-scope="{ row }">{{
-            util.global.getLabel("isLock", row.isLock)
-          }}</template>
-        </el-table-column>
-        <el-table-column
-          prop="status"
-          label="审核状态"
-          show-overflow-tooltip
-          width="80"
-          align="center"
-          fixed="right"
-        >
+
+        <el-table-column label="锁定" width="80" align="center" fixed="right">
           <template slot-scope="{ row }">
-            <div
-              :style="{
-                color: row.status == 3 ? 'red' : row.status == 2 ? 'green' : '',
-              }"
-            >
-              {{ util.global.getLabel("checkStatus", row.status) }}
-            </div>
+            <span :style="{ color: row.isLock ? '#F56C6C' : '#909399' }">{{
+              row.isLock ? "已锁定" : "正常"
+            }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="220" fixed="right" align="center">
+
+        <el-table-column label="操作" width="180" fixed="right" align="center">
           <template slot-scope="{ row }">
-            <div style="display: flex">
-              <el-button
-                type="primary"
-                size="mini"
-                @click="
-                  $router.push('/maintenance/worker/workerDetails?id=' + row.id)
-                "
-                >详情</el-button
-              >
-              <el-button size="mini" @click="editInit(row)" type="warning"
-                >编辑</el-button
-              >
-              <div>
-                <el-select
-                  v-model="row.abc"
-                  placeholder="更多"
-                  style="width: 71px; margin-left: 10px"
-                  size="mini"
+            <el-button
+              type="text"
+              size="small"
+              @click="
+                $router.push('/maintenance/worker/workerDetails?id=' + row.id)
+              "
+              >详情</el-button
+            >
+            <el-button type="text" size="small" @click="editInit(row)"
+              >编辑</el-button
+            >
+
+            <el-dropdown trigger="click" @command="handleCommand($event, row)">
+              <el-button type="text" size="small" class="more-btn">
+                更多<i class="el-icon-arrow-down el-icon--right"></i>
+              </el-button>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item command="audit" v-if="row.status === 1"
+                  >审核</el-dropdown-item
                 >
-                  <el-option v-show="!row.isLock">
-                    <el-button @click="isLock(row)" size="mini" type="danger"
-                      >锁定</el-button
-                    >
-                  </el-option>
-                  <el-option v-show="row.isLock">
-                    <el-button size="mini" @click="isLock(row)" type="success"
-                      >解锁</el-button
-                    >
-                  </el-option>
-                  <el-option v-if="row.status === 1">
-                    <el-button size="mini" @click="open(row)">审核</el-button>
-                  </el-option>
-                  <el-option>
-                    <el-button size="mini" @click="checkTeam(row)"
-                      >成员</el-button
-                    >
-                  </el-option>
-                  <!-- <el-option v-if="row.identity === '普通师傅'">
-                    <el-button
-                      size="mini"
-                      type="success"
-                      @click="openChooseRoseDialog(row.uid)"
-                      >角色</el-button
-                    >
-                  </el-option> -->
-                  <!-- <el-option>
-                    <el-button
-                      size="mini"
-                      @click="open_integral_dialog(row.uid)"
-                      >钻石</el-button
-                    >
-                  </el-option>
-                  <el-option>
-                    <el-button size="mini" @click="open_score_dialog(row.uid)"
-                      >分值</el-button
-                    >
-                  </el-option> -->
-                  <el-option>
-                    <el-button
-                      size="mini"
-                      @click="openSetActiveDialog(row.uid, row.activeFlag)"
-                      >活跃</el-button
-                    >
-                  </el-option>
-                  <el-option>
-                    <el-button size="mini" @click="openEditWorkerIdDialog(row)"
-                      >身份</el-button
-                    >
-                  </el-option>
-                  <el-option>
-                    <el-button size="mini" @click="openRemarksDialog(row)"
-                      >备注</el-button
-                    >
-                  </el-option>
-                </el-select>
-              </div>
-            </div>
+                <el-dropdown-item command="lock">{{
+                  row.isLock ? "解锁" : "锁定"
+                }}</el-dropdown-item>
+                <el-dropdown-item command="team">团队成员</el-dropdown-item>
+                <el-dropdown-item command="active">设置活跃</el-dropdown-item>
+                <el-dropdown-item command="identity">修改身份</el-dropdown-item>
+                <el-dropdown-item command="remark">备注/标签</el-dropdown-item>
+                <!-- <el-dropdown-item
+                  command="role"
+                  v-if="row.identity === '普通师傅' || true"
+                  >设置角色</el-dropdown-item
+                >
+                <el-dropdown-item command="score">分值记录</el-dropdown-item>
+                <el-dropdown-item command="integral">添加积分</el-dropdown-item> -->
+              </el-dropdown-menu>
+            </el-dropdown>
           </template>
         </el-table-column>
       </el-table>
-      <!-- 分页部分 -->
-      <div style="margin-top: 20px; display: flex; justify-content: center">
+
+      <div class="pagination-container">
         <el-pagination
           background
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page="queryMasterListParams.pageNo"
+          :page-sizes="[10, 20, 50, 100]"
           :page-size="queryMasterListParams.pageSize"
-          layout="total, prev, pager, next, jumper"
+          layout="total, sizes, prev, pager, next, jumper"
           :total="queryMasterListTotal"
         ></el-pagination>
       </div>
     </el-card>
 
-    <!-- 备注 ＋ 标签 -->
     <el-dialog
-      title="备注"
-      width="30%"
-      :before-close="closeRemarksDialog"
-      :visible="remarksDialogVisible"
+      title="设置备注标签"
+      :visible.sync="remarksDialogVisible"
+      width="500px"
       :close-on-click-modal="false"
+      :before-close="closeRemarksDialog"
     >
-      <div class="auditDialog">
-        <el-form label-width="80px">
-          <el-form-item label="标签:" v-if="masterTag && masterTag.length > 0">
-            <el-button
-              :type="judgeTagSelected(item) ? 'primary' : ''"
-              @click="addTag(item)"
-              size="small"
+      <el-form label-width="70px" size="small">
+        <el-form-item label="快捷标签" v-if="masterTag && masterTag.length > 0">
+          <div class="tag-container">
+            <el-tag
               v-for="item in masterTag"
               :key="item"
-              >{{ item }}</el-button
+              class="check-tag"
+              :effect="judgeTagSelected(item) ? 'dark' : 'plain'"
+              @click="addTag(item)"
+              >{{ item }}</el-tag
             >
-          </el-form-item>
-          <el-form-item label="自定义:">
-            <el-input
-              type="textarea"
-              placeholder="请输入内容"
-              v-model="handleMasterRemarkParamsCopy.remark"
-              maxlength="100"
-              show-word-limit
-            >
-            </el-input>
-          </el-form-item>
-          <el-form-item label="备注:" v-if="masterRemark">
-            {{ masterRemark }}
-          </el-form-item>
-        </el-form>
-      </div>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="closeRemarksDialog">取 消</el-button>
-        <el-button type="primary" @click="handleMasterRemark">确 定</el-button>
+          </div>
+        </el-form-item>
+        <el-form-item label="自定义">
+          <el-input
+            type="textarea"
+            :rows="3"
+            placeholder="请输入其他备注内容..."
+            v-model="handleMasterRemarkParamsCopy.remark"
+            maxlength="100"
+            show-word-limit
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="预览效果">
+          <div class="preview-box">
+            {{ masterRemark || "（暂无内容，请选择标签或输入备注）" }}
+          </div>
+        </el-form-item>
+      </el-form>
+      <span slot="footer">
+        <el-button size="small" @click="closeRemarksDialog">取 消</el-button>
+        <el-button size="small" type="primary" @click="handleMasterRemark"
+          >确 定</el-button
+        >
       </span>
     </el-dialog>
 
-    <!-- 设置区域经理/签约师傅 -->、
     <el-dialog
       title="设置角色"
-      width="30%"
-      :visible="chooseRoseDialogShow"
+      width="400px"
+      :visible.sync="chooseRoseDialogShow"
       :close-on-click-modal="false"
       :before-close="closeChooseRoseDialog"
     >
-      <div class="chooseRoseBox">
-        <div class="chooseRoseBox_title">
-          <div class="title">角色:</div>
-          <el-radio v-model="chooseRoseForm.masterRoleId" :label="3"
-            >签约师傅</el-radio
-          >
-          <el-radio
-            v-model="chooseRoseForm.masterRoleId"
-            :label="1"
-            @input="chooseMasterQuYu"
-            >区域经理</el-radio
-          >
+      <div class="role-dialog-content">
+        <div class="role-row">
+          <label>角色类型：</label>
+          <el-radio-group v-model="chooseRoseForm.masterRoleId">
+            <el-radio :label="3">签约师傅</el-radio>
+            <el-radio :label="1" @change="chooseMasterQuYu">区域经理</el-radio>
+          </el-radio-group>
         </div>
         <div
-          class="chooseRoseBox_master"
+          class="role-row"
           v-if="chooseRoseForm.masterRoleId === 3"
+          style="margin-top: 20px"
         >
-          <div class="title">区域经理:</div>
+          <label>区域经理：</label>
           <el-select
-            placeholder="请选择"
-            style="width: 150px"
+            placeholder="请选择上级"
             v-model="chooseRoseForm.superiorMasterUid"
+            style="width: 200px"
           >
             <el-option
               v-for="item in regionManagerList"
@@ -604,7 +414,7 @@
           </el-select>
         </div>
       </div>
-      <span slot="footer" class="dialog-footer">
+      <span slot="footer">
         <el-button @click="closeChooseRoseDialog">取 消</el-button>
         <el-button type="primary" @click="confirmChooseRose">确 定</el-button>
       </span>
@@ -616,22 +426,9 @@
       @ok="handleEditStatus"
       @close="resetEditForm"
     >
-      <el-form
-        :model="editForm"
-        :rules="rules"
-        ref="editForm"
-        status-icon
-        label-width="120px"
-        class="demo-ruleForm"
-        label-position="top"
-        center
-      >
-        <el-form-item
-          label="审核状态:"
-          prop="name"
-          style="width: calc(100% - 120px)"
-        >
-          <el-radio-group v-model="editForm.status" style="display: flex">
+      <el-form :model="editForm" label-width="100px">
+        <el-form-item label="审核结果">
+          <el-radio-group v-model="editForm.status">
             <el-radio :label="2">通过</el-radio>
             <el-radio :label="3">驳回</el-radio>
           </el-radio-group>
@@ -645,18 +442,8 @@
       @ok="handleEnterpriseExamine"
       @close="resetEditForm"
     >
-      <el-form
-        :model="editForm"
-        ref="editForm"
-        status-icon
-        label-width="120px"
-        class="demo-ruleForm"
-      >
-        <el-form-item
-          label="审核状态"
-          prop="name"
-          style="width: calc(100% - 120px)"
-        >
+      <el-form :model="editForm" label-width="120px">
+        <el-form-item label="审核状态">
           <el-switch v-model="editForm.status"></el-switch>
         </el-form-item>
       </el-form>
@@ -670,42 +457,35 @@
       :column="2"
     >
       <el-table
-        highlight-current-row
-        v-loading.fullscreen.lock="loading"
-        element-loading-text="拼命加载中"
-        element-loading-spinner="el-icon-loading"
         :data="masterTeamList"
-        max-height="700"
-        style="width: 1500px"
+        border
+        stripe
+        max-height="600"
+        style="width: 100%"
       >
         <el-table-column
           prop="realName"
           label="真实姓名"
-          show-overflow-tooltip
           align="center"
         ></el-table-column>
         <el-table-column
           prop="phone"
           label="联系电话"
-          show-overflow-tooltip
           align="center"
         ></el-table-column>
         <el-table-column
           prop="serviceTypes"
           label="服务范围"
-          show-overflow-tooltip
           align="center"
         ></el-table-column>
         <el-table-column
           prop="status"
           label="状态"
-          show-overflow-tooltip
           align="center"
         ></el-table-column>
         <el-table-column
           prop="serviceAreas"
           label="服务区域"
-          show-overflow-tooltip
           align="center"
         ></el-table-column>
       </el-table>
@@ -713,53 +493,46 @@
 
     <EditWorker ref="editWorker" @closeDialog="closeFn"></EditWorker>
 
-    <!-- 新增签约师傅addSigningMaster -->
     <el-dialog
-      :visible="addSigningMasterDialogShow"
+      :visible.sync="addSigningMasterDialogShow"
       :before-close="closeAddSigningMasterDialog"
       title="入驻签约师傅"
-      width="42%"
+      width="650px"
       :close-on-click-modal="false"
+      top="5vh"
     >
-      <div style="height: 500px; overflow: auto">
+      <div class="scroll-form-container">
         <el-form
           :rules="addSigningMasterRules"
           ref="addSigningMasterForm"
-          :inline="true"
-          label-position="left"
+          label-position="right"
           :model="addSigningMasterForm"
-          label-width="110px"
+          label-width="100px"
+          size="small"
         >
-          <el-form-item
-            label="类型"
-            style="margin-bottom: 10px"
-            prop="masterRoleId"
-          >
-            <el-radio
-              v-model="addSigningMasterForm.masterRoleId"
-              :label="3"
-              @input="changeMasterRoleId2"
-              >签约师傅</el-radio
-            >
-            <el-radio
-              v-model="addSigningMasterForm.masterRoleId"
-              :label="1"
-              @input="changeMasterRoleId1"
-              >区域经理</el-radio
-            >
+          <div class="form-section-header">角色设定</div>
+          <el-form-item label="入驻类型" prop="masterRoleId">
+            <el-radio-group v-model="addSigningMasterForm.masterRoleId">
+              <el-radio :label="3" @change="changeMasterRoleId2"
+                >签约师傅</el-radio
+              >
+              <el-radio :label="1" @change="changeMasterRoleId1"
+                >区域经理</el-radio
+              >
+            </el-radio-group>
           </el-form-item>
-          <br />
+
           <el-form-item
             v-if="addSigningMasterForm.masterRoleId === 3"
-            label="区域经理"
-            style="margin-bottom: 20px"
+            label="归属经理"
             prop="superiorMasterUid"
           >
             <el-select
-              placeholder="请选择"
-              style="width: 150px"
+              placeholder="请选择区域经理"
+              style="width: 100%"
               v-model="addSigningMasterForm.superiorMasterUid"
               @change="changeSuperiorMasterUid"
+              filterable
             >
               <el-option
                 v-for="item in regionManagerList"
@@ -769,205 +542,192 @@
               ></el-option>
             </el-select>
           </el-form-item>
-          <br v-if="addSigningMasterForm.masterRoleId === 3" />
-          <el-form-item
-            label="真实姓名"
-            style="margin-bottom: 20px"
-            prop="realName"
-          >
-            <el-input
-              v-model="addSigningMasterForm.realName"
-              placeholder="请输入师傅真实姓名"
-              style="width: 300px"
-            ></el-input>
-          </el-form-item>
-          <br />
-          <el-form-item
-            label="手机号码"
-            style="margin-bottom: 20px"
-            prop="phone"
-          >
-            <el-input
-              v-model="addSigningMasterForm.phone"
-              placeholder="请输入手机号码"
-              style="width: 300px"
-            ></el-input>
-          </el-form-item>
-          <br />
-          <el-form-item label="师傅编号" style="margin-bottom: 20px">
+
+          <div class="form-section-header">基础信息</div>
+          <el-row :gutter="20">
+            <el-col :span="12">
+              <el-form-item label="真实姓名" prop="realName">
+                <el-input
+                  v-model="addSigningMasterForm.realName"
+                  placeholder="请输入姓名"
+                ></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="手机号码" prop="phone">
+                <el-input
+                  v-model="addSigningMasterForm.phone"
+                  placeholder="请输入手机号"
+                ></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <el-form-item label="师傅编号">
             <el-input
               v-model="addSigningMasterForm.number"
-              placeholder="请输入师傅编号"
-              style="width: 300px"
+              placeholder="请输入编号 (可选)"
             ></el-input>
           </el-form-item>
-          <br />
-          <el-form-item
-            label="真实头像"
-            style="margin-bottom: 20px"
-            prop="realPortrait"
-          >
-            <el-upload
-              list-type="picture-card"
-              :show-file-list="false"
-              :http-request="uploadRealPortrait"
-              class="avatar-uploader"
-            >
-              <img
-                v-if="uploadRealPortraitImg"
-                :src="uploadRealPortraitImg"
-                class="avatar"
-              />
-              <i class="el-icon-plus" v-else></i>
-            </el-upload>
-          </el-form-item>
-          <br />
-          <el-form-item
-            label="详细地址"
-            style="margin-bottom: 20px"
-            prop="address"
-          >
+
+          <el-form-item label="详细地址" prop="address">
             <el-input
               v-model="addSigningMasterForm.address"
-              placeholder="请输入师傅真实详细地址"
-              style="width: 300px"
+              placeholder="请输入居住地址"
             ></el-input>
           </el-form-item>
-          <br />
-          <el-form-item
-            label="身份证号码"
-            style="margin-bottom: 20px"
-            prop="identityNumber"
-          >
+
+          <el-form-item label="身份证号" prop="identityNumber">
             <el-input
               v-model="addSigningMasterForm.identityNumber"
-              placeholder="请输入师傅身份证号码"
-              style="width: 300px"
+              placeholder="请输入身份证号"
             ></el-input>
           </el-form-item>
-          <br />
-          <el-form-item
-            label="身份证正面照"
-            style="margin-bottom: 20px"
-            prop="identityFrontImage"
-          >
-            <el-upload
-              list-type="picture-card"
-              :show-file-list="false"
-              :http-request="uploadIdentityFrontImage"
-              class="avatar-uploader"
-            >
-              <img
-                v-if="uploadIdentityFrontImageImg"
-                :src="uploadIdentityFrontImageImg"
-                class="avatar"
-              />
-              <i class="el-icon-plus" v-else></i>
-            </el-upload>
-          </el-form-item>
-          <el-form-item
-            label="身份证反面照"
-            style="margin-bottom: 20px"
-            prop="identityBackImage"
-          >
-            <el-upload
-              list-type="picture-card"
-              :show-file-list="false"
-              :http-request="uploadIdentityBackImage"
-              class="avatar-uploader"
-            >
-              <img
-                v-if="uploadIdentityBackImageImg"
-                :src="uploadIdentityBackImageImg"
-                class="avatar"
-              />
-              <i class="el-icon-plus" v-else></i>
-            </el-upload>
-          </el-form-item>
-          <br />
-          <el-form-item
-            label="设备类型"
-            style="margin-bottom: 20px"
-            prop="serviceTypes"
-          >
-            <el-select
-              style="margin-right: 20px; width: 150px"
-              v-model="equipmentTypeOne"
-              placeholder="请选择"
-              @change="changeEquipmentTypeOne"
-            >
-              <el-option
-                v-for="item in equipmentTypeList"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
+
+          <el-row :gutter="10" style="margin-bottom: 10px">
+            <el-col :span="8">
+              <el-form-item
+                label="真实头像"
+                prop="realPortrait"
+                label-width="80px"
               >
-              </el-option>
-            </el-select>
-            <el-select
-              style="width: 190px"
-              placeholder="请选择"
-              multiple
-              collapse-tags
-              v-model="equipmentTypeTwo"
-              @change="changeEquipmentTypeTwo"
-            >
-              <el-option
-                v-for="item in equipmentTypeTwoList"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
+                <el-upload
+                  list-type="picture-card"
+                  :show-file-list="false"
+                  :http-request="uploadRealPortrait"
+                  class="avatar-uploader-mini"
+                >
+                  <img
+                    v-if="uploadRealPortraitImg"
+                    :src="uploadRealPortraitImg"
+                    class="avatar"
+                  />
+                  <div v-else style="padding-top: 25px; text-align: center">
+                    <i class="el-icon-plus"></i>
+                    <div style="font-size: 12px; line-height: 1.2; color: #999">
+                      点击上传
+                    </div>
+                  </div>
+                </el-upload>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item
+                label="身份证正"
+                prop="identityFrontImage"
+                label-width="80px"
               >
-              </el-option>
-            </el-select>
+                <el-upload
+                  list-type="picture-card"
+                  :show-file-list="false"
+                  :http-request="uploadIdentityFrontImage"
+                  class="avatar-uploader-mini"
+                >
+                  <img
+                    v-if="uploadIdentityFrontImageImg"
+                    :src="uploadIdentityFrontImageImg"
+                    class="avatar"
+                  />
+                  <i class="el-icon-plus" v-else></i>
+                </el-upload>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item
+                label="身份证反"
+                prop="identityBackImage"
+                label-width="80px"
+              >
+                <el-upload
+                  list-type="picture-card"
+                  :show-file-list="false"
+                  :http-request="uploadIdentityBackImage"
+                  class="avatar-uploader-mini"
+                >
+                  <img
+                    v-if="uploadIdentityBackImageImg"
+                    :src="uploadIdentityBackImageImg"
+                    class="avatar"
+                  />
+                  <i class="el-icon-plus" v-else></i>
+                </el-upload>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <div class="form-section-header">专业技能</div>
+
+          <el-form-item label="设备类型" prop="serviceTypes">
+            <div style="display: flex; gap: 10px">
+              <el-select
+                v-model="equipmentTypeOne"
+                placeholder="一级类型"
+                @change="changeEquipmentTypeOne"
+                style="width: 140px"
+              >
+                <el-option
+                  v-for="item in equipmentTypeList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                ></el-option>
+              </el-select>
+              <el-select
+                placeholder="二级类型 (可多选)"
+                multiple
+                collapse-tags
+                v-model="equipmentTypeTwo"
+                @change="changeEquipmentTypeTwo"
+                style="flex: 1"
+              >
+                <el-option
+                  v-for="item in equipmentTypeTwoList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                ></el-option>
+              </el-select>
+            </div>
           </el-form-item>
-          <br />
-          <el-form-item
-            label="设备系统"
-            style="margin-bottom: 20px"
-            prop="serveSystem"
-          >
-            <el-select
-              style="margin-right: 20px; width: 150px"
-              v-model="equipmentSystemOne"
-              placeholder="请选择"
-              @change="changeEquipmentSystemOne"
-            >
-              <el-option
-                v-for="item in equipmentSystemList"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
+
+          <el-form-item label="设备系统" prop="serveSystem">
+            <div style="display: flex; gap: 10px">
+              <el-select
+                v-model="equipmentSystemOne"
+                placeholder="一级系统"
+                @change="changeEquipmentSystemOne"
+                style="width: 140px"
               >
-              </el-option>
-            </el-select>
-            <el-select
-              style="width: 190px"
-              placeholder="请选择"
-              multiple
-              collapse-tags
-              v-model="equipmentSystemTwo"
-              @change="changeEquipmentSystemTwo"
-            >
-              <el-option
-                v-for="item in equipmentSystemTwoList"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
+                <el-option
+                  v-for="item in equipmentSystemList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                ></el-option>
+              </el-select>
+              <el-select
+                placeholder="二级系统 (可多选)"
+                multiple
+                collapse-tags
+                v-model="equipmentSystemTwo"
+                @change="changeEquipmentSystemTwo"
+                style="flex: 1"
               >
-              </el-option>
-            </el-select>
+                <el-option
+                  v-for="item in equipmentSystemTwoList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                ></el-option>
+              </el-select>
+            </div>
           </el-form-item>
-          <br />
-          <el-form-item
-            label="服务部位"
-            style="margin-bottom: 20px"
-            prop="servePosition"
-          >
+
+          <el-form-item label="服务部位" prop="servePosition">
             <el-select
-              style="margin-right: 20px; width: 150px"
+              style="width: 100%"
               v-model="serviceArea"
-              placeholder="请选择"
+              placeholder="请选择服务部位 (可多选)"
               multiple
               collapse-tags
               @change="changeServiceArea"
@@ -977,126 +737,124 @@
                 :key="item.name"
                 :label="item.name"
                 :value="item.name"
-              >
-              </el-option>
+              ></el-option>
             </el-select>
           </el-form-item>
-          <br />
+
           <el-form-item
-            prop="serviceAreas"
-            label="服务区域"
-            style="margin-bottom: 20px"
             v-if="addSigningMasterForm.masterRoleId === 1"
+            label="服务区域"
+            prop="serviceAreas"
           >
-            <el-select
-              placeholder="请选择"
-              style="margin-right: 20px; width: 150px"
-              v-model="provinceValue"
-              @change="changeProvinceValue"
-            >
-              <el-option
-                v-for="item in provinceList"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
+            <div style="display: flex; gap: 10px">
+              <el-select
+                placeholder="省"
+                v-model="provinceValue"
+                @change="changeProvinceValue"
+                style="width: 30%"
               >
-              </el-option>
-            </el-select>
-            <el-select
-              v-model="cityValue"
-              placeholder="请选择"
-              style="margin-right: 20px; width: 150px"
-              @change="changeCityValue"
-            >
-              <el-option
-                v-for="item in cityList"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
+                <el-option
+                  v-for="item in provinceList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                ></el-option>
+              </el-select>
+              <el-select
+                placeholder="市"
+                v-model="cityValue"
+                @change="changeCityValue"
+                style="width: 30%"
               >
-              </el-option>
-            </el-select>
-            <el-select
-              placeholder="请选择"
-              style="width: 150px"
-              v-model="districtValue"
-              multiple
-              collapse-tags
-              @change="changeDistrictValue"
-            >
-              <el-option
-                v-for="item in districtList"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
+                <el-option
+                  v-for="item in cityList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                ></el-option>
+              </el-select>
+              <el-select
+                placeholder="区 (多选)"
+                v-model="districtValue"
+                multiple
+                collapse-tags
+                @change="changeDistrictValue"
+                style="width: 40%"
               >
-              </el-option>
-            </el-select>
+                <el-option
+                  v-for="item in districtList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                ></el-option>
+              </el-select>
+            </div>
           </el-form-item>
-          <br v-if="addSigningMasterForm.masterRoleId === 1" />
-          <el-form-item
-            label="行业经验"
-            style="margin-bottom: 20px"
-            prop="industryExperience"
-          >
+
+          <el-form-item label="行业经验" prop="industryExperience">
             <el-input
+              type="textarea"
+              :rows="2"
               v-model="addSigningMasterForm.industryExperience"
-              placeholder="请输入师傅行业经验"
-              style="width: 300px"
+              placeholder="请简述行业经验..."
             ></el-input>
           </el-form-item>
-          <br />
-          <el-form-item label="行业照片" style="margin-bottom: 10px">
-            <div style="height: 148px; width: 470px; overflow: hidden">
-              <el-upload
-                ref="uploadIndustryPicRef"
-                list-type="picture-card"
-                :http-request="uploadIndustryPic"
-                :on-remove="delIndustryPic"
-              >
-                <i class="el-icon-plus"></i>
-              </el-upload>
-            </div>
-          </el-form-item>
-          <br />
-          <el-form-item label="技能证书">
-            <div style="height: 148px; width: 470px; overflow: hidden">
-              <el-upload
-                ref="uploadSkillCertificatePicRef"
-                list-type="picture-card"
-                :http-request="uploadSkillCertificatePic"
-                :on-remove="delSkillCertificatePic"
-              >
-                <i class="el-icon-plus"></i>
-              </el-upload>
-            </div>
-          </el-form-item>
+
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="行业照片">
+                <el-upload
+                  ref="uploadIndustryPicRef"
+                  list-type="picture-card"
+                  :http-request="uploadIndustryPic"
+                  :on-remove="delIndustryPic"
+                  class="avatar-uploader-mini"
+                >
+                  <i class="el-icon-plus"></i>
+                </el-upload>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="技能证书">
+                <el-upload
+                  ref="uploadSkillCertificatePicRef"
+                  list-type="picture-card"
+                  :http-request="uploadSkillCertificatePic"
+                  :on-remove="delSkillCertificatePic"
+                  class="avatar-uploader-mini"
+                >
+                  <i class="el-icon-plus"></i>
+                </el-upload>
+              </el-form-item>
+            </el-col>
+          </el-row>
         </el-form>
       </div>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="closeAddSigningMasterDialog">取 消</el-button>
-        <el-button type="primary" @click="confirmAddSigningMaster"
-          >确 定</el-button
+      <span slot="footer">
+        <el-button size="small" @click="closeAddSigningMasterDialog"
+          >取 消</el-button
         >
-      </div>
+        <el-button size="small" type="primary" @click="confirmAddSigningMaster"
+          >立即入驻</el-button
+        >
+      </span>
     </el-dialog>
 
-    <!-- 选积分 -->
     <el-dialog
-      title="积分"
-      :visible="integral_dialogVisible"
-      width="30%"
+      title="添加积分"
+      :visible.sync="integral_dialogVisible"
+      width="400px"
       :before-close="integral_handleClose"
       :close-on-click-modal="false"
     >
-      <el-form label-width="90px" label-position="left">
+      <el-form label-width="90px">
         <el-form-item label="积分类型">
-          <el-select v-model="integralFrom.type">
+          <el-select v-model="integralFrom.type" style="width: 100%">
             <el-option
-              :label="item.text"
-              :value="item.type"
               v-for="item in masterIntegralList"
               :key="item.type"
+              :label="item.text"
+              :value="item.type"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -1120,163 +878,186 @@
           ></el-input>
         </el-form-item>
       </el-form>
-      <span slot="footer" class="dialog-footer">
+      <span slot="footer">
         <el-button @click="integral_handleClose">取 消</el-button>
         <el-button type="primary" @click="addIntegralConfirm">确 定</el-button>
       </span>
     </el-dialog>
 
-    <!-- 分值 -->
     <el-dialog
-      title="分值"
-      :visible="score_dialogVisible"
-      width="6                                                                                        m  30%"
+      title="分值记录"
+      :visible.sync="score_dialogVisible"
+      width="550px"
       :before-close="score_handleClose"
     >
-      <el-table :data="scoreList">
-        <el-table-column
-          label="时间"
-          align="center"
-          prop="createTime"
-        ></el-table-column>
-        <el-table-column label="订单号" align="center">
-          <template slot-scope="{ row }">
-            {{ row.relationOrderSn ? row.relationOrderSn : "无" }}
-          </template>
-        </el-table-column>
-        <el-table-column label="备注" align="center">
-          <template slot-scope="{ row }">
-            {{ row.remarks ? row.remarks : "无" }}
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="加减分值"
-          align="center"
-          prop="value"
-        ></el-table-column>
-      </el-table>
-      <div style="margin-top: 20px; text-align: center">
+      <div class="score-table-wrapper">
+        <el-table
+          :data="scoreList"
+          border
+          stripe
+          height="300"
+          :header-cell-style="{ background: '#fafafa', color: '#606266' }"
+        >
+          <el-table-column
+            label="时间"
+            align="center"
+            prop="createTime"
+            width="160"
+          ></el-table-column>
+          <el-table-column
+            label="关联单号"
+            align="center"
+            prop="relationOrderSn"
+            show-overflow-tooltip
+          >
+            <template slot-scope="{ row }">{{
+              row.relationOrderSn || "-"
+            }}</template>
+          </el-table-column>
+          <el-table-column
+            label="变动备注"
+            align="center"
+            prop="remarks"
+            show-overflow-tooltip
+          >
+            <template slot-scope="{ row }">{{ row.remarks || "-" }}</template>
+          </el-table-column>
+          <el-table-column label="分值" align="center" prop="value" width="80">
+            <template slot-scope="{ row }">
+              <span
+                :class="
+                  row.value > 0 ? 'score-value-plus' : 'score-value-minus'
+                "
+              >
+                {{ row.value > 0 ? "+" + row.value : row.value }}
+              </span>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+      <div class="mt-20 text-center">
         <el-pagination
           layout="prev, pager, next"
+          background
           :total="scoreListTotal"
           @current-change="scoreCurrentChange"
           :page-size="scoreForm.pageSize"
-        >
-        </el-pagination>
+        ></el-pagination>
       </div>
     </el-dialog>
 
-    <!-- 活跃 -->
     <el-dialog
-      title="设置活跃师傅"
-      :visible="setActiveDialog"
-      width="30%"
+      title="设置活跃状态"
+      :visible.sync="setActiveDialog"
+      width="420px"
       center
       :before-close="closeSetActiveDialog"
     >
-      <div class="setActiveDialog">
-        <el-form label-width="45%">
-          <el-form-item label="活跃师傅:">
-            <el-radio-group v-model="setActiveParmas.flag">
-              <el-radio :label="1">是</el-radio>
-              <el-radio :label="0">否</el-radio>
-            </el-radio-group>
+      <div class="mt-20">
+        <el-form label-width="0">
+          <el-form-item>
+            <div class="radio-card-group">
+              <el-radio-group v-model="setActiveParmas.flag">
+                <el-radio :label="1" style="margin-right: 8px"
+                  >设为活跃</el-radio
+                >
+                <el-radio :label="0">取消活跃</el-radio>
+              </el-radio-group>
+            </div>
           </el-form-item>
         </el-form>
       </div>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="closeSetActiveDialog">取 消</el-button>
-        <el-button type="primary" @click="confirmSetActive">确 定</el-button>
+      <span slot="footer">
+        <el-button size="small" @click="closeSetActiveDialog">取 消</el-button>
+        <el-button size="small" type="primary" @click="confirmSetActive"
+          >确 定</el-button
+        >
       </span>
     </el-dialog>
 
-    <!-- 设置师傅身份 -->
+    <model
+      ref="editStatusModel"
+      title="师傅审核"
+      @ok="handleEditStatus"
+      @close="resetEditForm"
+    >
+      <div class="text-center mt-20">
+        <div class="radio-card-group">
+          <el-radio-group v-model="editForm.status">
+            <el-radio :label="2">审核通过</el-radio>
+            <el-radio :label="3">驳回申请</el-radio>
+          </el-radio-group>
+        </div>
+      </div>
+    </model>
+
+    <el-dialog
+      title="设置角色"
+      width="450px"
+      :visible.sync="chooseRoseDialogShow"
+      :close-on-click-modal="false"
+      :before-close="closeChooseRoseDialog"
+    >
+      <el-form label-position="top" size="small">
+        <el-form-item label="选择角色类型">
+          <div class="radio-card-group" style="justify-content: flex-start">
+            <el-radio-group v-model="chooseRoseForm.masterRoleId">
+              <el-radio :label="3" style="margin-right: 8px">签约师傅</el-radio>
+              <el-radio :label="1" @change="chooseMasterQuYu"
+                >区域经理</el-radio
+              >
+            </el-radio-group>
+          </div>
+        </el-form-item>
+        <el-form-item
+          label="关联区域经理"
+          v-if="chooseRoseForm.masterRoleId === 3"
+        >
+          <el-select
+            placeholder="请选择上级经理"
+            v-model="chooseRoseForm.superiorMasterUid"
+            class="w-100"
+            filterable
+          >
+            <el-option
+              v-for="item in regionManagerList"
+              :key="item.uid"
+              :label="item.realName"
+              :value="item.uid"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <span slot="footer">
+        <el-button size="small" @click="closeChooseRoseDialog">取 消</el-button>
+        <el-button size="small" type="primary" @click="confirmChooseRose"
+          >确 定</el-button
+        >
+      </span>
+    </el-dialog>
+
     <el-dialog
       title="设置师傅身份"
-      :visible="setWorkerIdDialog"
-      width="30%"
+      :visible.sync="setWorkerIdDialog"
+      width="400px"
       center
       :before-close="closeEditWorkerIdDialog"
     >
-      <div class="setActiveDialog">
-        <el-form label-width="20%">
-          <el-form-item label="师傅身份:  ">
-            <el-radio-group v-model="submitSetWorkerIdParams.type">
-              <el-radio :label="1">兼职师傅</el-radio>
-              <el-radio :label="2">签约师傅</el-radio>
-              <el-radio :label="3">全职师傅</el-radio>
-            </el-radio-group>
-          </el-form-item>
-        </el-form>
+      <div style="text-align: center; padding: 20px">
+        <span style="margin-right: 20px">选择身份:</span>
+        <el-radio-group v-model="submitSetWorkerIdParams.type">
+          <el-radio :label="1">兼职</el-radio>
+          <el-radio :label="2">签约</el-radio>
+          <el-radio :label="3">全职</el-radio>
+        </el-radio-group>
       </div>
-      <span slot="footer" class="dialog-footer">
+      <span slot="footer">
         <el-button @click="closeEditWorkerIdDialog">取 消</el-button>
         <el-button type="primary" @click="confirmEditWorkerId">确 定</el-button>
       </span>
     </el-dialog>
   </div>
 </template>
-
-<style lang="less" scoped>
-// css
-::v-deep input::-webkit-outer-spin-button,
-::v-deep input::-webkit-inner-spin-button {
-  -webkit-appearance: none !important;
-}
-::v-deep input[type="number"] {
-  -moz-appearance: textfield !important;
-}
-
-.chooseRoseBox {
-  .chooseRoseBox_title,
-  .chooseRoseBox_master {
-    display: flex;
-    align-items: center;
-    .title {
-      font-size: 14px;
-      margin-right: 20px;
-      color: #606266;
-      font-weight: 700;
-      width: 100px;
-    }
-  }
-
-  .chooseRoseBox_title {
-    margin-bottom: 20px;
-  }
-}
-.row_button_item {
-  display: flex;
-  justify-content: center;
-}
-
-.avatar-uploader .el-upload {
-  border: 1px dashed #d9d9d9;
-  border-radius: 6px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.avatar-uploader .el-upload:hover {
-  border-color: #409eff;
-}
-.avatar-uploader-icon {
-  font-size: 28px;
-  color: #8c939d;
-  width: 178px;
-  height: 178px;
-  line-height: 178px;
-  text-align: center;
-}
-.avatar {
-  width: 142px;
-  height: 142px;
-  display: block;
-}
-</style>
 
 <script>
 import { UploadImg, addressFn, getSysLabel } from "@/api/system";
@@ -1300,9 +1081,14 @@ import {
   handleMasterRemark,
   testExport,
 } from "@/api/order.js";
+
+// 确保你已经安装并使用了这个JSON，如果没有请改为API获取或保持原有引入方式
+import cityAddressData from "../../../utils/city-address.json";
+
 export default {
   title: "course",
   mixins: [tableMixin],
+  components: { EditWorker },
   data() {
     return {
       serviceAreasProps: {
@@ -1312,7 +1098,7 @@ export default {
         label: "name",
         children: "child",
       },
-      serviceAreasList: [],
+      serviceAreasList: cityAddressData,
       remarksDialogVisible: false,
       handleMasterRemarkParamsCopy: {
         labelList: [],
@@ -1332,39 +1118,15 @@ export default {
         flag: "",
       },
       setActiveDialog: false,
-      scoreListTotal: "",
+      scoreListTotal: 0,
       scoreList: [],
       masterIntegralList: [
-        {
-          type: 4,
-          text: "主动提交维修单",
-          value: 30,
-        },
-        {
-          type: 5,
-          text: "介绍客户签约机床管家",
-          value: 30,
-        },
-        {
-          type: 6,
-          text: "拒单",
-          value: -1,
-        },
-        {
-          type: 7,
-          text: "同一故障返修",
-          value: -2,
-        },
-        {
-          type: 8,
-          text: "验机",
-          value: 0,
-        },
-        {
-          type: 9,
-          text: "保养",
-          value: 0,
-        },
+        { type: 4, text: "主动提交维修单", value: 30 },
+        { type: 5, text: "介绍客户签约机床管家", value: 30 },
+        { type: 6, text: "拒单", value: -1 },
+        { type: 7, text: "同一故障返修", value: -2 },
+        { type: 8, text: "验机", value: 0 },
+        { type: 9, text: "保养", value: 0 },
       ],
       integralFrom: {
         uid: "",
@@ -1386,126 +1148,72 @@ export default {
         uid: "",
       },
       chooseRoseDialogShow: false,
-      regionManagerList: null,
+      regionManagerList: [],
       addSigningMasterRules: {
-        phone: [
-          {
-            required: true,
-            message: "请填写手机号码",
-            trigger: "blur",
-          },
-        ],
+        phone: [{ required: true, message: "请填写手机号码", trigger: "blur" }],
         masterRoleId: [
-          {
-            required: true,
-            message: "请选择类型",
-            trigger: "blur",
-          },
+          { required: true, message: "请选择类型", trigger: "blur" },
         ],
         realName: [
-          {
-            required: true,
-            message: "请输入真实姓名",
-            trigger: "blur",
-          },
+          { required: true, message: "请输入真实姓名", trigger: "blur" },
         ],
         address: [
-          {
-            required: true,
-            message: "请输入详细地址",
-            trigger: "blur",
-          },
+          { required: true, message: "请输入详细地址", trigger: "blur" },
         ],
         identityNumber: [
-          {
-            required: true,
-            message: "请输入身份证号码",
-            trigger: "blur",
-          },
+          { required: true, message: "请输入身份证号码", trigger: "blur" },
         ],
         industryExperience: [
-          {
-            required: true,
-            message: "请输入行业经验",
-            trigger: "blur",
-          },
+          { required: true, message: "请输入行业经验", trigger: "blur" },
         ],
         realPortrait: [
-          {
-            required: true,
-            message: "请上传真实头像",
-            trigger: "blur",
-          },
+          { required: true, message: "请上传真实头像", trigger: "blur" },
         ],
         identityBackImage: [
-          {
-            required: true,
-            message: "请上传身份证反面照",
-            trigger: "blur",
-          },
+          { required: true, message: "请上传身份证反面照", trigger: "blur" },
         ],
         identityFrontImage: [
-          {
-            required: true,
-            message: "请上传身份证正面照",
-            trigger: "blur",
-          },
+          { required: true, message: "请上传身份证正面照", trigger: "blur" },
         ],
         serviceTypes: [
-          {
-            required: true,
-            message: "请选择设备类型",
-            trigger: "blur",
-          },
+          { required: true, message: "请选择设备类型", trigger: "blur" },
         ],
         serveSystem: [
-          {
-            required: true,
-            message: "请输入设备系统",
-            trigger: "blur",
-          },
+          { required: true, message: "请输入设备系统", trigger: "blur" },
         ],
         servePosition: [
-          {
-            required: true,
-            message: "请输入服务部位",
-            trigger: "blur",
-          },
+          { required: true, message: "请输入服务部位", trigger: "blur" },
         ],
         superiorMasterUid: [
-          {
-            required: true,
-            message: "请选择区域经理",
-            trigger: "blur",
-          },
+          { required: true, message: "请选择区域经理", trigger: "blur" },
         ],
       },
       skillCertificateImagesUid: [],
       industryExperienceImagesUid: [],
 
-      provinceList: null, //省列表
-      provinceValue: null, //选中省
+      provinceList: [], //省列表
+      provinceValue: null,
 
-      cityList: null, //市列表
-      cityValue: null, //选中市
+      cityList: [], //市列表
+      cityValue: null,
 
-      districtList: null, //区列表
-      districtValue: null, //选中区
+      districtList: [], //区列表
+      districtValue: [],
 
-      devicePositionList: null, //服务部位列表
-      serviceArea: null, //服务部位的值
+      devicePositionList: [], //服务部位列表
+      serviceArea: [], //服务部位的值
 
       equipmentSystemOne: null, //设备系统的值
-      equipmentSystemTwo: null, //设备系统的值
+      equipmentSystemTwo: [], //设备系统的值
       equipmentSystemList: [], //设备系统第一层
-      equipmentSystemTwoList: null, //设备系统第二层
+      equipmentSystemTwoList: [], //设备系统第二层
       equipmentSystemList1: [], //进口系统第二层
       equipmentSystemList2: [], //国产系统第二层
 
       equipmentTypeOne: null, //设备类型的值
-      equipmentTypeTwo: null, //设备类型的值
+      equipmentTypeTwo: [], //设备类型的值
       equipmentTypeList: [], //设备类型第一层
-      equipmentTypeTwoList: null, //设备类型第二层
+      equipmentTypeTwoList: [], //设备类型第二层
       equipmentTypeList1: [], //数控车床第二层
       equipmentTypeList2: [], //加工中心第二层
       equipmentTypeList3: [], //走心机第三层
@@ -1572,38 +1280,21 @@ export default {
         updateStatus: "/admin/maintenance/handleMasterExamine",
       },
       rules: {
-        worker: [
-          {
-            required: true,
-            message: "请输入接单人",
-            trigger: "blur",
-          },
-        ],
+        worker: [{ required: true, message: "请输入接单人", trigger: "blur" }],
         workerPhone: [
-          {
-            required: true,
-            message: "请输入接单人手机",
-            trigger: "blur",
-          },
+          { required: true, message: "请输入接单人手机", trigger: "blur" },
         ],
+      },
+      editForm: {
+        id: null,
+        status: null,
       },
       finishForm: {
         payAmount: 0,
       },
     };
   },
-  components: {
-    EditWorker: EditWorker,
-  },
-  async created() {
-    await this.getQueryDeviceTypeList();
-    await this.getQueryDeviceSystemList();
-    await this.getQueryDevicePositionList();
-    await this.getAddressFn();
-    await this.getMasterRoleList();
-    this.getSysLabel();
-    this._getMasterList();
-  },
+
   computed: {
     masterRemark() {
       const { labelList, remark } = this.handleMasterRemarkParamsCopy;
@@ -1614,10 +1305,76 @@ export default {
       return parts.join(";");
     },
   },
-  mounted() {
-    this.serviceAreasList = require("../../../utils/city-address.json");
+
+  async created() {
+    // 并发请求基础数据
+    await Promise.all([
+      this.getQueryDeviceTypeList(),
+      this.getQueryDeviceSystemList(),
+      this.getQueryDevicePositionList(),
+      this.getAddressFn(),
+      this.getMasterRoleList(),
+      this.getSysLabel(),
+    ]);
+    this._getMasterList();
   },
+
   methods: {
+    // ----------------- 辅助方法 -----------------
+    getImgUrl(str) {
+      return str ? str.split(",")[0] : "";
+    },
+    getImgList(str) {
+      return str ? str.split(",") : [];
+    },
+    isVerified(str) {
+      return str && (str.includes("V") || str.includes("v"));
+    },
+    getIdentityTag(type) {
+      const map = { 1: "info", 2: "warning", 3: "success" };
+      return map[type] || "";
+    },
+    getStatusTag(status) {
+      // 1审核中 2通过 3驳回
+      const map = { 1: "warning", 2: "success", 3: "danger" };
+      return map[status] || "info";
+    },
+
+    // ----------------- 业务逻辑 -----------------
+
+    // 统一处理Dropdown操作
+    handleCommand(command, row) {
+      switch (command) {
+        case "audit":
+          this.open(row);
+          break;
+        case "lock":
+          this.isLock(row);
+          break;
+        case "team":
+          this.checkTeam(row);
+          break;
+        case "active":
+          this.openSetActiveDialog(row.uid, row.activeFlag);
+          break;
+        case "identity":
+          this.openEditWorkerIdDialog(row);
+          break;
+        case "remark":
+          this.openRemarksDialog(row);
+          break;
+        case "role":
+          this.openChooseRoseDialog(row.uid);
+          break;
+        case "score":
+          this.open_score_dialog(row.uid);
+          break;
+        case "integral":
+          this.open_integral_dialog(row.uid);
+          break;
+      }
+    },
+
     //测试
     testExport() {
       const loading = this.$loading({
@@ -1625,7 +1382,7 @@ export default {
         text: "数据传输中",
         spinner: "el-icon-loading",
       });
-      const data = this.queryMasterListParams;
+      const data = { ...this.queryMasterListParams };
       data.pageSize = 1000;
       testExport(data).then((res) => {
         if (res) {
@@ -1635,7 +1392,7 @@ export default {
           });
           link.style.display = "none";
           link.href = URL.createObjectURL(blob);
-          link.download = "师傅列表"; //下载的文件名
+          link.download = "师傅列表.xls";
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
@@ -1651,10 +1408,7 @@ export default {
       };
       const res = await handleMasterRemark(params);
       if (res.code == "000") {
-        this.$message({
-          message: res.message,
-          type: "success",
-        });
+        this.$message.success(res.message);
         this.closeRemarksDialog();
         this._getMasterList();
       }
@@ -1677,10 +1431,8 @@ export default {
       const list = this.handleMasterRemarkParamsCopy.labelList;
       const index = list.indexOf(tag);
       if (index > -1) {
-        // 已存在，移除
         list.splice(index, 1);
       } else {
-        // 不存在，添加
         list.push(tag);
       }
     },
@@ -1702,30 +1454,22 @@ export default {
     // 获取师傅标签
     async getSysLabel() {
       const res = await getSysLabel("masterTag");
-      if (res.code == "000") {
-        if (res.data) {
-          this.masterTag = res.data.split(",");
-        }
+      if (res.code == "000" && res.data) {
+        this.masterTag = res.data.split(",");
       }
     },
     // 确定更改师傅身份
     async confirmEditWorkerId() {
       const res = await handleMasterType(this.submitSetWorkerIdParams);
       if (res.code == "000") {
-        this.$message({
-          message: res.message,
-          type: "success",
-        });
+        this.$message.success(res.message);
         this._getMasterList();
         this.closeEditWorkerIdDialog();
       }
     },
     // 关闭更改师傅身份框
     closeEditWorkerIdDialog() {
-      this.submitSetWorkerIdParams = {
-        uid: null,
-        type: null,
-      };
+      this.submitSetWorkerIdParams = { uid: null, type: null };
       this.setWorkerIdDialog = false;
     },
     // 打开更改师傅身份框
@@ -1736,18 +1480,19 @@ export default {
     },
 
     // 切换创建时间
-    changeQueryTimeCopy() {
-      this.queryMasterListParams.queryTime =
-        this.queryTimeCopy[0] + "~" + this.queryTimeCopy[1];
+    changeQueryTimeCopy(val) {
+      if (val && val.length > 0) {
+        this.queryMasterListParams.queryTime = val[0] + "~" + val[1];
+      } else {
+        this.queryMasterListParams.queryTime = null;
+      }
+      this._getMasterList(1);
     },
     // 确定设置活跃师傅
     async confirmSetActive() {
       const res = await handleActiveMaster(this.setActiveParmas);
       if (res.message == "操作成功") {
-        this.$message({
-          message: "操作成功",
-          type: "success",
-        });
+        this.$message.success("操作成功");
         this.closeSetActiveDialog();
         this._getMasterList();
       }
@@ -1755,10 +1500,7 @@ export default {
     // 关闭活跃师傅框
     closeSetActiveDialog() {
       this.setActiveDialog = false;
-      this.setActiveParmas = {
-        uid: "",
-        flag: "",
-      };
+      this.setActiveParmas = { uid: "", flag: "" };
     },
     // 打开活跃师傅框
     openSetActiveDialog(uid, flag) {
@@ -1784,7 +1526,7 @@ export default {
           this.integralFrom.relationOrderSn === "" ||
           this.integralFrom.type === ""
         ) {
-          this.$message("订单编号和积分类型都是必填的......");
+          this.$message.warning("订单编号和积分类型都是必填的......");
           return;
         }
         let value = this.masterIntegralList[this.integralFrom.type - 4].value;
@@ -1792,10 +1534,7 @@ export default {
       }
       const res = await handleMasterIntegral(this.integralFrom);
       if (res.message === "操作成功") {
-        this.$message({
-          message: "操作成功",
-          type: "success",
-        });
+        this.$message.success("操作成功");
         this.integral_handleClose();
         this._getMasterList();
       }
@@ -1810,20 +1549,12 @@ export default {
     },
     // 关闭分值框
     score_handleClose() {
-      this.scoreForm = {
-        uid: "",
-        pageNo: 1,
-        pageSize: 5,
-      };
+      this.scoreForm = { uid: "", pageNo: 1, pageSize: 5 };
       this.score_dialogVisible = false;
     },
     // 关闭积分框
     integral_handleClose() {
-      this.integralFrom = {
-        uid: "",
-        relationOrderSn: "",
-        type: "",
-      };
+      this.integralFrom = { uid: "", relationOrderSn: "", type: "" };
       this.integral_dialogVisible = false;
     },
     // 打开积分框
@@ -1837,19 +1568,12 @@ export default {
         this.chooseRoseForm.masterRoleId === 3 &&
         !this.chooseRoseForm.superiorMasterUid
       ) {
-        // 提示区域经理必填
-        this.$message({
-          message: "区域经理不能为空",
-          type: "warning",
-        });
+        this.$message.warning("区域经理不能为空");
         return;
       } else {
         const res = await handleMasterIdentity(this.chooseRoseForm);
         if (res.code === "000") {
-          this.$message({
-            message: "设置成功",
-            type: "success",
-          });
+          this.$message.success("设置成功");
           this.closeChooseRoseDialog();
           this._getMasterList();
         }
@@ -1861,11 +1585,7 @@ export default {
     },
     // 关闭设置师傅角色框
     closeChooseRoseDialog() {
-      this.chooseRoseForm = {
-        masterRoleId: 3,
-        superiorMasterUid: "",
-        uid: "",
-      };
+      this.chooseRoseForm = { masterRoleId: 3, superiorMasterUid: "", uid: "" };
       this.chooseRoseDialogShow = false;
     },
     // 打开设置师傅角色框
@@ -1889,11 +1609,7 @@ export default {
     // 点击区域经理触发
     changeMasterRoleId1() {
       this.addSigningMasterRules.serviceAreas = [
-        {
-          required: true,
-          message: "请输入服务区域",
-          trigger: "blur",
-        },
+        { required: true, message: "请输入服务区域", trigger: "blur" },
       ];
       delete this.addSigningMasterRules.superiorMasterUid;
     },
@@ -1901,11 +1617,7 @@ export default {
     changeMasterRoleId2() {
       delete this.addSigningMasterRules.serviceAreas;
       this.addSigningMasterRules.superiorMasterUid = [
-        {
-          required: true,
-          message: "请输入服务区域",
-          trigger: "blur",
-        },
+        { required: true, message: "请输入服务区域", trigger: "blur" },
       ];
     },
     // 服务区域的值变化触发
@@ -2083,13 +1795,13 @@ export default {
       this.uploadIdentityFrontImageImg = null;
       this.uploadIdentityBackImageImg = null;
       this.equipmentSystemOne = null;
-      this.equipmentSystemTwo = null;
+      this.equipmentSystemTwo = [];
       this.equipmentTypeOne = null;
-      this.equipmentTypeTwo = null;
-      this.serviceArea = null;
+      this.equipmentTypeTwo = [];
+      this.serviceArea = [];
       this.provinceValue = null;
       this.cityValue = null;
-      this.districtValue = null;
+      this.districtValue = [];
       this.$refs.uploadIndustryPicRef.clearFiles();
       this.$refs.uploadSkillCertificatePicRef.clearFiles();
       this.skillCertificateImagesUid = [];
@@ -2114,6 +1826,7 @@ export default {
         superiorMasterUid: null,
         recommendMasterUid: null,
         queryTime: null,
+        areaId: null,
       };
       this._getMasterList();
     },
@@ -2131,7 +1844,7 @@ export default {
         text: "数据传输中",
         spinner: "el-icon-loading",
       });
-      const data = this.queryMasterListParams;
+      const data = { ...this.queryMasterListParams };
       data.pageSize = 1000;
       handleMasterInfoExport(data).then((res) => {
         if (res) {
@@ -2141,7 +1854,7 @@ export default {
           });
           link.style.display = "none";
           link.href = URL.createObjectURL(blob);
-          link.download = "师傅列表"; //下载的文件名
+          link.download = "师傅列表.xls";
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
@@ -2172,9 +1885,15 @@ export default {
       this.queryMasterListParams.pageNo = page;
       this._getMasterList();
     },
+    handleSizeChange(val) {
+      this.queryMasterListParams.pageSize = val;
+      this.queryMasterListParams.pageNo = 1;
+      this._getMasterList();
+    },
     // 查询师傅列表
     async _getMasterList(id) {
-      // id=1 说明是重置
+      this.loading = true;
+      // id=1 说明是重置或新查询
       if (id === 1) {
         this.queryMasterListParams.pageNo = 1;
       }
@@ -2191,10 +1910,16 @@ export default {
           res.data[0] && res.data[0].uid;
       }
 
-      const res = await getMasterList(this.queryMasterListParams);
-      if (res.message === "操作成功") {
-        this.masterList = res.data.records;
-        this.queryMasterListTotal = res.data.total;
+      try {
+        const res = await getMasterList(this.queryMasterListParams);
+        if (res.message === "操作成功") {
+          this.masterList = res.data.records;
+          this.queryMasterListTotal = res.data.total;
+        }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        this.loading = false;
       }
     },
     querySelectData() {
@@ -2210,24 +1935,28 @@ export default {
       this.loading = false;
     },
     isLock(row) {
-      this.$axios
-        .post(this.url.lock, {
-          id: row.id,
-          lock: Number(!row.isLock),
-        })
-        .then(async ({ code, message }) => {
-          await this.util.message(this, code, message);
-          this._getMasterList();
-        })
-        .catch((err) => {
-          console.error(err);
-        });
+      this.$confirm(`确定要${row.isLock ? "解锁" : "锁定"}该师傅吗?`, "提示", {
+        type: "warning",
+      }).then(() => {
+        this.$axios
+          .post(this.url.lock, {
+            id: row.id,
+            lock: Number(!row.isLock),
+          })
+          .then(async ({ code, message }) => {
+            await this.util.message(this, code, message);
+            this._getMasterList();
+          })
+          .catch((err) => {
+            console.error(err);
+          });
+      });
     },
     open(row) {
       this.$refs.editStatusModel.open();
       this.editForm = {
         id: row.id,
-        status: false,
+        status: 2, // 默认为通过
       };
     },
     handleEditStatus(fn) {
@@ -2238,7 +1967,6 @@ export default {
         })
         .then((data) => {
           this.util.message(this, data.status, data.message);
-          // this.query();
           this._getMasterList();
           this.resetEditForm(false);
         })
@@ -2282,9 +2010,321 @@ export default {
     },
     resetEditForm(fn) {
       this.masterTeamList = null;
-      fn(false);
-      // this.query();
+      if (fn) fn(false);
     },
   },
 };
 </script>
+
+<style lang="less" scoped>
+// 全局覆盖
+::v-deep input::-webkit-outer-spin-button,
+::v-deep input::-webkit-inner-spin-button {
+  -webkit-appearance: none !important;
+}
+::v-deep input[type="number"] {
+  -moz-appearance: textfield !important;
+}
+
+.app-container {
+  padding: 20px;
+  background-color: #f0f2f5;
+  min-height: 100vh;
+}
+
+// 搜索栏样式
+.search-wrapper {
+  margin-bottom: 15px;
+  .search-btns {
+    float: right;
+  }
+}
+
+// 表格样式
+.table-wrapper {
+  .user-cell {
+    display: flex;
+    align-items: center;
+    .avatar-box {
+      position: relative;
+      width: 50px;
+      height: 50px;
+      margin-right: 12px;
+      .avatar-img {
+        width: 100%;
+        height: 100%;
+        border-radius: 4px;
+      }
+      .v-badge {
+        position: absolute;
+        width: 18px;
+        height: 18px;
+        bottom: -5px;
+        right: -5px;
+        z-index: 2;
+      }
+    }
+    .info-box {
+      display: flex;
+      flex-direction: column;
+      .name {
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 2px;
+      }
+      .phone {
+        font-size: 12px;
+        color: #999;
+      }
+    }
+  }
+
+  .img-row {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    .mini-img {
+      width: 40px;
+      height: 40px;
+      border-radius: 4px;
+      border: 1px solid #eee;
+    }
+  }
+
+  .more-btn {
+    color: #606266;
+    margin-left: 10px;
+    &:hover {
+      color: #409eff;
+    }
+  }
+}
+
+.pagination-container {
+  margin-top: 20px;
+  text-align: right;
+}
+
+// 弹窗样式
+.tag-group {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.avatar-uploader-mini .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  width: 100px;
+  height: 100px;
+  line-height: 100px;
+}
+.avatar-uploader-mini .el-upload:hover {
+  border-color: #409eff;
+}
+.avatar {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* --- 全局弹窗美化 (Deep Selectors) --- */
+::v-deep .el-dialog {
+  border-radius: 8px; /* 圆角更柔和 */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+
+  .el-dialog__header {
+    background: #f8f9fa; /* 浅灰背景区分头部 */
+    padding: 15px 20px;
+    border-bottom: 1px solid #ebeef5;
+    .el-dialog__title {
+      font-weight: 600;
+      color: #303133;
+      font-size: 16px;
+    }
+    .el-dialog__headerbtn {
+      top: 18px;
+    }
+  }
+
+  .el-dialog__body {
+    padding: 25px 25px 10px; /* 增加内部呼吸感 */
+  }
+
+  .el-dialog__footer {
+    padding: 15px 20px;
+    border-top: 1px solid #ebeef5;
+    background: #fff;
+    text-align: right;
+  }
+}
+
+/* --- 1. 卡片式单选组 (用于身份、活跃、审核等简单选择) --- */
+.radio-card-group {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  width: 100%;
+
+  ::v-deep .el-radio {
+    margin-right: 0;
+    width: 100px; /* 固定宽度，整齐 */
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    border: 1px solid #dcdfe6;
+    border-radius: 4px;
+    transition: all 0.3s;
+    padding: 0;
+
+    /* 隐藏原生的小圆点，纯文字按钮样式 */
+    .el-radio__input {
+      display: none;
+    }
+    .el-radio__label {
+      padding: 0;
+      font-size: 14px;
+    }
+
+    /* 选中状态 */
+    &.is-checked {
+      border-color: #409eff;
+      background-color: #ecf5ff;
+      color: #409eff;
+      font-weight: bold;
+      box-shadow: 0 2px 8px rgba(64, 158, 255, 0.15);
+    }
+
+    &:hover {
+      border-color: #c6e2ff;
+      color: #409eff;
+    }
+  }
+}
+
+/* --- 2. 备注/标签弹窗优化 --- */
+.tag-container {
+  border: 1px solid #ebeef5;
+  border-radius: 4px;
+  padding: 10px;
+  min-height: 40px;
+  background: #fafafa;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  .check-tag {
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+
+    &:hover {
+      transform: translateY(-1px);
+    }
+
+    /* 未选中态 - 使用Element plain样式 */
+    &.is-plain {
+      background-color: #fff;
+      border-color: #dcdfe6;
+      color: #606266;
+    }
+  }
+}
+.preview-box {
+  background: #f4f4f5;
+  padding: 10px;
+  border-radius: 4px;
+  color: #606266;
+  font-size: 13px;
+  line-height: 1.4;
+  min-height: 36px;
+}
+
+/* --- 3. 长表单容器 (新增签约师傅) --- */
+.scroll-form-container {
+  height: 60vh;
+  overflow-y: auto;
+  padding: 0 15px 15px 5px; /* 右侧留白给滚动条 */
+
+  /* 自定义滚动条 */
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #c0c4cc;
+    border-radius: 3px;
+  }
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  .form-section-header {
+    font-size: 15px;
+    font-weight: bold;
+    color: #303133;
+    margin: 10px 0 15px 0;
+    padding-left: 10px;
+    border-left: 3px solid #409eff;
+    background: #fcfcfc;
+    line-height: 2;
+  }
+}
+
+/* --- 4. 上传组件微调 --- */
+.avatar-uploader-mini ::v-deep .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  width: 100px;
+  height: 100px;
+  line-height: 100px;
+  transition: 0.3s;
+
+  &:hover {
+    border-color: #409eff;
+    background-color: #f9faff;
+  }
+
+  i {
+    font-size: 24px;
+    color: #8c939d;
+  }
+}
+.avatar {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+/* --- 5. 分值记录表格 --- */
+.score-table-wrapper {
+  border: 1px solid #ebeef5;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.score-value-plus {
+  color: #67c23a;
+  font-weight: bold;
+}
+.score-value-minus {
+  color: #f56c6c;
+  font-weight: bold;
+}
+
+/* 基础样式复用 */
+.w-100 {
+  width: 100%;
+}
+.mt-20 {
+  margin-top: 20px;
+}
+.text-center {
+  text-align: center;
+}
+</style>

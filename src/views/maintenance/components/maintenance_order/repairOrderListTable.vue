@@ -1,11 +1,13 @@
 <template>
   <div class="repairOrderListTable">
     <el-table
+      v-if="!isMobile"
       ref="repairOrderListTableRef"
       @selection-change="handleSelectionChange"
       highlight-current-row
       :data="repairOrderList"
       :key="params.status == 5"
+      style="width: 100%"
     >
       <el-table-column v-if="params.status >= 5" type="selection" width="55">
       </el-table-column>
@@ -306,10 +308,140 @@
       </el-table-column>
     </el-table>
 
-    <!-- 绑定业务员 -->
+    <div v-else class="mobile-list-container">
+      <div v-if="repairOrderList.length === 0" class="no-data">暂无数据</div>
+
+      <el-checkbox-group
+        v-model="mobileSelectedRows"
+        @change="handleMobileSelectionChange"
+      >
+        <div
+          class="mobile-card"
+          v-for="(row, index) in repairOrderList"
+          :key="row.orderSn || index"
+        >
+          <div class="card-header">
+            <div class="header-left">
+              <el-checkbox
+                v-if="params.status >= 5"
+                :label="row"
+                class="mobile-checkbox"
+              >
+                <span></span>
+              </el-checkbox>
+              <el-button
+                type="text"
+                class="order-sn-btn"
+                @click="goToOrderDesc(row)"
+              >
+                {{ row.orderSn || "无编号" }}
+              </el-button>
+            </div>
+            <div class="header-right">
+              <el-tag size="small" effect="plain">{{
+                row.orderStatusName
+              }}</el-tag>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div class="info-row full-width">
+              <span class="label">企业:</span>
+              <span class="value">{{ row.enterpriseName }}</span>
+            </div>
+            <div class="info-row full-width">
+              <span class="label">地址:</span>
+              <span class="value">{{ row.address || "/" }}</span>
+            </div>
+            <div class="info-row full-width">
+              <span class="label">故障:</span>
+              <span class="value fault-desc">{{ row.simpleDesc }}</span>
+            </div>
+            <div class="info-row">
+              <span class="label">师傅:</span>
+              <span class="value">{{ row.masterRealName || "/" }}</span>
+            </div>
+            <div class="info-row">
+              <span class="label">类型:</span>
+              <span class="value">{{
+                row.orderType === 1
+                  ? "散单"
+                  : row.orderType === 2
+                  ? "年保"
+                  : "年卡"
+              }}</span>
+            </div>
+
+            <div class="info-row">
+              <span class="label">设类:</span>
+              <span class="value">{{ row.deviceTypeName || "/" }}</span>
+            </div>
+            <div class="info-row">
+              <span class="label">系统:</span>
+              <span class="value">{{ row.deviceSystemName || "/" }}</span>
+            </div>
+
+            <div class="expand-toggle" @click="toggleExpand(row)">
+              <span style="color: #409eff; font-size: 13px">
+                {{ row.isExpanded ? "收起详情" : "展开更多" }}
+                <i
+                  :class="
+                    row.isExpanded ? 'el-icon-arrow-up' : 'el-icon-arrow-down'
+                  "
+                ></i>
+              </span>
+            </div>
+
+            <div class="expand-content" v-show="row.isExpanded">
+              <div class="info-row">
+                <span class="label">联系人:</span>
+                <span class="value">{{ row.contactsPeople }}</span>
+              </div>
+              <div class="info-row">
+                <span class="label">电话:</span>
+                <span class="value">{{ row.contactsPhone }}</span>
+              </div>
+              <div class="info-row">
+                <span class="label">结算:</span>
+                <span class="value">{{
+                  row.settlementType == 2 ? "月结" : "现结"
+                }}</span>
+              </div>
+              <div class="info-row">
+                <span class="label">超时:</span>
+                <span
+                  class="value"
+                  :style="{ color: row.timeoutFlag ? 'red' : '' }"
+                >
+                  {{
+                    row.timeoutFlag == "2001"
+                      ? "指派超时"
+                      : row.timeoutFlag == "2101"
+                      ? "接单超时"
+                      : row.timeoutFlag == "2201"
+                      ? "打卡超时"
+                      : row.timeoutFlag == "2301"
+                      ? "服务中超时"
+                      : row.timeoutFlag == "3001"
+                      ? "派发超时"
+                      : "/"
+                  }}
+                </span>
+              </div>
+              <div class="info-row full-width">
+                <span class="label">备注:</span>
+                <span class="value">{{ row.remarks || "/" }}</span>
+              </div>
+            </div>
+          </div>
+          <!-- <div class="card-footer"></div> -->
+        </div>
+      </el-checkbox-group>
+    </div>
+
     <el-dialog
       title="绑定业务员"
-      width="25%"
+      :width="dialogWidth"
       :visible="bindSalesmanDialogVisible"
       :close-on-click-modal="false"
       :before-close="closeBindSalesmanDialog"
@@ -321,6 +453,7 @@
         remote
         placeholder="请输入业务员名字"
         :remote-method="searchSalesman"
+        style="width: 100%"
       >
         <el-option
           v-for="item in salesmanOptions"
@@ -336,10 +469,9 @@
       </span>
     </el-dialog>
 
-    <!-- 转年保框 -->
     <el-dialog
       title="散单转类型"
-      width="30%"
+      :width="dialogWidth"
       :visible="openConvertToInsuranceShow"
       :before-close="closeConvertToInsurance"
       center
@@ -366,10 +498,9 @@
       </span>
     </el-dialog>
 
-    <!-- 备注 ＋ 标签 -->
     <el-dialog
       title="备注"
-      width="30%"
+      :width="dialogWidth"
       :before-close="closeRemarksDialog"
       :visible="remarksDialogVisible"
       :close-on-click-modal="false"
@@ -383,6 +514,7 @@
               size="small"
               v-for="item in orderTag"
               :key="item"
+              style="margin-right: 5px; margin-bottom: 5px"
               >{{ item }}</el-button
             >
           </el-form-item>
@@ -407,10 +539,9 @@
       </span>
     </el-dialog>
 
-    <!-- 设置标签 -->
     <el-dialog
       title="选择标签"
-      width="35%"
+      :width="dialogWidth"
       :visible="setOrderTagDialogVisible"
       :close-on-click-modal="false"
       :before-close="closeSetOrderTagDialog"
@@ -421,6 +552,7 @@
           v-for="item in lablelList"
           :key="item.value"
           :label="item.value"
+          style="display: block; margin-bottom: 10px"
           ><el-tag :type="item.type">{{ item.value }}</el-tag></el-radio
         >
       </el-radio-group>
@@ -447,7 +579,6 @@ import { getSysLabel } from "@/api/system.js";
 export default {
   name: "RepairOrderListTable",
   props: {
-    // 查询订单需要的参数
     params: {
       type: Object,
       required: true,
@@ -455,24 +586,24 @@ export default {
   },
   data() {
     return {
+      // === 移动端适配新增数据 ===
+      isMobile: false,
+      mobileSelectedRows: [], // 移动端选中的行
+      // =======================
+
       repairOrderList: [],
-      // 【绑定业务员】
       bindSalesmanDialogVisible: false,
       bindSalesmanParams: {
         salesmanId: null,
         orderSn: null,
       },
       salesmanOptions: [],
-
-      // 【转类型】
       openConvertToInsuranceShow: false,
       convertToInsuranceparams: {
         orderSn: null,
         no: null,
         type: null,
       },
-
-      // 【备注】
       remarksDialogVisible: false,
       handleRepairRemarksParamsCopy: {
         labelList: [],
@@ -480,8 +611,6 @@ export default {
       },
       chooseOrderSn: null,
       orderTag: [],
-
-      // 【设置199 299】
       setOrderTagDialogVisible: false,
       handleOrderLabelParams: {
         label: null,
@@ -504,6 +633,10 @@ export default {
     };
   },
   computed: {
+    // 动态计算弹窗宽度
+    dialogWidth() {
+      return this.isMobile ? "90%" : "30%";
+    },
     orderRemark() {
       const { labelList, remark } = this.handleRepairRemarksParamsCopy;
       const parts = [...labelList];
@@ -513,8 +646,32 @@ export default {
       return parts.join(";");
     },
   },
+  mounted() {
+    this.checkMobile();
+    window.addEventListener("resize", this.checkMobile);
+  },
+  beforeDestroy() {
+    window.removeEventListener("resize", this.checkMobile);
+  },
   methods: {
-    // 删除订单
+    // 新增切换展开方法
+    toggleExpand(row) {
+      row.isExpanded = !row.isExpanded;
+      // 如果是用 Vue 2 且发现视图没更新，请使用：this.$set(row, 'isExpanded', !row.isExpanded)
+    },
+    // === 移动端适配新增方法 ===
+    checkMobile() {
+      const width = window.innerWidth;
+      // 768px 是常规平板竖屏和手机的分界线
+      this.isMobile = width < 768;
+    },
+    // 移动端多选触发
+    handleMobileSelectionChange(val) {
+      // 模拟 el-table 的 selection-change 事件
+      this.$emit("change-tableSelection", val);
+    },
+    // =======================
+
     async deleteRepairOrder(row) {
       const confirmRes = await this.$confirm(`您确定要该订单吗？`, "删除订单", {
         confirmButtonText: "确定",
@@ -528,23 +685,24 @@ export default {
             message: "删除成功！",
             type: "success",
           });
-          this._queryRepairOrderList();
+          // 修正：调用的是 queryRepairOrderList
+          this.queryRepairOrderList();
         }
       }
     },
 
-    // 清除表格选中
     cleanTableChoose() {
-      this.$refs.repairOrderListTableRef.clearSelection();
+      if (this.$refs.repairOrderListTableRef) {
+        this.$refs.repairOrderListTableRef.clearSelection();
+      }
+      // 清空移动端选择
+      this.mobileSelectedRows = [];
     },
 
-    // 表格多选切换选择
     handleSelectionChange(val) {
       this.$emit("change-tableSelection", val);
     },
 
-    // 【设置199 299】
-    // 确定设置标签
     async handleOrderLabel() {
       if (!this.handleOrderLabelParams.label) {
         this.$message({
@@ -566,7 +724,6 @@ export default {
         this.closeSetOrderTagDialog();
       }
     },
-    // 关闭订单标签框
     closeSetOrderTagDialog() {
       this.handleOrderLabelParams = {
         label: null,
@@ -574,7 +731,6 @@ export default {
       };
       this.setOrderTagDialogVisible = false;
     },
-    // 设置订单标签 199套餐
     setOrderTag(row) {
       this.handleOrderLabelParams.orderSn = row.orderSn;
       if (row.label) {
@@ -585,7 +741,6 @@ export default {
       this.setOrderTagDialogVisible = true;
     },
 
-    //  【复制订单】
     async copyOrder(row) {
       const confirm = await this.$confirm(
         `您是否根据【${row.orderSn}】复制一个新的订单号?`,
@@ -608,8 +763,6 @@ export default {
       }
     },
 
-    // 【备注】
-    // 点击标签
     addTag(tag) {
       const list = this.handleRepairRemarksParamsCopy.labelList;
       const index = list.indexOf(tag);
@@ -619,7 +772,6 @@ export default {
         list.push(tag);
       }
     },
-    // 获取企业标签
     async getSysLabel() {
       const res = await getSysLabel("orderRemarkTag");
       if (res.code == "000") {
@@ -628,11 +780,9 @@ export default {
         }
       }
     },
-    // 判断是否被选中
     judgeTagSelected(tag) {
       return this.handleRepairRemarksParamsCopy.labelList.includes(tag);
     },
-    // 确定企业备注
     async handleRepairRemarks() {
       let params = {
         orderSn: this.chooseOrderSn,
@@ -648,7 +798,6 @@ export default {
         this.queryRepairOrderList();
       }
     },
-    // 关闭备注弹窗
     closeRemarksDialog() {
       this.handleRepairRemarksParamsCopy = {
         labelList: [],
@@ -657,7 +806,6 @@ export default {
       this.chooseOrderSn = null;
       this.remarksDialogVisible = false;
     },
-    // 打开备注弹框
     openRemarksDialog(row) {
       if (row.remarks) {
         let arr = row.remarks.split(";");
@@ -673,8 +821,6 @@ export default {
       this.remarksDialogVisible = true;
     },
 
-    // 【转类型】
-    // 确认散单转类型
     async convertToInsurance() {
       const res = await convertToInsurance(this.convertToInsuranceparams);
       if (res.message === "操作成功") {
@@ -686,7 +832,6 @@ export default {
         this.queryRepairOrderList();
       }
     },
-    // 关闭转类型框
     closeConvertToInsurance() {
       this.openConvertToInsuranceShow = false;
       this.convertToInsuranceparams = {
@@ -694,14 +839,11 @@ export default {
         no: null,
       };
     },
-    // 打开转类型框
     openConvertToInsurance(orderSn) {
       this.convertToInsuranceparams.orderSn = orderSn;
       this.openConvertToInsuranceShow = true;
     },
 
-    // 【绑定业务员】
-    // 绑定业务员
     async bindSalesman() {
       const res = await bindSalesman(this.bindSalesmanParams);
       if (res.code == "000") {
@@ -709,7 +851,6 @@ export default {
         this.closeBindSalesmanDialog();
       }
     },
-    // 搜索业务员
     async searchSalesman(e) {
       const res = await querySalesmanList({
         pageNo: 1,
@@ -721,20 +862,17 @@ export default {
         this.salesmanOptions = res.data.records;
       }
     },
-    // 关闭绑定业务员框
     closeBindSalesmanDialog() {
       this.bindSalesmanParams.salesmanId = null;
       this.bindSalesmanParams.orderSn = null;
       this.salesmanOptions = [];
       this.bindSalesmanDialogVisible = false;
     },
-    // 打开绑定业务员框
     openBindSalesmanDialog(orderSn) {
       this.bindSalesmanParams.orderSn = orderSn;
       this.bindSalesmanDialogVisible = true;
     },
 
-    // 跳转详情
     goToOrderDesc(row) {
       const routeData = this.$router.resolve({
         name: "maintenance_order_desc",
@@ -742,11 +880,14 @@ export default {
       });
       window.open(routeData.href, "_blank");
     },
-    // 查询订单
     async queryRepairOrderList() {
       const res = await queryRepairOrderList(this.params);
       if (res.code == "000") {
-        this.repairOrderList = res.data.records;
+        // 遍历数据，添加 isExpanded 标识
+        this.repairOrderList = res.data.records.map((item) => ({
+          ...item,
+          isExpanded: false,
+        }));
         this.$emit("change-paginationTotal", res.data.total);
       }
     },
@@ -758,5 +899,133 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+/* 移动端卡片样式 */
+.mobile-list-container {
+  padding: 10px;
+  background: #f5f7fa;
+}
+
+.mobile-card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  margin-bottom: 15px;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 头部: 编号 + 状态 */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #ebeef5;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+}
+
+.mobile-checkbox {
+  margin-right: 10px;
+}
+
+.order-sn-btn {
+  font-weight: bold;
+  font-size: 16px;
+  padding: 0;
+}
+
+/* 内容区 Grid */
+.card-body {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.info-row {
+  width: 50%; /* 默认一行两个 */
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #606266;
+  display: flex;
+}
+
+.info-row.full-width {
+  width: 100%; /* 独占一行 */
+}
+
+.label {
+  color: #909399;
+  margin-right: 6px;
+  min-width: 40px;
+}
+
+.value {
+  color: #303133;
+  word-break: break-all;
+}
+
+.fault-desc {
+  font-weight: 500;
+}
+
+/* 底部操作 */
+.card-footer {
+  border-top: 1px solid #ebeef5;
+  padding-top: 10px;
+  margin-top: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.salesman-text {
+  font-size: 13px;
+  color: #909399;
+}
+
+.no-data {
+  text-align: center;
+  padding: 20px;
+  color: #909399;
+}
+
+/* 移动端适配 CSS */
+@media screen and (max-width: 768px) {
+  /* 强制覆盖弹窗的可能的全局样式 */
+  ::v-deep .el-dialog {
+    margin-top: 15vh !important;
+    width: 90% !important;
+  }
+}
+.expand-toggle {
+  width: 100%;
+  text-align: center;
+  padding: 8px 0;
+  border-top: 1px dashed #ebeef5;
+  margin-top: 5px;
+  cursor: pointer;
+}
+
+.expand-content {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  background-color: #fafafa;
+  padding: 10px;
+  border-radius: 4px;
+  margin-top: 5px;
+  transition: all 0.3s;
+}
+
+/* 调整原有 info-row 在移动端的字体 */
+.info-row {
+  font-size: 13px;
+  line-height: 1.6;
+}
 </style>

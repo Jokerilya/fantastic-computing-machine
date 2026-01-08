@@ -22,7 +22,7 @@
   height: 100%;
   position: relative;
   overflow: hidden;
-  background: url("https://w.wallhaven.cc/full/ly/wallhaven-lyyx5q.jpg")
+  background: url("https://snk2025-1305456087.cos.ap-guangzhou.myqcloud.com/user/20260107/MM73951865.jpg")
     no-repeat center center;
   background-size: 100vw 100vh;
   animation: bgFocus 2.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;

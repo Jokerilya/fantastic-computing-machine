@@ -13,6 +13,7 @@
     "test:ci": "npm run lint && npm run test:unit"
   },
   "dependencies": {
+    "@fingerprintjs/fingerprintjs": "^5.0.1",
     "axios": "^0.21.1",
     "core-js": "^3.22.4",
     "crypto-js": "^4.2.0",

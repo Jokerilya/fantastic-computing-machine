@@ -1168,7 +1168,6 @@ export default {
       await this._queryEnterpriseMemberList(row);
       this.$refs.enterpriseTeamList.open();
     },
-    // 不清楚!!!!
     handleEnterpriseExamine() {
       this.$axios
         .post(this.url.handleEnterpriseExamine, {
