@@ -41,19 +41,21 @@ export default {
         { processKey: "enterprise_create_order", processName: "企业发布订单" },
         { processKey: "platform_assign_master", processName: "平台指派师傅" },
         { processKey: "master_accept_order", processName: "师傅接单" },
-        { processKey: "master_remote_quote", processName: "师傅远程报价" },
+        { processKey: "master_remote_quote", processName: "致电&远程报价" },
         { processKey: "master_start_journey", processName: "师傅开始出发" },
         { processKey: "master_arrival_punch", processName: "师傅到点打卡" },
-        { processKey: "master_submit_quote", processName: "师傅提交报价" },
-        { processKey: "platform_examine_quote", processName: "平台审核定价" },
+        { processKey: "master_submit_quote", processName: "师傅诊断&报价" },
+        {
+          processKey: "platform_examine_quote",
+          processName: "平台审核定价&审调",
+        },
         { processKey: "enterprise_confirm_quote", processName: "客户确认报价" },
         { processKey: "master_start_service", processName: "师傅开始服务" },
         { processKey: "master_submit_check", processName: "师傅提交验收" },
         { processKey: "enterprise_check", processName: "企业验收" },
-        { processKey: "enterprise_payment", processName: "企业支付" },
-        { processKey: "enterprise_comment", processName: "企业评论" },
-        { processKey: "warranty_period", processName: "质保期" },
+        { processKey: "enterprise_payment", processName: "企业结算&支付" },
         { processKey: "order_completed", processName: "订单完结" },
+        { processKey: "warranty_period", processName: "质保期" },
 
         // { processKey: "master_cancel", processName: "师傅取消" }, 红
         // { processKey: "consult_cost", processName: "协商师傅费用" }, 绿
@@ -62,6 +64,7 @@ export default {
         // { processKey: "order_suspension", processName: "订单中止" }, 红
         // { processKey: "cancel_order_suspension", processName: "取消订单中止" },
         // { processKey: "order_stop", processName: "订单挂起" }, 绿
+        //  { processKey: "enterprise_comment", processName: "企业评论" },
         // { processKey: "cancel_order_stop", processName: "取消订单挂起" },
       ],
     };
@@ -138,7 +141,7 @@ export default {
       const lastItem = this.params[this.params.length - 1];
       if (lastItem && CANCEL_KEYS.includes(lastItem.processKey)) {
         // 不补全
-        return this.params.map((item, index) => ({
+        let editParams = this.params.map((item, index) => ({
           ...item,
           status:
             item.processKey === "consult_cost"
@@ -146,12 +149,23 @@ export default {
               : index === this.params.length - 1 &&
                 (item.processKey === "master_cancel" ||
                   item.processKey === "enterprise_cancel" ||
-                  item.processKey === "platform_cancel" ||
-                  item.processKey === "order_suspension" ||
-                  item.processKey === "order_stop")
+                  item.processKey === "platform_cancel")
               ? "aborted"
+              : index === this.params.length - 1 &&
+                (item.processKey === "order_suspension" ||
+                  item.processKey === "order_stop")
+              ? "suspended"
               : "completed",
         }));
+
+        // 超时常驻红色
+        editParams.forEach((item) => {
+          console.log(159, item);
+          if (item.timeOutDuration) {
+            item.status = "aborted";
+          }
+        });
+        return editParams;
       } else {
         // 补全逻辑
         let result = fillRemainingProcess(
@@ -170,7 +184,6 @@ export default {
   mounted() {
     this.autoScrollToLatest();
   },
-  // 在 data() 同级或者 computed 同级添加 watch
   watch: {
     params: {
       handler(newVal) {
@@ -256,7 +269,7 @@ export default {
   --color-pending: #d6d6d6;
   --color-completed: #409eff;
   --color-suspended: #ffd635;
-  --color-aborted: #ff7487;
+  --color-aborted: #e50014;
   --color-interval: #00c691;
   --arrow-w: 12px;
   --step-width: 110px;

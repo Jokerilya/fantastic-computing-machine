@@ -259,6 +259,15 @@ export function UploadImg(data) {
     data,
   });
 }
+
+// 预览图片
+export function generatePresignedUrl(url) {
+  return request({
+    url: `/admin/base/generatePresignedUrl?url=${url}`,
+    method: "get",
+  });
+}
+
 // export function UploadImg(data) {
 // 	return new Promise((resolve, reject) => {
 // 		console.log("wenjian--"+ data.file)

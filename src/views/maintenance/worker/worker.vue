@@ -83,11 +83,15 @@
         style="width: 100%"
         :header-cell-style="{ background: '#f5f7fa', color: '#606266' }"
       >
-        <el-table-column label="师傅信息" width="200" fixed="left">
+        <el-table-column label="师傅信息" width="100" fixed="left">
           <template slot-scope="{ row }">
             <div class="user-cell">
               <div class="avatar-box">
-                <el-image
+                <PrivateFilePreviewer
+                  :file-paths="row.realPortrait"
+                  custom-text="师傅头像"
+                ></PrivateFilePreviewer>
+                <!-- <el-image
                   class="avatar-img"
                   :src="getImgUrl(row.realPortrait)"
                   :preview-src-list="getImgList(row.realPortrait)"
@@ -95,17 +99,27 @@
                   <div slot="error" class="image-slot">
                     <i class="el-icon-picture-outline"></i>
                   </div>
-                </el-image>
-                <img
+                </el-image> -->
+                <!-- <img
                   v-if="isVerified(row.number)"
                   class="v-badge"
-                  src="https://snk-1305456087.cos.ap-guangzhou.myqcloud.com/user/20240927/AU04149909.png"
-                />
+                  src="../../../assets/master/masterVIP.png"
+                /> -->
               </div>
-              <div class="info-box">
-                <div class="name">{{ row.realName || "-" }}</div>
-                <div class="phone">{{ row.phone }}</div>
-              </div>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="number"
+          label="师傅信息"
+          width="140"
+          align="center"
+          show-overflow-tooltip
+        >
+          <template slot-scope="{ row }">
+            <div class="info-box">
+              <div class="name">{{ row.realName || "-" }}</div>
+              <div class="phone">{{ row.phone }}</div>
             </div>
           </template>
         </el-table-column>
@@ -165,21 +179,24 @@
           width="120"
           align="center"
           show-overflow-tooltip
-        ></el-table-column>
+        >
+          <template slot-scope="{ row }">
+            {{ row.promotionPeople ? row.promotionPeople : "--" }}
+          </template>
+        </el-table-column>
 
-        <el-table-column label="身份证" width="120" align="center">
+        <el-table-column label="身份证" width="140" align="center">
           <template slot-scope="{ row }">
             <div class="img-row">
-              <el-image
-                class="mini-img"
-                :src="getImgUrl(row.identityFrontImage)"
-                :preview-src-list="getImgList(row.identityFrontImage)"
-              ></el-image>
-              <el-image
-                class="mini-img"
-                :src="getImgUrl(row.identityBackImage)"
-                :preview-src-list="getImgList(row.identityBackImage)"
-              ></el-image>
+              <PrivateFilePreviewer
+                :file-paths="row.identityFrontImage"
+                custom-text="正面"
+              ></PrivateFilePreviewer>
+
+              <PrivateFilePreviewer
+                :file-paths="row.identityBackImage"
+                custom-text="反面"
+              ></PrivateFilePreviewer>
             </div>
           </template>
         </el-table-column>
@@ -192,25 +209,19 @@
           show-overflow-tooltip
         ></el-table-column>
 
-        <el-table-column label="经验/证书" width="120" align="center">
+        <el-table-column label="经验/证书" width="160" align="center">
           <template slot-scope="{ row }">
             <div class="img-row">
-              <el-tooltip content="行业经验" placement="top">
-                <el-image
-                  class="mini-img"
-                  v-if="row.industryExperienceImages"
-                  :src="getImgUrl(row.industryExperienceImages)"
-                  :preview-src-list="getImgList(row.industryExperienceImages)"
-                ></el-image>
-              </el-tooltip>
-              <el-tooltip content="技能证书" placement="top">
-                <el-image
-                  class="mini-img"
-                  v-if="row.skillCertificateImages"
-                  :src="getImgUrl(row.skillCertificateImages)"
-                  :preview-src-list="getImgList(row.skillCertificateImages)"
-                ></el-image>
-              </el-tooltip>
+              <PrivateFilePreviewer
+                v-if="row.industryExperienceImages"
+                :file-paths="row.industryExperienceImages"
+                custom-text="行业经验"
+              ></PrivateFilePreviewer>
+              <PrivateFilePreviewer
+                v-if="row.skillCertificateImages"
+                :file-paths="row.skillCertificateImages"
+                custom-text="技能证书"
+              ></PrivateFilePreviewer>
             </div>
           </template>
         </el-table-column>
@@ -263,7 +274,11 @@
           width="150"
           align="center"
           show-overflow-tooltip
-        ></el-table-column>
+        >
+          <template slot-scope="{ row }">
+            {{ row.remark ? row.remark : "--" }}
+          </template>
+        </el-table-column>
         <el-table-column
           prop="createTime"
           label="创建时间"
@@ -2047,9 +2062,6 @@ export default {
     align-items: center;
     .avatar-box {
       position: relative;
-      width: 50px;
-      height: 50px;
-      margin-right: 12px;
       .avatar-img {
         width: 100%;
         height: 100%;

@@ -20,13 +20,7 @@ const router = {
       component: () => import("@/views/activityManage/activityProductList"),
       meta: { title: "活动产品列表" },
     },
-    {
-      path: "activityProductOrderList",
-      name: "activityProductOrderList",
-      component: () =>
-        import("@/views/activityManage/activityProductOrderList"),
-      meta: { title: "活动订单列表" },
-    },
+
     {
       path: "bindActivateOrder",
       name: "bindActivateOrder",

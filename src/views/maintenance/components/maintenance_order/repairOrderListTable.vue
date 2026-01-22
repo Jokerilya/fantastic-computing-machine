@@ -9,8 +9,8 @@
       :key="params.status == 5"
       style="width: 100%"
     >
-      <el-table-column v-if="params.status >= 5" type="selection" width="55">
-      </el-table-column>
+      <!-- <el-table-column v-if="params.status >= 5" type="selection" width="55">
+      </el-table-column> -->
       <el-table-column
         prop="orderSn"
         label="订单编号"
@@ -874,8 +874,16 @@ export default {
     },
 
     goToOrderDesc(row) {
+      const targetTime = new Date("2026/01/22 00:00:00").getTime();
+      const inputTime = new Date(row.createTime.replace(/-/g, "/")).getTime();
+      let name;
+      if (inputTime > targetTime) {
+        name = "maintenance_order_desc";
+      } else {
+        name = "maintenance_order_desc_copy";
+      }
       const routeData = this.$router.resolve({
-        name: "maintenance_order_desc",
+        name,
         query: { orderSn: row.orderSn },
       });
       window.open(routeData.href, "_blank");

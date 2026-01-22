@@ -403,6 +403,10 @@ export default {
           value: 4,
           label: "初次保养",
         },
+        {
+          value: 5,
+          label: "免费检测",
+        },
       ],
     };
   },

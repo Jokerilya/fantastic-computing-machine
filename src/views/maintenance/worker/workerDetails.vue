@@ -49,7 +49,11 @@
                     v-if="workerDetailList.identityFrontImage"
                   >
                     <span class="sub-label">正面</span>
-                    <el-image
+                    <PrivateFilePreviewer
+                      :file-paths="workerDetailList.identityFrontImage"
+                      custom-text="查看正面身份证"
+                    ></PrivateFilePreviewer>
+                    <!-- <el-image
                       class="auth-img"
                       :src="workerDetailList.identityFrontImage"
                       :preview-src-list="[
@@ -57,14 +61,18 @@
                         workerDetailList.identityBackImage,
                       ]"
                       fit="cover"
-                    ></el-image>
+                    ></el-image> -->
                   </div>
                   <div
                     class="img-wrapper"
                     v-if="workerDetailList.identityBackImage"
                   >
                     <span class="sub-label">反面</span>
-                    <el-image
+                    <PrivateFilePreviewer
+                      :file-paths="workerDetailList.identityBackImage"
+                      custom-text="查看反面身份证"
+                    ></PrivateFilePreviewer>
+                    <!-- <el-image
                       class="auth-img"
                       :src="workerDetailList.identityBackImage"
                       :preview-src-list="[
@@ -72,13 +80,32 @@
                         workerDetailList.identityBackImage,
                       ]"
                       fit="cover"
-                    ></el-image>
+                    ></el-image> -->
+                  </div>
+                  <div class="img-wrapper" v-if="workerDetailList.realPortrait">
+                    <span class="sub-label">师傅头像</span>
+                    <PrivateFilePreviewer
+                      :file-paths="workerDetailList.realPortrait"
+                      custom-text="查看师傅头像"
+                    ></PrivateFilePreviewer>
+                    <!-- <el-image
+                      class="auth-img"
+                      :src="workerDetailList.identityBackImage"
+                      :preview-src-list="[
+                        workerDetailList.identityFrontImage,
+                        workerDetailList.identityBackImage,
+                      ]"
+                      fit="cover"
+                    ></el-image> -->
                   </div>
                 </div>
               </div>
 
-              <div class="info-item image-row">
-                <span class="label">真实头像:</span>
+              <!-- <div
+                class="info-item image-row"
+                v-if="workerDetailList.realPortrait"
+              >
+                <span class="label">师傅头像:</span>
                 <el-image
                   class="avatar-img"
                   v-if="workerDetailList.realPortrait"
@@ -86,7 +113,7 @@
                   :preview-src-list="[workerDetailList.realPortrait]"
                   fit="cover"
                 ></el-image>
-              </div>
+              </div> -->
             </div>
           </section>
 
@@ -168,35 +195,27 @@
 
               <div
                 class="info-item image-row"
-                v-if="industryExperienceImages.length"
+                v-if="industryExperienceImages.length > 0"
               >
                 <span class="label">经验展示:</span>
                 <div class="image-group">
-                  <el-image
-                    v-for="(item, index) in industryExperienceImages"
-                    :key="'exp_' + index"
-                    :src="item"
-                    :preview-src-list="industryExperienceImages"
-                    class="evidence-img"
-                    fit="cover"
-                  ></el-image>
+                  <PrivateFilePreviewer
+                    :file-paths="industryExperienceImages"
+                    custom-text="查看行业经验"
+                  ></PrivateFilePreviewer>
                 </div>
               </div>
 
               <div
                 class="info-item image-row"
-                v-if="skillCertificateImages.length"
+                v-if="skillCertificateImages.length > 0"
               >
                 <span class="label">技能证书:</span>
                 <div class="image-group">
-                  <el-image
-                    v-for="(item, index) in skillCertificateImages"
-                    :key="'skill_' + index"
-                    :src="item"
-                    :preview-src-list="skillCertificateImages"
-                    class="evidence-img"
-                    fit="cover"
-                  ></el-image>
+                  <PrivateFilePreviewer
+                    :file-paths="skillCertificateImages"
+                    custom-text="查看技能证书"
+                  ></PrivateFilePreviewer>
                 </div>
               </div>
             </div>

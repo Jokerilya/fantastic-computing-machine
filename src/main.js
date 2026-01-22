@@ -1,6 +1,8 @@
 import Vue from "vue";
+
 import { webName } from "./webConfig.js";
 import webLogo from "./assets/logo.png"; // logo.png
+
 import FirstTitle from "./components/First-title";
 import vueMixin from "./vueMixin.js";
 
@@ -26,16 +28,22 @@ import echarts from "echarts";
 // Vue.use(echarts)
 
 Vue.component("first-title", FirstTitle);
+
 Vue.prototype.$webData = {
   webName,
   webLogo,
   apiHost: process.env.VUE_APP_BASE_API,
 };
+
 Vue.mixin(vueMixin);
 // Vue.prototype.$store = store;
 
 import "@/icons"; // icon
 import "@/permission"; // permission control
+
+// 预览图片组件
+import PrivateFilePreviewer from "@/components/PrivateFilePreviewer.vue";
+Vue.component("PrivateFilePreviewer", PrivateFilePreviewer);
 
 Vue.component("y-image", Image);
 Vue.component("upload-img", uploadImg);

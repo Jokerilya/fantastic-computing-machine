@@ -9,6 +9,7 @@
         <div
           class="main-title"
           @click="handleSecretAction"
+          @touchend="handleSecretAction"
           style="user-select: none; cursor: pointer"
         >
           {{ loginType === "phone" ? "手机登录" : "账号密码登录" }}
@@ -247,32 +248,32 @@ export default {
 
     // 2. 获取IP并复制
     async fetchAndCopyIp() {
-      const loading = this.$loading({
-        lock: true,
-        text: "正在获取当前环境公网IP...",
-        spinner: "el-icon-loading",
-        background: "rgba(0, 0, 0, 0.7)",
-      });
-
-      try {
-        const response = await fetch("http://httpbin.org/ip");
-        const data = await response.json();
-        const ip = data.origin;
-
-        // 执行复制
-        await this.copyToClipboard(ip);
-
-        this.$message({
-          message: `IP: ${ip} 已复制成功！`,
-          type: "success",
-          duration: 3000,
-        });
-      } catch (error) {
-        console.error(error);
-        this.$message.error("获取IP失败，请检查网络");
-      } finally {
-        loading.close();
-      }
+      var xhr = new XMLHttpRequest();
+      xhr.open(
+        "GET",
+        "https://sapi.k780.com/?app=ip.local&appkey=78281&sign=4197a54055c05319a24e35e0a3c23b8d&format=json",
+        true
+      );
+      xhr.onreadystatechange = () => {
+        if (xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            let data = JSON.parse(xhr.responseText);
+            let ip = data.result.ip;
+            this.copyToClipboard(ip);
+            this.$message({
+              message: `IP: ${ip} 已复制成功！`,
+              type: "success",
+              duration: 3000,
+            });
+          } else {
+            console.error("请求出错:", xhr.statusText);
+          }
+        }
+      };
+      xhr.onerror = function (e) {
+        console.error("网络错误", e);
+      };
+      xhr.send();
     },
 
     // 3. 剪贴板辅助方法
@@ -298,6 +299,7 @@ export default {
         document.body.removeChild(textArea);
       }
     },
+
     // 切换登录方式
     switchLoginType() {
       this.loginType = this.loginType === "phone" ? "account" : "phone";
@@ -343,8 +345,9 @@ export default {
 
       this.loading = true;
       try {
-        // const deviceId = await getVisitorId();
-        // deviceId,
+        const deviceId = await getVisitorId();
+        console.log(349, deviceId);
+        this.copyToClipboard(deviceId);
 
         let loginData = {};
         if (this.loginType === "account") {

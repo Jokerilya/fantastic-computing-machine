@@ -11,7 +11,7 @@ export const getVisitorId = async () => {
 
     // 2. 获取当前的识别结果
     // 可以传入 { debug: true } 查看收集了哪些具体维度
-    const result = await fp.get();
+    const result = await fp.get({ debug: true });
 
     // 3. visitorId 是根据浏览器特征（字体、插件、画布、音频等）生成的 32 位哈希值
     const visitorId = result.visitorId;

@@ -254,7 +254,7 @@ export default {
     height: 100%;
     top: 0;
     left: 0;
-    background: url("../../../assets/upload.png") no-repeat center / 100% 100%;
+    background: url("../../../assets/indexBgI.jpg") no-repeat center / 100% 100%;
     font-size: #fff;
     text-align: center;
     line-height: 50px;

@@ -1,6 +1,6 @@
 <template>
   <div class="amendPricing">
-    <el-card style="padding: 0 100px;">
+    <el-card style="padding: 0 100px">
       <h3 class="oneLineTitle">故障解决方案</h3>
       <!-- 故障类型: -->
       <div class="faultType">
@@ -20,7 +20,7 @@
         <div>
           <el-checkbox-group v-model="siteOfFailureValue">
             <el-checkbox
-              style="margin-bottom: 15px;"
+              style="margin-bottom: 15px"
               v-for="item in equipmentPosition"
               :key="item.name"
               :label="item.name"
@@ -101,16 +101,16 @@
         </h3>
         <div v-if="solvePlanList">
           <div class="item" v-for="(item, index) in solvePlanList" :key="index">
-            <h3 class="title" style="position: relative;">
+            <h3 class="title" style="position: relative">
               方案{{ index + 1 }}:
               <i
                 @click="editSolvePlanFn(index)"
-                style="position: absolute;right: 25px;top: 0;"
+                style="position: absolute; right: 25px; top: 0"
                 class="el-icon-s-tools"
               ></i>
               <i
                 @click="delSolvePlanFn(index)"
-                style="position: absolute;right: 0;top: 0;"
+                style="position: absolute; right: 0; top: 0"
                 class="el-icon-delete-solid"
               ></i>
             </h3>
@@ -144,19 +144,16 @@
           配件明细<a href="#" @click.prevent="addAccessories">添加配件</a>
         </h3>
         <div class="content">
-          <el-table
-            :data="accessoriesList"
-            :key="againTableRefresh"
-          >
+          <el-table :data="accessoriesList" :key="againTableRefresh">
             <el-table-column label="采购方式" align="center" width="100">
               <template slot-scope="{ row }">
                 <img
-                  src="@/assets/logo/masterPurchase.png"
+                  src="@/assets/master/masterPurchase.png"
                   width="28px"
                   v-if="row.type !== 2"
                 />
                 <img
-                  src="@/assets/logo/platformPurchase.png"
+                  src="@/assets/master/platformPurchase.png"
                   width="28px"
                   v-if="row.type === 2"
                 />
@@ -191,22 +188,22 @@
             </el-table-column>
             <el-table-column align="center" prop="parameter" label="配件参数">
             </el-table-column>
-              <el-table-column align="center" prop="number" label="物料编码">
+            <el-table-column align="center" prop="number" label="物料编码">
             </el-table-column>
             <el-table-column align="center" label="配件总金额" width="100">
               <template slot-scope="{ row }">
-                <div style="color: red;">￥{{ row.num * row.price }}</div>
+                <div style="color: red">￥{{ row.num * row.price }}</div>
               </template>
             </el-table-column>
             <el-table-column align="center" label="操作">
               <template slot-scope="{ row, $index }">
                 <a
-                  style="color:#4889fb;margin-right: 10px;"
+                  style="color: #4889fb; margin-right: 10px"
                   @click.prevent="delAccessoriesFn(row, $index)"
                   >删除</a
                 >
                 <a
-                  style="color:#4889fb;"
+                  style="color: #4889fb"
                   @click.prevent="editAccessories(row, $index)"
                   >编辑</a
                 >
@@ -217,7 +214,7 @@
       </div>
       <!-- 维保报价 -->
       <div class="maintenanceOffer">
-        <h3 style="color: #0b2059;">维保报价</h3>
+        <h3 style="color: #0b2059">维保报价</h3>
         <div class="content">
           <div class="item">
             <span class="title">人工费 <i>建议每公里2元,估算距离费用</i></span>
@@ -257,7 +254,7 @@
           </div> -->
           <div class="item">
             <span>合计</span>
-            <span class="text" style="color: red;">{{ priceSum }}元</span>
+            <span class="text" style="color: red">{{ priceSum }}元</span>
           </div>
         </div>
       </div>
@@ -286,16 +283,16 @@
       :close-on-click-modal="false"
     >
       <div>
-        <div style="margin-bottom: 15px;">
+        <div style="margin-bottom: 15px">
           <a
             :class="active === 1 ? 'activeTextColor' : ''"
-            style="margin-right: 15px;"
+            style="margin-right: 15px"
             @click.prevent="active = 1"
             >故障描述</a
           >
           <a
             :class="active === 2 ? 'activeTextColor' : ''"
-            style="margin-right: 15px;"
+            style="margin-right: 15px"
             @click.prevent="active = 2"
             >故障分析</a
           >
@@ -345,7 +342,10 @@
       :before-close="closeAddAccessoriesDialog"
       :close-on-click-modal="false"
     >
-      <div slot="title" style="font-weight:700 ;color: #707070;font-size:20px">
+      <div
+        slot="title"
+        style="font-weight: 700; color: #707070; font-size: 20px"
+      >
         {{ accessoriesTitle }}
       </div>
       <el-form
@@ -435,14 +435,14 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <div style="display: flex;justify-content: center;">
+        <div style="display: flex; justify-content: center">
           <el-button
-            style="width: 120px;border: 1px #2d4da0 solid;color: #2d4da0;"
+            style="width: 120px; border: 1px #2d4da0 solid; color: #2d4da0"
             @click="closeAddAccessoriesDialog"
             >取 消</el-button
           >
           <el-button
-            style="width: 120px;background-color: #2d4da0;color: #ffffff;"
+            style="width: 120px; background-color: #2d4da0; color: #ffffff"
             @click="addAccessoriesComfirm(accessoriesForm.index)"
             >确 定</el-button
           >
@@ -458,10 +458,10 @@
       :before-close="closeChooseStashParts"
       center
     >
-      <div style="display: flex;align-items: center;margin-bottom: 10px;">
+      <div style="display: flex; align-items: center; margin-bottom: 10px">
         <el-input
           placeholder="请输入商品名称查询"
-          style="width: 20vw;margin-right: 10px;"
+          style="width: 20vw; margin-right: 10px"
           v-model="jdProductListQuery"
         ></el-input>
         <el-button @click="queryJdProductList">搜索</el-button>
@@ -476,8 +476,7 @@
         <el-table-column label="商品名称" property="name"> </el-table-column>
         <el-table-column label="品牌名称" property="brandName">
         </el-table-column>
-         <el-table-column label="物料编码" property="number">
-        </el-table-column>
+        <el-table-column label="物料编码" property="number"> </el-table-column>
         <el-table-column label="规格型号" property="model"> </el-table-column>
       </el-table>
       <span slot="footer" class="dialog-footer">
@@ -547,7 +546,7 @@ export default {
         parameter: null,
         choose: 2,
         chooseStashPartsValue: "",
-        number:null,
+        number: null,
       },
 
       accessoriesRules: {
@@ -597,15 +596,8 @@ export default {
     },
     // 确定选择仓库配件
     comfirmChooseStashParts() {
-      const {
-        brandId,
-        brandName,
-        model,
-        name,
-        id,
-        unitId,
-        number
-      } = this.chooseStashPartData;
+      const { brandId, brandName, model, name, id, unitId, number } =
+        this.chooseStashPartData;
       this.accessoriesForm.chooseStashPartsValue =
         name + "/" + brandName + "/" + model;
       this.closeChooseStashParts();
@@ -615,7 +607,7 @@ export default {
       this.accessoriesForm.parameter = model;
       this.accessoriesForm.name = name;
       this.accessoriesForm.unitId = unitId;
-      this.accessoriesForm.number = number
+      this.accessoriesForm.number = number;
     },
     // 选中仓库配件的数据
     changeStashParts(val) {
@@ -739,7 +731,7 @@ export default {
         parameter: null,
         choose: 2,
         id: null,
-        number:null
+        number: null,
       };
       this.accessoriesForm.chooseStashPartsValue = "";
       this.addAccessoriesDialog = false;
@@ -770,7 +762,7 @@ export default {
           chooseStashPartsValue,
           id,
           unitId,
-          number
+          number,
         } = this.accessoriesForm;
         this.accessoriesList[index] = {
           id,

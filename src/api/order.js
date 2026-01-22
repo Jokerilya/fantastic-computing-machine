@@ -1293,3 +1293,12 @@ export function handleRepairProcessRemark(data) {
     data,
   });
 }
+
+// 订单流程快照
+export function handleRepairProcessresultSnapshot(data) {
+  return request({
+    url: `/admin/order/handleRepairProcessresultSnapshot`,
+    method: "post",
+    data,
+  });
+}

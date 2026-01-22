@@ -2,14 +2,12 @@
 <template>
   <div class="checkPart">
     <!-- 故障解决方案 -->
-    <h2 style="color: #0b2059;margin-bottom: 20px;font-size:24px">
+    <h2 style="color: #0b2059; margin-bottom: 20px; font-size: 24px">
       故障解决方案
     </h2>
     <div class="faultSolveProgramme">
       <div class="lineItem">
-        <div class="title">
-          故障类型:
-        </div>
+        <div class="title">故障类型:</div>
         <div class="content">
           <el-checkbox-group v-model="faultTypeCheckbox">
             <el-checkbox :label="1">机械故障</el-checkbox>
@@ -19,13 +17,11 @@
         </div>
       </div>
       <div class="lineItem">
-        <div class="title">
-          故障部位:
-        </div>
+        <div class="title">故障部位:</div>
         <div class="content">
           <el-checkbox-group v-model="faultPartsCheckbox">
             <el-checkbox
-              style="margin-bottom: 10px;"
+              style="margin-bottom: 10px"
               v-for="item in equipmentPosition"
               :key="item.name"
               :label="item.name"
@@ -41,7 +37,7 @@
       <div class="describe">
         故障描述：
         <textarea
-          style="resize:none "
+          style="resize: none"
           v-model="programmes[0].desc"
           name
           id
@@ -53,7 +49,7 @@
       <div class="describe">
         故障分析：
         <textarea
-          style="resize:none "
+          style="resize: none"
           v-model="programmes[0].analysis"
           name
           id
@@ -65,7 +61,7 @@
       <div class="describe">
         维保方案：
         <textarea
-          style="resize:none "
+          style="resize: none"
           v-model="programmes[0].programme"
           name
           id
@@ -77,7 +73,7 @@
     </div>
 
     <!-- 配件明细部分 -->
-    <div class="peijian" style="margin-top: 30px;">
+    <div class="peijian" style="margin-top: 30px">
       <div class="peijianTitle">配件明细:</div>
       <div class="addpeijian" @click="openAdd">添加配件</div>
     </div>
@@ -86,12 +82,12 @@
         <el-table-column label="采购方式" align="center" width="100">
           <template slot-scope="{ row }">
             <img
-              src="@/assets/logo/masterPurchase.png"
+              src="@/assets/master/masterPurchase.png"
               width="28px"
               v-if="row.type !== 2"
             />
             <img
-              src="@/assets/logo/platformPurchase.png"
+              src="@/assets/master/platformPurchase.png"
               width="28px"
               v-if="row.type === 2"
             />
@@ -125,18 +121,18 @@
         </el-table-column>
         <el-table-column align="center" label="配件总金额" width="100">
           <template slot-scope="{ row }">
-            <div style="color: red;">￥{{ row.num * row.price }}</div>
+            <div style="color: red">￥{{ row.num * row.price }}</div>
           </template>
         </el-table-column>
         <el-table-column align="center" label="操作">
           <template slot-scope="{ row, $index }">
             <a
-              style="color:#4889fb;margin-right: 10px;"
+              style="color: #4889fb; margin-right: 10px"
               @click.prevent="deleted(row, $index)"
               >删除</a
             >
             <a
-              style="color:#4889fb;"
+              style="color: #4889fb"
               @click.prevent="editAccessories(row, $index)"
               >编辑</a
             >
@@ -147,14 +143,12 @@
 
     <div v-if="orderDetail.orderType === 1">
       <!-- 增值服务项 -->
-      <h2 style="color: #0b2059;margin: 20px 0;font-size:24px">
+      <h2 style="color: #0b2059; margin: 20px 0; font-size: 24px">
         增值服务项
       </h2>
       <div class="faultSolveProgramme">
         <div class="lineItem">
-          <div class="title">
-            预防性检测:
-          </div>
+          <div class="title">预防性检测:</div>
           <div class="content">
             <el-radio-group v-model="orderDetail.preventType">
               <el-radio :label="2">不需要</el-radio>
@@ -163,9 +157,7 @@
           </div>
         </div>
         <div class="lineItem">
-          <div class="title">
-            协助清理机台:
-          </div>
+          <div class="title">协助清理机台:</div>
           <div class="content">
             <el-radio-group v-model="orderDetail.assistCleanType">
               <el-radio :label="2">不需要</el-radio>
@@ -174,9 +166,7 @@
           </div>
         </div>
         <div class="lineItem">
-          <div class="title">
-            配件:
-          </div>
+          <div class="title">配件:</div>
           <div class="content">
             <el-radio-group v-model="orderDetail.accessoryType">
               <el-radio :label="1">自备</el-radio>
@@ -185,9 +175,7 @@
           </div>
         </div>
         <div class="lineItem">
-          <div class="title">
-            到达时间:
-          </div>
+          <div class="title">到达时间:</div>
           <div class="content">
             <el-radio-group v-model="orderDetail.arrivalTimeType">
               <el-radio :label="3">当天</el-radio>
@@ -197,9 +185,7 @@
           </div>
         </div>
         <div class="lineItem">
-          <div class="title">
-            师傅技术能力:
-          </div>
+          <div class="title">师傅技术能力:</div>
           <div class="content">
             <el-radio-group v-model="orderDetail.technicalCapabilitiesType">
               <el-radio :label="3">初级</el-radio>
@@ -209,9 +195,7 @@
           </div>
         </div>
         <div class="lineItem">
-          <div class="title">
-            配件质保时间:
-          </div>
+          <div class="title">配件质保时间:</div>
           <div class="content">
             <el-radio-group v-model="orderDetail.warrantyPeriodType">
               <el-radio :label="1">7天</el-radio>
@@ -226,9 +210,9 @@
 
     <!-- 维保报价部分 -->
     <div class="pricing">
-      <div class="pricingTitle" style="color: #0b2059;">维保报价</div>
+      <div class="pricingTitle" style="color: #0b2059">维保报价</div>
       <div class="pricingPart">
-        <div class="pricingLine" style="margin: 1px 0 ;">
+        <div class="pricingLine" style="margin: 1px 0">
           <div class="lineLeft">
             <div class="left1">人工费</div>
             <div class="left2">建议每公里2元，估算距离费用</div>
@@ -282,12 +266,12 @@
         </div> -->
         <div class="pricingLine">
           <div class="lineLeft">
-            <div class="left1" style="font-weight:bold">合计</div>
+            <div class="left1" style="font-weight: bold">合计</div>
             <div class="left2"></div>
           </div>
           <div
             class="lineRight"
-            style="color:red;font-weight:bold;margin-right: 125px;"
+            style="color: red; font-weight: bold; margin-right: 125px"
           >
             ￥{{ sum }}
           </div>
@@ -327,7 +311,7 @@
       @close="closeAddAccessories"
     >
       <template slot="title">
-        <div style="color: #707070;font-size: 18px;font-weight: 700;">
+        <div style="color: #707070; font-size: 18px; font-weight: 700">
           {{ accessoriesTitle }}
         </div>
       </template>
@@ -336,26 +320,26 @@
           <div class="addPart">
             <div class="addcontent">
               <div class="name">配件选择:</div>
-              <div style="width: 230px;">
+              <div style="width: 230px">
                 <el-radio v-model="part.choose" :label="2">仓库</el-radio>
                 <el-radio v-model="part.choose" :label="1">新增</el-radio>
               </div>
             </div>
             <div class="addcontent" v-if="part.choose != 2">
               <div class="name">配件采购:</div>
-              <div style="width: 230px;">
+              <div style="width: 230px">
                 <el-radio v-model="part.type" :label="2">平台采购</el-radio>
                 <el-radio v-model="part.type" :label="1">师傅采购</el-radio>
               </div>
             </div>
             <div
               class="addcontent"
-              style="position:relative"
+              style="position: relative"
               v-if="part.choose == 2"
             >
               <div class="name">勾选配件:</div>
               <el-input
-                style="width: 230px;"
+                style="width: 230px"
                 v-model="part.chooseStashPartsValue"
                 @focus="openChooseStashParts"
                 placeholder="点击选择仓库已有的配件"
@@ -363,36 +347,36 @@
             </div>
             <div
               class="addcontent"
-              style="position:relative"
+              style="position: relative"
               v-if="part.choose != 2"
             >
               <div class="name">配件品牌:</div>
               <el-input
-                style="width: 230px;"
+                style="width: 230px"
                 v-model.trim="part.brand"
                 placeholder="请填写配件品牌"
               ></el-input>
             </div>
             <div
               class="addcontent"
-              style="position:relative"
+              style="position: relative"
               v-if="part.choose != 2"
             >
               <div class="name">配件名称:</div>
               <el-input
-                style="width: 230px;"
+                style="width: 230px"
                 v-model.trim="part.name"
                 placeholder="请填写配件名称"
               ></el-input>
             </div>
             <div
               class="addcontent"
-              style="position:relative"
+              style="position: relative"
               v-if="part.choose != 2"
             >
               <div class="name">配件参数:</div>
               <el-input
-                style="width: 230px;"
+                style="width: 230px"
                 v-model.trim="part.parameter"
                 placeholder="请填写配件参数"
               ></el-input>
@@ -400,7 +384,7 @@
             <div class="addcontent">
               <div class="name">配件单价:</div>
               <el-input
-                style="width: 230px;"
+                style="width: 230px"
                 @input="judgeInp('price', 'part')"
                 v-model="part.price"
                 placeholder="请填写配件单价"
@@ -409,7 +393,7 @@
             <div class="addcontent">
               <div class="name">配件数量:</div>
               <el-input
-                style="width: 230px;"
+                style="width: 230px"
                 @input="judgeInp('num', 'part')"
                 v-model.number="part.num"
                 placeholder="请填写配件数量,例如：2"
@@ -419,11 +403,11 @@
         </div>
       </el-from>
       <div class="addPartBtn">
-        <el-button style="color: #2e4c9e;width: 200px" @click="addFalse"
+        <el-button style="color: #2e4c9e; width: 200px" @click="addFalse"
           >返回</el-button
         >
         <el-button
-          style="background-color:#2e4c9e;color: #fff;width: 200px"
+          style="background-color: #2e4c9e; color: #fff; width: 200px"
           @click="addTrue(part.index)"
           >提交</el-button
         >
@@ -438,10 +422,10 @@
       :before-close="closeChooseStashParts"
       center
     >
-      <div style="display: flex;align-items: center;margin-bottom: 10px;">
+      <div style="display: flex; align-items: center; margin-bottom: 10px">
         <el-input
           placeholder="请输入商品名称查询"
-          style="width: 20vw;margin-right: 10px;"
+          style="width: 20vw; margin-right: 10px"
           v-model="jdProductListQuery"
         ></el-input>
         <el-button @click="queryJdProductList">搜索</el-button>
@@ -456,8 +440,7 @@
         <el-table-column label="商品名称" property="name"> </el-table-column>
         <el-table-column label="品牌名称" property="brandName">
         </el-table-column>
-          <el-table-column label="物料编码" property="number">
-        </el-table-column>
+        <el-table-column label="物料编码" property="number"> </el-table-column>
         <el-table-column label="规格型号" property="model"> </el-table-column>
       </el-table>
       <span slot="footer" class="dialog-footer">
@@ -513,7 +496,7 @@ export default {
         parameter: null,
         choose: 2,
         chooseStashPartsValue: "",
-        number:null,
+        number: null,
       },
 
       param: {
@@ -617,22 +600,15 @@ export default {
     },
     // 确定选择仓库配件
     comfirmChooseStashParts() {
-      const {
-        brandId,
-        brandName,
-        model,
-        name,
-        id,
-        number,
-        unitId,
-      } = this.chooseStashPartData;
+      const { brandId, brandName, model, name, id, number, unitId } =
+        this.chooseStashPartData;
       console.log(this.chooseStashPartData);
       this.part.chooseStashPartsValue = name + "/" + brandName + "/" + model;
       this.closeChooseStashParts();
       this.part.brand = brandName;
       this.part.brandId = brandId;
       this.part.parameter = model;
-      this.part.number= number
+      this.part.number = number;
       this.part.name = name;
       this.part.id = id;
       this.part.unitId = unitId;

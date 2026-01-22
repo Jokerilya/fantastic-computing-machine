@@ -723,7 +723,7 @@
 </style>
 
 <script>
-import tableMixin from "@/mixin/table";
+// import tableMixin from "@/mixin/table";
 import { getSysLabel } from "@/api/system.js";
 import {
   getEnterpriseList,
@@ -747,7 +747,7 @@ import {
 } from "@/api/boss";
 export default {
   title: "course",
-  mixins: [tableMixin],
+  // mixins: [tableMixin],
   data() {
     return {
       remarksDialogVisible: false,

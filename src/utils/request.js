@@ -107,7 +107,7 @@ service.interceptors.request.use(
       // A. 处理 Loading
       // 如果 url 不在忽略列表中，则显示 Loading
       const isNoLoading = NO_LOADING_URLS.some((url) =>
-        config.url.includes(url)
+        config.url.includes(url),
       );
       if (!isNoLoading) {
         showLoading();
@@ -117,23 +117,42 @@ service.interceptors.request.use(
       // 条件：生产环境 + 不在白名单 + 有数据
       const isProd = process.env.NODE_ENV !== "development";
       const isForbidden = NO_ENCRYPT_URLS.some((url) =>
-        config.url.includes(url)
+        config.url.includes(url),
       );
 
       if (isProd && !isForbidden && config.data) {
         // 将 data 转为 JSON 字符串后加密
-        config.data = encryptData(JSON.stringify(config.data));
+        // config.data = encryptData(JSON.stringify(config.data));
         config.headers["Content-Type"] = "application/json";
         // config.dataType = "text"; // 通常不需要显式设置这个，axios 会自动处理
       }
     }
 
+    // 对所有图片后面有 签名标识剔除
+    // if (config.data) {
+    //   const dataObj = JSON.parse(config.data);
+    //   // 定义需要处理的后缀
+    //   const mediaExtensions = [".png", ".jpg", ".jpeg", ".gif", ".mp4", ".pdf"];
+    //   for (let key in dataObj) {
+    //     let value = dataObj[key];
+    //     if (typeof value === "string") {
+    //       // 检查是否包含指定的后缀
+    //       const hasMediaExtension = mediaExtensions.some((ext) =>
+    //         value.toLowerCase().includes(ext),
+    //       );
+    //       // 如果是媒体文件且包含问号，则截断
+    //       if (hasMediaExtension && value.includes("?")) {
+    //         dataObj[key] = value.split("?")[0];
+    //       }
+    //     }
+    //   }
+    // }
     return config;
   },
   (error) => {
     console.log("Request Error:", error);
     return Promise.reject(error);
-  }
+  },
 );
 
 service.interceptors.response.use(
@@ -143,7 +162,7 @@ service.interceptors.response.use(
     // A. 关闭 Loading (仅针对 POST 且原本开启了 Loading 的请求)
     if (config.method.toUpperCase() === "POST") {
       const isNoLoading = NO_LOADING_URLS.some((url) =>
-        config.url.includes(url)
+        config.url.includes(url),
       );
       if (!isNoLoading) {
         hideLoading();
@@ -215,7 +234,7 @@ service.interceptors.response.use(
         duration: 5 * 1000,
       });
       return Promise.reject(
-        new Error(res.errorMessage || res.message || "Error")
+        new Error(res.errorMessage || res.message || "Error"),
       );
     }
   },
@@ -230,7 +249,7 @@ service.interceptors.response.use(
       duration: 5 * 1000,
     });
     return Promise.reject(error);
-  }
+  },
 );
 
 export default service;

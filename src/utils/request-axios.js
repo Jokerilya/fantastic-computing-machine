@@ -83,12 +83,13 @@ service.interceptors.request.use((request) => {
         }
       });
       if (pass) {
-        request.data = Encrypt(JSON.stringify(request.data));
+        // request.data = Encrypt(JSON.stringify(request.data));
         request.headers["Content-Type"] = "application/json";
         request.dataType = "text";
       }
     }
   }
+
   return request;
 });
 // response interceptor
@@ -124,6 +125,10 @@ service.interceptors.response.use(
       }
 
       const res = response.data;
+      console.log(127, res);
+      if (res.success == "1") {
+        return res.result;
+      }
       if (res.code == "000") {
         return res;
       } else if (res.code == "002" || res.code == "004" || res.code == "007") {
@@ -143,7 +148,7 @@ service.interceptors.response.use(
           duration: 5 * 1000,
         });
         return Promise.reject(
-          new Error(res.errorMessage || res.message || "Error")
+          new Error(res.errorMessage || res.message || "Error"),
         );
       }
     }
@@ -156,6 +161,6 @@ service.interceptors.response.use(
     });
     loadingInstance.close();
     return Promise.reject(error);
-  }
+  },
 );
 export default service;

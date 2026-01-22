@@ -108,12 +108,12 @@
             >
               <div class="loginPurchase">
                 <img
-                  src="@/assets/logo/masterPurchase.png"
+                  src="@/assets/master/masterPurchase.png"
                   width="28px"
                   v-if="item.type !== 2"
                 />
                 <img
-                  src="@/assets/logo/platformPurchase.png"
+                  src="@/assets/master/platformPurchase.png"
                   width="28px"
                   v-if="item.type === 2"
                 />

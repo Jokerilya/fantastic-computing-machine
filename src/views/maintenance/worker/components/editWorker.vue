@@ -230,11 +230,9 @@ export default {
   },
   methods: {
     // 打开弹框
-    openEditworkerDialog(row) {
-      // 深拷贝，防止修改影响父组件列表显示
+    async openEditworkerDialog(row) {
       const formData = JSON.parse(JSON.stringify(row));
 
-      // 数据格式转换：字符串转数组 (加了非空判断)
       formData.servePosition = formData.servePosition
         ? formData.servePosition.split(",")
         : [];
@@ -244,6 +242,8 @@ export default {
       formData.serviceTypes = formData.serviceTypes
         ? formData.serviceTypes.split(",")
         : [];
+
+      console.log(247, formData);
 
       // 赋值
       this.dialogForm = formData;

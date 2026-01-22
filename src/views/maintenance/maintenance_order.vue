@@ -13,7 +13,7 @@
         label-position="left"
         size="small"
       >
-        <el-row :gutter="20">
+        <el-row :gutter="20" type="flex" style="flex-wrap: wrap">
           <el-col :xs="24" :sm="12" :md="8" :lg="6" :xl="4">
             <el-form-item label="师傅名称">
               <el-select
@@ -195,6 +195,7 @@
             :lg="6"
             :xl="4"
             class="search-btn-col"
+            style="margin-left: auto; align-self: flex-end"
           >
             <div class="search-action-btns">
               <el-button type="primary" size="small" @click="searchTableList"
@@ -221,113 +222,114 @@
       </el-form>
     </el-card>
 
-    <div class="toolbar-section">
-      <div
-        class="status-radio-group"
-        v-if="!orderSummaryTableListEdit && tableType != 3 && tableType != 4"
-      >
-        <el-radio-group
-          v-model="queryRepairOrderListParams.status"
-          @input="changeOrderState"
-          size="medium"
-        >
-          <el-radio-button
-            :label="item.num"
-            v-for="item in statusObjList"
-            :key="item.num"
-          >
-            {{ item.desc }}
-            <span class="badge" v-if="orderSubscript[item.str] > 0"
-              >({{ orderSubscript[item.str] }})</span
-            >
-          </el-radio-button>
-        </el-radio-group>
-      </div>
-
-      <div class="function-btns">
-        <template v-if="!orderSummaryTableListEdit">
-          <el-button
-            size="small"
-            plain
-            @click="handleBatchProxyPayment"
-            :disabled="multipleSelection.length == 0"
-            v-if="tableType == 1"
-          >
-            批量代付
-          </el-button>
-
-          <el-button
-            size="small"
-            @click="openPreviewGenerateBill"
-            plain
-            v-if="tableType == 4"
-            :disabled="accountSelection.length == 0"
-          >
-            生成对账单
-          </el-button>
-
-          <el-button
-            size="small"
-            @click="changeOrderSummaryTableListEdit"
-            type="warning"
-            v-if="tableType != 1 && tableType != 4"
-            >编辑</el-button
-          >
-
-          <el-dropdown
-            v-if="tableType == 1"
-            @command="exportListFn"
-            trigger="click"
-            class="margin-lr-10"
-          >
-            <el-button type="success" plain size="small">
-              导出 <i class="el-icon-arrow-down el-icon--right"></i>
-            </el-button>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item command="导出">普通导出</el-dropdown-item>
-              <el-dropdown-item command="导出V2">详细导出V2</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
-
-          <el-button
-            class="margin-right-10"
-            v-if="tableType != 1 && tableType != 4"
-            type="success"
-            plain
-            size="small"
-            @click="handleTableExport"
-            >导出</el-button
-          >
-
-          <el-dropdown trigger="click" @command="tableTypeListFn">
-            <el-button type="primary" plain size="small">
-              {{ currentTableTypeName }}
-              <i class="el-icon-arrow-down el-icon--right"></i>
-            </el-button>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item :command="1">默认列表</el-dropdown-item>
-              <el-dropdown-item :command="2">订单总表</el-dropdown-item>
-              <el-dropdown-item :command="3">交接单</el-dropdown-item>
-              <el-dropdown-item :command="4">对账单</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
-        </template>
-
-        <template v-else>
-          <el-button size="small" @click="cancelOnlineRepairOrder"
-            >取消</el-button
-          >
-          <el-button
-            size="small"
-            type="primary"
-            @click="updateOnlineRepairOrder"
-            >保存</el-button
-          >
-        </template>
-      </div>
-    </div>
-
     <el-card shadow="never" class="table-card">
+      <div class="toolbar-section">
+        <div
+          class="status-radio-group"
+          v-if="!orderSummaryTableListEdit && tableType != 3 && tableType != 4"
+        >
+          <el-radio-group
+            v-model="queryRepairOrderListParams.status"
+            @input="changeOrderState"
+            size="medium"
+          >
+            <el-radio-button
+              :label="item.num"
+              v-for="item in statusObjList"
+              :key="item.num"
+            >
+              {{ item.desc }}
+              <span class="badge" v-if="orderSubscript[item.str] > 0"
+                >({{ orderSubscript[item.str] }})</span
+              >
+            </el-radio-button>
+          </el-radio-group>
+        </div>
+        <div class="status-radio-group" v-else></div>
+
+        <div class="function-btns">
+          <template v-if="!orderSummaryTableListEdit">
+            <!-- <el-button
+              size="small"
+              plain
+              @click="handleBatchProxyPayment"
+              :disabled="multipleSelection.length == 0"
+              v-if="tableType == 1"
+            >
+              批量代付
+            </el-button> -->
+
+            <el-button
+              size="small"
+              @click="openPreviewGenerateBill"
+              plain
+              v-if="tableType == 4"
+              :disabled="accountSelection.length == 0"
+            >
+              生成对账单
+            </el-button>
+
+            <el-button
+              size="small"
+              @click="changeOrderSummaryTableListEdit"
+              type="warning"
+              v-if="tableType != 1 && tableType != 4"
+              >编辑</el-button
+            >
+
+            <el-dropdown
+              v-if="tableType == 1"
+              @command="exportListFn"
+              trigger="click"
+              class="margin-lr-10"
+            >
+              <el-button type="success" plain size="small">
+                导出 <i class="el-icon-arrow-down el-icon--right"></i>
+              </el-button>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item command="导出">普通导出</el-dropdown-item>
+                <el-dropdown-item command="导出V2">详细导出V2</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+
+            <el-button
+              class="margin-right-10"
+              v-if="tableType != 1 && tableType != 4"
+              type="success"
+              plain
+              size="small"
+              @click="handleTableExport"
+              >导出</el-button
+            >
+
+            <el-dropdown trigger="click" @command="tableTypeListFn">
+              <el-button type="primary" plain size="small">
+                {{ currentTableTypeName }}
+                <i class="el-icon-arrow-down el-icon--right"></i>
+              </el-button>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item :command="1">默认列表</el-dropdown-item>
+                <el-dropdown-item :command="2">订单总表</el-dropdown-item>
+                <el-dropdown-item :command="3">交接单</el-dropdown-item>
+                <el-dropdown-item :command="4">对账单</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </template>
+
+          <template v-else>
+            <el-button size="small" @click="cancelOnlineRepairOrder"
+              >取消</el-button
+            >
+            <el-button
+              size="small"
+              type="primary"
+              @click="updateOnlineRepairOrder"
+              >保存</el-button
+            >
+          </template>
+        </div>
+      </div>
+
       <RepairOrderListTable
         v-if="tableType == 1"
         ref="repairOrderListTableRef"
@@ -796,12 +798,16 @@ export default {
     },
 
     // 【切换图表类型】
-    tableTypeListFn(e) {
+    async tableTypeListFn(e) {
       if (e == this.tableType) {
         this.$message.warning(`您已经在 【${this.currentTableTypeName}】 页面`);
       } else {
         this.tableType = e;
-        this.resetTableList(); // 切换类型时重置筛选
+        if (e == 3 || e == 4) {
+          this.resetTableList(false);
+        } else {
+          this.resetTableList(true);
+        }
       }
     },
 
@@ -843,9 +849,14 @@ export default {
     },
 
     // 搜索：重置
-    resetTableList() {
-      // 保留状态，重置其他条件
-      const currentStatus = this.queryRepairOrderListParams.status;
+    resetTableList(flag) {
+      let currentStatus;
+      if (flag) {
+        currentStatus = this.queryRepairOrderListParams.status;
+      } else {
+        currentStatus = null;
+      }
+
       this.queryRepairOrderListParams = {
         pageNo: 1,
         pageSize: 10,
@@ -1003,6 +1014,8 @@ export default {
     justify-content: flex-end;
     align-items: center;
     gap: 10px;
+    height: 32px; /* 匹配 el-form-item 的高度，防止偏移 */
+    margin-bottom: 10px; /* 匹配表单项的间距 */
   }
 }
 
@@ -1091,10 +1104,11 @@ export default {
     }
   }
 
+  // margin-top: 10px;
+  //     border-top: 1px dashed #eee;
+  //     padding-top: 10px;
   .search-btn-col {
-    margin-top: 10px;
-    border-top: 1px dashed #eee;
-    padding-top: 10px;
+    float: none !important;
   }
 }
 
