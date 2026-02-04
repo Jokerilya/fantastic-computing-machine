@@ -337,9 +337,12 @@
                         align="center"
                         width="100"
                       >
-                        <template slot-scope="{ row }">{{
-                          row.generalAmount + "~" + row.annualAmount
-                        }}</template>
+                        <template slot-scope="{ row }">
+                          <span v-if="row.generalAmount">{{
+                            row.generalAmount + "~" + row.annualAmount
+                          }}</span>
+                          <span v-else>0</span>
+                        </template>
                       </el-table-column>
                       <el-table-column
                         label="师傅提交价"
@@ -356,7 +359,11 @@
                         align="center"
                       >
                         <template slot-scope="{ row }">
-                          {{ row.cardNum ? row.cardNum : "--" }}
+                          {{
+                            row.consumableQuantity
+                              ? row.consumableQuantity
+                              : "--"
+                          }}
                         </template>
                       </el-table-column>
                       <el-table-column
@@ -375,6 +382,15 @@
                       >
                         <template slot-scope="{ row }">
                           {{ row.solution ? row.solution : "--" }}
+                        </template>
+                      </el-table-column>
+                      <el-table-column
+                        width="100"
+                        label="实际耗时"
+                        align="center"
+                      >
+                        <template slot-scope="{ row }">
+                          {{ row.duration ? row.duration + "小时" : "--" }}
                         </template>
                       </el-table-column>
                       <el-table-column
@@ -593,9 +609,12 @@ export default {
     },
     initViewList(params) {
       if (!params) return;
-      const newList = this.params.map((item) => {
+      const newList = params.map((item) => {
         // 处理备注JSON
-        let remark = item.remark ? JSON.parse(item.remark) : null;
+        let remark =
+          typeof item.remark === "string"
+            ? JSON.parse(item.remark)
+            : item.remark;
         if (Array.isArray(remark)) {
           remark.forEach((i) => {
             i.createTime = i.createTime.replace("T", " ").substring(0, 19);
@@ -603,17 +622,22 @@ export default {
         }
 
         // 处理快照JSON
-        let resultSnapshot = item.resultSnapshot
-          ? JSON.parse(item.resultSnapshot)
-          : null;
+        let resultSnapshot =
+          typeof item.resultSnapshot === "string"
+            ? JSON.parse(item.resultSnapshot)
+            : item.resultSnapshot;
         let imagesSummary = [];
         if (Array.isArray(resultSnapshot)) {
           resultSnapshot.forEach((i) => {
             i.createTime = i.createTime.replace("T", " ").substring(0, 19);
             if (i.images) {
-              let imageArray = i.images.split(",");
-              i.images = imageArray;
-              imagesSummary = imageArray.filter(
+              const imageList = Array.isArray(i.images)
+                ? i.images
+                : i.images
+                ? String(i.images).split(",")
+                : [];
+              i.images = imageList;
+              imagesSummary = imageList.filter(
                 (item) => !item.includes(".pdf")
               );
             }
@@ -622,8 +646,6 @@ export default {
             if (item.processKey == "enterprise_invoice") {
               i.content = i.content.split("#^#");
             }
-            console.log(599, i);
-
             if (
               (i.targetType == "parts" ||
                 i.targetType == "faults" ||
@@ -633,6 +655,12 @@ export default {
             ) {
               try {
                 i.content = JSON.parse(i.content);
+                i.content.forEach((imgItem) => {
+                  imgItem.image =
+                    typeof imgItem.image === "string"
+                      ? JSON.parse(imgItem.image)
+                      : imgItem.image;
+                });
               } catch (e) {
                 i.content = [];
               }
@@ -699,7 +727,6 @@ export default {
         if (item.processKey == "consult_cost") {
           bizButtons = ["协商师傅费用"];
         }
-
         return {
           ...item,
           remark,

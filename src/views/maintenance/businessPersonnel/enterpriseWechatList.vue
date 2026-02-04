@@ -82,6 +82,11 @@
               {{ row.createTime ? row.createTime : "/" }}
             </template>
           </el-table-column>
+          <el-table-column label="群创建人" prop="chatName">
+            <template slot-scope="{ row }">
+              {{ row.owner ? row.owner : "/" }}
+            </template>
+          </el-table-column>
           <el-table-column label="企业微信群名称" prop="chatName">
             <template slot-scope="{ row }">
               {{ row.chatName ? row.chatName : "/" }}

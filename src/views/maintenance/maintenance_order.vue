@@ -505,6 +505,16 @@
         >
       </span>
     </el-dialog>
+
+    <!-- ps -->
+    <!-- <p>收到 React 的回复: {{ childMessage }}</p>
+    <iframe
+      ref="iframeRef"
+      src="http://localhost:3000"
+      width="100%"
+      height="500px"
+      frameborder="0"
+    ></iframe> -->
   </div>
 </template>
 
@@ -541,6 +551,8 @@ export default {
   },
   data() {
     return {
+      childMessage: "",
+
       // UI控制
       isSearchExpanded: false, // 搜索栏折叠状态
 
@@ -662,7 +674,39 @@ export default {
       return map[this.tableType] || "默认列表";
     },
   },
+  mounted() {
+    // 监听来自子页面的消息
+    window.addEventListener("message", this.handleMessage);
+  },
+  beforeDestroy() {
+    // 组件销毁前移除监听，防止内存泄漏
+    window.removeEventListener("message", this.handleMessage);
+  },
   methods: {
+    // 【父传子】发送消息
+    sendMessageToReact() {
+      const iframeWin = this.$refs.iframeRef.contentWindow;
+      // 参数1：发送的数据
+      // 参数2：接收方的源（出于安全考虑，建议替换 '*' 为具体的 React 项目地址）
+      iframeWin.postMessage(
+        {
+          type: "FROM_VUE",
+          data: "Hello React, this is Vue!",
+        },
+        "*"
+      );
+    },
+    // 【子传父】接收消息处理
+    handleMessage(event) {
+      // 建议校验来源，防止安全风险
+      // if (event.origin !== "http://localhost:3000") return;
+
+      if (event.data && event.data.type === "FROM_REACT") {
+        console.log("收到 React 数据:", event.data);
+        this.childMessage = event.data.data;
+      }
+    },
+
     // === 辅助方法：获取当前激活的Table组件引用 ===
     getCurrentTableRef() {
       const refs = {

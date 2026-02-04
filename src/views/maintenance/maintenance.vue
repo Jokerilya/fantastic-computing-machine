@@ -68,7 +68,7 @@
             type="date"
             value-format="yyyy-MM-dd HH:mm:ss"
             placeholder="选择日期"
-            style="width: 285px;"
+            style="width: 285px"
           ></el-date-picker>
         </div>
       </div>
@@ -173,7 +173,7 @@
     </div>
     <div class="bottomLine2" v-if="activeName == 'second'">
       <div class="custorCode">
-        <div class="code" style="margin:10px 0">铭牌图片</div>
+        <div class="code" style="margin: 10px 0">铭牌图片</div>
         <div class="codeInput">
           <el-upload
             action
@@ -189,7 +189,7 @@
         <div
           class="btnSmbit"
           v-if="activeName == 'second'"
-          style="margin:50px 0"
+          style="margin: 50px 0"
         >
           <el-button
             v-if="!change"
@@ -225,7 +225,7 @@
       <el-table
         highlight-current-row
         :data="deviceList.partsList"
-        style="width: 100%;"
+        style="width: 100%"
       >
         <el-table-column
           prop="category"
@@ -294,13 +294,13 @@
 
     <!-- 设备列表部分 -->
     <div class="titlePart" v-if="activeName == 'third'">
-      <div class="titleOne" style="margin-top: 25px;">投保设备列表</div>
+      <div class="titleOne" style="margin-top: 25px">投保设备列表</div>
       <el-button
         icon="el-icon-refresh"
         plain
         type="primary"
         @click="keepAdd"
-        style="margin-top: 25px;"
+        style="margin-top: 25px"
         >继续新增设备</el-button
       >
     </div>
@@ -308,7 +308,7 @@
       <el-table
         highlight-current-row
         :data="param.deviceList"
-        style="width: 100%;"
+        style="width: 100%"
       >
         <el-table-column
           prop="no"
@@ -396,13 +396,13 @@
 
     <!-- 支付信息部分 -->
     <div class="titlePart" v-if="activeName == 'fourth'">
-      <div class="titleOne" style="margin-top: 25px;">支付信息列表</div>
+      <div class="titleOne" style="margin-top: 25px">支付信息列表</div>
     </div>
     <div class="listPart" v-if="activeName == 'fourth'">
       <el-table
         highlight-current-row
         :data="param.payInfoList"
-        style="width: 100%;"
+        style="width: 100%"
       >
         <el-table-column
           prop="payTime"

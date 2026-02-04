@@ -48,10 +48,9 @@ const router = {
       meta: { title: "维保订单详情", noShow: "true" },
     },
     {
-      path: "/maintenance/maintenance_order_desc_copy",
-      name: "maintenance_order_desc_copy",
-      component: () =>
-        import("@/views/maintenance/maintenance_order_desc_copy"),
+      path: "/maintenance/maintenance_order_desc_old",
+      name: "maintenance_order_desc_old",
+      component: () => import("@/views/maintenance/maintenance_order_desc_old"),
       meta: { title: "维保订单详情旧版", noShow: "true" },
     },
     {

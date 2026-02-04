@@ -12,13 +12,13 @@
           @touchend="handleSecretAction"
           style="user-select: none; cursor: pointer"
         >
-          {{ loginType === "phone" ? "手机登录" : "账号密码登录" }}
+          {{ loginType === "phone" ? "手机登录" : "账密登录" }}
         </div>
 
-        <div class="sub-switch" style="color: #999" @click="switchLoginType">
-          {{ loginType === "phone" ? "账号密码登录" : "手机验证码登录" }}
+        <!-- <div class="sub-switch" style="color: #999" @click="switchLoginType">
+          {{ loginType === "phone" ? "账密登录" : "手机验证码登录" }}
           <i class="el-icon-arrow-right"></i>
-        </div>
+        </div> -->
       </div>
 
       <el-form
@@ -127,9 +127,9 @@
 
 <script>
 import md5 from "js-md5";
-import { getVisitorId } from "@/utils/fingerprint"; // 保留原逻辑
-import webLogo from "@/components/webLogo/web-logo.vue"; // 保留原逻辑
-import { webName, webICP, version } from "@/webConfig.js"; // 保留原逻辑
+import { getVisitorId } from "@/utils/fingerprint";
+import webLogo from "@/components/webLogo/web-logo.vue";
+import { webName, webICP, version } from "@/webConfig.js";
 
 export default {
   name: "Login",

@@ -880,7 +880,7 @@ export default {
       if (inputTime > targetTime) {
         name = "maintenance_order_desc";
       } else {
-        name = "maintenance_order_desc_copy";
+        name = "maintenance_order_desc_old";
       }
       const routeData = this.$router.resolve({
         name,

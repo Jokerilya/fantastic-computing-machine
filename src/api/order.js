@@ -633,6 +633,15 @@ export function queryFaultItems(data) {
   });
 }
 
+// 故障项目列表V2
+export function queryFaultItemsV2(data) {
+  return request({
+    url: "/admin/maintenance/queryFaultItemsV2",
+    method: "post",
+    data,
+  });
+}
+
 // 保存故障列表
 export function saveFaultItems(data) {
   return request({
@@ -777,6 +786,15 @@ export function deleteOrderFaultItem(data) {
 export function addOrderFaultItem(data) {
   return request({
     url: "/admin/maintenance/addOrderFaultItem",
+    method: "post",
+    data,
+  });
+}
+
+// 新增订单故障项目V2
+export function addOrderFaultItemV2(data) {
+  return request({
+    url: "/admin/maintenance/addOrderFaultItemV2",
     method: "post",
     data,
   });
@@ -1298,6 +1316,24 @@ export function handleRepairProcessRemark(data) {
 export function handleRepairProcessresultSnapshot(data) {
   return request({
     url: `/admin/order/handleRepairProcessresultSnapshot`,
+    method: "post",
+    data,
+  });
+}
+
+// 设置订单设备信息
+export function setOrderDeviceInfo(data) {
+  return request({
+    url: `/admin/order/setOrderDeviceInfo`,
+    method: "post",
+    data,
+  });
+}
+
+// 订单设置平台活动优惠减免
+export function setOrderPlatDiscount(data) {
+  return request({
+    url: `/admin/order/setOrderPlatDiscount`,
     method: "post",
     data,
   });
